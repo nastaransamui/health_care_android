@@ -33,7 +33,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var data = snapshot.data;
-            print(data);
             if (data!.isNotEmpty) {
               var response = jsonDecode(data);
               homeThemeName = response['homeThemeName'];

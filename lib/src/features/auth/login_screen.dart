@@ -163,9 +163,9 @@ class SubmitNotification extends Notification {
 _header(context) {
   return Container(
     margin: const EdgeInsets.only(
-      top: 4.0,
+      top: 8.0,
     ),
-    height: 200,
+    height: 180,
     decoration: const BoxDecoration(
       image: DecorationImage(
           image: AssetImage('assets/images/register-top-img.png')),

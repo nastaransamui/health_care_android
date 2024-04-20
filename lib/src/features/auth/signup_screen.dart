@@ -152,8 +152,8 @@ class _SignupScreenState extends State<SignupScreen> {
 }
 
 class SubmitNotification extends Notification {
-  final TextEditingController emailValue;
-  final TextEditingController passwordValue;
+  final String emailValue;
+  final String passwordValue;
 
   SubmitNotification(this.emailValue, this.passwordValue);
 }
@@ -161,9 +161,9 @@ class SubmitNotification extends Notification {
 _header(context) {
   return Container(
     margin: const EdgeInsets.only(
-      top: 24.0,
+      top: 8.0,
     ),
-    height: 200,
+    height: 180,
     decoration: const BoxDecoration(
       image: DecorationImage(
           image: AssetImage('assets/images/register-top-img.png')),
@@ -172,9 +172,9 @@ _header(context) {
 }
 
 class InputField extends StatefulWidget {
-  final passwordController;
+  final TextEditingController passwordController;
 
-  final emailController;
+  final TextEditingController emailController;
 
   const InputField({
     super.key,
@@ -197,7 +197,7 @@ class _InputFieldState extends State<InputField> {
 
   _formSubmit() {
     SubmitNotification(
-            widget.emailController.text.trim(), widget.passwordController.text)
+            widget.emailController.text, widget.passwordController.text)
         .dispatch(context);
   }
 

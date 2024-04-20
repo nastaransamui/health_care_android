@@ -207,8 +207,20 @@ class FindDoctorsCard extends StatefulWidget {
 class _FindDoctorsCardState extends State<FindDoctorsCard> {
   var height = 200.0;
   var _color = Colors.amber;
-  var _chosen_model;
+  static late String _chosenModel;
   bool selected = false;
+
+  void init(BuildContext context) {
+    _chosenModel = context.tr('none');
+  }
+
+@override
+  void didChangeDependencies() {
+    context.locale.toString();          // OK
+    _chosenModel = context.tr('none');
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardTopPosition = widget.expandedHeight / 2 - widget.shrinkOffset;
@@ -325,7 +337,7 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 isExpanded: true,
-                                value: _chosen_model,
+                                value: _chosenModel,
                                 items: <String>[
                                   context.tr('none'),
                                   context.tr('available'),
@@ -348,7 +360,7 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
                                 }).toList(),
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    _chosen_model = newValue!;
+                                    _chosenModel = newValue!;
                                   });
                                 },
                                 hint: Text(

@@ -35,7 +35,6 @@ void initiateSocket() {
     print('conneted');
     socket.on('getThemeFromAdmin', (data) {
       final themeFromAdmin = ThemeFromAdmin.fromJson(json.encode(data));
-      print(themeFromAdmin.toJson());
       streamSocket.addResponse(themeFromAdmin.toJson());
     });
   });
