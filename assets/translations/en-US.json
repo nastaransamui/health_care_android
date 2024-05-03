@@ -24,5 +24,28 @@
   "thisWeek": "This Week",
   "thisMonth": "This Month",
   "searchNow": "Search Now",
-  "filters": "Filters"
+  "filters": "Filters",
+  "pullDown": "Pull Down",
+  "/cardiohome": "Cardiology",
+  "/eyecarehome": "Eye Care",
+  "/veterinaryhome": "Veterinary",
+  "/paediatrichome": "Paediatric",
+  "/fertilityhome": "Fertility",
+  "/enthome": "ENT",
+  "/cosmeticshome": "Cosmetic",
+  "/homecare": "Home care",
+  "specialities": "Specialities:",
+  "clinics": "Clinics: ",
+  "Dentist": "Dentist",
+  "Cardiologist": "Cardiologist",
+  "Ophthalmology": "Ophthalmology",
+  "Orthopedic": "Orthopedic",
+  "Neurology": "Neurology",
+  "Urology": "Urology",
+  "doctorsNumber": {
+    "zero": "No doctor yet",
+    "one": "We have {} doctor",
+    "many": "We have {} doctors",
+    "other": "We have {} doctors"
+  }
 }

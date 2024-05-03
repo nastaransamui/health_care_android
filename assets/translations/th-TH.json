@@ -24,5 +24,28 @@
   "thisWeek": "สัปดาห์นี้",
   "thisMonth": "เดือนนี้",
   "searchNow": "ค้นหาเลย",
-  "filters": "ตัวกรอง"
+  "filters": "ตัวกรอง",
+  "pullDown": "ดึงลง",
+  "/cardiohome": "หทัยวิทยา",
+  "/eyecarehome": "การดูแลดวงตา",
+  "/veterinaryhome": "สัตวแพทย์",
+  "/paediatrichome": "กุมารเวชศาสตร์",
+  "/fertilityhome": "การเจริญพันธุ์",
+  "/enthome": "ENT",
+  "/cosmeticshome": "เครื่องสำอาง",
+  "/homecare": "การดูแลที่บ้าน",
+  "specialities": "ความเชี่ยวชาญพิเศษ:",
+  "clinics": "คลินิก: ",
+  "Dentist": "ทันตแพทย์",
+  "Cardiologist": "แพทย์โรคหัวใจ",
+  "Ophthalmology": "จักษุวิทยา",
+  "Orthopedic": "กระดูกและข้อ",
+  "Neurology": "ประสาทวิทยา",
+  "Urology": "ระบบทางเดินปัสสาวะ",
+  "doctorsNumber": {
+    "zero": "ยังไม่มีแพทย์",
+    "one": "เรามีแพทย์ {} คน",
+    "many": "เรามีแพทย์ {} คน",
+    "other": "เรามีแพทย์ {} คน"
+  }
 }

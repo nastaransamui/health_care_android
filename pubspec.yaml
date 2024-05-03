@@ -41,6 +41,12 @@ dependencies:
   flutter_spinkit: ^5.2.1
   avatar_view: ^1.0.1
   flutter_signin_button: ^2.0.0
+  provider: ^6.1.2
+  carousel_slider: ^4.2.1
+  sliver_fill_remaining_box_adapter: ^1.0.0
+  extended_nested_scroll_view: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  easy_logger: ^0.0.2
 
 dev_dependencies:
   flutter_test:

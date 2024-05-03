@@ -40,9 +40,12 @@ class _SilverScaffoldWrapperState extends State<SilverScaffoldWrapper> {
               ),
             ),
             SliverFillRemaining(
-              child: Center(
-                child: widget.children,
-              ),
+              hasScrollBody: false,
+              child: widget.children,
+              // child: Container(
+              //   margin: const EdgeInsets.only(top: kToolbarHeight),
+              //   child: widget.children,
+              // ),
             ),
           ],
         ),
@@ -69,6 +72,7 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
     // final cardTopPosition = expandedHeight / 2 - shrinkOffset;
     final proportion = 2 - (expandedHeight / appBarSize);
     final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
+
     return SizedBox(
       height: expandedHeight + expandedHeight / 2,
       child: Stack(
@@ -88,16 +92,40 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
                 );
               }),
               elevation: 10,
-              title: Opacity(
-                opacity: percent,
-                child: Text(
+              title: AnimatedCrossFade(
+                crossFadeState: percent == 0
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: const Duration(milliseconds: 400),
+                firstChild: Text(
                   context.tr(title),
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(color: Colors.black),
+                ),
+                secondChild: Text(
+                  context.tr('pullDown'),
+                  maxLines: 1,
+                  overflow: TextOverflow.clip,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(color: Colors.black),
                 ),
               ),
+              // Opacity(
+              //   opacity: percent,
+              //   child: Text(
+              //     context.tr(title),
+              //     style: const TextStyle(
+              //       color: Colors.black,
+              //       fontSize: 24,
+              //     ),
+              //   ),
+              // ),
               actions: [
                 Builder(
                   builder: (context) {
@@ -206,7 +234,6 @@ class FindDoctorsCard extends StatefulWidget {
 
 class _FindDoctorsCardState extends State<FindDoctorsCard> {
   var height = 200.0;
-  var _color = Colors.amber;
   static late String _chosenModel;
   bool selected = false;
 
@@ -214,9 +241,9 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
     _chosenModel = context.tr('none');
   }
 
-@override
+  @override
   void didChangeDependencies() {
-    context.locale.toString();          // OK
+    context.locale.toString(); // OK
     _chosenModel = context.tr('none');
     super.didChangeDependencies();
   }
@@ -234,24 +261,75 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
         opacity: widget.percent,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _color = _color == Colors.amber ? Colors.blue : Colors.amber;
-              });
-            },
-            child: Card(
-              // color: _color,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
+          child: Card(
+            // color: _color,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Row(
+                      children: [
+                        Transform.translate(
+                          offset: const Offset(5.0, 20.0),
+                          child: Card(
+                            elevation: 5.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(35.0),
+                            ),
+                            child: const SizedBox(
+                              width: 45,
+                              height: 45,
+                              child: Icon(
+                                Icons.search,
+                                size: 19,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                              hintText: context.tr('keyWord'),
+                              hintStyle: const TextStyle(
+                                fontSize: 12.0,
+                              ),
+                              counterText: '',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0, left: 32.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      height: 30.0,
+                      child: CustomPaint(
+                        size: const Size(1, double.infinity),
+                        painter: DashedLineVerticalPainter(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Transform.translate(
+                      offset: const Offset(0, -25),
                       child: Row(
                         children: [
                           Transform.translate(
-                            offset: const Offset(5.0, 20.0),
+                            offset: const Offset(6, 12),
                             child: Card(
                               elevation: 5.0,
                               shape: RoundedRectangleBorder(
@@ -261,7 +339,7 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
                                 width: 45,
                                 height: 45,
                                 child: Icon(
-                                  Icons.search,
+                                  Icons.event_available,
                                   size: 19,
                                 ),
                               ),
@@ -269,144 +347,88 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
                           ),
                           const SizedBox(width: 5),
                           Expanded(
-                            child: TextField(
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor,
+                            child: DropdownButton<String>(
+                              iconEnabledColor: Theme.of(context).primaryColor,
+                              style: const TextStyle(
+                                fontSize: 12.0,
+                              ),
+                              underline: Container(
+                                height: 1.6,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              isExpanded: true,
+                              value: _chosenModel,
+                              items: <String>[
+                                context.tr('none'),
+                                context.tr('available'),
+                                context.tr('today'),
+                                context.tr('tomorrow'),
+                                context.tr('thisWeek'),
+                                context.tr('thisMonth'),
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      color: brightness == Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
                                   ),
-                                ),
-                                hintText: context.tr('keyWord'),
-                                hintStyle: const TextStyle(
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _chosenModel = newValue!;
+                                });
+                              },
+                              hint: Text(
+                                context.tr('availability'),
+                                style: const TextStyle(
                                   fontSize: 12.0,
                                 ),
-                                counterText: '',
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12.0, left: 32.0),
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        height: 30.0,
-                        child: CustomPaint(
-                          size: const Size(1, double.infinity),
-                          painter: DashedLineVerticalPainter(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10, left: 10),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(double.maxFinite, 30),
+                        elevation: 5.0,
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        context.tr('searchNow'),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Transform.translate(
-                        offset: const Offset(0, -25),
-                        child: Row(
-                          children: [
-                            Transform.translate(
-                              offset: const Offset(6, 12),
-                              child: Card(
-                                elevation: 5.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(35.0),
-                                ),
-                                child: const SizedBox(
-                                  width: 45,
-                                  height: 45,
-                                  child: Icon(
-                                    Icons.event_available,
-                                    size: 19,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: DropdownButton<String>(
-                                iconEnabledColor:
-                                    Theme.of(context).primaryColor,
-                                style: const TextStyle(
-                                  fontSize: 12.0,
-                                ),
-                                underline: Container(
-                                  height: 1.6,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                isExpanded: true,
-                                value: _chosenModel,
-                                items: <String>[
-                                  context.tr('none'),
-                                  context.tr('available'),
-                                  context.tr('today'),
-                                  context.tr('tomorrow'),
-                                  context.tr('thisWeek'),
-                                  context.tr('thisMonth'),
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        color: brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _chosenModel = newValue!;
-                                  });
-                                },
-                                hint: Text(
-                                  context.tr('availability'),
-                                  style: const TextStyle(
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(right: 10, left: 10, top: 10),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(double.maxFinite, 30),
+                        elevation: 5.0,
+                        foregroundColor: Theme.of(context).primaryColor,
+                        animationDuration: const Duration(milliseconds: 1000),
+                        backgroundColor: Theme.of(context).primaryColorLight,
+                        shadowColor: Theme.of(context).primaryColorLight,
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        context.tr('filters'),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10, left: 10),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(double.maxFinite, 30),
-                          elevation: 5.0,
-                        ),
-                        onPressed: () {},
-                        child: Text(
-                          context.tr('searchNow'),
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(right: 10, left: 10, top: 10),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(double.maxFinite, 30),
-                          backgroundColor: Theme.of(context).primaryColorLight,
-                          elevation: 5.0,
-                        ),
-                        onPressed: () {},
-                        child: Text(
-                          context.tr('filters'),
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
