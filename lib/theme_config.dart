@@ -1,6 +1,46 @@
-
 import 'package:flutter/material.dart';
 import 'package:health_care/src/utils/hex_to_color.dart';
+
+String primaryColorCodeReturn(String homeThemeName) {
+  switch (homeThemeName) {
+    case 'joker':
+      return 'e52165';
+    case 'cloud':
+      return '3f51b5';
+    case 'greenLeaf':
+      return '4caf50';
+    case 'money':
+      return 'ffa000';
+    case 'grayscale':
+      return '546e7a';
+    case 'violet':
+      return '673AB7';
+    case 'violeta':
+      return '9c27b0';
+    case 'violate':
+      return '8bc34a';
+    case 'deepBlue':
+      return '03a9f4';
+    case 'ubuntu':
+      return 'EF6C00';
+    case 'geenNature':
+      return '009688';
+    case 'vampire':
+      return 'f44336';
+    case 'gold':
+      return 'FF9100';
+    case 'botani':
+      return '689F38';
+    case 'littleQueen':
+      return '00BCD4';
+    case 'brown':
+      return '795548';
+    case 'oceanBlue':
+      return '00f5ff';
+    default:
+      return '';
+  }
+}
 
 ThemeData themDataLive(String homeThemeName, String homeThemeType) {
   String primaryColor = '';
@@ -27,7 +67,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
       secondaryColor = '#f5c200';
       break;
     case 'violet':
-      primaryColor = '#673AB';
+      primaryColor = '#673AB7';
       secondaryColor = '#ec407a';
       break;
     case 'violeta':
@@ -46,10 +86,10 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
       primaryColor = '#EF6C00';
       secondaryColor = '#9C27B0';
       break;
-    case 'geenNature':
-      primaryColor = '#009688';
-      secondaryColor = '#76ff02';
-      break;
+    // case 'geenNature':
+    //   primaryColor = '#009688';
+    //   secondaryColor = '#76ff02';
+    // break;
     case 'vampire':
       primaryColor = '#f44336';
       secondaryColor = '#607d8b';
@@ -88,9 +128,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
             color: hexToColor(secondaryColor),
           ),
         ),
-        iconTheme: IconThemeData(
-          color: hexToColor(secondaryColor)
-        ),
+        iconTheme: IconThemeData(color: hexToColor(secondaryColor)),
         dividerColor: hexToColor(secondaryColor),
         primaryColor: hexToColor(primaryColor),
         primaryColorLight: hexToColor(secondaryColor),
@@ -131,15 +169,13 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
       );
     default:
       return ThemeData.light().copyWith(
-       appBarTheme: AppBarTheme(
+        appBarTheme: AppBarTheme(
           backgroundColor: hexToColor(primaryColor),
           iconTheme: IconThemeData(
             color: hexToColor(secondaryColor),
           ),
         ),
-        iconTheme: IconThemeData(
-          color: hexToColor(secondaryColor)
-        ),
+        iconTheme: IconThemeData(color: hexToColor(secondaryColor)),
         dividerColor: hexToColor(secondaryColor),
         primaryColor: hexToColor(primaryColor),
         primaryColorLight: hexToColor(secondaryColor),

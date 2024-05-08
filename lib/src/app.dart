@@ -2,18 +2,21 @@
 
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:health_care/constants/global_variables.dart';
+import 'package:health_care/models/clinics.dart';
 import 'package:health_care/providers/clinics_provider.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/specialities_provider.dart';
+import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/router.dart';
 import 'package:health_care/services/clinics_service.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/services/specialities_service.dart';
-// import 'package:health_care/src/commons/scaffold_wrapper.dart';
+import 'package:health_care/services/theme_service.dart';
 import 'package:health_care/src/commons/silver_scaffold_wrapper.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
@@ -30,17 +33,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   // This widget is the root of your application.
+  final ThemeService themeService = ThemeService();
   final ClinicsService clinicsService = ClinicsService();
   final SpecialitiesService specialitiesService = SpecialitiesService();
   final DoctorsService doctorsService = DoctorsService();
   late final AnimationController _controller = AnimationController(vsync: this);
-  String homeThemeName = '';
-  String homeThemeType = '';
-  String homeActivePage = '';
+  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  // String homeThemeName = '';
+  // String homeThemeType = '';
+  // String homeActivePage = '';
 
   @override
   void initState() {
     super.initState();
+    themeService.getThemeFromAdmin(context);
     clinicsService.getClinicData(context);
     specialitiesService.getSpecialitiesData(context);
     doctorsService.getDoctorsData(context);
@@ -52,6 +59,10 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         stream: streamSocket.getResponse,
         initialData: '',
         builder: (context, snapshot) {
+          var homeThemeName = Provider.of<ThemeProvider>(context).homeThemeName;
+          var homeThemeType = Provider.of<ThemeProvider>(context).homeThemeType;
+          var homeActivePage =
+              Provider.of<ThemeProvider>(context).homeActivePage;
           if (snapshot.hasData) {
             var data = snapshot.data;
             if (data!.isNotEmpty) {
@@ -111,55 +122,76 @@ class _DefaultState extends State<Default> {
     final specialities =
         Provider.of<SpecialitiesProvider>(context).specialities;
     final doctors = Provider.of<DoctorsProvider>(context).doctors;
-    print(doctors);
-    var clinicsScrollView = SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: <Widget>[
-          ...clinics.map(
-            (i) {
-              final name = context.tr(i.href);
-              final imagee = i.image;
-              final imageSrc = '$webUrl$imagee';
-              final bool isActive = i.active;
-              if (isActive) {
-                return Card(
+    skipNulls<T>(List<Clinics> items) {
+      return items..removeWhere((item) => !item.active);
+    }
+
+    CarouselSlider clinicsScrollView = CarouselSlider(
+      options: CarouselOptions(
+        height: 300.0,
+        autoPlay: false,
+        enlargeCenterPage: true,
+      ),
+      items: skipNulls(clinics).map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            final name = context.tr(i.name);
+            final imagee = i.image;
+            final hasThemeImage = i.hasThemeImage;
+            var homeThemeName =
+                Provider.of<ThemeProvider>(context).homeThemeName;
+            final primaryColorCode = primaryColorCodeReturn(homeThemeName);
+            final imageSrc = hasThemeImage
+                ? '$webUrl${imagee.replaceAll('primaryMain', primaryColorCode)}'
+                : '$webUrl$imagee';
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: Card(
                   elevation: 5.0,
                   clipBehavior: Clip.hardEdge,
+                  margin: const EdgeInsets.all(0),
                   child: InkWell(
-                    splashColor: Theme.of(context).primaryColor,
+                     splashColor: Theme.of(context).primaryColor,
                     onTap: () {
                       Navigator.pushNamed(context, i.href);
                     },
-                    child: SizedBox(
-                      width: 200,
-                      height: 220,
-                      child: Column(
-                        children: [
-                          Text(name),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                imageSrc,
-                                width: 200,
-                                height: 200,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 25,
+                          child: ListTile(
+                            title: Text(name),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            // color: Colors.amber,
+                            margin: const EdgeInsets.only(
+                              top: 20,
+                              bottom: 10,
+                            ),
+                            height: 200,
+                            child: FittedBox(
+                              fit: BoxFit.fill,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  imageSrc,
+                                  width: 200,
+                                  height: 200,
+                                ),
                               ),
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
-        ],
-      ),
+                  )),
+            );
+          },
+        );
+      }).toList(),
     );
 
     var specialitiesScrollView = SingleChildScrollView(
@@ -222,268 +254,109 @@ class _DefaultState extends State<Default> {
         ],
       ),
     );
-    var doctorScrollView = SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: <Widget>[
-          ...doctors.map(
-            (i) {
-              final name = "${i.firstName} ${i.lastName}";
-              final imageSrc = i.profileImage;
-              print(name);
-              print(imageSrc);
-              // final imageIsSvg = imageSrc.endsWith('.svg');
-              // final numberOfDoctors = i.usersId.length;
-              return InkWell(
-                splashColor: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(10.0),
-                onTap: () {
-                  // Navigator.pushNamed(context, i.href);
-                },
+
+    CarouselSlider bestDoctorsScrollView = CarouselSlider(
+      items: doctors.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            var subheading = context.tr(i.specialities[0].specialities);
+            final name = "${i.firstName} ${i.lastName}";
+            var cardImage = NetworkImage(i.profileImage.isEmpty
+                ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
+                : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
+            var supportingText = i.aboutMe;
+            // print(cardImage);
+            return SizedBox(
+              height: 420,
+              child: Card(
+                elevation: 4.0,
                 child: Column(
                   children: [
-                    // Text(name),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      height: 300,
-                      child: Stack(
-                        children: <Widget>[
-                          Card(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            elevation: 5,
-                            // margin: const EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 250,
-                                  child: Image.network(
-                                    imageSrc,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Positioned(
-                            bottom: 0,
-                            left: 10,
-                            child: SizedBox(
-                              height: 50,
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [Text('Title'), Text('Subtitle')],
-                              ),
-                            ),
-                          )
-                        ],
+                      height: 70,
+                      child: ListTile(
+                        title: Text("Dr. $name"),
+                        subtitle: Text(subheading),
+                        trailing: const Icon(Icons.favorite_outline),
                       ),
                     ),
-                    // FittedBox(
-                    //   fit: BoxFit.contain,
-                    //   child: ClipRRect(
-                    //     borderRadius: BorderRadius.circular(8),
-                    //     child: Image.network(
-                    //       imageSrc,
-                    //       width: MediaQuery.of(context).size.width,
-                    //       height: 200,
-                    //     ),
-                    //   ),
-                    // ),
-                    // // Text('doctorsNumber').plural(10, format: NumberFormat.compact(locale: context.locale.toString()))
-                    // const Text('doctorsNumber').plural(
-                    //   numberOfDoctors,
-                    //   format: NumberFormat.compact(
-                    //     locale: context.locale.toString(),
-                    //   ),
-                    // )
+                    InkWell(
+                      splashColor: Theme.of(context).hintColor,
+                      onTap: () {
+                        Navigator.pushNamed(context, 'i.href');
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 250,
+                        child: Ink.image(
+                          image: cardImage,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        // height: 50,
+                        padding: const EdgeInsets.only(left: 16.0),
+                        alignment: Alignment.centerLeft,
+                        child: Text(supportingText),
+                      ),
+                    ),
                   ],
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            );
+          },
+        );
+      }).toList(),
+      options: CarouselOptions(
+        autoPlay: false,
+        enlargeCenterPage: true,
+        viewportFraction: 1,
+        aspectRatio: 2.0,
+        initialPage: 1,
+        height: 435,
       ),
     );
-
+    
     return SilverScaffoldWrapper(
-      title: 'appTitle',
+      title: 'findDoctor',
       children: Column(
         children: <Widget>[
-          ListTile(
-            title: Text(context.tr('clinics')),
-          ),
-          Expanded(
-            child: SizedBox(
+          if (clinics.isNotEmpty) ...[
+            ListTile(
+              title: Text(context.tr('clinics')),
+            ),
+            clinicsScrollView
+          ],
+          if (specialities.isNotEmpty) ...[
+            ListTile(
+              title: Text(context.tr('specialities')),
+            ),
+            SizedBox(
               // color: Colors.red,
-              height: 250,
+              height: 160,
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return clinicsScrollView;
+                  return specialitiesScrollView;
                 },
                 itemCount: 1,
               ),
+            )
+          ],
+          if (doctors.isNotEmpty) ...[
+            ListTile(
+              title: Text(context.tr('bestDoctors')),
             ),
-          ),
-          ListTile(
-            title: Text(context.tr('specialities')),
-          ),
-          SizedBox(
-            // color: Colors.red,
-            height: 160,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return specialitiesScrollView;
-              },
-              itemCount: 1,
-            ),
-          ),
-
-          ListTile(
-            title: Text(context.tr('bestDoctors')),
-          ),
-          SizedBox(
-            // color: Colors.red,
-            height: 350,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return doctorScrollView;
-              },
-              itemCount: 1,
-            ),
-          ),
-          // Container(color: Colors.blue, height: 100)
+            bestDoctorsScrollView
+          ],
         ],
       ),
-      // SliverList(
-      //   delegate: SliverChildListDelegate([
-      //     Container(
-      //       color: Colors.yellow,
-      //       // height: 400,
-      //       child: ListView.builder(
-      //         shrinkWrap: true,
-      //         physics: const BouncingScrollPhysics(),
-      //         itemBuilder: (context, index) {
-      //           return singleChildScrollView;
-      //         },
-      //         itemCount: 1,
-      //       ),
-      //     ),
-      //     // Container(color: Colors.red, height: 800),
-      //   ]),
-      // ),
-      // Column(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   mainAxisSize: MainAxisSize.max,
-      //   children: <Widget>[
-      //     const ListTile(
-      //       title: Text('Clinics '),
-      //     ),
-      //     SizedBox(
-      //       height: 230,
-      //       // color: Colors.blue,
-      //       child: ListView.builder(
-      //         shrinkWrap: true,
-      //         physics: const BouncingScrollPhysics(),
-      //         itemBuilder: (context, index) {
-      //           return singleChildScrollView;
-      //         },
-      //         itemCount: 1,
-      //       ),
-      //     ),
-      //     SizedBox(
-      //       height: 230,
-      //       // color: Colors.blue,
-      //       child: ListView.builder(
-      //         shrinkWrap: true,
-      //         physics: const BouncingScrollPhysics(),
-      //         itemBuilder: (context, index) {
-      //           return singleChildScrollView;
-      //         },
-      //         itemCount: 1,
-      //       ),
-      //     ),
-      //     const Text('We cannot let a stray gunshot give us away'),
-      //     const Text(
-      //         'We will fight up close, seize the moment and stay in it'),
-      //     const Text(
-      //         'It’s either that or meet the business end of a bayonet'),
-      //     const Text('The code word is ‘Rochambeau,’ dig me?'),
-
-      //     Expanded(
-      //       child: Text(
-      //         'Rochambeau!',
-      //         style: DefaultTextStyle.of(context)
-      //             .style
-      //             .apply(fontSizeFactor: 2.0),
-      //       ),
-      //     ),
-      //   ],
-      // )
-      // ListView.builder(
-      //     itemBuilder: (context, index) {return singleChildScrollView; },
-      //     itemCount:1,
-      //   ),
     );
-    // children: SingleChildScrollView(
-    //   child: Column(
-    //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //     children: <Widget>[
-    //       if (clinics.isEmpty) ...[
-    //         const LoadingScreen()
-    //       ] else ...[
-    //         ...clinics.map(
-    //           (e) {
-    //             if (e.active) {
-    //               return Text(e.name, style: const TextStyle(fontSize: 15));
-    //             } else {
-    //               return const SizedBox();
-    //             }
-    //           },
-    //         ),
-    //         // ...getList()
-    //         // CarouselSlider.builder(
-    //         //   itemCount: clinics.length,
-    //         //   itemBuilder:
-    //         //       (BuildContext context, int index, int realIndex) {
-    //         //     final i = clinics[index];
-    //         //     final name = i.name;
-    //         //     final image = i.image;
-    //         //     final imageSrc = '$webUrl$image';
-    //         //     final bool isActive = i.active;
-    //         //     print(name);
-    //         //     if (isActive) {
-    //         //       return Image.network(
-    //         //         imageSrc,
-    //         //         fit: BoxFit.cover,
-    //         //         height: 200,
-    //         //       );
-    //         //     }else{
-    //         //       return  Text(name);
-    //         //     }
-    //         //   },
-    //         //   options: CarouselOptions(
-    //         //     viewportFraction: 1,
-    //         //     height: 250,
-    //         //     // autoPlay: true,
-    //         //     autoPlayInterval: const Duration(milliseconds: 2000),
-    //         //   ),
-    //         // )
-    //       ],
-    //     ],
-    //   ),
-    // ),
-    // );
   }
 }
 

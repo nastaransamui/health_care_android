@@ -20,8 +20,7 @@ class DoctorsService {
         "limit": 10,
         "skip": 0,
       });
-      socket.once('doctorSearchReturn', (data) {
-        // print(data['doctors'][0]['status']);
+      socket.on('doctorSearchReturn', (data) {
         if (data['status'] == 200) {
           doctorsProvider.setDoctors(data['doctors']);
         }
@@ -30,10 +29,8 @@ class DoctorsService {
 
     doctorWithUpdate();
 
-    socket.once('updateDoctorSearch', (data) {
-      print(data);
+    socket.on('updateDoctorSearch', (data) {
       doctorWithUpdate();
-      // doctorsProvider.setDoctors(data);
     });
   }
 }

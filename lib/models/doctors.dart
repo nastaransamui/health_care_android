@@ -15,6 +15,7 @@ class Doctors {
   final String dob;
   final String clinicName;
   final String clinicAddress;
+  final String aboutMe;
   final List<ClinicImages> clinicImages;
   final String profileImage;
   final String roleName;
@@ -54,6 +55,7 @@ class Doctors {
     required this.dob,
     required this.clinicName,
     required this.clinicAddress,
+    required this.aboutMe,
     required this.clinicImages,
     required this.profileImage,
     required this.roleName,
@@ -94,6 +96,7 @@ class Doctors {
     String? dob,
     String? clinicName,
     String? clinicAddress,
+    String? aboutMe,
     List<ClinicImages>? clinicImages,
     String? profileImage,
     String? roleName,
@@ -133,6 +136,7 @@ class Doctors {
       dob: dob ?? this.dob,
       clinicName: clinicName ?? this.clinicName,
       clinicAddress: clinicAddress ?? this.clinicAddress,
+      aboutMe: aboutMe ?? this.aboutMe,
       clinicImages: clinicImages ?? this.clinicImages,
       profileImage: profileImage ?? this.profileImage,
       roleName: roleName ?? this.roleName,
@@ -176,6 +180,7 @@ class Doctors {
     result.addAll({'dob': dob});
     result.addAll({'clinicName': clinicName});
     result.addAll({'clinicAddress': clinicAddress});
+    result.addAll({'aboutMe': aboutMe});
     result.addAll({'clinicImages': clinicImages.map((x) => x.toMap()).toList()});
     result.addAll({'profileImage': profileImage});
     result.addAll({'roleName': roleName});
@@ -219,6 +224,7 @@ class Doctors {
       dob: map['dob'] ?? '',
       clinicName: map['clinicName'] ?? '',
       clinicAddress: map['clinicAddress'] ?? '',
+      aboutMe: map['aboutMe'] ?? '',
       clinicImages: List<ClinicImages>.from(map['clinicImages']?.map((x) => ClinicImages.fromMap(x))),
       profileImage: map['profileImage'] ?? '',
       roleName: map['roleName'] ?? '',
@@ -255,7 +261,7 @@ class Doctors {
 
   @override
   String toString() {
-    return 'Doctors(createdAt: $createdAt, updatedAt: $updatedAt, userName: $userName, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, gender: $gender, dob: $dob, clinicName: $clinicName, clinicAddress: $clinicAddress, clinicImages: $clinicImages, profileImage: $profileImage, roleName: $roleName, services: $services, address1: $address1, address2: $address2, city: $city, state: $state, zipCode: $zipCode, country: $country, pricing: $pricing, specialitiesServices: $specialitiesServices, specialities: $specialities, educations: $educations, experinces: $experinces, awards: $awards, memberships: $memberships, socialMedia: $socialMedia, registrations: $registrations, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, accessToken: $accessToken, isActive: $isActive, lastUpdate: $lastUpdate,  id: $id)';
+    return 'Doctors(createdAt: $createdAt, updatedAt: $updatedAt, userName: $userName, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, gender: $gender, dob: $dob, clinicName: $clinicName, clinicAddress: $clinicAddress, aboutMe: $aboutMe, clinicImages: $clinicImages, profileImage: $profileImage, roleName: $roleName, services: $services, address1: $address1, address2: $address2, city: $city, state: $state, zipCode: $zipCode, country: $country, pricing: $pricing, specialitiesServices: $specialitiesServices, specialities: $specialities, educations: $educations, experinces: $experinces, awards: $awards, memberships: $memberships, socialMedia: $socialMedia, registrations: $registrations, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, accessToken: $accessToken, isActive: $isActive, lastUpdate: $lastUpdate,  id: $id)';
   }
 
   @override
@@ -273,6 +279,7 @@ class Doctors {
       other.dob == dob &&
       other.clinicName == clinicName &&
       other.clinicAddress == clinicAddress &&
+      other.aboutMe == aboutMe && 
       listEquals(other.clinicImages, clinicImages) &&
       other.profileImage == profileImage &&
       other.roleName == roleName &&
@@ -314,6 +321,7 @@ class Doctors {
       dob.hashCode ^
       clinicName.hashCode ^
       clinicAddress.hashCode ^
+      aboutMe.hashCode ^
       clinicImages.hashCode ^
       profileImage.hashCode ^
       roleName.hashCode ^

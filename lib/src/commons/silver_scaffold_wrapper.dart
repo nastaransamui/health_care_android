@@ -107,7 +107,7 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
                       .copyWith(color: Colors.black),
                 ),
                 secondChild: Text(
-                  context.tr('pullDown'),
+                  context.tr('appTitle'),
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                   style: Theme.of(context)

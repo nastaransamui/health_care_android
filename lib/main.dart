@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:health_care/providers/clinics_provider.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/specialities_provider.dart';
+import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,9 @@ Future<void> main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => DoctorsProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ThemeProvider(),
       )
     ],
     child: EasyLocalization(

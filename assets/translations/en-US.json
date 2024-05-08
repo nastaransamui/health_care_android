@@ -47,5 +47,6 @@
     "one": "We have {} doctor",
     "many": "We have {} doctors",
     "other": "We have {} doctors"
-  }
+  },
+  "bestDoctors": "Best Doctors"
 }

@@ -1,15 +1,10 @@
 // ignore_for_file: avoid_print, library_prefixes
 
 import 'dart:async';
-import 'dart:convert';
 
-// import 'package:health_care/models/clinics.dart';
-import 'package:health_care/models/theme_from_admin.dart';
-// import 'package:health_care/providers/clinics_provider.dart';
-// import 'package:provider/provider.dart';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
-
 import 'package:health_care/constants/global_variables.dart';
 
 class StreamSocket {
@@ -36,32 +31,17 @@ IO.Socket socket = IO.io(
 void initiateSocket() {
   socket.onConnect((_) {
     print('conneted');
-    socket.on('getThemeFromAdmin', (data) {
-      final themeFromAdmin = ThemeFromAdmin.fromJson(json.encode(data));
-      streamSocket.addResponse(themeFromAdmin.toJson());
-    });
 
-    // socket.on('getClinicStatusFromAdmin', (data) {
-    //   // print(data.toString());
-    //   // List<dynamic> clinicslist = [];
-    //   // for (var element in data) {
-    //   //   final clinicsFromAdmin = Clinics.fromMap(element);
-    //   //   clinicslist.add(Clinics.fromJson(clinicsFromAdmin.toJson()));
-    //   // }
-    // });
-    socket.on('getSpecialitiesFromAdmin', (data) {
-      // print(data);
-      // final themeFromAdmin = ThemeFromAdmin.fromJson(json.encode(data));
-      // streamSocket.addResponse(themeFromAdmin.toJson());
-    });
     // socket.on('getUserProfileFromAdmin', (data) {
     //   print(data);
     //   // final themeFromAdmin = ThemeFromAdmin.fromJson(json.encode(data));
     //   // streamSocket.addResponse(themeFromAdmin.toJson());
     // });
   });
+
+
   //When an event recieved from server, data is added to the stream
-  socket.on('event', (data) => streamSocket.addResponse);
+  // socket.on('event', (data) => streamSocket.addResponse);
   socket.onDisconnect((_) => print('disconnect'));
 }
 
