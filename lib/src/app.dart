@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-
+import 'dart:math' as math;
+import 'package:accordion/accordion.dart';
+import 'package:accordion/controllers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +137,6 @@ class _DefaultState extends State<Default> {
       items: skipNulls(clinics).map((i) {
         return Builder(
           builder: (BuildContext context) {
-            final name = context.tr(i.name);
             final imagee = i.image;
             final hasThemeImage = i.hasThemeImage;
             var homeThemeName =
@@ -152,7 +153,7 @@ class _DefaultState extends State<Default> {
                   clipBehavior: Clip.hardEdge,
                   margin: const EdgeInsets.all(0),
                   child: InkWell(
-                     splashColor: Theme.of(context).primaryColor,
+                    splashColor: Theme.of(context).primaryColor,
                     onTap: () {
                       Navigator.pushNamed(context, i.href);
                     },
@@ -161,7 +162,7 @@ class _DefaultState extends State<Default> {
                         SizedBox(
                           height: 25,
                           child: ListTile(
-                            title: Text(name),
+                            title: Text(context.tr(i.href)),
                           ),
                         ),
                         Expanded(
@@ -320,7 +321,7 @@ class _DefaultState extends State<Default> {
         height: 435,
       ),
     );
-    
+
     return SilverScaffoldWrapper(
       title: 'findDoctor',
       children: Column(
@@ -354,8 +355,304 @@ class _DefaultState extends State<Default> {
             ),
             bestDoctorsScrollView
           ],
+          ListTile(
+            title: Text(context.tr('howItsWork')),
+          ),
+          Expanded(
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/work-img.png'),
+                  fit: BoxFit.cover,
+                  opacity: 0.3,
+                ),
+              ),
+              child: SizedBox(
+                height: 400,
+                width: MediaQuery.of(context).size.width,
+                child: const CustomAccordion(),
+              ),
+            ),
+          )
         ],
       ),
+    );
+  }
+}
+
+class CustomAccordion extends StatefulWidget {
+  const CustomAccordion({super.key});
+      static const headerStyle = TextStyle(
+    fontSize: 18,
+  );
+  static const contentStyleHeader = TextStyle(
+      color: Color(0xff999999), fontSize: 14, fontWeight: FontWeight.w700);
+  static const contentStyle =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.normal);
+  @override
+  State<CustomAccordion> createState() => _CustomAccordionState();
+}
+
+class _CustomAccordionState extends State<CustomAccordion> {
+  var isSearchOpen = false;
+  var isCheckDoctorProfileOpen = false;
+  var isScheduleAppointmentOpen = false;
+  var isSolutionOpen = false;
+  @override
+  Widget build(BuildContext context) {
+
+  final loremIpsum = context.tr('lorem');
+
+
+    return Accordion(
+      headerBorderColor: Theme.of(context).primaryColor,
+      headerBorderColorOpened: Theme.of(context).primaryColor,
+      headerBackgroundColorOpened: Theme.of(context).primaryColorLight,
+      contentBackgroundColor: Theme.of(context).cardColor,
+      contentBorderColor: Theme.of(context).primaryColorLight,
+      contentBorderWidth: 3,
+      contentHorizontalPadding: 20,
+      scaleWhenAnimating: true,
+      openAndCloseAnimation: true,
+      headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+      sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
+      sectionClosingHapticFeedback: SectionHapticFeedback.heavy,
+      flipRightIconIfOpen: true,
+      paddingBetweenClosedSections: 25,
+      children: [
+        AccordionSection(
+          isOpen: isSearchOpen,
+          contentVerticalPadding: 20,
+          rightIcon: Transform.rotate(
+            angle: 180 * math.pi / 180,
+            child: IconButton(
+              icon: isSearchOpen
+                  ? Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColorLight,
+                      size: 20,
+                    ),
+              onPressed: null,
+            ),
+          ),
+          leftIcon: Padding(
+            padding: const EdgeInsets.only(
+              top: 0.0,
+              bottom: 0.0,
+            ),
+            child: SvgPicture.asset(
+              'assets/icon/search_doctor.svg',
+              width: 30,
+              height: 30,
+              fit: BoxFit.fitHeight,
+              colorFilter: isSearchOpen
+                  ? ColorFilter.mode(
+                      Theme.of(context).primaryColor, BlendMode.srcIn)
+                  : ColorFilter.mode(
+                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
+            ),
+          ),
+          header: Text(context.tr('searchDoctor'),
+              style: CustomAccordion.headerStyle),
+          content:  Text(loremIpsum,
+              style: CustomAccordion.contentStyle),
+          onOpenSection: () {
+            setState(() {
+              isSearchOpen = true;
+              isCheckDoctorProfileOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = false;
+            });
+          },
+          onCloseSection: () {
+            setState(() {
+              isSearchOpen = false;
+              isCheckDoctorProfileOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = false;
+            });
+          },
+        ),
+        AccordionSection(
+          isOpen: isCheckDoctorProfileOpen,
+          contentVerticalPadding: 20,
+          rightIcon: Transform.rotate(
+            angle: 180 * math.pi / 180,
+            child: IconButton(
+              icon: isCheckDoctorProfileOpen
+                  ? Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColorLight,
+                      size: 20,
+                    ),
+              onPressed: null,
+            ),
+          ),
+          leftIcon: Padding(
+            padding: const EdgeInsets.only(
+              top: 0.0,
+              bottom: 0.0,
+            ),
+            child: SvgPicture.asset(
+              'assets/icon/profile_doctor.svg',
+              width: 30,
+              height: 30,
+              fit: BoxFit.fitHeight,
+              colorFilter: isCheckDoctorProfileOpen
+                  ? ColorFilter.mode(
+                      Theme.of(context).primaryColor, BlendMode.srcIn)
+                  : ColorFilter.mode(
+                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
+            ),
+          ),
+          header: Text(context.tr('checkDoctorProfile'),
+              style: CustomAccordion.headerStyle),
+          content: Text(loremIpsum,
+              style: CustomAccordion.contentStyle),
+          onOpenSection: () {
+            setState(() {
+              isCheckDoctorProfileOpen = true;
+              isSearchOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = false;
+            });
+          },
+          onCloseSection: () {
+            setState(() {
+              isCheckDoctorProfileOpen = false;
+              isSearchOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = false;
+            });
+          },
+        ),
+        AccordionSection(
+          isOpen: isScheduleAppointmentOpen,
+          contentVerticalPadding: 20,
+          rightIcon: Transform.rotate(
+            angle: 180 * math.pi / 180,
+            child: IconButton(
+              icon: isScheduleAppointmentOpen
+                  ? Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColorLight,
+                      size: 20,
+                    ),
+              onPressed: null,
+            ),
+          ),
+          leftIcon: Padding(
+            padding: const EdgeInsets.only(
+              top: 0.0,
+              bottom: 0.0,
+            ),
+            child: SvgPicture.asset(
+              'assets/icon/schedule_doctor.svg',
+              width: 30,
+              height: 30,
+              fit: BoxFit.fitHeight,
+              colorFilter: isScheduleAppointmentOpen
+                  ? ColorFilter.mode(
+                      Theme.of(context).primaryColor, BlendMode.srcIn)
+                  : ColorFilter.mode(
+                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
+            ),
+          ),
+          header: Text(context.tr('scheduleAppointment'),
+              style: CustomAccordion.headerStyle),
+          content: Text(loremIpsum,
+              style: CustomAccordion.contentStyle),
+          onOpenSection: () {
+            setState(() {
+              isCheckDoctorProfileOpen = false;
+              isSearchOpen = false;
+              isScheduleAppointmentOpen = true;
+              isSolutionOpen = false;
+            });
+          },
+          onCloseSection: () {
+            setState(() {
+              isCheckDoctorProfileOpen = false;
+              isSearchOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = false;
+            });
+          },
+        ),
+        AccordionSection(
+          isOpen: isSolutionOpen,
+          contentVerticalPadding: 20,
+          rightIcon: Transform.rotate(
+            angle: 180 * math.pi / 180,
+            child: IconButton(
+              icon: isSolutionOpen
+                  ? Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Theme.of(context).primaryColorLight,
+                      size: 20,
+                    ),
+              onPressed: null,
+            ),
+          ),
+          leftIcon: Padding(
+            padding: const EdgeInsets.only(
+              top: 0.0,
+              bottom: 0.0,
+            ),
+            child: SvgPicture.asset(
+              'assets/icon/solution_doctor.svg',
+              width: 30,
+              height: 30,
+              fit: BoxFit.fitHeight,
+              colorFilter: isSolutionOpen
+                  ? ColorFilter.mode(
+                      Theme.of(context).primaryColor, BlendMode.srcIn)
+                  : ColorFilter.mode(
+                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
+            ),
+          ),
+          header: Text(context.tr('getSolution'),
+              style: CustomAccordion.headerStyle),
+          content:  Text(loremIpsum,
+              style: CustomAccordion.contentStyle),
+          onOpenSection: () {
+            setState(() {
+              isCheckDoctorProfileOpen = false;
+              isSearchOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = true;
+            });
+          },
+          onCloseSection: () {
+            setState(() {
+              isCheckDoctorProfileOpen = false;
+              isSearchOpen = false;
+              isScheduleAppointmentOpen = false;
+              isSolutionOpen = false;
+            });
+          },
+        ),
+      ],
     );
   }
 }

@@ -47,6 +47,7 @@ dependencies:
   extended_nested_scroll_view: ^6.2.1
   flutter_svg: ^2.0.10+1
   easy_logger: ^0.0.2
+  accordion: ^2.6.0
 
 dev_dependencies:
   flutter_test:
@@ -106,3 +107,4 @@ flutter:
     - assets/images/
     - assets/images/lang/
     - assets/translations/
+    - assets/icon/

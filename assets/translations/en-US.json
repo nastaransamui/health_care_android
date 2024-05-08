@@ -48,5 +48,11 @@
     "many": "We have {} doctors",
     "other": "We have {} doctors"
   },
-  "bestDoctors": "Best Doctors"
+  "bestDoctors": "Best Doctors",
+  "howItsWork": "How it's work: ",
+  "searchDoctor": "Search Doctor",
+  "checkDoctorProfile": "Check Doctor Profile",
+  "scheduleAppointment": "Schedule Appointment",
+  "getSolution": "Get Your Solution",
+  "lorem": "Lorem ipsum is typically a corrupted version of 'De finibus bonorum et malorum', a 1st century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin."
 }
