@@ -78,7 +78,7 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
       child: Stack(
         children: <Widget>[
           SizedBox(
-            height: appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
+            height: overlapsContent ? kToolbarHeight : appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
             child: AppBar(
               leading: Builder(builder: (context) {
                 return IconButton(
@@ -192,7 +192,7 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
             ),
           ),
           //Prevent finddoctor card to ovelap header buttons
-          percent == 0
+          percent == 0 || overlapsContent
               ? const SizedBox(
                   height: 100,
                 )

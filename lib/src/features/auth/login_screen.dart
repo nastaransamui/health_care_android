@@ -54,8 +54,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 email != '' &&
                 password != '') {
               showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) => const LoadingScreen());
+                context: context,
+                builder: (context) => const LoadingScreen(),
+              );
               removeLoading();
             }
 

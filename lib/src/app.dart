@@ -9,6 +9,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:health_care/constants/global_variables.dart';
+import 'package:health_care/controllers/theme_controller.dart';
 import 'package:health_care/models/clinics.dart';
 import 'package:health_care/providers/clinics_provider.dart';
 import 'package:health_care/providers/doctors_provider.dart';
@@ -24,10 +25,16 @@ import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:health_care/theme_config.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/gestures.dart';
 
 class MyApp extends StatefulWidget {
   final StreamSocket streamSocket;
-  const MyApp({super.key, required this.streamSocket});
+  final ThemeController controller;
+  const MyApp({
+    super.key,
+    required this.streamSocket,
+    required this.controller,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -41,10 +48,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   final DoctorsService doctorsService = DoctorsService();
   late final AnimationController _controller = AnimationController(vsync: this);
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-  // String homeThemeName = '';
-  // String homeThemeType = '';
-  // String homeActivePage = '';
 
   @override
   void initState() {
@@ -74,13 +77,20 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               homeActivePage = response['homeActivePage'];
             }
           }
+
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             restorationScopeId: 'health_care',
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
-            theme: themDataLive(homeThemeName, homeThemeType),
+            theme: themDataLive(
+                homeThemeName.isEmpty
+                    ? widget.controller.homeThemeName
+                    : homeThemeName,
+                homeThemeType.isEmpty
+                    ? widget.controller.homeThemeType
+                    : homeThemeType),
             onGenerateRoute: (settings) => generateRoute(settings),
             home: snapshot.hasData
                 ? AnimatedBuilder(
@@ -128,10 +138,11 @@ class _DefaultState extends State<Default> {
       return items..removeWhere((item) => !item.active);
     }
 
+    final isCollapsed = ValueNotifier<bool>(true);
     CarouselSlider clinicsScrollView = CarouselSlider(
       options: CarouselOptions(
         height: 300.0,
-        autoPlay: false,
+        autoPlay: true,
         enlargeCenterPage: true,
       ),
       items: skipNulls(clinics).map((i) {
@@ -149,6 +160,11 @@ class _DefaultState extends State<Default> {
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 5.0),
               child: Card(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        color: Theme.of(context).primaryColorLight, width: 2.0),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                   elevation: 5.0,
                   clipBehavior: Clip.hardEdge,
                   margin: const EdgeInsets.all(0),
@@ -194,133 +210,217 @@ class _DefaultState extends State<Default> {
         );
       }).toList(),
     );
-
-    var specialitiesScrollView = SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: <Widget>[
-          ...specialities.map(
-            (i) {
-              final name = context.tr(i.specialities);
-              final imageSrc = i.image;
-              final imageIsSvg = imageSrc.endsWith('.svg');
-              final numberOfDoctors = i.usersId.length;
-              return Card(
-                elevation: 5.0,
-                clipBehavior: Clip.hardEdge,
-                child: InkWell(
-                  splashColor: Theme.of(context).primaryColor,
-                  onTap: () {
-                    // Navigator.pushNamed(context, i.href);
-                  },
-                  child: SizedBox(
-                    width: 150,
-                    height: 150,
-                    child: Column(
-                      children: [
-                        Text(name),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: imageIsSvg
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 20.0, bottom: 20.0),
-                                    child: SvgPicture.network(
-                                      imageSrc,
-                                      width: 60,
-                                      height: 60,
-                                      fit: BoxFit.fitHeight,
-                                    ),
-                                  )
-                                : Image.network(
-                                    imageSrc,
-                                    width: 100,
-                                    height: 100,
-                                  ),
-                          ),
-                        ),
-                        // Text('doctorsNumber').plural(10, format: NumberFormat.compact(locale: context.locale.toString()))
-                        const Text('doctorsNumber').plural(numberOfDoctors,
-                            format: NumberFormat.compact(
-                                locale: context.locale.toString()))
-                      ],
+    CarouselSlider specialitiesScrollView = CarouselSlider(
+      options: CarouselOptions(
+        aspectRatio: 2.0,
+        enlargeCenterPage: true,
+        scrollDirection: Axis.vertical,
+        autoPlay: true,
+      ),
+      items: specialities.map((i) {
+        final name = context.tr(i.specialities);
+        final imageSrc = i.image;
+        final imageIsSvg = imageSrc.endsWith('.svg');
+        final numberOfDoctors = i.usersId.length;
+        var brightness = Theme.of(context).brightness;
+        return Card(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+                color: Theme.of(context).primaryColorLight, width: 2.0),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          elevation: 5.0,
+          clipBehavior: Clip.hardEdge,
+          child: InkWell(
+            splashColor: Theme.of(context).primaryColor,
+            onTap: () {
+              // Navigator.pushNamed(context, i.href);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: imageIsSvg
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20.0, bottom: 20.0),
+                              child: SvgPicture.network(
+                                imageSrc,
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            )
+                          : Image.network(
+                              imageSrc,
+                              width: 100,
+                              height: 100,
+                            ),
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-
-    CarouselSlider bestDoctorsScrollView = CarouselSlider(
-      items: doctors.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            var subheading = context.tr(i.specialities[0].specialities);
-            final name = "${i.firstName} ${i.lastName}";
-            var cardImage = NetworkImage(i.profileImage.isEmpty
-                ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
-                : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
-            var supportingText = i.aboutMe;
-            // print(cardImage);
-            return SizedBox(
-              height: 420,
-              child: Card(
-                elevation: 4.0,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: 70,
-                      child: ListTile(
-                        title: Text("Dr. $name"),
-                        subtitle: Text(subheading),
-                        trailing: const Icon(Icons.favorite_outline),
+                Expanded(
+                  child: ListTile(
+                    textColor: brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                    title: Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    InkWell(
-                      splashColor: Theme.of(context).hintColor,
-                      onTap: () {
-                        Navigator.pushNamed(context, 'i.href');
-                      },
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 250,
-                        child: Ink.image(
-                          image: cardImage,
-                          fit: BoxFit.cover,
-                        ),
+                    subtitle: const Text('doctorsNumber').plural(
+                      numberOfDoctors,
+                      format: NumberFormat.compact(
+                        locale: context.locale.toString(),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        // height: 50,
-                        padding: const EdgeInsets.only(left: 16.0),
-                        alignment: Alignment.centerLeft,
-                        child: Text(supportingText),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          },
+                const Icon(Icons.arrow_right)
+              ],
+            ),
+          ),
         );
       }).toList(),
-      options: CarouselOptions(
-        autoPlay: false,
-        enlargeCenterPage: true,
-        viewportFraction: 1,
-        aspectRatio: 2.0,
-        initialPage: 1,
-        height: 435,
-      ),
     );
+
+    ValueListenableBuilder bestDoctorsScrollView = ValueListenableBuilder(
+        valueListenable: isCollapsed,
+        builder: (context, value, child) {
+          return CarouselSlider(
+            items: doctors.map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  var subheading = context.tr(i.specialities[0].specialities);
+                  final name = "${i.firstName} ${i.lastName}";
+                  var cardImage = NetworkImage(i.profileImage.isEmpty
+                      ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
+                      : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
+                  var supportingText = i.aboutMe;
+                  print(supportingText.length);
+                  return SizedBox(
+                    child: Card(
+                      elevation: 4.0,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: 70,
+                            child: ListTile(
+                              title: Text("Dr. $name"),
+                              subtitle: Text(subheading),
+                              trailing: const Icon(Icons.favorite_outline),
+                            ),
+                          ),
+                          InkWell(
+                            splashColor: Theme.of(context).hintColor,
+                            onTap: () {
+                              Navigator.pushNamed(context, 'i.href');
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 250,
+                              child: Ink.image(
+                                image: cardImage,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              // height: 50,
+                              padding: const EdgeInsets.only(
+                                left: 16.0,
+                              ),
+                              alignment: Alignment.centerLeft,
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: supportingText.length <= 240
+                                          ? supportingText
+                                          : supportingText.substring(0, 240),
+                                    ),
+                                    if (supportingText.length >= 240) ...[
+                                      TextSpan(
+                                          text: value
+                                              ? ' ...Read more'
+                                              : 'Read less',
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              isCollapsed.value =
+                                                  !isCollapsed.value;
+                                              showModalBottomSheet(
+                                                context: context,
+                                                useSafeArea: true,
+                                                isDismissible: false,
+                                                showDragHandle: true,
+                                                constraints:
+                                                    const BoxConstraints(
+                                                  maxHeight: double.infinity,
+                                                ),
+                                                scrollControlDisabledMaxHeightRatio:
+                                                    1,
+                                                builder: (context) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Text(
+                                                      supportingText,
+                                                      textAlign:
+                                                          TextAlign.justify,
+                                                      style: const TextStyle(
+                                                        fontSize: 18.0,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ).whenComplete(() {
+                                                isCollapsed.value =
+                                                    !isCollapsed.value;
+                                              });
+                                            })
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+            options: CarouselOptions(
+              autoPlay: false,
+              enlargeCenterPage: true,
+              viewportFraction: 1,
+              aspectRatio: 2.0,
+              initialPage: 1,
+              height: 450,
+            ),
+          );
+        });
 
     return SilverScaffoldWrapper(
       title: 'findDoctor',
@@ -337,8 +437,8 @@ class _DefaultState extends State<Default> {
               title: Text(context.tr('specialities')),
             ),
             SizedBox(
-              // color: Colors.red,
-              height: 160,
+              width: MediaQuery.of(context).size.width / 1.2,
+              height: 210,
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
@@ -382,7 +482,7 @@ class _DefaultState extends State<Default> {
 
 class CustomAccordion extends StatefulWidget {
   const CustomAccordion({super.key});
-      static const headerStyle = TextStyle(
+  static const headerStyle = TextStyle(
     fontSize: 18,
   );
   static const contentStyleHeader = TextStyle(
@@ -400,9 +500,7 @@ class _CustomAccordionState extends State<CustomAccordion> {
   var isSolutionOpen = false;
   @override
   Widget build(BuildContext context) {
-
-  final loremIpsum = context.tr('lorem');
-
+    final loremIpsum = context.tr('lorem');
 
     return Accordion(
       headerBorderColor: Theme.of(context).primaryColor,
@@ -459,8 +557,7 @@ class _CustomAccordionState extends State<CustomAccordion> {
           ),
           header: Text(context.tr('searchDoctor'),
               style: CustomAccordion.headerStyle),
-          content:  Text(loremIpsum,
-              style: CustomAccordion.contentStyle),
+          content: Text(loremIpsum, style: CustomAccordion.contentStyle),
           onOpenSection: () {
             setState(() {
               isSearchOpen = true;
@@ -517,8 +614,7 @@ class _CustomAccordionState extends State<CustomAccordion> {
           ),
           header: Text(context.tr('checkDoctorProfile'),
               style: CustomAccordion.headerStyle),
-          content: Text(loremIpsum,
-              style: CustomAccordion.contentStyle),
+          content: Text(loremIpsum, style: CustomAccordion.contentStyle),
           onOpenSection: () {
             setState(() {
               isCheckDoctorProfileOpen = true;
@@ -575,8 +671,7 @@ class _CustomAccordionState extends State<CustomAccordion> {
           ),
           header: Text(context.tr('scheduleAppointment'),
               style: CustomAccordion.headerStyle),
-          content: Text(loremIpsum,
-              style: CustomAccordion.contentStyle),
+          content: Text(loremIpsum, style: CustomAccordion.contentStyle),
           onOpenSection: () {
             setState(() {
               isCheckDoctorProfileOpen = false;
@@ -633,8 +728,7 @@ class _CustomAccordionState extends State<CustomAccordion> {
           ),
           header: Text(context.tr('getSolution'),
               style: CustomAccordion.headerStyle),
-          content:  Text(loremIpsum,
-              style: CustomAccordion.contentStyle),
+          content: Text(loremIpsum, style: CustomAccordion.contentStyle),
           onOpenSection: () {
             setState(() {
               isCheckDoctorProfileOpen = false;

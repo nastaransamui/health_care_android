@@ -1,7 +1,7 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
+import 'package:health_care/controllers/theme_controller.dart';
 import 'package:health_care/providers/clinics_provider.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/specialities_provider.dart';
@@ -14,16 +14,25 @@ final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',
   defaultLevel: LevelMessages.debug,
   enableBuildModes: [BuildMode.debug, BuildMode.profile, BuildMode.release],
-  enableLevels: [LevelMessages.debug, LevelMessages.info, LevelMessages.error, LevelMessages.warning],
+  enableLevels: [
+    LevelMessages.debug,
+    LevelMessages.info,
+    LevelMessages.error,
+    LevelMessages.warning
+  ],
 );
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  ///Load Theme from shared_preferences
+  final themeController = ThemeController();
+
+  await themeController.loadTheme();
 
   //Initial easy localization
   EasyLocalization.logger.enableBuildModes = [];
   await EasyLocalization.ensureInitialized();
-
+  
   initiateSocket();
   runApp(MultiProvider(
     providers: [
@@ -51,6 +60,7 @@ Future<void> main() async {
         'US',
       ),
       child: MyApp(
+        controller: themeController,
         streamSocket: streamSocket,
       ),
     ),

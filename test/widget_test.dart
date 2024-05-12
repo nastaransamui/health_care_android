@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:health_care/controllers/theme_controller.dart';
 
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
@@ -14,7 +15,9 @@ import 'package:health_care/stream_socket.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(streamSocket: streamSocket,));
+     ///Load Theme from shared_preferences
+  final themeController = ThemeController();
+    await tester.pumpWidget(MyApp(streamSocket: streamSocket,controller: themeController,));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
