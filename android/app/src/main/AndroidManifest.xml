@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="health_care"
+        android:label="healthCareApp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -41,4 +42,5 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
 </manifest>

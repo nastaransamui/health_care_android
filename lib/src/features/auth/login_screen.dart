@@ -1,14 +1,21 @@
+import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
+import 'package:health_care/constants/error_handling.dart';
+import 'package:health_care/providers/device_provider.dart';
+import 'package:health_care/providers/user_data_provider.dart';
+import 'package:health_care/services/auth_service.dart';
+import 'package:health_care/services/device_service.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
-import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/utils/validate_email.dart';
 import 'package:health_care/src/utils/validate_password.dart';
+import 'package:health_care/stream_socket.dart';
+import 'package:provider/provider.dart';
+import 'package:toastify/toastify.dart';
 
 Future<void> func() async {}
 
@@ -25,14 +32,121 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final DeviceService deviceService = DeviceService();
+  final AuthService authService = AuthService();
 
-  Future<void> removeLoading() async {
-    await Future<void>.delayed(const Duration(seconds: 3), () {
-      _formKey.currentState!.reset();
-      Navigator.pop(context);
-      FocusManager.instance.primaryFocus?.unfocus();
-      widget.emailController.text = '';
-      widget.passwordController.text = '';
+  double lifeTime = 2500;
+  double duration = 200;
+  @override
+  void initState() {
+    super.initState();
+    deviceService.getDeviceService(context);
+  }
+
+  Future<void> submitLogin(
+    String password,
+    String email,
+    userData,
+    deviceData,
+    context,
+  ) async {
+    var formData = {
+      "password": password,
+      "email": email,
+      "ipAddr": userData?.query,
+      "userAgent": deviceData
+    };
+    FocusManager.instance.primaryFocus?.unfocus();
+    socket.emit('loginFormSubmit', formData);
+    socket.once('loginFormReturn', (data) {
+      switch (data['status']) {
+        case 400:
+        case 500:
+          showToast(
+            context,
+            Toast(
+              title: 'Failed',
+              description: data['reason'],
+              duration: Duration(milliseconds: duration.toInt()),
+              lifeTime: Duration(
+                milliseconds: lifeTime.toInt(),
+              ),
+            ),
+          );
+          break;
+        case 410:
+          showToast(
+            context,
+            Toast(
+              id: '_toast',
+              child: CustomInfoToast(
+                onLogout: () {
+                  socket.emit('logOutAllUsersSubmit', {
+                    "email": formData['email'],
+                    'services': 'password',
+                    "password": formData['password']
+                  });
+                  socket.once('logOutAllUsersReturn', (msg) {
+                    Navigator.pop(context);
+                    if (msg['status'] != 200) {
+                      showToast(
+                        context,
+                        Toast(
+                          title: 'Failed',
+                          description: msg['reason']!,
+                          duration: Duration(milliseconds: 200.toInt()),
+                          lifeTime: Duration(
+                            milliseconds: 2500.toInt(),
+                          ),
+                        ),
+                      );
+                    } else {
+                      showToast(
+                        context,
+                        Toast(
+                          title: 'Succeded',
+                          description: msg['message']!,
+                          duration: Duration(milliseconds: 200.toInt()),
+                          lifeTime: Duration(
+                            milliseconds: 2500.toInt(),
+                          ),
+                        ),
+                      );
+                    }
+                  });
+                },
+                title: '',
+                description:
+                    '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
+              ),
+              transitionBuilder: (animation, child, isRemoving) {
+                if (isRemoving) {
+                  return SizeTransition(
+                    sizeFactor: animation,
+                    child: child,
+                  );
+                }
+                return SlideTransition(
+                  position: animation.drive(
+                    Tween(
+                      begin: const Offset(1, 0),
+                      end: const Offset(0, 0),
+                    ),
+                  ),
+                  child: child,
+                );
+              },
+            ),
+            width: MediaQuery.of(context).size.width - 10,
+          );
+          break;
+        default:
+          var token = data['accessToken'];
+          authService.loginService(context, token);
+          Navigator.pushNamed(context, '/');
+
+          break;
+      }
     });
   }
 
@@ -41,6 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(
     BuildContext context,
   ) {
+    final userData = Provider.of<UserDataProvider>(context).userData;
+    final deviceData = Provider.of<DeviceProvider>(context).deviceData;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -53,11 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (_formKey.currentState!.validate() &&
                 email != '' &&
                 password != '') {
-              showCupertinoModalPopup(
-                context: context,
-                builder: (context) => const LoadingScreen(),
-              );
-              removeLoading();
+              submitLogin(password, email, userData, deviceData, context);
             }
 
             return true;
@@ -146,9 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: const BottomBar(
-          showLogin: false,
-        ),
+        bottomNavigationBar: const BottomBar(showLogin: false),
       ),
     );
   }
@@ -224,6 +335,7 @@ class _InputFieldState extends State<InputField> {
           decoration: InputDecoration(
             errorStyle: TextStyle(color: Colors.redAccent.shade400),
             hintText: context.tr('email'),
+            labelText: context.tr('email'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide.none),
@@ -250,6 +362,7 @@ class _InputFieldState extends State<InputField> {
               color: Colors.redAccent.shade400,
             ),
             hintText: context.tr('password'),
+            labelText: context.tr('password'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide.none),

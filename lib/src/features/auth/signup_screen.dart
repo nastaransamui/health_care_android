@@ -221,6 +221,7 @@ class _InputFieldState extends State<InputField> {
           decoration: InputDecoration(
             errorStyle: TextStyle(color: Colors.redAccent.shade400),
             hintText: context.tr('email'),
+            labelText: context.tr('email'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide.none),
@@ -247,6 +248,7 @@ class _InputFieldState extends State<InputField> {
               color: Colors.redAccent.shade400,
             ),
             hintText: context.tr('password'),
+            labelText: context.tr('password'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide.none),

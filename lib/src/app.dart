@@ -7,8 +7,8 @@ import 'package:accordion/controllers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/controllers/theme_controller.dart';
 import 'package:health_care/models/clinics.dart';
 import 'package:health_care/providers/clinics_provider.dart';
@@ -16,10 +16,12 @@ import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/specialities_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/router.dart';
+import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/clinics_service.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/services/specialities_service.dart';
 import 'package:health_care/services/theme_service.dart';
+import 'package:health_care/services/user_data_service.dart';
 import 'package:health_care/src/commons/silver_scaffold_wrapper.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
@@ -43,16 +45,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   // This widget is the root of your application.
   final ThemeService themeService = ThemeService();
+  final AuthService authService = AuthService();
   final ClinicsService clinicsService = ClinicsService();
   final SpecialitiesService specialitiesService = SpecialitiesService();
   final DoctorsService doctorsService = DoctorsService();
   late final AnimationController _controller = AnimationController(vsync: this);
-  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   void initState() {
     super.initState();
     themeService.getThemeFromAdmin(context);
+    authService.getAuthService(context);
     clinicsService.getClinicData(context);
     specialitiesService.getSpecialitiesData(context);
     doctorsService.getDoctorsData(context);
@@ -96,6 +99,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                 ? AnimatedBuilder(
                     animation: _controller,
                     builder: (BuildContext context, Widget? child) {
+                      //Get user Data
                       return Builder(builder: (context) {
                         switch (homeActivePage) {
                           case 'general_0':
@@ -128,6 +132,19 @@ class Default extends StatefulWidget {
 }
 
 class _DefaultState extends State<Default> {
+  final UserDataService userDataService = UserDataService();
+
+  @override
+  void initState() {
+    super.initState();
+    userDataService.fetchUserData(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose(); // Always call super.dispose() at the end.
+  }
+
   @override
   Widget build(BuildContext context) {
     final clinics = Provider.of<ClinicsProvider>(context).clinics;
@@ -139,6 +156,7 @@ class _DefaultState extends State<Default> {
     }
 
     final isCollapsed = ValueNotifier<bool>(true);
+    var brightness = Theme.of(context).brightness;
     CarouselSlider clinicsScrollView = CarouselSlider(
       options: CarouselOptions(
         height: 300.0,
@@ -154,8 +172,8 @@ class _DefaultState extends State<Default> {
                 Provider.of<ThemeProvider>(context).homeThemeName;
             final primaryColorCode = primaryColorCodeReturn(homeThemeName);
             final imageSrc = hasThemeImage
-                ? '$webUrl${imagee.replaceAll('primaryMain', primaryColorCode)}'
-                : '$webUrl$imagee';
+                ? '${dotenv.env['webUrl']}${imagee.replaceAll('primaryMain', primaryColorCode)}'
+                : '${dotenv.env['webUrl']}$imagee';
             return Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -222,7 +240,6 @@ class _DefaultState extends State<Default> {
         final imageSrc = i.image;
         final imageIsSvg = imageSrc.endsWith('.svg');
         final numberOfDoctors = i.usersId.length;
-        var brightness = Theme.of(context).brightness;
         return Card(
           shape: RoundedRectangleBorder(
             side: BorderSide(
@@ -271,7 +288,7 @@ class _DefaultState extends State<Default> {
                     title: Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 15.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -304,7 +321,6 @@ class _DefaultState extends State<Default> {
                       ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
                       : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
                   var supportingText = i.aboutMe;
-                  print(supportingText.length);
                   return SizedBox(
                     child: Card(
                       elevation: 4.0,
@@ -352,6 +368,11 @@ class _DefaultState extends State<Default> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
+                                      style: TextStyle(
+                                        color: brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
                                       text: supportingText.length <= 240
                                           ? supportingText
                                           : supportingText.substring(0, 240),

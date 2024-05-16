@@ -133,9 +133,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
               ),
             ),
           ),
-          bottomNavigationBar: const BottomBar(
-            showLogin: false,
-          ),
+          bottomNavigationBar: const BottomBar(showLogin: false),
         ),
       );
   }
@@ -194,26 +192,30 @@ class _InputFieldState extends State<InputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextFormField(
-          controller: widget.emailController,
-          enableSuggestions: true,
-          validator: ((value) {
-            if (value == null || value.isEmpty) {
-              return context.tr('emailEnter');
-            } else {
-              return validateEmail(value);
-            }
-          }),
-          decoration: InputDecoration(
-            errorStyle: TextStyle(color: Colors.redAccent.shade400),
-            hintText: context.tr('email'),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none),
-            fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            filled: true,
-            prefixIcon: const Icon(Icons.email_sharp),
-            isDense: true,
+        Semantics(
+          label: context.tr('email'),
+          child: TextFormField(
+            controller: widget.emailController,
+            enableSuggestions: true,
+            validator: ((value) {
+              if (value == null || value.isEmpty) {
+                return context.tr('emailEnter');
+              } else {
+                return validateEmail(value);
+              }
+            }),
+            decoration: InputDecoration(
+              errorStyle: TextStyle(color: Colors.redAccent.shade400),
+              hintText: context.tr('email'),
+              labelText: context.tr('email'),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none),
+              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              filled: true,
+              prefixIcon: const Icon(Icons.email_sharp),
+              isDense: true,
+            ),
           ),
         ),
         const SizedBox(height: 10),

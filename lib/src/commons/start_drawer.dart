@@ -1,5 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class StartDrawer extends StatefulWidget {
   const StartDrawer({super.key});
@@ -10,7 +13,7 @@ class StartDrawer extends StatefulWidget {
 
 class _StartDrawerState extends State<StartDrawer> {
 int _selectedIndex = 0;
-
+final AuthService authService = AuthService();
     void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -19,6 +22,8 @@ int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    var profile = Provider.of<AuthProvider>(context).profile;
+    var isLogin = Provider.of<AuthProvider>(context).isLogin;
     return SafeArea(
       child: Drawer(
         child: ListTileTheme(
@@ -26,9 +31,9 @@ int _selectedIndex = 0;
             children: [
               UserAccountsDrawerHeader(
                 accountName: Text(context.tr('appTitle')),
-                accountEmail: const Text("test@web-mjcode.ddns.net"),
+                accountEmail:  Text(isLogin ? '${profile?.userProfile.userName}' :""),
                 currentAccountPicture: const CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/avatar.jpg"),
+                  backgroundImage: AssetImage("assets/icon/icon.png"),
                 ),
                 decoration: const BoxDecoration(
                   image: DecorationImage(

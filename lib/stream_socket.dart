@@ -3,9 +3,9 @@
 import 'dart:async';
 
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
-import 'package:health_care/constants/global_variables.dart';
 
 class StreamSocket {
   final _socketResponse = StreamController<String>();
@@ -22,7 +22,7 @@ class StreamSocket {
 StreamSocket streamSocket = StreamSocket();
 
 IO.Socket socket = IO.io(
-  socketUrl,
+  dotenv.env['SOCKET_URL'],
   OptionBuilder()
       .setTransports(['websocket']).setExtraHeaders({'foo': 'bar'}) // optional
       .build(),

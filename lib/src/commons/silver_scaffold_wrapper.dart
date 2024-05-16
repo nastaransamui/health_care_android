@@ -24,6 +24,7 @@ class _SilverScaffoldWrapperState extends State<SilverScaffoldWrapper> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       key: _globalKey,
       drawer: const StartDrawer(),
@@ -50,7 +51,7 @@ class _SilverScaffoldWrapperState extends State<SilverScaffoldWrapper> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomBar(showLogin: true),
+      bottomNavigationBar:  const BottomBar(showLogin: true),
     );
   }
 }
@@ -78,7 +79,11 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
       child: Stack(
         children: <Widget>[
           SizedBox(
-            height: overlapsContent ? kToolbarHeight : appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
+            height: overlapsContent
+                ? kToolbarHeight
+                : appBarSize < kToolbarHeight
+                    ? kToolbarHeight
+                    : appBarSize,
             child: AppBar(
               leading: Builder(builder: (context) {
                 return IconButton(

@@ -54,5 +54,12 @@
   "checkDoctorProfile": "Check Doctor Profile",
   "scheduleAppointment": "Schedule Appointment",
   "getSolution": "Get Your Solution",
-  "lorem": "Lorem ipsum is typically a corrupted version of 'De finibus bonorum et malorum', a 1st century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin."
+  "lorem": "Lorem ipsum is typically a corrupted version of 'De finibus bonorum et malorum', a 1st century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin.",
+  "errorPageTitle": "Page Not found",
+  "errorPageSubtitle": "The page you are looking for was moved, removed renamed or might never existed.",
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "logout": "Logout",
+  "patient": "Patient",
+  "doctor": "Doctor"
 }

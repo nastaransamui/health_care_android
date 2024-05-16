@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
+import 'package:health_care/src/commons/not_found_error.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
@@ -18,16 +19,15 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
     default:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text('not Found'),
-            ),
-            body: const Center(child: Text('Screen does not exist')),
-            bottomNavigationBar: const BottomBar(
-              showLogin: true,
-            ),
-          ),
+        builder: (_) => const SafeArea(
+          child: NotFound404Error(),
+          // Scaffold(
+          //   appBar: AppBar(
+          //     title: const Text('not Found'),
+          //   ),
+          //   body:  Center(child: Text('Screen ${routeSettings.name} does not exist')),
+          //   bottomNavigationBar: const BottomBar(showLogin: true),
+          // ),
         ),
       );
   }

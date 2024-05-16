@@ -1,14 +1,20 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/controllers/theme_controller.dart';
+import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/clinics_provider.dart';
+import 'package:health_care/providers/device_provider.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/specialities_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
+import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',
@@ -27,12 +33,15 @@ Future<void> main() async {
   ///Load Theme from shared_preferences
   final themeController = ThemeController();
 
+  ///Load auth from shared_preferences
+
   await themeController.loadTheme();
+  await dotenv.load(fileName: '.env');
 
   //Initial easy localization
   EasyLocalization.logger.enableBuildModes = [];
   await EasyLocalization.ensureInitialized();
-  
+await SharedPreferences.getInstance();
   initiateSocket();
   runApp(MultiProvider(
     providers: [
@@ -47,6 +56,15 @@ Future<void> main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => ThemeProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => UserDataProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => DeviceProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => AuthProvider(),
       )
     ],
     child: EasyLocalization(
