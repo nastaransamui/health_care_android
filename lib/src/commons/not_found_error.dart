@@ -77,7 +77,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
         body: Container(
           width: currentWidth,
           height: currentHeight,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).canvasColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -87,7 +87,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                 curve: Curves.fastOutSlowIn,
                 child: Container(
                   width: currentWidth,
-                  height: currentHeight / 1.8,
+                  height: currentHeight / 2,
                   child: Lottie.asset("assets/images/health_error.json",
                       animate: true),
                 ),
@@ -102,7 +102,6 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                      context.tr('errorPageTitle'),
                       style: TextStyle(
                         fontSize: 45,
-                        color: Colors.black,
                       ),
                     ),
                     Container(
@@ -113,7 +112,6 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w300,
-                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -127,20 +125,22 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                 curve: Curves.fastOutSlowIn,
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 40),
-                  child: MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        minWidth: currentWidth / 3,
-                        height: currentHeight / 16.5,
-                        elevation: 3,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/');
-                        },
-                        color: Theme.of(context).primaryColorLight,
-                        child: Text(context.tr('home'),
-                          style: TextStyle(color: Colors.black, fontSize: 15),
+                  child: Center(
+                    child: MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          minWidth: currentWidth / 3,
+                          height: currentHeight / 16.5,
+                          elevation: 3,
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/');
+                          },
+                          color: Theme.of(context).primaryColorLight,
+                          child: Text(context.tr('home'),
+                            style: TextStyle(color: Colors.black, fontSize: 15),
+                          ),
                         ),
-                      ),
+                  ),
                        
                 ),
               )

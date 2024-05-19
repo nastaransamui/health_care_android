@@ -61,5 +61,6 @@
   "profile": "Profile",
   "logout": "Logout",
   "patient": "Patient",
-  "doctor": "Doctor"
+  "doctor": "Doctor",
+  "notEligible": "This user is not eligible to login any more"
 }

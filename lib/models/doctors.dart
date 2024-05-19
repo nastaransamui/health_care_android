@@ -81,7 +81,6 @@ class Doctors {
     required this.accessToken,
     required this.isActive,
     required this.lastUpdate,
-    // required this.status,
     required this.id,
   });
 

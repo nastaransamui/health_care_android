@@ -12,9 +12,9 @@ class StartDrawer extends StatefulWidget {
 }
 
 class _StartDrawerState extends State<StartDrawer> {
-int _selectedIndex = 0;
-final AuthService authService = AuthService();
-    void _onItemTapped(int index) {
+  int _selectedIndex = 0;
+  final AuthService authService = AuthService();
+  void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -22,8 +22,11 @@ final AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    var profile = Provider.of<AuthProvider>(context).profile;
     var isLogin = Provider.of<AuthProvider>(context).isLogin;
+    var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
+    var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
+    var roleName = Provider.of<AuthProvider>(context).roleName;
+
     return SafeArea(
       child: Drawer(
         child: ListTileTheme(
@@ -31,7 +34,9 @@ final AuthService authService = AuthService();
             children: [
               UserAccountsDrawerHeader(
                 accountName: Text(context.tr('appTitle')),
-                accountEmail:  Text(isLogin ? '${profile?.userProfile.userName}' :""),
+                accountEmail: Text(isLogin
+                    ? '${roleName == 'patient' ? patientProfile?.userProfile.userName : doctorsProfile?.userProfile.userName}'
+                    : ""),
                 currentAccountPicture: const CircleAvatar(
                   backgroundImage: AssetImage("assets/icon/icon.png"),
                 ),
@@ -88,7 +93,7 @@ final AuthService authService = AuthService();
                 selected: _selectedIndex == 2,
                 onTap: () {
                   // Update the state of the app
-                   _onItemTapped(1);
+                  _onItemTapped(1);
                   // Then close the drawer
                   Navigator.pop(context);
                   if (ModalRoute.of(context)?.settings.name != '/blog') {
@@ -113,12 +118,11 @@ final AuthService authService = AuthService();
                   _onItemTapped(3);
                   // Then close the drawer
                   // Navigator.pop(context);
-                    if (ModalRoute.of(context)?.settings.name != '/contact') {
+                  if (ModalRoute.of(context)?.settings.name != '/contact') {
                     Navigator.pushNamed(context, '/contact');
                   }
                 },
               )
-            
             ],
           ),
         ),

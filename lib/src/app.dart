@@ -18,6 +18,7 @@ import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/router.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/clinics_service.dart';
+import 'package:health_care/services/device_service.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/services/specialities_service.dart';
 import 'package:health_care/services/theme_service.dart';
@@ -50,16 +51,19 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   final SpecialitiesService specialitiesService = SpecialitiesService();
   final DoctorsService doctorsService = DoctorsService();
   late final AnimationController _controller = AnimationController(vsync: this);
-
+  final DeviceService deviceService = DeviceService();
   @override
   void initState() {
     super.initState();
     themeService.getThemeFromAdmin(context);
+    deviceService.getDeviceService(context);
     authService.getAuthService(context);
     clinicsService.getClinicData(context);
     specialitiesService.getSpecialitiesData(context);
     doctorsService.getDoctorsData(context);
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

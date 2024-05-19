@@ -1,15 +1,15 @@
+
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:health_care/models/patients.dart';
-import 'package:health_care/providers/auth_provider.dart';
-import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/src/features/auth/login_screen.dart';
-import 'package:health_care/src/utils/capitalize.dart';
-import 'package:health_care/stream_socket.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
-import 'package:badges/badges.dart' as badges;
+
+import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/services/auth_service.dart';
+import 'package:health_care/src/features/auth/login_screen.dart';
+import 'package:health_care/stream_socket.dart';
 
 class BottomBar extends StatefulWidget {
   final bool showLogin;
@@ -24,15 +24,57 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+  final AuthService authService = AuthService();
   @override
   void initState() {
     super.initState();
+    authService.updateLiveAuth(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose(); // Always call super.dispose() at the end.
+  }
+
+  @override
+  void didChangeDependencies() {
+    Navigator.of(context);
+    super.didChangeDependencies();
+    // authService.updateLiveAuth(context);
   }
 
   @override
   Widget build(BuildContext context) {
     var isLogin = Provider.of<AuthProvider>(context).isLogin;
-    var profile = Provider.of<AuthProvider>(context).profile;
+    var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
+    var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
+    var roleName = Provider.of<AuthProvider>(context).roleName;
+    late Image image = Image.asset(
+      "assets/images/default-avatar.png",
+      fit: BoxFit.fill,
+    );
+    
+    if (isLogin) {
+      if (roleName == 'patient') {
+        if (patientProfile!.userProfile.profileImage.isEmpty) {
+          image = Image.asset(
+            "assets/images/default-avatar.png",
+            fit: BoxFit.fill,
+          );
+        } else {
+          image = Image.network(patientProfile.userProfile.profileImage);
+        }
+      } else if (roleName == 'doctors') {
+        if (doctorsProfile!.userProfile.profileImage.isEmpty) {
+          image = Image.asset(
+            "assets/images/default-avatar.png",
+            fit: BoxFit.fill,
+          );
+        } else {
+          image = Image.network(doctorsProfile.userProfile.profileImage);
+        }
+      }
+    }
     return BottomAppBar(
       height: kBottomNavigationBarHeight,
       child: Row(
@@ -98,40 +140,32 @@ class _BottomBarState extends State<BottomBar> {
                           child: SizedBox(
                             width: 30.0,
                             height: 30.0,
-                            child: (profile!.userProfile.profileImage.isEmpty)
-                                ? Image.asset(
-                                    "assets/images/default-avatar.png",
-                                    fit: BoxFit.fill,
-                                  )
-                                : Image.network(
-                                    profile.userProfile.profileImage,
-                                    fit: BoxFit.fill,
-                                  ),
+                            child: image,
                           ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: badges.Badge(
-                          position: badges.BadgePosition.topStart(),
-                          badgeStyle: badges.BadgeStyle(
-                            padding: const EdgeInsets.all(6),
-                            badgeColor: Theme.of(context).primaryColorLight,
-                          ),
-                          badgeContent: Container(
-                            height: 1,
-                            width: 1,
-                            color: Theme.of(context).primaryColorLight,
-                          ),
-                        ),
-                      ),
+                      // Align(
+                      //   alignment: Alignment.topRight,
+                      //   child: badges.Badge(
+                      //     position: badges.BadgePosition.topStart(),
+                      //     badgeStyle: badges.BadgeStyle(
+                      //       padding: const EdgeInsets.all(6),
+                      //       badgeColor: Theme.of(context).primaryColorLight,
+                      //     ),
+                      //     badgeContent: Container(
+                      //       height: 1,
+                      //       width: 1,
+                      //       color: Theme.of(context).primaryColorLight,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
                 onTap: () {
                   showPopover(
                     context: context,
-                    bodyBuilder: (context) => const ListItems(),
+                    bodyBuilder: (context) =>  ListItems(image: image),
                     // onPop: () => print('Popover was popped!'),
                     direction: PopoverDirection.bottom,
                     width: 200,
@@ -152,7 +186,12 @@ class _BottomBarState extends State<BottomBar> {
 }
 
 class ListItems extends StatefulWidget {
-  const ListItems({super.key});
+  final Image image;
+
+  const ListItems({
+    super.key,
+    required this.image,
+  });
 
   @override
   State<ListItems> createState() => _ListItemsState();
@@ -169,7 +208,10 @@ class _ListItemsState extends State<ListItems> {
 
   @override
   Widget build(BuildContext context) {
-    var profile = Provider.of<AuthProvider>(context).profile;
+    var isLogin = Provider.of<AuthProvider>(context).isLogin;
+    var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
+    var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
+    var roleName = Provider.of<AuthProvider>(context).roleName;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView(
@@ -194,33 +236,25 @@ class _ListItemsState extends State<ListItems> {
                             child: SizedBox(
                               width: 70.0,
                               height: 70.0,
-                              child: (profile!.userProfile.profileImage.isEmpty)
-                                  ? Image.asset(
-                                      "assets/images/default-avatar.png",
-                                      fit: BoxFit.fill,
-                                    )
-                                  : Image.network(
-                                      profile.userProfile.profileImage,
-                                      fit: BoxFit.fill,
-                                    ),
+                              child: widget.image,
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: badges.Badge(
-                            position: badges.BadgePosition.topStart(),
-                            badgeStyle: badges.BadgeStyle(
-                              padding: const EdgeInsets.all(6),
-                              badgeColor: Theme.of(context).primaryColorLight,
-                            ),
-                            badgeContent: Container(
-                              height: 1,
-                              width: 1,
-                              color: Theme.of(context).primaryColorLight,
-                            ),
-                          ),
-                        ),
+                        // Align(
+                        //   alignment: Alignment.topRight,
+                        //   child: badges.Badge(
+                        //     position: badges.BadgePosition.topStart(),
+                        //     badgeStyle: badges.BadgeStyle(
+                        //       padding: const EdgeInsets.all(6),
+                        //       badgeColor: Theme.of(context).primaryColorLight,
+                        //     ),
+                        //     badgeContent: Container(
+                        //       height: 1,
+                        //       width: 1,
+                        //       color: Theme.of(context).primaryColorLight,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -237,9 +271,9 @@ class _ListItemsState extends State<ListItems> {
                           children: <TextSpan>[
                             TextSpan(
                                 text:
-                                    '${profile.userProfile.gender} ${profile.userProfile.firstName} ${profile.userProfile.lastName} \n \n'),
+                                    '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ${roleName == 'patient' ? patientProfile?.userProfile.firstName : doctorsProfile?.userProfile.firstName} \n ${roleName == 'patient' ? patientProfile?.userProfile.lastName : doctorsProfile?.userProfile.lastName} \n \n'),
                             TextSpan(
-                              text: context.tr(profile.roleName),
+                              text: context.tr(roleName),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -257,8 +291,8 @@ class _ListItemsState extends State<ListItems> {
           InkWell(
             onTap: () {
               if (ModalRoute.of(context)?.settings.name !=
-                  '/${profile.roleName}_dashboard') {
-                Navigator.pushNamed(context, '/${profile.roleName}_dashboard');
+                  '/${roleName}_dashboard') {
+                Navigator.pushNamed(context, '/${roleName}_dashboard');
               }
             },
             child: SizedBox(
@@ -284,8 +318,8 @@ class _ListItemsState extends State<ListItems> {
             onTap: () {
               Navigator.pop(context);
               if (ModalRoute.of(context)?.settings.name !=
-                  '/${profile.roleName}_profile') {
-                Navigator.pushNamed(context, '/${profile.roleName}_profile');
+                  '/${roleName}_profile') {
+                Navigator.pushNamed(context, '/${roleName}_profile');
               }
             },
             child: SizedBox(
@@ -309,25 +343,26 @@ class _ListItemsState extends State<ListItems> {
           ),
           InkWell(
             onTap: () {
-              logoutSubmit(context, profile);
+              logoutSubmit(
+                  context, patientProfile, doctorsProfile, isLogin, roleName);
             },
             child: SizedBox(
               height: 30,
               child: SizedBox(
-              height: 30,
-              child: Row(
-                children: [
-                  const Icon(Icons.logout),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(context.tr('logout')),
-                  ),
-                ],
+                height: 30,
+                child: Row(
+                  children: [
+                    const Icon(Icons.logout),
+                    const SizedBox(
+                      width: 10.0,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(context.tr('logout')),
+                    ),
+                  ],
+                ),
               ),
-            ),
             ),
           ),
           Divider(
@@ -338,12 +373,20 @@ class _ListItemsState extends State<ListItems> {
     );
   }
 
-  void logoutSubmit(context, Patients? profile) {
-    if (profile != null) {
-      var id = profile.userId;
-      var services = profile.services;
+  void logoutSubmit(
+      context, patientProfile, doctorsProfile, isLogin, roleName) {
+    late String services;
+    late String userid;
+    if (isLogin != null && isLogin) {
+      if (roleName == 'patient') {
+        services = patientProfile.services;
+        userid = patientProfile.userId;
+      } else if (roleName == 'doctors') {
+        services = doctorsProfile.services;
+        userid = doctorsProfile.userId;
+      }
       Navigator.of(context).pop();
-      socket.emit('logOutSubmit', {id, services});
+      socket.emit('logOutSubmit', {userid, services});
       socket.on('logOutReturn', (data) {
         if (data['status'] != 200) {
           showToast(

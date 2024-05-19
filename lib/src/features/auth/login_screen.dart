@@ -61,6 +61,18 @@ class _LoginScreenState extends State<LoginScreen> {
     socket.once('loginFormReturn', (data) {
       switch (data['status']) {
         case 400:
+        case 403:
+          showToast(
+            context,
+            Toast(
+              title: 'Failed',
+              description: data['reason'],
+              duration: Duration(milliseconds: duration.toInt()),
+              lifeTime: Duration(
+                milliseconds: lifeTime.toInt(),
+              ),
+            ),
+          );
         case 500:
           showToast(
             context,

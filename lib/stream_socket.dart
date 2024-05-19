@@ -24,7 +24,8 @@ StreamSocket streamSocket = StreamSocket();
 IO.Socket socket = IO.io(
   dotenv.env['SOCKET_URL'],
   OptionBuilder()
-      .setTransports(['websocket']).setExtraHeaders({'foo': 'bar'}) // optional
+      .setTransports(['websocket'])
+      // .setExtraHeaders({'foo': 'bar'}) // optional
       .build(),
 );
 

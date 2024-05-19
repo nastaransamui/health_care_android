@@ -7,12 +7,14 @@ import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/constants/error_handling.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserDataService {
   Future<void> fetchUserData(BuildContext context) async {
     final userDataProvider =
         Provider.of<UserDataProvider>(context, listen: false);
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       http.Response res = await http.get(
         Uri.parse(ipApiUrl),
       );
@@ -23,6 +25,7 @@ class UserDataService {
           context: context,
           onSuccess: () {
              userDataProvider.setUserData(UserData.fromJson(jsonEncode(jsonDecode(res.body))));
+             prefs.setString('userData', jsonEncode(jsonDecode(res.body)));
           },
         );
       }
