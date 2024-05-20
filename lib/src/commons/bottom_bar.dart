@@ -1,5 +1,3 @@
-
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
@@ -53,7 +51,7 @@ class _BottomBarState extends State<BottomBar> {
       "assets/images/default-avatar.png",
       fit: BoxFit.fill,
     );
-    
+
     if (isLogin) {
       if (roleName == 'patient') {
         if (patientProfile!.userProfile.profileImage.isEmpty) {
@@ -165,7 +163,7 @@ class _BottomBarState extends State<BottomBar> {
                 onTap: () {
                   showPopover(
                     context: context,
-                    bodyBuilder: (context) =>  ListItems(image: image),
+                    bodyBuilder: (context) => ListItems(image: image),
                     // onPop: () => print('Popover was popped!'),
                     direction: PopoverDirection.bottom,
                     width: 200,
@@ -212,6 +210,7 @@ class _ListItemsState extends State<ListItems> {
     var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
     var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
     var roleName = Provider.of<AuthProvider>(context).roleName;
+    var brightness = Theme.of(context).brightness;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView(
@@ -270,12 +269,20 @@ class _ListItemsState extends State<ListItems> {
                           ),
                           children: <TextSpan>[
                             TextSpan(
+                                style: TextStyle(
+                                  color: brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                                 text:
                                     '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ${roleName == 'patient' ? patientProfile?.userProfile.firstName : doctorsProfile?.userProfile.firstName} \n ${roleName == 'patient' ? patientProfile?.userProfile.lastName : doctorsProfile?.userProfile.lastName} \n \n'),
                             TextSpan(
                               text: context.tr(roleName),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
+                                color: brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
                             ),
                           ],

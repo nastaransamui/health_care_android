@@ -63,8 +63,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     doctorsService.getDoctorsData(context);
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -447,60 +445,64 @@ class _DefaultState extends State<Default> {
           );
         });
 
-    return SilverScaffoldWrapper(
-      title: 'findDoctor',
-      children: Column(
-        children: <Widget>[
-          if (clinics.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('clinics')),
-            ),
-            clinicsScrollView
-          ],
-          if (specialities.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('specialities')),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 1.2,
-              height: 210,
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return specialitiesScrollView;
-                },
-                itemCount: 1,
-              ),
-            )
-          ],
-          if (doctors.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('bestDoctors')),
-            ),
-            bestDoctorsScrollView
-          ],
-          ListTile(
-            title: Text(context.tr('howItsWork')),
-          ),
-          Expanded(
-            child: DecoratedBox(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/work-img.png'),
-                  fit: BoxFit.cover,
-                  opacity: 0.3,
+    return OrientationBuilder(
+      builder: (BuildContext context, Orientation orientation) {
+        return SilverScaffoldWrapper(
+          title: 'findDoctor',
+          children: Column(
+            children: <Widget>[
+              if (clinics.isNotEmpty) ...[
+                ListTile(
+                  title: Text(context.tr('clinics')),
                 ),
+                clinicsScrollView
+              ],
+              if (specialities.isNotEmpty) ...[
+                ListTile(
+                  title: Text(context.tr('specialities')),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height:orientation == Orientation.landscape ? 250 : 210,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return specialitiesScrollView;
+                    },
+                    itemCount: 1,
+                  ),
+                )
+              ],
+              if (doctors.isNotEmpty) ...[
+                ListTile(
+                  title: Text(context.tr('bestDoctors')),
+                ),
+                bestDoctorsScrollView
+              ],
+              ListTile(
+                title: Text(context.tr('howItsWork')),
               ),
-              child: SizedBox(
-                height: 400,
-                width: MediaQuery.of(context).size.width,
-                child: const CustomAccordion(),
-              ),
-            ),
-          )
-        ],
-      ),
+              Expanded(
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/work-img.png'),
+                      fit: BoxFit.cover,
+                      opacity: 0.3,
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 400,
+                    width: MediaQuery.of(context).size.width,
+                    child: const CustomAccordion(),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -528,6 +530,7 @@ class _CustomAccordionState extends State<CustomAccordion> {
     final loremIpsum = context.tr('lorem');
 
     return Accordion(
+      disableScrolling: true,
       headerBorderColor: Theme.of(context).primaryColor,
       headerBorderColorOpened: Theme.of(context).primaryColor,
       headerBackgroundColorOpened: Theme.of(context).primaryColorLight,
