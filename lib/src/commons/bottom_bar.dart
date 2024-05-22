@@ -23,6 +23,7 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar> {
   final AuthService authService = AuthService();
+  String typeClicked = '';
   @override
   void initState() {
     super.initState();
@@ -34,12 +35,28 @@ class _BottomBarState extends State<BottomBar> {
     super.dispose(); // Always call super.dispose() at the end.
   }
 
-  @override
-  void didChangeDependencies() {
-    Navigator.of(context);
-    super.didChangeDependencies();
-    // authService.updateLiveAuth(context);
+  void authListClicked(String type, String roleName) {
+    setState(() {
+      typeClicked = type;
+    });
+    switch (type) {
+      case 'dashboard':
+        Navigator.pop(context);
+        if (ModalRoute.of(context)?.settings.name != '/${roleName}_dashboard') {
+          Navigator.pushNamed(context, '/${roleName}_dashboard');
+        }
+        break;
+      case 'profile':
+        Navigator.pop(context);
+        if (ModalRoute.of(context)?.settings.name != '/${roleName}_profile') {
+          Navigator.pushNamed(context, '/${roleName}_profile');
+        }
+        break;
+      case 'logout':
+        Navigator.pop(context);
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +143,7 @@ class _BottomBarState extends State<BottomBar> {
               )
             ],
           ] else if (widget.showLogin) ...[
-            Builder(builder: (context) {
+            Builder(builder: (popoverContextOnly) {
               return GestureDetector(
                 child: CircleAvatar(
                   backgroundColor: Theme.of(context).primaryColorLight,
@@ -162,9 +179,44 @@ class _BottomBarState extends State<BottomBar> {
                 ),
                 onTap: () {
                   showPopover(
-                    context: context,
-                    bodyBuilder: (context) => ListItems(image: image),
-                    // onPop: () => print('Popover was popped!'),
+                    context: popoverContextOnly,
+                    bodyBuilder: (popoverContextOnly) => AuthList(
+                        image: image, authListClicked: authListClicked),
+                    onPop: () {
+                      if (typeClicked == 'logout') {
+                        late String services;
+                        late String userid;
+                        if (isLogin) {
+                          if (roleName == 'patient' && patientProfile != null) {
+                            services = patientProfile.services;
+                            userid = patientProfile.userId;
+                          } else if (roleName == 'doctors' &&
+                              doctorsProfile != null) {
+                            services = doctorsProfile.services;
+                            userid = doctorsProfile.userId;
+                          }
+                        }
+                        socket.emit('logOutSubmit', {userid, services});
+                        socket.on('logOutReturn', (data) {
+                          if (data['status'] != 200) {
+                            showToast(
+                              context,
+                              Toast(
+                                title: 'Failed',
+                                description: data['reason'] ??
+                                    context.tr('logoutFailed'),
+                                duration: Duration(milliseconds: 200.toInt()),
+                                lifeTime: Duration(
+                                  milliseconds: 2500.toInt(),
+                                ),
+                              ),
+                            );
+                          } else {
+                            authService.logoutService(context);
+                          }
+                        });
+                      }
+                    },
                     direction: PopoverDirection.bottom,
                     width: 200,
                     height: 240,
@@ -183,26 +235,19 @@ class _BottomBarState extends State<BottomBar> {
   }
 }
 
-class ListItems extends StatefulWidget {
+class AuthList extends StatefulWidget {
   final Image image;
+  final Function authListClicked;
 
-  const ListItems({
-    super.key,
-    required this.image,
-  });
+  const AuthList(
+      {super.key, required this.image, required this.authListClicked});
 
   @override
-  State<ListItems> createState() => _ListItemsState();
+  State<AuthList> createState() => _AuthListState();
 }
 
-class _ListItemsState extends State<ListItems> {
+class _AuthListState extends State<AuthList> {
   final AuthService authService = AuthService();
-
-  @override
-  void didChangeDependencies() {
-    Navigator.of(context);
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -297,10 +342,7 @@ class _ListItemsState extends State<ListItems> {
           ),
           InkWell(
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name !=
-                  '/${roleName}_dashboard') {
-                Navigator.pushNamed(context, '/${roleName}_dashboard');
-              }
+              widget.authListClicked('dashboard', roleName);
             },
             child: SizedBox(
               height: 30,
@@ -323,11 +365,7 @@ class _ListItemsState extends State<ListItems> {
           ),
           InkWell(
             onTap: () {
-              Navigator.pop(context);
-              if (ModalRoute.of(context)?.settings.name !=
-                  '/${roleName}_profile') {
-                Navigator.pushNamed(context, '/${roleName}_profile');
-              }
+              widget.authListClicked('profile', roleName);
             },
             child: SizedBox(
               height: 30,
@@ -350,8 +388,9 @@ class _ListItemsState extends State<ListItems> {
           ),
           InkWell(
             onTap: () {
-              logoutSubmit(
-                  context, patientProfile, doctorsProfile, isLogin, roleName);
+              widget.authListClicked('logout', roleName);
+              // logoutSubmit(
+              //     context, patientProfile, doctorsProfile, isLogin, roleName);
             },
             child: SizedBox(
               height: 30,

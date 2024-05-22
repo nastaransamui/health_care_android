@@ -2,6 +2,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:health_care/controllers/theme_controller.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/clinics_provider.dart';
@@ -12,9 +16,6 @@ import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',

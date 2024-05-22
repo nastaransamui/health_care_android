@@ -40,6 +40,10 @@ void initiateSocket() {
     // });
   });
 
+  socket.onConnectError((err){
+    print('err: $err');
+  });
+
 
   //When an event recieved from server, data is added to the stream
   // socket.on('event', (data) => streamSocket.addResponse);

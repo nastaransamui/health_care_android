@@ -270,6 +270,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  flutter_form_builder:
+    dependency: "direct main"
+    description:
+      name: flutter_form_builder
+      sha256: "560eb5e367d81170c6ade1e7ae63ecc5167936ae2cdfaae8a345e91bce19d2f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.2.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -333,6 +341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.2.0"
+  form_builder_validators:
+    dependency: "direct main"
+    description:
+      name: form_builder_validators
+      sha256: "19aa5282b7cede82d0025ab031a98d0554b84aa2ba40f12013471a3b3e22bf02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.1.0"
   get:
     dependency: transitive
     description:
@@ -341,6 +357,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.6"
+  google_identity_services_web:
+    dependency: transitive
+    description:
+      name: google_identity_services_web
+      sha256: "9482364c9f8b7bd36902572ebc3a7c2b5c8ee57a9c93e6eb5099c1a9ec5265d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1+1"
+  google_sign_in:
+    dependency: "direct main"
+    description:
+      name: google_sign_in
+      sha256: "0b8787cb9c1a68ad398e8010e8c8766bfa33556d2ab97c439fb4137756d7308f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.1"
+  google_sign_in_android:
+    dependency: transitive
+    description:
+      name: google_sign_in_android
+      sha256: "7647893c65e6720973f0e579051c8f84b877b486614d9f70a404259c41a4632e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.23"
+  google_sign_in_ios:
+    dependency: transitive
+    description:
+      name: google_sign_in_ios
+      sha256: a058c9880be456f21e2e8571c1126eaacd570bdc5b6c6d9d15aea4bdf22ca9fe
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.7.6"
+  google_sign_in_platform_interface:
+    dependency: transitive
+    description:
+      name: google_sign_in_platform_interface
+      sha256: "1f6e5787d7a120cc0359ddf315c92309069171306242e181c09472d1b00a2971"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.5"
+  google_sign_in_web:
+    dependency: transitive
+    description:
+      name: google_sign_in_web
+      sha256: fc0f14ed45ea616a6cfb4d1c7534c2221b7092cc4f29a709f0c3053cc3e821bd
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.4"
   http:
     dependency: "direct main"
     description:
@@ -597,6 +661,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  rflutter_alert:
+    dependency: "direct main"
+    description:
+      name: rflutter_alert
+      sha256: "8ff35e3f9712ba24c746499cfa95bf320385edf38901a1a4eab0fe555867f66c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   rxdart:
     dependency: transitive
     description:

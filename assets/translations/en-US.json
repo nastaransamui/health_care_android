@@ -62,5 +62,9 @@
   "logout": "Logout",
   "patient": "Patient",
   "doctor": "Doctor",
-  "notEligible": "This user is not eligible to login any more"
+  "notEligible": "This user is not eligible to login any more",
+  "accountDetails": "Account Details",
+  "userType": "User Type",
+  "required": "This field is required.",
+  "doctors": "Doctors"
 }
