@@ -1,17 +1,19 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:convert';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/src/app.dart';
 import 'package:health_care/src/utils/verify_home_access_token.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toastify/toastify.dart';
 import 'package:easy_localization/src/easy_localization_controller.dart';
 import 'package:easy_localization/src/localization.dart';
+import 'package:flutter/scheduler.dart';
 
 class AuthService {
   final Localization L = Localization.instance;
@@ -72,31 +74,26 @@ class AuthService {
       var payloadData = verifyHomeAccessToken(token);
       var response = jsonDecode(payloadData);
       var roleName = response['roleName'];
-      if (roleName == 'patient') {
-        final newParsedPatient = PatientsProfile.fromJson(
-          jsonEncode(
-            jsonDecode(payloadData),
-          ),
-        );
-        var newAccessToken = newParsedPatient.accessToken;
-        var newIsActive = newParsedPatient.userProfile.isActive;
-        final bool? isLogin = prefs.getBool('isLogin');
-        if (isLogin != null && isLogin) {
-          if (newAccessToken.isEmpty || !newIsActive) {
-            logoutService(context);
-            showToast(
-              context,
-              Toast(
-                id: 'eligible',
-                title: 'Logout',
-                description: L.tr('notEligible'),
-                duration: Duration(milliseconds: 200.toInt()),
-                lifeTime: Duration(
-                  milliseconds: 5000.toInt(),
-                ),
+      final bool? newIsLogin = prefs.getBool('isLogin');
+      var currentContext =
+          NavigationService.navigatorKey.currentContext as BuildContext;
+      if (response['accessToken'].isEmpty) {
+        //logout
+        if (newIsLogin != null) {
+          BotToast.showCustomLoading(
+              duration: const Duration(
+                seconds: 3,
               ),
-            );
-          } else {
+              toastBuilder: (void Function() cancelFunc) {
+                return Text(L.tr('notEligible'));
+              });
+          logoutService(currentContext);
+        }
+      } else {
+        
+          final bool? isLogin = prefs.getBool('isLogin');
+          //Check is Login or not
+          if (isLogin != null && isLogin) {
             var payloadData = verifyHomeAccessToken(token);
             prefs.setBool('isLogin', true);
             prefs.setString('homeAccessToken', token);
@@ -104,43 +101,8 @@ class AuthService {
             prefs.setString('roleName', roleName);
             authProvider.setAuth(token, true, payloadData);
           }
-        }
-      } else if (roleName == 'doctors') {
-        //Start
-        final newParsedDoctor = DoctorsProfile.fromJson(
-          jsonEncode(
-            jsonDecode(payloadData),
-          ),
-        );
-        var newAccessToken = newParsedDoctor.accessToken;
-        var newIsActive = newParsedDoctor.userProfile.isActive;
-        final bool? isLogin = prefs.getBool('isLogin');
-        if (isLogin != null && isLogin) {
-          if (newAccessToken.isEmpty || !newIsActive) {
-            logoutService(context);
-            showToast(
-              context,
-              Toast(
-                id: 'eligible',
-                title: 'Logout',
-                description: L.tr('notEligible'),
-                duration: Duration(milliseconds: 200.toInt()),
-                lifeTime: Duration(
-                  milliseconds: 5000.toInt(),
-                ),
-              ),
-            );
-          } else {
-            var payloadData = verifyHomeAccessToken(token);
-            prefs.setBool('isLogin', true);
-            prefs.setString('homeAccessToken', token);
-            prefs.setString('profile', payloadData);
-            prefs.setString('roleName', roleName);
-            authProvider.setAuth(token, true, payloadData);
-          }
-        }
-        //finish
       }
+     
     });
   }
 
@@ -165,6 +127,11 @@ class AuthService {
     await prefs.remove('profile');
     await prefs.remove('roleName');
     authProvider.removeAuth();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context)?.settings.name != '/') {
+        Navigator.pushNamed(context, '/');
+      }
+    });
   }
 
   /// Method to load translations since context is not available in isolate.

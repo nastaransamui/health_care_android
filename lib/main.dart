@@ -43,6 +43,11 @@ Future<void> main() async {
   EasyLocalization.logger.enableBuildModes = [];
   await EasyLocalization.ensureInitialized();
 await SharedPreferences.getInstance();
+// SharedPreferences prefs = await SharedPreferences.getInstance();
+//     await prefs.remove('isLogin');
+//     await prefs.remove('homeAccessToken');
+//     await prefs.remove('profile');
+//     await prefs.remove('roleName');
   initiateSocket();
   runApp(MultiProvider(
     providers: [

@@ -29,7 +29,13 @@ import 'package:health_care/stream_socket.dart';
 import 'package:health_care/theme_config.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
+import 'package:bot_toast/bot_toast.dart';
 
+
+class NavigationService { 
+  static GlobalKey<NavigatorState> navigatorKey = 
+  GlobalKey<NavigatorState>();
+}
 class MyApp extends StatefulWidget {
   final StreamSocket streamSocket;
   final ThemeController controller;
@@ -84,6 +90,9 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
           }
 
           return MaterialApp(
+            navigatorKey: NavigationService.navigatorKey, 
+            builder: BotToastInit(), //1. call BotToastInit
+            navigatorObservers: [BotToastNavigatorObserver()],
             debugShowCheckedModeBanner: false,
             restorationScopeId: 'health_care',
             localizationsDelegates: context.localizationDelegates,
@@ -463,7 +472,7 @@ class _DefaultState extends State<Default> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 1.2,
-                  height:orientation == Orientation.landscape ? 250 : 210,
+                  height: orientation == Orientation.landscape ? 250 : 210,
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),

@@ -344,7 +344,6 @@ class _InputFieldState extends State<InputField> {
     final userData = Provider.of<UserDataProvider>(context).userData;
     final deviceData = Provider.of<DeviceProvider>(context).deviceData;
     void onChanged(dynamic val) {
-      debugPrint(val.toString());
       setState(() {
         roleName = val.toString();
       });

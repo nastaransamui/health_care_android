@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/commons/custom_app_bar.dart';
 import 'package:health_care/src/commons/end_drawer.dart';
 import 'package:health_care/src/commons/start_drawer.dart';
@@ -25,11 +26,7 @@ class _ScaffoldWrapperState extends State<ScaffoldWrapper> {
         body: Center(
           child: widget.children,
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: _incrementCounter,
-        //   tooltip: 'Increment',
-        //   child: const Icon(Icons.add),
-        // ), 
+       bottomNavigationBar:  const BottomBar(showLogin: true),
       ),
     );
   }

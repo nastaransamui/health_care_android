@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
@@ -43,7 +44,11 @@ class _BottomBarState extends State<BottomBar> {
       case 'dashboard':
         Navigator.pop(context);
         if (ModalRoute.of(context)?.settings.name != '/${roleName}_dashboard') {
-          Navigator.pushNamed(context, '/${roleName}_dashboard');
+          Navigator.pushNamed(
+            context,
+            '/${roleName}_dashboard',
+            arguments: <String, String>{'roleName': roleName},
+          );
         }
         break;
       case 'profile':
@@ -56,7 +61,6 @@ class _BottomBarState extends State<BottomBar> {
         Navigator.pop(context);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +81,8 @@ class _BottomBarState extends State<BottomBar> {
             fit: BoxFit.fill,
           );
         } else {
-          image = Image.network(patientProfile.userProfile.profileImage);
+          image = Image.network(
+              '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
         }
       } else if (roleName == 'doctors') {
         if (doctorsProfile!.userProfile.profileImage.isEmpty) {
@@ -86,7 +91,8 @@ class _BottomBarState extends State<BottomBar> {
             fit: BoxFit.fill,
           );
         } else {
-          image = Image.network(doctorsProfile.userProfile.profileImage);
+          image = Image.network(
+              '${doctorsProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
         }
       }
     }
@@ -134,7 +140,7 @@ class _BottomBarState extends State<BottomBar> {
                 icon: const Icon(Icons.login),
                 onPressed: () {
                   setState(() {
-                    Navigator.push(
+                   Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
@@ -181,7 +187,9 @@ class _BottomBarState extends State<BottomBar> {
                   showPopover(
                     context: popoverContextOnly,
                     bodyBuilder: (popoverContextOnly) => AuthList(
-                        image: image, authListClicked: authListClicked),
+                      image: image,
+                      authListClicked: authListClicked,
+                    ),
                     onPop: () {
                       if (typeClicked == 'logout') {
                         late String services;
@@ -212,7 +220,7 @@ class _BottomBarState extends State<BottomBar> {
                               ),
                             );
                           } else {
-                            authService.logoutService(context);
+                            // authService.logoutService(context);
                           }
                         });
                       }
@@ -239,8 +247,11 @@ class AuthList extends StatefulWidget {
   final Image image;
   final Function authListClicked;
 
-  const AuthList(
-      {super.key, required this.image, required this.authListClicked});
+  const AuthList({
+    super.key,
+    required this.image,
+    required this.authListClicked,
+  });
 
   @override
   State<AuthList> createState() => _AuthListState();
@@ -256,6 +267,7 @@ class _AuthListState extends State<AuthList> {
     var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
     var roleName = Provider.of<AuthProvider>(context).roleName;
     var brightness = Theme.of(context).brightness;
+    var image = widget.image;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView(
@@ -280,25 +292,10 @@ class _AuthListState extends State<AuthList> {
                             child: SizedBox(
                               width: 70.0,
                               height: 70.0,
-                              child: widget.image,
+                              child:image,
                             ),
                           ),
                         ),
-                        // Align(
-                        //   alignment: Alignment.topRight,
-                        //   child: badges.Badge(
-                        //     position: badges.BadgePosition.topStart(),
-                        //     badgeStyle: badges.BadgeStyle(
-                        //       padding: const EdgeInsets.all(6),
-                        //       badgeColor: Theme.of(context).primaryColorLight,
-                        //     ),
-                        //     badgeContent: Container(
-                        //       height: 1,
-                        //       width: 1,
-                        //       color: Theme.of(context).primaryColorLight,
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

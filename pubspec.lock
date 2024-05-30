@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bot_toast:
+    dependency: "direct main"
+    description:
+      name: bot_toast
+      sha256: "6b93030a99a98335b8827ecd83021e92e885ffc61d261d3825ffdecdd17f3bdf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.3"
   cached_network_image:
     dependency: transitive
     description:
@@ -357,6 +365,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.6"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: abec47eb8c8c36ebf41d0a4c64dbbe7f956e39a012b3aafc530e951bdc12fe3f
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.1.4"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -653,6 +669,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
+  qlevar_router:
+    dependency: "direct main"
+    description:
+      name: qlevar_router
+      sha256: "55ee7a822b9f7311eea292bd6d348336b03ffd1b85c44427987b72072591a84c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.10.3"
   readmore:
     dependency: "direct main"
     description:
