@@ -66,5 +66,13 @@
   "accountDetails": "Account Details",
   "userType": "User Type",
   "required": "This field is required.",
-  "doctors": "Doctors"
+  "doctors": "Doctors",
+  "vitalSigns": "Vital Signs",
+  "heartRate": "Heart Rate",
+  "bodyTemp": "Body Temp",
+  "weight": "Weight",
+  "height": "Height",
+  "patientDashboard": "Patient Dashboard",
+  "value": "Value",
+  "date": "Date"
 }

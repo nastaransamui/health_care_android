@@ -1,6 +1,6 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
@@ -107,9 +107,13 @@ class _BottomBarState extends State<BottomBar> {
             padding: const EdgeInsets.only(bottom: 28.0),
             icon: const Icon(Icons.home),
             onPressed: () {
-              if (ModalRoute.of(context)?.settings.name != '/') {
-                Navigator.pushNamed(context, '/');
-              }
+              SchedulerBinding.instance.addPostFrameCallback(
+                (_) {
+                  if (ModalRoute.of(context)?.settings.name != '/') {
+                    Navigator.pushNamed(context, '/');
+                  }
+                },
+              );
             },
           ),
           IconButton(
@@ -140,7 +144,7 @@ class _BottomBarState extends State<BottomBar> {
                 icon: const Icon(Icons.login),
                 onPressed: () {
                   setState(() {
-                   Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
@@ -292,7 +296,7 @@ class _AuthListState extends State<AuthList> {
                             child: SizedBox(
                               width: 70.0,
                               height: 70.0,
-                              child:image,
+                              child: image,
                             ),
                           ),
                         ),

@@ -97,8 +97,10 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                     height: orientation == Orientation.landscape
                         ? currentHeight / 3
                         : currentHeight / 2,
-                    child: Lottie.asset("assets/images/health_error.json",
-                        animate: true),
+                    child: Lottie.asset(
+                      "assets/images/health_error.json",
+                      animate: true,
+                    ),
                   ),
                 ),
                 TopAnime(

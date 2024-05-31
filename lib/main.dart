@@ -1,8 +1,8 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:health_care/providers/vital_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +16,7 @@ import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',
@@ -33,6 +34,7 @@ Future<void> main() async {
 
   ///Load Theme from shared_preferences
   final themeController = ThemeController();
+  tz.initializeTimeZones();
 
   ///Load auth from shared_preferences
 
@@ -42,7 +44,7 @@ Future<void> main() async {
   //Initial easy localization
   EasyLocalization.logger.enableBuildModes = [];
   await EasyLocalization.ensureInitialized();
-await SharedPreferences.getInstance();
+  await SharedPreferences.getInstance();
 // SharedPreferences prefs = await SharedPreferences.getInstance();
 //     await prefs.remove('isLogin');
 //     await prefs.remove('homeAccessToken');
@@ -71,7 +73,10 @@ await SharedPreferences.getInstance();
       ),
       ChangeNotifierProvider(
         create: (context) => AuthProvider(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => VitalProvider(),
+      ),
     ],
     child: EasyLocalization(
       supportedLocales: const [

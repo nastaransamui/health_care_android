@@ -66,5 +66,13 @@
   "accountDetails": "รายละเอียดบัญชี",
   "userType": "ประเภทผู้ใช้",
   "required": "ฟิลด์นี้จำเป็นต้องระบุ.",
-  "doctors": "หมอ"
+  "doctors": "หมอ",
+  "vitalSigns": "สัญญาณชีพ",
+  "heartRate": "อัตราการเต้นของหัวใจ",
+  "bodyTemp": "อุณหภูมิร่างกาย",
+  "weight": "น้ำหนัก",
+  "height": "ความสูง",
+  "patientDashboard": "แดชบอร์ดผู้ป่วย",
+  "value": "ค่า",
+  "date": "วันที่"
 }
