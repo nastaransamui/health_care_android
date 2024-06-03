@@ -23,18 +23,14 @@ class VitalService {
     socket.on(
       'getVitalSignFromAdmin',
       (data) {
-        
-        if(data.isNotEmpty){
-          vitalSignsProvider.setVitalSigns(data[0]);
-        }
+        vitalSignsProvider.setVitalSigns(data);
       },
     );
-
-    socket.emit('getVitalSign', {userId});
-    socket.once(
+    socket.emit('getVitalSign', {"userId": userId});
+    socket.on(
       'getVitalSignReturn',
       (data) {
-        debugPrint('data: $data');
+         vitalSignsProvider.setVitalSigns(data);
       },
     );
   }

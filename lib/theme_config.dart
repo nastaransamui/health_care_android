@@ -135,8 +135,8 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all(hexToColor(primaryColor)),
-            foregroundColor: MaterialStateProperty.all(Colors.black),
+                WidgetStateProperty.all(hexToColor(primaryColor)),
+            foregroundColor: WidgetStateProperty.all(Colors.black),
           ),
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -182,8 +182,8 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all(hexToColor(primaryColor)),
-            foregroundColor: MaterialStateProperty.all(Colors.black),
+                WidgetStateProperty.all(hexToColor(primaryColor)),
+            foregroundColor: WidgetStateProperty.all(Colors.black),
           ),
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(

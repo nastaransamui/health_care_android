@@ -74,5 +74,6 @@
   "height": "Height",
   "patientDashboard": "Patient Dashboard",
   "value": "Value",
-  "date": "Date"
+  "date": "Date",
+  "loginGoogle": "Login with Google"
 }

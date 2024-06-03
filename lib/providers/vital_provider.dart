@@ -6,12 +6,13 @@ class VitalProvider extends ChangeNotifier {
 
   VitalSigns? get vitalSign => _vitalSigns;
 
-  void setVitalSigns(Map<String, dynamic> data) {
-
-      final signsFromAdmin =
-          VitalSigns.fromMap(data);
+  void setVitalSigns(List<dynamic> data) {
+    if (data.isNotEmpty) {
+      final signsFromAdmin = VitalSigns.fromMap(data[0]);
       _vitalSigns = signsFromAdmin;
-
+    }else{
+      _vitalSigns = null;
+    }
 
     notifyListeners();
   }

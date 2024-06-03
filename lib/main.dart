@@ -44,13 +44,17 @@ Future<void> main() async {
   //Initial easy localization
   EasyLocalization.logger.enableBuildModes = [];
   await EasyLocalization.ensureInitialized();
-  await SharedPreferences.getInstance();
-// SharedPreferences prefs = await SharedPreferences.getInstance();
+  // await SharedPreferences.getInstance();
+SharedPreferences prefs = await SharedPreferences.getInstance();
+ final String? profile = prefs.getString('profile');
+    final bool? isLogin = prefs.getBool('isLogin');
+    final String? roleName = prefs.getString('roleName');
+    final String? userData = prefs.getString('userData');
 //     await prefs.remove('isLogin');
 //     await prefs.remove('homeAccessToken');
 //     await prefs.remove('profile');
 //     await prefs.remove('roleName');
-  initiateSocket();
+  initiateSocket(isLogin, profile, roleName, userData);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -482,7 +483,9 @@ class _InputFieldState extends State<InputField> {
                   var token = data['accessToken'];
                   authService.loginService(context, token);
                   Navigator.pushNamed(context, '/');
-
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                      Navigator.pushNamed(context, '/');
+                  });
                   break;
               }
             });

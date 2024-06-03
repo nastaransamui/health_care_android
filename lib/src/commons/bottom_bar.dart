@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -68,31 +69,17 @@ class _BottomBarState extends State<BottomBar> {
     var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
     var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
     var roleName = Provider.of<AuthProvider>(context).roleName;
-    late Image image = Image.asset(
-      "assets/images/default-avatar.png",
-      fit: BoxFit.fill,
-    );
-
+    late String imageUrl = '';
     if (isLogin) {
       if (roleName == 'patient') {
-        if (patientProfile!.userProfile.profileImage.isEmpty) {
-          image = Image.asset(
-            "assets/images/default-avatar.png",
-            fit: BoxFit.fill,
-          );
-        } else {
-          image = Image.network(
-              '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
+        if (patientProfile!.userProfile.profileImage.isNotEmpty) {
+          imageUrl =
+              '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
         }
       } else if (roleName == 'doctors') {
-        if (doctorsProfile!.userProfile.profileImage.isEmpty) {
-          image = Image.asset(
-            "assets/images/default-avatar.png",
-            fit: BoxFit.fill,
-          );
-        } else {
-          image = Image.network(
-              '${doctorsProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
+        if (doctorsProfile!.userProfile.profileImage.isNotEmpty) {
+          imageUrl =
+              '${doctorsProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
         }
       }
     }
@@ -165,25 +152,22 @@ class _BottomBarState extends State<BottomBar> {
                           child: SizedBox(
                             width: 30.0,
                             height: 30.0,
-                            child: image,
+                            // child: image,
+                            child: imageUrl.isEmpty
+                                ? Image.asset(
+                                    'assets/images/default-avatar.png',
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    errorWidget: (ccontext, url, error) {
+                                      return Image.asset(
+                                        'assets/images/default-avatar.png',
+                                      );
+                                    },
+                                  ),
                           ),
                         ),
                       ),
-                      // Align(
-                      //   alignment: Alignment.topRight,
-                      //   child: badges.Badge(
-                      //     position: badges.BadgePosition.topStart(),
-                      //     badgeStyle: badges.BadgeStyle(
-                      //       padding: const EdgeInsets.all(6),
-                      //       badgeColor: Theme.of(context).primaryColorLight,
-                      //     ),
-                      //     badgeContent: Container(
-                      //       height: 1,
-                      //       width: 1,
-                      //       color: Theme.of(context).primaryColorLight,
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -191,7 +175,7 @@ class _BottomBarState extends State<BottomBar> {
                   showPopover(
                     context: popoverContextOnly,
                     bodyBuilder: (popoverContextOnly) => AuthList(
-                      image: image,
+                      imageUrl: imageUrl,
                       authListClicked: authListClicked,
                     ),
                     onPop: () {
@@ -224,7 +208,7 @@ class _BottomBarState extends State<BottomBar> {
                               ),
                             );
                           } else {
-                            // authService.logoutService(context);
+                            authService.logoutService(context);
                           }
                         });
                       }
@@ -248,12 +232,12 @@ class _BottomBarState extends State<BottomBar> {
 }
 
 class AuthList extends StatefulWidget {
-  final Image image;
+  final String imageUrl;
   final Function authListClicked;
 
   const AuthList({
     super.key,
-    required this.image,
+    required this.imageUrl,
     required this.authListClicked,
   });
 
@@ -271,7 +255,7 @@ class _AuthListState extends State<AuthList> {
     var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
     var roleName = Provider.of<AuthProvider>(context).roleName;
     var brightness = Theme.of(context).brightness;
-    var image = widget.image;
+    var imageUrl = widget.imageUrl;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView(
@@ -296,7 +280,18 @@ class _AuthListState extends State<AuthList> {
                             child: SizedBox(
                               width: 70.0,
                               height: 70.0,
-                              child: image,
+                              child: imageUrl.isEmpty
+                                  ? Image.asset(
+                                      'assets/images/default-avatar.png',
+                                    )
+                                  : CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      errorWidget: (ccontext, url, error) {
+                                        return Image.asset(
+                                          'assets/images/default-avatar.png',
+                                        );
+                                      },
+                                    ),
                             ),
                           ),
                         ),
@@ -420,37 +415,37 @@ class _AuthListState extends State<AuthList> {
     );
   }
 
-  void logoutSubmit(
-      context, patientProfile, doctorsProfile, isLogin, roleName) {
-    late String services;
-    late String userid;
-    if (isLogin != null && isLogin) {
-      if (roleName == 'patient') {
-        services = patientProfile.services;
-        userid = patientProfile.userId;
-      } else if (roleName == 'doctors') {
-        services = doctorsProfile.services;
-        userid = doctorsProfile.userId;
-      }
-      Navigator.of(context).pop();
-      socket.emit('logOutSubmit', {userid, services});
-      socket.on('logOutReturn', (data) {
-        if (data['status'] != 200) {
-          showToast(
-            context,
-            Toast(
-              title: 'Failed',
-              description: data['reason'] ?? context.tr('logoutFailed'),
-              duration: Duration(milliseconds: 200.toInt()),
-              lifeTime: Duration(
-                milliseconds: 2500.toInt(),
-              ),
-            ),
-          );
-        } else {
-          authService.logoutService(context);
-        }
-      });
-    }
-  }
+  // void logoutSubmit(
+  //     context, patientProfile, doctorsProfile, isLogin, roleName) {
+  //   late String services;
+  //   late String userid;
+  //   if (isLogin != null && isLogin) {
+  //     if (roleName == 'patient') {
+  //       services = patientProfile.services;
+  //       userid = patientProfile.userId;
+  //     } else if (roleName == 'doctors') {
+  //       services = doctorsProfile.services;
+  //       userid = doctorsProfile.userId;
+  //     }
+  //     Navigator.of(context).pop();
+  //     socket.emit('logOutSubmit', {userid, services});
+  //     socket.on('logOutReturn', (data) {
+  //       if (data['status'] != 200) {
+  //         showToast(
+  //           context,
+  //           Toast(
+  //             title: 'Failed',
+  //             description: data['reason'] ?? context.tr('logoutFailed'),
+  //             duration: Duration(milliseconds: 200.toInt()),
+  //             lifeTime: Duration(
+  //               milliseconds: 2500.toInt(),
+  //             ),
+  //           ),
+  //         );
+  //       } else {
+  //         authService.logoutService(context);
+  //       }
+  //     });
+  //   }
+  // }
 }

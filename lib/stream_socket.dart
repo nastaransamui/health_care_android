@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print, library_prefixes
 
 import 'dart:async';
+import 'dart:convert';
 
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:health_care/models/users.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -26,10 +28,41 @@ IO.Socket socket = IO.io(
   OptionBuilder()
       .setTransports(['websocket'])
       // .setExtraHeaders({'foo': 'bar'}) // optional
+      .disableAutoConnect()
       .build(),
 );
 
-void initiateSocket() {
+void initiateSocket(isLogin, profile,roleName, userData) {
+    late String accessToken = '';
+    late String userid = '';
+if (isLogin != null && isLogin) {
+      if (roleName == 'patient') {
+        final parsedPatient = PatientsProfile.fromJson(
+          jsonEncode(
+            jsonDecode(profile!),
+          ),
+        );
+        accessToken = parsedPatient.accessToken;
+        userid = parsedPatient.userId;
+      } else if (roleName == 'doctors') {
+        final parsedDoctor = DoctorsProfile.fromJson(
+          jsonEncode(
+            jsonDecode(profile!),
+          ),
+        );
+        accessToken = parsedDoctor.accessToken;
+        userid = parsedDoctor.userId;
+      }
+    }
+    socket.io.options?['extraHeaders'] = {
+      'userData': "$userData",
+      'token': 'Bearer $accessToken',
+      'userid': userid //${parsedProfile?.userId}
+    }; // Update the extra headers.
+    // socket.io
+    //   ..disconnect()
+    //   ..connect();
+  socket.connect();
   socket.onConnect((_) {
     print('conneted');
 
