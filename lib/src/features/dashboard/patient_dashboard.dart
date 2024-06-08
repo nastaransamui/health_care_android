@@ -104,10 +104,24 @@ class _PatientDashboardState extends State<PatientDashboard> {
                   ),
                   headingRowHeight: 32.0,
                   showBottomBorder: true,
-                  horizontalMargin: dataTable.isNotEmpty ? 24 : 66,
+                  horizontalMargin: dataTable.isNotEmpty ? 16 : 50,
                   columns: [
-                    DataColumn(label: Text("${context.tr('value')} / $unit")),
-                    DataColumn(label: Text(context.tr('date'))),
+                    DataColumn(
+                        label: Flexible(
+                            fit: FlexFit.tight,
+                            child: Center(
+                                child: Text(
+                              "${context.tr('value')} / $unit",
+                              textAlign: TextAlign.center,
+                            )))),
+                    DataColumn(
+                        label: Flexible(
+                            fit: FlexFit.tight,
+                            child: Center(
+                                child: Text(
+                              context.tr('date'),
+                              textAlign: TextAlign.center,
+                            )))),
                   ],
                   rows: dataTable.map((e) {
                     var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
@@ -118,18 +132,18 @@ class _PatientDashboardState extends State<PatientDashboard> {
                     return DataRow(
                       cells: [
                         DataCell(
-                          Text(
-                            e['value'],
-                            style: const TextStyle(
-                              fontStyle: FontStyle.italic,
+                          Center(
+                            child: Text(
+                              e['value'],
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ),
                         ),
                         DataCell(
-                          Text(
-                            formattedDate,
-                            style: const TextStyle(
-                              fontStyle: FontStyle.italic,
+                          Center(
+                            child: Text(
+                              formattedDate,
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ),
                         ),
@@ -191,7 +205,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
             '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
       }
     }
-
+    var brightness = Theme.of(context).brightness;
     CarouselSlider vitalSignScrollView = CarouselSlider(
       options: CarouselOptions(
         height: 200.0,
@@ -248,10 +262,99 @@ class _PatientDashboardState extends State<PatientDashboard> {
                         Expanded(
                           // height: 100,
                           child: i['image']!.isEmpty
-                              ? Lottie.asset(
-                                  i['icon']!,
+                              ? Lottie.asset(i['icon']!,
                                   animate: true,
-                                )
+                                  delegates: LottieDelegates(values: [
+                                    ValueDelegate.colorFilter(
+                                      ['Line', '**'],
+                                      value: ColorFilter.mode(
+                                        Theme.of(context).primaryColorLight,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Layer 6 Outlines", '**'],
+                                      value: ColorFilter.mode(
+                                        brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Layer 5 Outlines", '**'],
+                                      value: ColorFilter.mode(
+                                        brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Layer 4 Outlines", '**'],
+                                      value: ColorFilter.mode(
+                                        brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Layer 3 Outlines", '**'],
+                                      value: ColorFilter.mode(
+                                        brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["therometer outline", '**'],
+                                      value: ColorFilter.mode(
+                                        brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Layer 2 Outlines", '**'],
+                                      value: ColorFilter.mode(
+                                        brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Sun", '**'],
+                                      value: ColorFilter.mode(
+                                        Theme.of(context).primaryColorLight,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Place 1", '**'],
+                                      value: ColorFilter.mode(
+                                        Theme.of(context).primaryColorLight,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Place 2", '**'],
+                                      value: ColorFilter.mode(
+                                        Theme.of(context).primaryColorLight,
+                                        BlendMode.src,
+                                      ),
+                                    ),
+                                    ValueDelegate.colorFilter(
+                                      ["Main", '**'],
+                                      value: ColorFilter.mode(
+                                        Theme.of(context).primaryColor,
+                                        BlendMode.src,
+                                      ),
+                                    )
+                                  ]))
                               : Image.asset(i['image']!),
                         ),
                         SizedBox(
@@ -322,191 +425,340 @@ class _PatientDashboardState extends State<PatientDashboard> {
         },
       ).toList(),
     );
+    CarouselSlider datasScrollView = CarouselSlider(
+      options: CarouselOptions(
+        aspectRatio: 2.0,
+        height: 110,
+        enlargeCenterPage: true,
+        scrollDirection: Axis.vertical,
+        autoPlay: true,
+      ),
+      items: patinetDataScroll.map((i) {
+        final name = context.tr(i['title']);
+        return InkWell(
+          splashColor: Theme.of(context).primaryColor,
+          onTap: () {
+            Navigator.pushNamed(context, i['routeName']);
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                  color: Theme.of(context).primaryColorLight, width: 2.0),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            elevation: 8.0,
+            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            child: InkWell(
+              splashColor: Theme.of(context).primaryColor,
+              onTap: () {
+                Navigator.pushNamed(context, i['routeName']);
+              },
+              child: SizedBox(
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10.0),
+                  leading: i['icon'],
+                  title: Text(name),
+                  trailing: const Icon(Icons.arrow_forward),
+                ),
+              ),
+            ),
+          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Expanded(
+          //       child: FittedBox(
+          //         fit: BoxFit.scaleDown,
+          //         child: ClipRRect(
+          //           borderRadius: BorderRadius.circular(8),
+          //           child: i['icon'],
+          //         ),
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: ListTile(
+          //         textColor: brightness == Brightness.dark
+          //             ? Colors.white
+          //             : Colors.black,
+          //         title: Text(
+          //           name,
+          //           style: const TextStyle(
+          //             fontSize: 15.0,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //     const Icon(Icons.arrow_right)
+          //   ],
+          // ),
+        );
+      }).toList(),
+    );
 
-    return ScaffoldWrapper(
-      title: context.tr('patientDashboard'),
-      children: patientProfile == null
-          ? const LoadingScreen()
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                      top: 8.0,
-                    ),
-                    height: 180,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorLight,
-                      border: Border.all(
-                          color: Theme.of(context).primaryColorLight),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: imageUrl.isEmpty
-                            ? const AssetImage(
-                                'assets/images/default-avatar.png',
-                              ) as ImageProvider
-                            : CachedNetworkImageProvider(imageUrl),
-                        // image: NetworkImage(
-                        //   '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}',
-                        // ),
-                        // onError: (exception, stackTrace) => const AssetImage(
-                        //   "assets/images/default-avatar.png",
-                        // ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                      "${patientProfile.userProfile.gender} ${patientProfile.userProfile.firstName} ${patientProfile.userProfile.lastName}"),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(patientProfile.userProfile.userName),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text("As: ${context.tr(patientProfile.roleName)}"),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return OrientationBuilder(
+      builder: (BuildContext context, Orientation orientation) {
+        return ScaffoldWrapper(
+          title: context.tr('patientDashboard'),
+          children: patientProfile == null
+              ? const LoadingScreen()
+              : SingleChildScrollView(
+                  child: Column(
                     children: [
-                      Icon(
-                        Icons.cake,
-                        color: Theme.of(context).primaryColorLight,
+                      const SizedBox(
+                        height: 5,
                       ),
-                      Text(
-                          " ${patientProfile.userProfile.dob.isNotEmpty ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob).toLocal()) : '---- -- --'}"),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text("$years years $months months $days days"),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      Column(
-                        children: [
-                          Text(patientProfile.userProfile.city),
-                          Text(patientProfile.userProfile.state),
-                          Text(patientProfile.userProfile.country)
-                        ],
-                      ),
-                    ],
-                  ),
-                  ListTile(
-                    title: Text(context.tr('vitalSigns')),
-                  ),
-                  vitalSignScrollView,
-                  ListTile(
-                    title: Text(context.tr('bmiStatus')),
-                  ),
-                  Container(
-                    height: 300,
-                    width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                            color: Theme.of(context).primaryColorLight,
-                            width: 2.0),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      elevation: 5.0,
-                      clipBehavior: Clip.hardEdge,
-                      margin: const EdgeInsets.all(0),
-                      child: InkWell(
-                        splashColor: Theme.of(context).primaryColor,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BMIScreen(
-                                vitalSigns: vitalSigns,
-                                age: years == '--' ? 1 : int.parse(years),
-                                gender: patientProfile.userProfile.gender,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 45,
-                              child: ListTile(
-                                title: Center(
-                                  child: Text(
-                                    context.tr('bmiStatus'),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Theme.of(context).primaryColorLight,
+                                width: 2.0),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          elevation: 5.0,
+                          clipBehavior: Clip.hardEdge,
+                          margin: const EdgeInsets.all(0),
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  top: 8.0,
+                                ),
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColorLight,
+                                  border: Border.all(
+                                      color:
+                                          Theme.of(context).primaryColorLight),
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: imageUrl.isEmpty
+                                        ? const AssetImage(
+                                            'assets/images/default-avatar.png',
+                                          ) as ImageProvider
+                                        : CachedNetworkImageProvider(imageUrl),
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              // height: 100,
-                              child: PrettyGauge(
-                                gaugeSize: 210,
-                                minValue: 0,
-                                maxValue: 40,
-                                segments: [
-                                  GaugeSegment('UnderWeight', 18.5, Colors.red),
-                                  GaugeSegment('Normal', 6.4, Colors.green),
-                                  GaugeSegment('OverWeight', 5, Colors.orange),
-                                  GaugeSegment('Obese', 10.1, Colors.pink),
-                                ],
-                                valueWidget: const Text(
-                                  "",
-                                  style: TextStyle(fontSize: 40),
-                                ),
-                                currentValue: 0.5,
-                                needleColor:
-                                    Theme.of(context).primaryColorLight,
-                                startMarkerStyle: const TextStyle(
-                                  fontSize: 10,
-                                ),
-                                endMarkerStyle: const TextStyle(
-                                  fontSize: 10,
-                                ),
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                            SizedBox(
-                              height: 45,
-                              child: Row(
+                              Text(
+                                  "${patientProfile.userProfile.gender} ${patientProfile.userProfile.firstName} ${patientProfile.userProfile.lastName}"),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(patientProfile.userProfile.userName),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                  "As: ${context.tr(patientProfile.roleName)}"),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SizedBox(
-                                      width: 40,
-                                      child: Text(
-                                        "bmi",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                      ))
+                                  Icon(
+                                    Icons.cake,
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                  Text(
+                                      " ${patientProfile.userProfile.dob.isNotEmpty ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob).toLocal()) : '---- -- --'}"),
                                 ],
                               ),
-                            )
-                          ],
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text("$years years $months months $days days"),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(patientProfile.userProfile.city),
+                                      Text(patientProfile.userProfile.state),
+                                      Text(patientProfile.userProfile.country)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                      ListTile(
+                        title: Text(context.tr('vitalSigns')),
+                      ),
+                      vitalSignScrollView,
+                      ListTile(
+                        title: Text(context.tr('bmiStatus')),
+                      ),
+                      Container(
+                        height: 300,
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Theme.of(context).primaryColorLight,
+                                width: 2.0),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          elevation: 5.0,
+                          clipBehavior: Clip.hardEdge,
+                          margin: const EdgeInsets.all(0),
+                          child: InkWell(
+                            splashColor: Theme.of(context).primaryColor,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BMIScreen(
+                                    vitalSigns: vitalSigns,
+                                    age: years == '--' ? 1 : int.parse(years),
+                                    gender: patientProfile.userProfile.gender,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 45,
+                                  child: ListTile(
+                                    title: Center(
+                                      child: Text(
+                                        context.tr('bmiStatus'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  // height: 100,
+                                  child: PrettyGauge(
+                                    gaugeSize: 210,
+                                    minValue: 0,
+                                    maxValue: 40,
+                                    segments: [
+                                      GaugeSegment(
+                                          'UnderWeight', 18.5, Colors.red),
+                                      GaugeSegment('Normal', 6.4, Colors.green),
+                                      GaugeSegment(
+                                          'OverWeight', 5, Colors.orange),
+                                      GaugeSegment('Obese', 10.1, Colors.pink),
+                                    ],
+                                    valueWidget: const Text(
+                                      "",
+                                      style: TextStyle(fontSize: 40),
+                                    ),
+                                    currentValue: 0.5,
+                                    needleColor:
+                                        Theme.of(context).primaryColorLight,
+                                    startMarkerStyle: const TextStyle(
+                                      fontSize: 10,
+                                    ),
+                                    endMarkerStyle: const TextStyle(
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    height: 50,
+                                    width: 140,
+                                    child: Center(
+                                      child: Text(
+                                        context.tr("bmi"),
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontFamily: 'Roboto_Condensed',
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                    ))
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(context.tr('informations')),
+                      ),
+                      Container(
+                        // height: 250,
+                        width: MediaQuery.of(context).size.width / 1.2,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        height: 110,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return datasScrollView;
+                          },
+                          itemCount: 1,
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(context.tr('links')),
+                      ),
+                      ...elements.map((i) {
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Theme.of(context).primaryColorLight,
+                                width: 2.0),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          elevation: 8.0,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 6.0),
+                          child: InkWell(
+                            splashColor: Theme.of(context).primaryColor,
+                            onTap: () {
+                              if (i['routeName'].isNotEmpty) {
+                                Navigator.pushNamed(context, i['routeName']);
+                              } else {
+                                if (i['name'] == 'logout') {
+                                  debugPrint("logout");
+                                }
+                              }
+                            },
+                            child: SizedBox(
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 10.0),
+                                leading: i['icon'],
+                                title: Text(i['name']),
+                                trailing: const Icon(Icons.arrow_forward),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+        );
+      },
     );
   }
 }
@@ -618,39 +870,41 @@ class _BMIScreenState extends State<BMIScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 60),
+                        vertical: 20, horizontal: 30),
                     child: SwipeableButtonView(
-                        isFinished: _isFinished,
-                        onFinish: () async {
-                          await Navigator.push(
-                              context,
-                              PageTransition(
-                                  child: ScoreScreen(
-                                    bmiScore: _bmiScore,
-                                    age: _age,
-                                  ),
-                                  type: PageTransitionType.fade));
+                      isFinished: _isFinished,
+                      onFinish: () async {
+                        await Navigator.push(
+                          context,
+                          PageTransition(
+                              child: ScoreScreen(
+                                bmiScore: _bmiScore,
+                                age: _age,
+                              ),
+                              type: PageTransitionType.fade),
+                        );
 
+                        setState(() {
+                          _isFinished = false;
+                        });
+                      },
+                      onWaitingProcess: () {
+                        //Calculate BMI here
+                        calculateBmi();
+
+                        Future.delayed(const Duration(seconds: 1), () {
                           setState(() {
-                            _isFinished = false;
+                            _isFinished = true;
                           });
-                        },
-                        onWaitingProcess: () {
-                          //Calculate BMI here
-                          calculateBmi();
-
-                          Future.delayed(const Duration(seconds: 1), () {
-                            setState(() {
-                              _isFinished = true;
-                            });
-                          });
-                        },
-                        activeColor: Theme.of(context).primaryColor,
-                        buttonWidget: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: Colors.black,
-                        ),
-                        buttonText: "CALCULATE"),
+                        });
+                      },
+                      activeColor: Theme.of(context).primaryColor,
+                      buttonWidget: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.black,
+                      ),
+                      buttonText: context.tr('calculate'),
+                    ),
                   )
                 ],
               ),
@@ -864,237 +1118,141 @@ class _SliderWidgetState extends State<SliderWidget> {
   }
 }
 
-// class AgeWeightWidget extends StatefulWidget {
-//   final Function(int) onChange;
-
-//   final String title;
-
-//   final int initValue;
-
-//   final int min;
-
-//   final int max;
-
-//   const AgeWeightWidget(
-//       {super.key,
-//       required this.onChange,
-//       required this.title,
-//       required this.initValue,
-//       required this.min,
-//       required this.max});
-
-//   @override
-//   State<AgeWeightWidget> createState() => _AgeWeightWidgetState();
-// }
-
-// class _AgeWeightWidgetState extends State<AgeWeightWidget> {
-//   int counter = 0;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     counter = widget.initValue;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(8.0),
-//       child: Card(
-//         elevation: 12,
-//         shape: const RoundedRectangleBorder(),
-//         child: Column(
-//           children: [
-//             Text(
-//               widget.title,
-//               style: const TextStyle(
-//                 fontSize: 20,
-//               ),
-//             ),
-//             const SizedBox(
-//               height: 10,
-//             ),
-//             Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: Row(
-//                 children: [
-//                   InkWell(
-//                     child: CircleAvatar(
-//                       radius: 12,
-//                       backgroundColor: Theme.of(context).primaryColor,
-//                       child: const Icon(
-//                         Icons.remove,
-//                       ),
-//                     ),
-//                     onTap: () {
-//                       setState(() {
-//                         if (counter > widget.min) {
-//                           counter--;
-//                         }
-//                       });
-//                       widget.onChange(counter);
-//                     },
-//                   ),
-//                   const SizedBox(
-//                     width: 15,
-//                   ),
-//                   Text(
-//                     counter.toString(),
-//                     textAlign: TextAlign.center,
-//                     style: const TextStyle(
-//                       fontSize: 18,
-//                       fontWeight: FontWeight.w500,
-//                     ),
-//                   ),
-//                   const SizedBox(
-//                     width: 15,
-//                   ),
-//                   InkWell(
-//                     child: CircleAvatar(
-//                       radius: 12,
-//                       backgroundColor: Theme.of(context).primaryColorLight,
-//                       child: const Icon(Icons.add, color: Colors.white),
-//                     ),
-//                     onTap: () {
-//                       setState(() {
-//                         if (counter < widget.max) {
-//                           counter++;
-//                         }
-//                       });
-//                       widget.onChange(counter);
-//                     },
-//                   ),
-//                 ],
-//               ),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class ScoreScreen extends StatelessWidget {
+class ScoreScreen extends StatefulWidget {
   final double bmiScore;
 
   final int age;
 
+  const ScoreScreen({
+    super.key,
+    required this.bmiScore,
+    required this.age,
+  });
+
+  @override
+  State<ScoreScreen> createState() => _ScoreScreenState();
+}
+
+class _ScoreScreenState extends State<ScoreScreen> {
   String? bmiStatus;
 
   String? bmiInterpretation;
 
   Color? bmiStatusColor;
 
-  ScoreScreen({super.key, required this.bmiScore, required this.age});
-
   @override
   Widget build(BuildContext context) {
     setBmiInterpretation(context);
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(context.tr("bmiScore")),
-      ),
-      body: Container(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(context.tr("bmiScore")),
+        ),
+        body: Container(
           padding: const EdgeInsets.all(12),
           child: Card(
-              elevation: 12,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(15),
-                ),
+            elevation: 12,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Theme.of(context).primaryColor),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(15),
               ),
-              child: Column(
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  context.tr("yourScore"),
+                  style: TextStyle(
+                      fontSize: 30, color: Theme.of(context).primaryColor),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                PrettyGauge(
+                  gaugeSize: 300,
+                  minValue: 0,
+                  maxValue: 40,
+                  segments: [
+                    GaugeSegment('UnderWeight', 18.5, Colors.red),
+                    GaugeSegment('Normal', 6.4, Colors.green),
+                    GaugeSegment('OverWeight', 5, Colors.orange),
+                    GaugeSegment('Obese', 10.1, Colors.pink),
+                  ],
+                  valueWidget: Text(
+                    widget.bmiScore.toStringAsFixed(1),
+                    style: const TextStyle(fontSize: 40),
+                  ),
+                  currentValue: widget.bmiScore.toDouble(),
+                  needleColor: Theme.of(context).primaryColorLight,
+                  startMarkerStyle: const TextStyle(
+                    fontSize: 10,
+                  ),
+                  endMarkerStyle: const TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  bmiStatus!,
+                  style: TextStyle(fontSize: 20, color: bmiStatusColor!),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  bmiInterpretation!,
+                  style: const TextStyle(fontSize: 15),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      context.tr("yourScore"),
-                      style: TextStyle(
-                          fontSize: 30, color: Theme.of(context).primaryColor),
-                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(context.tr('Re-calculate'))),
                     const SizedBox(
-                      height: 10,
+                      width: 10,
                     ),
-                    PrettyGauge(
-                      gaugeSize: 300,
-                      minValue: 0,
-                      maxValue: 40,
-                      segments: [
-                        GaugeSegment('UnderWeight', 18.5, Colors.red),
-                        GaugeSegment('Normal', 6.4, Colors.green),
-                        GaugeSegment('OverWeight', 5, Colors.orange),
-                        GaugeSegment('Obese', 10.1, Colors.pink),
-                      ],
-                      valueWidget: Text(
-                        bmiScore.toStringAsFixed(1),
-                        style: const TextStyle(fontSize: 40),
-                      ),
-                      currentValue: bmiScore.toDouble(),
-                      needleColor: Theme.of(context).primaryColorLight,
-                      startMarkerStyle: const TextStyle(
-                        fontSize: 10,
-                      ),
-                      endMarkerStyle: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      bmiStatus!,
-                      style: TextStyle(fontSize: 20, color: bmiStatusColor!),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      bmiInterpretation!,
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(context.tr('Re-calculate'))),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ElevatedButton(
-                            onPressed: () {
-                              // Share.share(
-                              //     "Your BMI is ${bmiScore.toStringAsFixed(1)} at age $age");
-                            },
-                            child: Text(context.tr("Share"))),
-                      ],
-                    )
-                  ]))),
+                    ElevatedButton(
+                        onPressed: () {
+                          // Share.share(
+                          //     "Your BMI is ${bmiScore.toStringAsFixed(1)} at age $age");
+                        },
+                        child: Text(context.tr("Share"))),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   void setBmiInterpretation(context) {
-    if (bmiScore > 30) {
-      bmiStatus = "Obese";
-      bmiInterpretation = "Please work to reduce obesity";
+    if (widget.bmiScore > 30) {
+      bmiStatus = tr("Obese");
+      bmiInterpretation = tr("ObeseDesc");
       bmiStatusColor = Colors.pink;
-    } else if (bmiScore >= 25) {
-      bmiStatus = "Overweight";
-      bmiInterpretation = "Do regular exercise & reduce the weight";
+    } else if (widget.bmiScore >= 25) {
+      bmiStatus = tr("Overweight");
+      bmiInterpretation = tr("OverweightDesc");
       bmiStatusColor = Colors.orange;
-    } else if (bmiScore >= 18.5) {
-      bmiStatus = "Normal";
-      bmiInterpretation = "Enjoy, You are fit";
+    } else if (widget.bmiScore >= 18.5) {
+      bmiStatus = tr("Normal");
+      bmiInterpretation = tr("NormalDesc");
       bmiStatusColor = Colors.green;
-    } else if (bmiScore < 18.5) {
-      bmiStatus = "Underweight";
-      bmiInterpretation = "Try to increase the weight";
+    } else if (widget.bmiScore < 18.5) {
+      bmiStatus = tr("Underweight");
+      bmiInterpretation = tr("UnderweightDesc");
       bmiStatusColor = Colors.red;
     }
   }

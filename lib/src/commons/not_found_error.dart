@@ -78,6 +78,11 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
         builder: (BuildContext context, Orientation orientation) {
       return SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              context.tr('goBack'),
+            ),
+          ),
           bottomNavigationBar: BottomBar(
             showLogin: true,
           ),
@@ -95,8 +100,8 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                   child: Container(
                     width: currentWidth,
                     height: orientation == Orientation.landscape
-                        ? currentHeight / 3
-                        : currentHeight / 2,
+                        ? currentHeight / 4
+                        : currentHeight / 3,
                     child: Lottie.asset(
                       "assets/images/health_error.json",
                       animate: true,

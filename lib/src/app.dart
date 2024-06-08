@@ -459,6 +459,7 @@ class _DefaultState extends State<Default> {
         return SilverScaffoldWrapper(
           title: 'findDoctor',
           children: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               if (clinics.isNotEmpty) ...[
                 ListTile(
@@ -492,7 +493,8 @@ class _DefaultState extends State<Default> {
               ListTile(
                 title: Text(context.tr('howItsWork')),
               ),
-              Expanded(
+              Flexible(
+                fit: FlexFit.loose,
                 child: DecoratedBox(
                   decoration: const BoxDecoration(
                     image: DecorationImage(

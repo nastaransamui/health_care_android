@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.4+4
+version: 1.0.6+6
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -74,6 +74,14 @@ dependencies:
   pretty_gauge: ^1.0.1
   share_plus: ^9.0.0
   cached_network_image: ^3.3.1
+  grouped_list: ^5.1.2
+  font_awesome_flutter: ^9.2.0
+  mirai_dropdown_menu: ^0.0.8+2
+  flutter_animate: ^4.5.0
+  search_choices: ^2.2.7
+  easy_debounce: ^2.0.3
+  flutter_typeahead: ^5.0.1
+  flutter_swipe_button: ^2.1.3
 
 dev_dependencies:
   flutter_test:
@@ -97,6 +105,12 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
+  fonts:
+    - family: Roboto_Condensed
+      fonts:
+        - asset: fonts/Roboto_Condensed/RobotoCondensed-Italic-VariableFont_wght.ttf
+        - asset: fonts/Roboto_Condensed/RobotoCondensed-VariableFont_wght.ttf
+          weight: 400
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

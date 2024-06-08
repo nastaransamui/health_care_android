@@ -7,6 +7,7 @@ import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/utils/validate_email.dart';
+import 'package:lottie/lottie.dart';
 
 Future<void> func() async {}
 
@@ -153,9 +154,52 @@ _header(context) {
       top: 24.0,
     ),
     height: 200,
-    decoration: const BoxDecoration(
-      image: DecorationImage(
-          image: AssetImage('assets/images/register-top-img.png')),
+    child: Lottie.asset(
+      "assets/images/authHeader1.json",
+      animate: true,
+      delegates: LottieDelegates(
+        values: [
+          ValueDelegate.colorFilter(
+            ['Shape 4', '**'],
+            value: ColorFilter.mode(
+              Theme.of(context).primaryColorLight,
+              BlendMode.src,
+            ),
+          ),
+          ValueDelegate.colorFilter(
+            ["Shape 3", '**'],
+            value: ColorFilter.mode(
+              // brightness == Brightness.dark ? Colors.white : Colors.black,
+              Theme.of(context).primaryColorLight,
+              BlendMode.src,
+            ),
+          ),
+          ValueDelegate.colorFilter(
+            ["Shape 2", '**'],
+            value: ColorFilter.mode(
+              // brightness == Brightness.dark ? Colors.white : Colors.black,
+              Theme.of(context).primaryColorLight,
+              BlendMode.src,
+            ),
+          ),
+          ValueDelegate.colorFilter(
+            ["Shape 1", '**'],
+            value: ColorFilter.mode(
+              // brightness == Brightness.dark ? Colors.white : Colors.black,
+              Theme.of(context).primaryColorLight,
+              BlendMode.src,
+            ),
+          ),
+          ValueDelegate.colorFilter(
+            ["Layer 1", '**'],
+            value: ColorFilter.mode(
+              // brightness == Brightness.dark ? Colors.white : Colors.black,
+              Theme.of(context).primaryColor,
+              BlendMode.src,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

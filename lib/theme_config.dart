@@ -121,8 +121,13 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
   switch (homeThemeType) {
     case 'dark':
       return ThemeData.dark().copyWith(
+        textTheme: Typography().white.apply(fontFamily: 'Roboto_Condensed'),
         appBarTheme: AppBarTheme(
-          titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
+          titleTextStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Roboto_Condensed',
+          ),
           backgroundColor: hexToColor(primaryColor),
           iconTheme: IconThemeData(
             color: hexToColor(secondaryColor),
@@ -134,8 +139,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         primaryColorLight: hexToColor(secondaryColor),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor:
-                WidgetStateProperty.all(hexToColor(primaryColor)),
+            backgroundColor: WidgetStateProperty.all(hexToColor(primaryColor)),
             foregroundColor: WidgetStateProperty.all(Colors.black),
           ),
         ),
@@ -165,10 +169,12 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           selectedTileColor: hexToColor(primaryColor),
           selectedColor: hexToColor(secondaryColor),
           textColor: hexToColor(primaryColor),
+          titleTextStyle: const TextStyle(fontFamily: 'Roboto_Condensed', fontSize: 18.0)
         ),
       );
     default:
       return ThemeData.light().copyWith(
+        textTheme: Typography().black.apply(fontFamily: 'Roboto_Condensed'),
         appBarTheme: AppBarTheme(
           backgroundColor: hexToColor(primaryColor),
           iconTheme: IconThemeData(
@@ -181,8 +187,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         primaryColorLight: hexToColor(secondaryColor),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor:
-                WidgetStateProperty.all(hexToColor(primaryColor)),
+            backgroundColor: WidgetStateProperty.all(hexToColor(primaryColor)),
             foregroundColor: WidgetStateProperty.all(Colors.black),
           ),
         ),
@@ -212,6 +217,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           selectedTileColor: hexToColor(primaryColor),
           selectedColor: hexToColor(secondaryColor),
           textColor: hexToColor(primaryColor),
+           titleTextStyle: const TextStyle(fontFamily: 'Roboto_Condensed', fontSize: 18.0)
         ),
       );
   }
