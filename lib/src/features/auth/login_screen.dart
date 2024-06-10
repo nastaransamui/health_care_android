@@ -6,14 +6,13 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/constants/error_handling.dart';
 import 'package:health_care/providers/device_provider.dart';
 import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/device_service.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
-import 'package:health_care/src/features/auth/forgot_screen.dart';
-import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/utils/validate_email.dart';
 import 'package:health_care/src/utils/validate_password.dart';
 import 'package:health_care/stream_socket.dart';
@@ -163,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
         default:
           var token = data['accessToken'];
           authService.loginService(context, token);
-          Navigator.pushNamed(context, '/');
 
           break;
       }
@@ -226,14 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ForgotScreen()),
-                                        );
-                                      });
+                                      context.push('/forgot');
                                     },
                                     child: Text(
                                       context.tr('forgotPasswordLink'),
@@ -248,14 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Text(context.tr('haveAccount')),
                                       TextButton(
                                           onPressed: () {
-                                            setState(() {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SignupScreen()),
-                                              );
-                                            });
+                                           context.push('/signup');
                                           },
                                           child: Text(
                                             context.tr('signup'),
@@ -527,9 +511,8 @@ class _InputFieldState extends State<InputField> {
                 default:
                   var token = data['accessToken'];
                   authService.loginService(context, token);
-                  Navigator.pushNamed(context, '/');
                   SchedulerBinding.instance.addPostFrameCallback((_) {
-                    Navigator.pushNamed(context, '/');
+                    context.push('/');
                   });
                   break;
               }
@@ -669,6 +652,9 @@ class _InputFieldState extends State<InputField> {
         TextFormField(
           keyboardType: TextInputType.emailAddress,
           controller: widget.emailController,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           enableSuggestions: true,
           validator: ((value) {
             if (value == null || value.isEmpty) {
@@ -679,7 +665,7 @@ class _InputFieldState extends State<InputField> {
           }),
           decoration: InputDecoration(
             errorStyle: TextStyle(color: Colors.redAccent.shade400),
-            hintText: context.tr('email'),
+            alignLabelWithHint: true,
             labelText: context.tr('email'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -694,6 +680,9 @@ class _InputFieldState extends State<InputField> {
         TextFormField(
           controller: widget.passwordController,
           enableSuggestions: true,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           validator: ((value) {
             if (value == null || value.isEmpty) {
               return context.tr('passwordEnter');
@@ -706,7 +695,6 @@ class _InputFieldState extends State<InputField> {
             errorStyle: TextStyle(
               color: Colors.redAccent.shade400,
             ),
-            hintText: context.tr('password'),
             labelText: context.tr('password'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -721,6 +709,7 @@ class _InputFieldState extends State<InputField> {
               ),
             ),
             isDense: true,
+            alignLabelWithHint: true,
           ),
           obscureText: _isObscureText,
         ),

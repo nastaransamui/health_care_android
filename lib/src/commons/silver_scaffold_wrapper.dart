@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/models/cities.dart';
 import 'package:health_care/models/countries.dart';
 import 'package:health_care/models/states.dart';
@@ -321,22 +322,34 @@ class DoctorsCard extends StatefulWidget {
 
 class _DoctorsCardState extends State<DoctorsCard> {
   static late String _chosenModel;
+   String? availabilityValue;
+
+  final keyWordController = TextEditingController();
   bool selected = false;
   bool _isFinished = false;
   void init(BuildContext context) {
-    _chosenModel = context.tr('none');
+    _chosenModel = context.tr('availability');
   }
 
   @override
   void didChangeDependencies() {
     context.locale.toString(); // OK
-    _chosenModel = context.tr('none');
+    _chosenModel = context.tr('availability');
+    availabilityValue = null;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
+    List<Map<String, dynamic>> availabilityValues = [
+      {"value": context.tr('availability'), "search": null},
+      {"value": context.tr('available'), "search": "Available"},
+      {"value": context.tr('today'), "search": "AvailableToday"},
+      {"value": context.tr('tomorrow'), "search": "AvailableTomorrow"},
+      {"value": context.tr('thisWeek'), "search": "AvailableThisWeek"},
+      {"value": context.tr('thisMonth'), "search": "AvailableThisMonth"},
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
@@ -375,21 +388,29 @@ class _DoctorsCardState extends State<DoctorsCard> {
                     const SizedBox(width: 5),
                     Expanded(
                       child: TextField(
+                        onTapOutside: (event) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
+                        controller: keyWordController,
                         keyboardType: TextInputType.text,
+                        onChanged: (value) {
+                          keyWordController.text = value;
+                        },
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(top: 20),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 2),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                              ),
                             ),
-                          ),
-                          
-                          hintText: context.tr('keyWord'),
-                          hintStyle: const TextStyle(
-                            fontSize: 12.0,
-                          ),
-                          // counterText: '',
-                        ),
+                            label: Text(context.tr('keyWord')),
+                            labelStyle: TextStyle(
+                                fontSize: 12.0,
+                                color: Theme.of(context).primaryColorLight),
+                            alignLabelWithHint: true
+                            // counterText: '',
+                            ),
                       ),
                     ),
                   ],
@@ -444,18 +465,13 @@ class _DoctorsCardState extends State<DoctorsCard> {
                           ),
                           isExpanded: true,
                           value: _chosenModel,
-                          items: <String>[
-                            context.tr('none'),
-                            context.tr('available'),
-                            context.tr('today'),
-                            context.tr('tomorrow'),
-                            context.tr('thisWeek'),
-                            context.tr('thisMonth'),
-                          ].map<DropdownMenuItem<String>>((String value) {
+                          items: availabilityValues
+                              .map<DropdownMenuItem<String>>(
+                                  (Map<String, dynamic> values) {
                             return DropdownMenuItem<String>(
-                              value: value,
+                              value: values['value'],
                               child: Text(
-                                value,
+                                values['value']!,
                                 style: TextStyle(
                                   color: brightness == Brightness.dark
                                       ? Colors.white
@@ -467,6 +483,11 @@ class _DoctorsCardState extends State<DoctorsCard> {
                           onChanged: (String? newValue) {
                             setState(() {
                               _chosenModel = newValue!;
+                              for (var element in availabilityValues) {
+                                if (element['value'] == newValue) {
+                                  availabilityValue = element['search'];
+                                }
+                              }
                             });
                           },
                           hint: Text(
@@ -488,7 +509,32 @@ class _DoctorsCardState extends State<DoctorsCard> {
                     fixedSize: const Size(double.maxFinite, 30),
                     elevation: 5.0,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Map<String, String> searchFilters = {
+                      ...widget.cityValue != null 
+                          ? {"city": widget.cityValue!}
+                          : {},
+                          ...widget.stateValue != null 
+                          ? {"state": widget.stateValue!}
+                          : {},
+                          ...widget.countryValue != null 
+                          ? {"country": widget.countryValue!}
+                          : {},
+                      ...widget.specialitiesValue != null 
+                          ? {"specialities": widget.specialitiesValue!}
+                          : {},
+                      ...widget.genderValue != null 
+                          ? {"gender": widget.genderValue!}
+                          : {},
+                      ...keyWordController.text.isNotEmpty 
+                          ? {"keyWord": keyWordController.text}
+                          : {},
+                      ...availabilityValue != null 
+                          ? {"available": availabilityValue!}
+                          : {}
+                    };
+                    context.go(Uri(path: '/doctors/search', queryParameters: searchFilters).toString());
+                  },
                   child: Text(
                     context.tr('searchNow'),
                     style: const TextStyle(color: Colors.black),

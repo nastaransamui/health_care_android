@@ -9,6 +9,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/controllers/theme_controller.dart';
 import 'package:health_care/models/clinics.dart';
 import 'package:health_care/providers/clinics_provider.dart';
@@ -24,18 +25,16 @@ import 'package:health_care/services/specialities_service.dart';
 import 'package:health_care/services/theme_service.dart';
 import 'package:health_care/services/user_data_service.dart';
 import 'package:health_care/src/commons/silver_scaffold_wrapper.dart';
-import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:health_care/theme_config.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-
-class NavigationService { 
-  static GlobalKey<NavigatorState> navigatorKey = 
-  GlobalKey<NavigatorState>();
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
+
 class MyApp extends StatefulWidget {
   final StreamSocket streamSocket;
   final ThemeController controller;
@@ -56,7 +55,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   final ClinicsService clinicsService = ClinicsService();
   final SpecialitiesService specialitiesService = SpecialitiesService();
   final DoctorsService doctorsService = DoctorsService();
-  late final AnimationController _controller = AnimationController(vsync: this);
   final DeviceService deviceService = DeviceService();
   @override
   void initState() {
@@ -77,22 +75,23 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         builder: (context, snapshot) {
           var homeThemeName = Provider.of<ThemeProvider>(context).homeThemeName;
           var homeThemeType = Provider.of<ThemeProvider>(context).homeThemeType;
-          var homeActivePage =
-              Provider.of<ThemeProvider>(context).homeActivePage;
+          // var homeActivePage =
+          //     Provider.of<ThemeProvider>(context).homeActivePage;
           if (snapshot.hasData) {
             var data = snapshot.data;
             if (data!.isNotEmpty) {
               var response = jsonDecode(data);
               homeThemeName = response['homeThemeName'];
               homeThemeType = response['homeThemeType'];
-              homeActivePage = response['homeActivePage'];
+              // homeActivePage = response['homeActivePage'];
             }
           }
 
-          return MaterialApp(
-            navigatorKey: NavigationService.navigatorKey, 
+          return MaterialApp.router(
+            routerConfig: router,
+            // navigatorKey: NavigationService.navigatorKey,
             builder: BotToastInit(), //1. call BotToastInit
-            navigatorObservers: [BotToastNavigatorObserver()],
+            // navigatorObservers: [BotToastNavigatorObserver()],
             debugShowCheckedModeBanner: false,
             restorationScopeId: 'health_care',
             localizationsDelegates: context.localizationDelegates,
@@ -105,28 +104,29 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                 homeThemeType.isEmpty
                     ? widget.controller.homeThemeType
                     : homeThemeType),
-            onGenerateRoute: (settings) => generateRoute(settings),
-            home: snapshot.hasData
-                ? AnimatedBuilder(
-                    animation: _controller,
-                    builder: (BuildContext context, Widget? child) {
-                      //Get user Data
-                      return Builder(builder: (context) {
-                        switch (homeActivePage) {
-                          case 'general_0':
-                            return const General0Page();
-                          case 'general_1':
-                            return const General1Page();
-                          case 'general_2':
-                            return const General2Page();
-                          default:
-                            return const Default();
-                        }
-                      });
-                    },
-                    // child: const MyHomePage(),
-                  )
-                : const LoadingScreen(),
+            
+            // onGenerateRoute: (settings) => generateRoute(settings),
+            // home: snapshot.hasData
+            //     ? AnimatedBuilder(
+            //         animation: _controller,
+            //         builder: (BuildContext context, Widget? child) {
+            //           //Get user Data
+            //           return Builder(builder: (context) {
+            //             switch (homeActivePage) {
+            //               case 'general_0':
+            //                 return const General0Page();
+            //               case 'general_1':
+            //                 return const General1Page();
+            //               case 'general_2':
+            //                 return const General2Page();
+            //               default:
+            //                 return const Default();
+            //             }
+            //           });
+            //         },
+            //         // child: const MyHomePage(),
+            //       )
+            //     : const LoadingScreen(),
           );
         });
   }
@@ -200,7 +200,7 @@ class _DefaultState extends State<Default> {
                   child: InkWell(
                     splashColor: Theme.of(context).primaryColor,
                     onTap: () {
-                      Navigator.pushNamed(context, i.href);
+                      context.push(i.href);
                     },
                     child: Column(
                       children: [
@@ -261,9 +261,7 @@ class _DefaultState extends State<Default> {
           clipBehavior: Clip.hardEdge,
           child: InkWell(
             splashColor: Theme.of(context).primaryColor,
-            onTap: () {
-              // Navigator.pushNamed(context, i.href);
-            },
+            onTap: () {},
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -356,7 +354,7 @@ class _DefaultState extends State<Default> {
                           InkWell(
                             splashColor: Theme.of(context).hintColor,
                             onTap: () {
-                              Navigator.pushNamed(context, 'i.href');
+                              
                             },
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width,
@@ -504,9 +502,9 @@ class _DefaultState extends State<Default> {
                     ),
                   ),
                   child: SizedBox(
-                    height: 400,
+                    height: orientation == Orientation.portrait ? 400 : 500,
                     width: MediaQuery.of(context).size.width,
-                    child: const CustomAccordion(),
+                    child: CustomAccordion(orientation: orientation),
                   ),
                 ),
               )
@@ -519,7 +517,8 @@ class _DefaultState extends State<Default> {
 }
 
 class CustomAccordion extends StatefulWidget {
-  const CustomAccordion({super.key});
+  final Orientation orientation;
+  const CustomAccordion({super.key, required this.orientation});
   static const headerStyle = TextStyle(
     fontSize: 18,
   );
@@ -541,7 +540,8 @@ class _CustomAccordionState extends State<CustomAccordion> {
     final loremIpsum = context.tr('lorem');
 
     return Accordion(
-      disableScrolling: true,
+      disableScrolling:
+          widget.orientation == Orientation.portrait ? false : true,
       headerBorderColor: Theme.of(context).primaryColor,
       headerBorderColorOpened: Theme.of(context).primaryColor,
       headerBackgroundColorOpened: Theme.of(context).primaryColorLight,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:health_care/src/commons/scaffold_wrapper.dart';
 // import 'package:health_care/src/commons/scaffold_wrapper.dart';
 
 class BlogScreen extends StatelessWidget {
@@ -10,21 +11,11 @@ class BlogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.tr('home')),
-        ),
-        body: Center(
+    return ScaffoldWrapper(
+      title: 'blog',
+      children: Center(
         child: Text(context.tr('blog')),
       ),
-      ),
     );
-    // return ScaffoldWrapper(
-    //   title: 'blog',
-    //   children: Center(
-    //     child: Text(context.tr('blog')),
-    //   ),
-    // );
   }
 }

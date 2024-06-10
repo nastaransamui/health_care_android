@@ -8,6 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_3d_choice_chip/flutter_3d_choice_chip.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
@@ -438,7 +439,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         return InkWell(
           splashColor: Theme.of(context).primaryColor,
           onTap: () {
-            Navigator.pushNamed(context, i['routeName']);
+            context.push(i['routeName']);
           },
           child: Card(
             shape: RoundedRectangleBorder(
@@ -451,7 +452,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
             child: InkWell(
               splashColor: Theme.of(context).primaryColor,
               onTap: () {
-                Navigator.pushNamed(context, i['routeName']);
+                context.push(i['routeName']);
               },
               child: SizedBox(
                 child: ListTile(
@@ -464,35 +465,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
               ),
             ),
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Expanded(
-          //       child: FittedBox(
-          //         fit: BoxFit.scaleDown,
-          //         child: ClipRRect(
-          //           borderRadius: BorderRadius.circular(8),
-          //           child: i['icon'],
-          //         ),
-          //       ),
-          //     ),
-          //     Expanded(
-          //       child: ListTile(
-          //         textColor: brightness == Brightness.dark
-          //             ? Colors.white
-          //             : Colors.black,
-          //         title: Text(
-          //           name,
-          //           style: const TextStyle(
-          //             fontSize: 15.0,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //     const Icon(Icons.arrow_right)
-          //   ],
-          // ),
         );
       }).toList(),
     );
@@ -536,6 +508,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                           Theme.of(context).primaryColorLight),
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
+                                    fit: BoxFit.contain,
                                     image: imageUrl.isEmpty
                                         ? const AssetImage(
                                             'assets/images/default-avatar.png',
@@ -734,13 +707,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                           child: InkWell(
                             splashColor: Theme.of(context).primaryColor,
                             onTap: () {
-                              if (i['routeName'].isNotEmpty) {
-                                Navigator.pushNamed(context, i['routeName']);
-                              } else {
-                                if (i['name'] == 'logout') {
-                                  debugPrint("logout");
-                                }
-                              }
+                              context.push(i['routeName']);
                             },
                             child: SizedBox(
                               child: ListTile(

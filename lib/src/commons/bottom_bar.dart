@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
 
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/src/features/auth/login_screen.dart';
 import 'package:health_care/stream_socket.dart';
 
 class BottomBar extends StatefulWidget {
@@ -44,19 +44,29 @@ class _BottomBarState extends State<BottomBar> {
     switch (type) {
       case 'dashboard':
         Navigator.pop(context);
-        if (ModalRoute.of(context)?.settings.name != '/${roleName}_dashboard') {
-          Navigator.pushNamed(
-            context,
-            '/${roleName}_dashboard',
-            arguments: <String, String>{'roleName': roleName},
-          );
-        }
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (GoRouter.of(context)
+                  .routerDelegate
+                  .currentConfiguration
+                  .uri
+                  .toString() !=
+              '/${roleName}_dashboard') {
+            context.go('/${roleName}_dashboard');
+          }
+        });
         break;
       case 'profile':
         Navigator.pop(context);
-        if (ModalRoute.of(context)?.settings.name != '/${roleName}_profile') {
-          Navigator.pushNamed(context, '/${roleName}_profile');
-        }
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          if (GoRouter.of(context)
+                  .routerDelegate
+                  .currentConfiguration
+                  .uri
+                  .toString() !=
+              '/${roleName}_profile') {
+            context.go('/${roleName}_profile');
+          }
+        });
         break;
       case 'logout':
         Navigator.pop(context);
@@ -96,9 +106,7 @@ class _BottomBarState extends State<BottomBar> {
             onPressed: () {
               SchedulerBinding.instance.addPostFrameCallback(
                 (_) {
-                  if (ModalRoute.of(context)?.settings.name != '/') {
-                    Navigator.pushNamed(context, '/');
-                  }
+                  context.go('/');
                 },
               );
             },
@@ -130,12 +138,13 @@ class _BottomBarState extends State<BottomBar> {
                 padding: const EdgeInsets.only(bottom: 28.0),
                 icon: const Icon(Icons.login),
                 onPressed: () {
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
-                  });
+                  context.go('/login');
+                  // setState(() {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(builder: (context) => LoginScreen()),
+                  //   );
+                  // });
                 },
               )
             ],

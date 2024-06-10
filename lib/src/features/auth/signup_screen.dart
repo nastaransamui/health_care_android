@@ -2,9 +2,8 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
-import 'package:health_care/src/features/auth/forgot_screen.dart';
-import 'package:health_care/src/features/auth/login_screen.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/utils/validate_email.dart';
 import 'package:health_care/src/utils/validate_password.dart';
@@ -93,14 +92,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ForgotScreen()),
-                                        );
-                                      });
+                                      context.push('/forgot');
                                     },
                                     child: Text(
                                       context.tr('forgotPasswordLink'),
@@ -115,14 +107,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       Text(context.tr('haveAccount')),
                                       TextButton(
                                         onPressed: () {
-                                          setState(() {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LoginScreen()),
-                                            );
-                                          });
+                                          context.go('/login');
                                         },
                                         child: Text(
                                           context.tr('login'),
@@ -254,6 +239,9 @@ class _InputFieldState extends State<InputField> {
       children: [
         TextFormField(
           controller: widget.emailController,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           enableSuggestions: true,
           validator: ((value) {
             if (value == null || value.isEmpty) {
@@ -264,7 +252,6 @@ class _InputFieldState extends State<InputField> {
           }),
           decoration: InputDecoration(
             errorStyle: TextStyle(color: Colors.redAccent.shade400),
-            hintText: context.tr('email'),
             labelText: context.tr('email'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -273,12 +260,16 @@ class _InputFieldState extends State<InputField> {
             filled: true,
             prefixIcon: const Icon(Icons.email_sharp),
             isDense: true,
+            alignLabelWithHint: true,
           ),
         ),
         const SizedBox(height: 10),
         TextFormField(
           controller: widget.passwordController,
           enableSuggestions: true,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           validator: ((value) {
             if (value == null || value.isEmpty) {
               return context.tr('passwordEnter');
@@ -291,7 +282,6 @@ class _InputFieldState extends State<InputField> {
             errorStyle: TextStyle(
               color: Colors.redAccent.shade400,
             ),
-            hintText: context.tr('password'),
             labelText: context.tr('password'),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -306,6 +296,7 @@ class _InputFieldState extends State<InputField> {
               ),
             ),
             isDense: true,
+            alignLabelWithHint: true,
           ),
           obscureText: _isObscureText,
         ),

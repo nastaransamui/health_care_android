@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/src/app.dart';
@@ -80,12 +81,13 @@ class AuthService {
         //logout
         if (newIsLogin != null) {
           BotToast.showCustomLoading(
-              duration: const Duration(
-                seconds: 3,
-              ),
-              toastBuilder: (void Function() cancelFunc) {
-                return Text(L.tr('notEligible'));
-              });
+            duration: const Duration(
+              seconds: 3,
+            ),
+            toastBuilder: (void Function() cancelFunc) {
+              return Text(L.tr('notEligible'));
+            },
+          );
 
           logoutService(currentContext);
         }
@@ -114,28 +116,28 @@ class AuthService {
     prefs.setString('homeAccessToken', token);
     prefs.setString('profile', payloadData);
     prefs.setString('roleName', roleName);
-     late String accessToken = '';
+    late String accessToken = '';
     late String userid = '';
 
-      if (roleName == 'patient') {
-        final parsedPatient = PatientsProfile.fromJson(
-          jsonEncode(
-            jsonDecode(payloadData),
-          ),
-        );
-        accessToken = parsedPatient.accessToken;
-        userid = parsedPatient.userId;
-      } else if (roleName == 'doctors') {
-        final parsedDoctor = DoctorsProfile.fromJson(
-          jsonEncode(
-            jsonDecode(payloadData),
-          ),
-        );
-        accessToken = parsedDoctor.accessToken;
-        userid = parsedDoctor.userId;
-      }
-    
-     socket.io.options?['extraHeaders'] = {
+    if (roleName == 'patient') {
+      final parsedPatient = PatientsProfile.fromJson(
+        jsonEncode(
+          jsonDecode(payloadData),
+        ),
+      );
+      accessToken = parsedPatient.accessToken;
+      userid = parsedPatient.userId;
+    } else if (roleName == 'doctors') {
+      final parsedDoctor = DoctorsProfile.fromJson(
+        jsonEncode(
+          jsonDecode(payloadData),
+        ),
+      );
+      accessToken = parsedDoctor.accessToken;
+      userid = parsedDoctor.userId;
+    }
+
+    socket.io.options?['extraHeaders'] = {
       'userData': "${prefs.getString('userData')}",
       'token': 'Bearer $accessToken',
       'userid': userid //${parsedProfile?.userId}
@@ -144,6 +146,16 @@ class AuthService {
       ..disconnect()
       ..connect();
     authProvider.setAuth(token, true, payloadData);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (GoRouter.of(context)
+              .routerDelegate
+              .currentConfiguration
+              .uri
+              .toString() !=
+          '/') {
+        context.go('/');
+      }
+    });
   }
 
   Future<void> logoutService(BuildContext context) async {
@@ -163,8 +175,13 @@ class AuthService {
       ..disconnect()
       ..connect();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (ModalRoute.of(context)?.settings.name != '/') {
-        Navigator.pushNamed(context, '/');
+      if (GoRouter.of(context)
+              .routerDelegate
+              .currentConfiguration
+              .uri
+              .toString() !=
+          '/') {
+        context.go('/');
       }
     });
   }

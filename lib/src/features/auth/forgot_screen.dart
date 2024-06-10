@@ -1,8 +1,8 @@
-
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/loading_screen.dart';
@@ -39,104 +39,103 @@ class _ForgotScreenState extends State<ForgotScreen> {
     BuildContext context,
   ) {
     return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              context.tr('forgot'),
-            ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            context.tr('forgot'),
           ),
-          body: NotificationListener<SubmitNotification>(
-            onNotification: (notification) {
-              final email = notification.emailValue;
-              if (_formKey.currentState!.validate() && email != '') {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) => const LoadingScreen(),
-                );
-                removeLoading();
-              }
+        ),
+        body: NotificationListener<SubmitNotification>(
+          onNotification: (notification) {
+            final email = notification.emailValue;
+            if (_formKey.currentState!.validate() && email != '') {
+              showCupertinoModalPopup(
+                context: context,
+                builder: (context) => const LoadingScreen(),
+              );
+              removeLoading();
+            }
 
-              return true;
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  _header(context),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Card(
-                      child: Stack(
-                        fit: StackFit.loose,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 8.0,
-                              right: 8.0,
-                              top: 20.0,
-                            ),
-                            child: SizedBox(
-                              child: Form(
-                                key: _formKey,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                child: Column(
-                                  children: [
-                                    InputField(
-                                      emailController:
-                                          widget.emailController,
+            return true;
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _header(context),
+                Container(
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                  child: Card(
+                    child: Stack(
+                      fit: StackFit.loose,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top: 20.0,
+                          ),
+                          child: SizedBox(
+                            child: Form(
+                              key: _formKey,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              child: Column(
+                                children: [
+                                  InputField(
+                                    emailController: widget.emailController,
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      context.go('/login');
+                                    },
+                                    child: Text(
+                                      context.tr('login'),
+                                      style: TextStyle(
+                                          color:
+                                              Theme.of(context).primaryColor),
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        context.tr('login'),
-                                        style: TextStyle(
-                                            color:Theme.of(context).primaryColor),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(context.tr('haveAccount')),
-                                        TextButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(context.tr('haveAccount')),
+                                      TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
                                                     builder: (context) =>
-                                                        SignupScreen()
-                                                  ),
-                                                );
-                                              });
-                                            },
-                                            child: Text(
-                                              context.tr('signup'),
-                                              style: TextStyle(
-                                                color: Theme.of(context).primaryColor,
-                                              ),
-                                            ))
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                                        SignupScreen()),
+                                              );
+                                            });
+                                          },
+                                          child: Text(
+                                            context.tr('signup'),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                          ))
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          bottomNavigationBar: const BottomBar(showLogin: false),
         ),
-      );
+        bottomNavigationBar: const BottomBar(showLogin: false),
+      ),
+    );
   }
 }
 
@@ -241,6 +240,9 @@ class _InputFieldState extends State<InputField> {
           child: TextFormField(
             controller: widget.emailController,
             enableSuggestions: true,
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
             validator: ((value) {
               if (value == null || value.isEmpty) {
                 return context.tr('emailEnter');
@@ -250,7 +252,6 @@ class _InputFieldState extends State<InputField> {
             }),
             decoration: InputDecoration(
               errorStyle: TextStyle(color: Colors.redAccent.shade400),
-              hintText: context.tr('email'),
               labelText: context.tr('email'),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(18),
@@ -259,6 +260,7 @@ class _InputFieldState extends State<InputField> {
               filled: true,
               prefixIcon: const Icon(Icons.email_sharp),
               isDense: true,
+              alignLabelWithHint: true
             ),
           ),
         ),

@@ -2,6 +2,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 
 import 'package:lottie/lottie.dart';
@@ -155,7 +156,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                             : currentHeight / 16.5,
                         elevation: 3,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/');
+                           context.go('/');
                         },
                         color: Theme.of(context).primaryColorLight,
                         child: Text(
