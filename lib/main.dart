@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/providers/vital_provider.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,10 @@ final EasyLogger logger = EasyLogger(
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+///Prevent orientation
+SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   ///Load Theme from shared_preferences
   final themeController = ThemeController();
   tz.initializeTimeZones();
@@ -96,6 +101,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
         controller: themeController,
         streamSocket: streamSocket,
       ),
+      ), 
     ),
-  ));
+  );
 }

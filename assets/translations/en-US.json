@@ -43,7 +43,7 @@
   "Neurology": "Neurology",
   "Urology": "Urology",
   "doctorsNumber": {
-    "zero": "No doctor yet",
+    "zero": "No any doctor found.",
     "one": "We have {} doctor",
     "many": "We have {} doctors",
     "other": "We have {} doctors"
@@ -107,5 +107,13 @@
   "city": "City:",
   "noItem": "No items found!",
   "submit": "Submit",
-  "close": "Close"
+  "close": "Close",
+  "favLoginError": "You need to login first to favorite a doctor.",
+  "slideToSeeMore": "Slide Each item to see more Informations.",
+  "userName": "User Name",
+  "joinDate": "Join Date",
+  "reset": "Reset",
+  "chooseFilters": "Choose Filters",
+  "search": "Search Doctors",
+  "filterSelection": "Search with filters"
 }

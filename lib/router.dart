@@ -1,16 +1,15 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
-import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
 import 'package:health_care/src/features/auth/login_screen.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
+import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
@@ -130,21 +129,7 @@ final router = GoRouter(
       path: '/doctors/search',
       name: 'doctorsSearch',
       builder: (context, state) {
-        // print(state.pathParameters['id1']);
-        debugPrint(state.uri.queryParameters['city']);
-        debugPrint(state.uri.queryParameters['state']);
-        debugPrint(state.uri.queryParameters['country']);
-        debugPrint(state.uri.queryParameters['specialities']);
-        debugPrint(state.uri.queryParameters['gender']);
-        debugPrint(state.uri.queryParameters['keyWord']);
-        debugPrint(state.uri.queryParameters['available']);
-        // print(state.pathParameters['keyWord']);
-        return ScaffoldWrapper(
-          title: 'search',
-          children: Center(
-            child: Text(context.tr('search')),
-          ),
-        );
+        return DoctorSearch(queryParameters: state.uri.queryParameters);
       },
     )
   ],

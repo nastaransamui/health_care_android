@@ -38,8 +38,11 @@ class Doctors {
   final List<dynamic> invoiceIds;
   final List<dynamic> reviewsArray;
   final List<dynamic> rateArray;
+  final List<dynamic> timeslots;
+  final List<dynamic> favIds;
   final String accessToken;
   final bool isActive;
+  final bool online;
   final String lastUpdate;
   // final Map<dynamic, dynamic> status;
   final String id;
@@ -78,8 +81,11 @@ class Doctors {
     required this.invoiceIds,
     required this.reviewsArray,
     required this.rateArray,
+    required this.timeslots,
+    required this.favIds,
     required this.accessToken,
     required this.isActive,
+    required this.online,
     required this.lastUpdate,
     required this.id,
   });
@@ -118,8 +124,11 @@ class Doctors {
     List<dynamic>? invoiceIds,
     List<dynamic>? reviewsArray,
     List<dynamic>? rateArray,
+    List<dynamic>? timeslots,
+    List<dynamic>? favIds,
     String? accessToken,
     bool? isActive,
+    bool? online,
     String? lastUpdate,
     // Map<dynamic, dynamic>? status,
     String? id,
@@ -158,8 +167,11 @@ class Doctors {
       invoiceIds: invoiceIds ?? this.invoiceIds,
       reviewsArray: reviewsArray ?? this.reviewsArray,
       rateArray: rateArray ?? this.rateArray,
+      timeslots: timeslots ?? this.timeslots,
+      favIds: favIds ?? this.favIds,
       accessToken: accessToken ?? this.accessToken,
       isActive: isActive ?? this.isActive,
+      online: online ?? this.online,
       lastUpdate: lastUpdate ?? this.lastUpdate,
       // status: status ?? this.status,
       id: id ?? this.id,
@@ -202,8 +214,11 @@ class Doctors {
     result.addAll({'invoiceIds': invoiceIds});
     result.addAll({'reviewsArray': reviewsArray});
     result.addAll({'rateArray': rateArray});
+    result.addAll({'timeslots': timeslots});
+    result.addAll({'favIds': favIds});
     result.addAll({'accessToken': accessToken});
     result.addAll({'isActive': isActive});
+    result.addAll({'online': online});
     result.addAll({'lastUpdate': lastUpdate});
     // result.addAll({'status': status});
     result.addAll({'id': id});
@@ -246,8 +261,11 @@ class Doctors {
       invoiceIds: List<dynamic>.from(map['invoice_ids']),
       reviewsArray: List<dynamic>.from(map['reviews_array']),
       rateArray: List<dynamic>.from(map['rate_array']),
+      timeslots: List<dynamic>.from(map['timeslots']),
+      favIds: List<dynamic>.from(map['favs_id']),
       accessToken: map['accessToken'] ?? '',
       isActive: map['isActive'] ?? false,
+      online: map['online'] ?? false,
       lastUpdate: map['lastUpdate'] ?? '',
       // status: Map<dynamic, dynamic>.from(map['status']),
       id: map['_id'] ?? '',
@@ -260,7 +278,7 @@ class Doctors {
 
   @override
   String toString() {
-    return 'Doctors(createdAt: $createdAt, updatedAt: $updatedAt, userName: $userName, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, gender: $gender, dob: $dob, clinicName: $clinicName, clinicAddress: $clinicAddress, aboutMe: $aboutMe, clinicImages: $clinicImages, profileImage: $profileImage, roleName: $roleName, services: $services, address1: $address1, address2: $address2, city: $city, state: $state, zipCode: $zipCode, country: $country, pricing: $pricing, specialitiesServices: $specialitiesServices, specialities: $specialities, educations: $educations, experinces: $experinces, awards: $awards, memberships: $memberships, socialMedia: $socialMedia, registrations: $registrations, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, accessToken: $accessToken, isActive: $isActive, lastUpdate: $lastUpdate,  id: $id)';
+    return 'Doctors(createdAt: $createdAt, updatedAt: $updatedAt, userName: $userName, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, gender: $gender, dob: $dob, clinicName: $clinicName, clinicAddress: $clinicAddress, aboutMe: $aboutMe, clinicImages: $clinicImages, profileImage: $profileImage, roleName: $roleName, services: $services, address1: $address1, address2: $address2, city: $city, state: $state, zipCode: $zipCode, country: $country, pricing: $pricing, specialitiesServices: $specialitiesServices, specialities: $specialities, educations: $educations, experinces: $experinces, awards: $awards, memberships: $memberships, socialMedia: $socialMedia, registrations: $registrations, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, timeslots: $timeslots, favIds: $favIds accessToken: $accessToken, isActive: $isActive, online: $online, lastUpdate: $lastUpdate,  id: $id)';
   }
 
   @override
@@ -301,8 +319,11 @@ class Doctors {
       listEquals(other.invoiceIds, invoiceIds) &&
       listEquals(other.reviewsArray, reviewsArray) &&
       listEquals(other.rateArray, rateArray) &&
+      listEquals(other.timeslots, timeslots) &&
+      listEquals(other.favIds, favIds) &&
       other.accessToken == accessToken &&
       other.isActive == isActive &&
+      other.online == online &&
       other.lastUpdate == lastUpdate &&
       // mapEquals(other.status, status) &&
       other.id == id;
@@ -343,8 +364,11 @@ class Doctors {
       invoiceIds.hashCode ^
       reviewsArray.hashCode ^
       rateArray.hashCode ^
+      favIds.hashCode ^
+      timeslots.hashCode ^
       accessToken.hashCode ^
       isActive.hashCode ^
+      online.hashCode ^
       lastUpdate.hashCode ^
       // status.hashCode ^
       id.hashCode;

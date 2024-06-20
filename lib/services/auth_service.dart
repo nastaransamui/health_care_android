@@ -38,38 +38,6 @@ class AuthService {
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // final String? profile = prefs.getString('profile');
-    // final bool? isLogin = prefs.getBool('isLogin');
-    // final String? roleName = prefs.getString('roleName');
-    // late String accessToken = '';
-    // late String userid = '';
-    // if (isLogin != null && isLogin) {
-    //   if (roleName == 'patient') {
-    //     final parsedPatient = PatientsProfile.fromJson(
-    //       jsonEncode(
-    //         jsonDecode(profile!),
-    //       ),
-    //     );
-    //     accessToken = parsedPatient.accessToken;
-    //     userid = parsedPatient.userId;
-    //   } else if (roleName == 'doctors') {
-    //     final parsedDoctor = DoctorsProfile.fromJson(
-    //       jsonEncode(
-    //         jsonDecode(profile!),
-    //       ),
-    //     );
-    //     accessToken = parsedDoctor.accessToken;
-    //     userid = parsedDoctor.userId;
-    //   }
-    // }
-    // socket.io.options?['extraHeaders'] = {
-    //   'userData': "${prefs.getString('userData')}",
-    //   'token': 'Bearer $accessToken',
-    //   'userid': userid //${parsedProfile?.userId}
-    // }; // Update the extra headers.
-    // socket.io
-    //   ..disconnect()
-    //   ..connect();
     socket.on('getUserProfileFromAdmin', (token) async {
       var payloadData = verifyHomeAccessToken(token);
       var response = jsonDecode(payloadData);

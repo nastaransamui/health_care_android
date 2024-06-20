@@ -1,3 +1,5 @@
+
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -134,16 +136,6 @@ class CustomSilverAppBar extends SliverPersistentHeaderDelegate {
                       .copyWith(color: Colors.black),
                 ),
               ),
-              // Opacity(
-              //   opacity: percent,
-              //   child: Text(
-              //     context.tr(title),
-              //     style: const TextStyle(
-              //       color: Colors.black,
-              //       fontSize: 24,
-              //     ),
-              //   ),
-              // ),
               actions: [
                 Builder(
                   builder: (context) {
@@ -276,6 +268,16 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
     });
   }
 
+  void resetFilterState() {
+    setState(() {
+      specialitiesValue = null;
+      genderValue = null;
+      countryValue = null;
+      stateValue = null;
+      cityValue = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardTopPosition = widget.expandedHeight / 2 - widget.shrinkOffset;
@@ -293,6 +295,7 @@ class _FindDoctorsCardState extends State<FindDoctorsCard> {
           stateValue: stateValue,
           cityValue: cityValue,
           updateFilterState: updateFilterState,
+          resetFilterState: resetFilterState,
         ),
       ),
     );
@@ -306,6 +309,7 @@ class DoctorsCard extends StatefulWidget {
   final String? stateValue;
   final String? cityValue;
   final Function updateFilterState;
+  final Function resetFilterState;
   const DoctorsCard({
     super.key,
     required this.genderValue,
@@ -314,6 +318,7 @@ class DoctorsCard extends StatefulWidget {
     required this.stateValue,
     required this.cityValue,
     required this.updateFilterState,
+    required this.resetFilterState,
   });
 
   @override
@@ -322,21 +327,27 @@ class DoctorsCard extends StatefulWidget {
 
 class _DoctorsCardState extends State<DoctorsCard> {
   static late String _chosenModel;
-   String? availabilityValue;
-
+  late List<Map<String, dynamic>> availabilityValues;
+  String? availabilityValue;
   final keyWordController = TextEditingController();
+  String keyWordValue = '';
   bool selected = false;
   bool _isFinished = false;
-  void init(BuildContext context) {
-    _chosenModel = context.tr('availability');
-  }
+  double paddingTop = 15;
+  // void init(BuildContext context) {
+  //   _chosenModel = context.tr('availability');
+  // }
 
   @override
   void didChangeDependencies() {
     context.locale.toString(); // OK
-    _chosenModel = context.tr('availability');
-    availabilityValue = null;
     super.didChangeDependencies();
+  }
+
+  void updatePadding(double value) {
+    setState(() {
+      paddingTop = value;
+    });
   }
 
   @override
@@ -350,284 +361,355 @@ class _DoctorsCardState extends State<DoctorsCard> {
       {"value": context.tr('thisWeek'), "search": "AvailableThisWeek"},
       {"value": context.tr('thisMonth'), "search": "AvailableThisMonth"},
     ];
+    for (var element in availabilityValues) {
+      if (element['search'] == availabilityValue) {
+        _chosenModel = element['value'];
+      }
+    }
+
+    bool isFiltersHaveValue = keyWordValue != '' ||
+        widget.genderValue != null ||
+        widget.specialitiesValue != null ||
+        widget.countryValue != null ||
+        widget.stateValue != null ||
+        widget.cityValue != null ||
+        availabilityValue != null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
-        elevation: 12,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Theme.of(context).primaryColorLight),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15),
+          elevation: 12,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Theme.of(context).primaryColorLight),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Row(
-                  children: [
-                    Transform.translate(
-                      offset: const Offset(5.0, 20.0),
-                      child: Card(
-                        elevation: 5.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(35.0),
-                        ),
-                        child: const SizedBox(
-                          width: 45,
-                          height: 45,
-                          child: Icon(
-                            Icons.search,
-                            size: 19,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: TextField(
-                        onTapOutside: (event) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                        controller: keyWordController,
-                        keyboardType: TextInputType.text,
-                        onChanged: (value) {
-                          keyWordController.text = value;
-                        },
-                        decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 2),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            label: Text(context.tr('keyWord')),
-                            labelStyle: TextStyle(
-                                fontSize: 12.0,
-                                color: Theme.of(context).primaryColorLight),
-                            alignLabelWithHint: true
-                            // counterText: '',
-                            ),
-                      ),
-                    ),
-                  ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AnimatedPadding(
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.easeInOut,
+                  padding: EdgeInsets.only(top: paddingTop),
+                  child: Text(context.tr('filterSelection')),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0, left: 32.0),
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  height: 30.0,
-                  child: CustomPaint(
-                    size: const Size(1, double.infinity),
-                    painter: DashedLineVerticalPainter(
-                      color: Theme.of(context).primaryColor,
+                AnimatedPadding(
+                  duration: const Duration(seconds: 2),
+                  padding:
+                      EdgeInsets.only(top: paddingTop, left: 18, right: 18),
+                  child: TextField(
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      setState(() {
+                        if (isFiltersHaveValue) {
+                          paddingTop = 6;
+                        } else {
+                          paddingTop = 15;
+                        }
+                      });
+                    },
+                    controller: keyWordController,
+                    keyboardType: TextInputType.text,
+                    onChanged: (value) {
+                      keyWordController.text = value;
+                      setState(() {
+                        keyWordValue = value;
+                        if (isFiltersHaveValue && value != '') {
+                          paddingTop = 6;
+                        } else {
+                          paddingTop = 15;
+                        }
+                      });
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      prefixIconColor: Theme.of(context).primaryColor,
+                      suffixIcon: keyWordController.text.isEmpty
+                          ? null
+                          : IconButton(
+                              onPressed: () {
+                                keyWordController.text = '';
+                                setState(() {
+                                  keyWordValue = '';
+                                  if (widget.genderValue != null ||
+                                      widget.specialitiesValue != null ||
+                                      widget.countryValue != null ||
+                                      widget.stateValue != null ||
+                                      widget.cityValue != null ||
+                                      availabilityValue != null) {
+                                    paddingTop = 6;
+                                  } else {
+                                    paddingTop = 15;
+                                  }
+                                });
+                              },
+                              icon: const Icon(Icons.close)),
+                      suffixIconColor: Theme.of(context).primaryColorLight,
+                      contentPadding: const EdgeInsets.all(8),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                        ),
+                      ),
+                      label: Text(context.tr('keyWord')),
+                      labelStyle: const TextStyle(
+                        fontSize: 12.0,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Transform.translate(
-                  offset: const Offset(0, -25),
-                  child: Row(
-                    children: [
-                      Transform.translate(
-                        offset: const Offset(6, 12),
-                        child: Card(
-                          elevation: 5.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(35.0),
-                          ),
-                          child: const SizedBox(
-                            width: 45,
-                            height: 45,
-                            child: Icon(
-                              Icons.event_available,
-                              size: 19,
-                            ),
-                          ),
+                AnimatedPadding(
+                  duration: const Duration(seconds: 2),
+                  padding:
+                      EdgeInsets.only(top: paddingTop, left: 18, right: 18),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      isDense: true,
+                      prefixIcon: const Icon(
+                        Icons.event_available,
+                        size: 19,
+                      ),
+                      prefixIconColor: Theme.of(context).primaryColor,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 10.0),
+                      enabledBorder: OutlineInputBorder(
+                        // width: 0.0 produces a thin "hairline" border
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                          width: 1,
                         ),
                       ),
-                      const SizedBox(width: 5),
-                      Expanded(
-                        child: DropdownButton<String>(
-                          iconEnabledColor: Theme.of(context).primaryColor,
+                      border: const OutlineInputBorder(),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        iconEnabledColor: Theme.of(context).primaryColorLight,
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                        ),
+                        isExpanded: true,
+                        value: _chosenModel,
+                        items: availabilityValues.map<DropdownMenuItem<String>>(
+                            (Map<String, dynamic> values) {
+                          return DropdownMenuItem<String>(
+                            value: values['value'],
+                            child: Text(
+                              values['value']!,
+                              style: TextStyle(
+                                color: brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _chosenModel = newValue!;
+                            for (var element in availabilityValues) {
+                              if (element['value'] == newValue) {
+                                availabilityValue = element['search'];
+                                if (keyWordValue != '' ||
+                                    widget.genderValue != null ||
+                                    widget.specialitiesValue != null ||
+                                    widget.countryValue != null ||
+                                    widget.stateValue != null ||
+                                    widget.cityValue != null ||
+                                    element['search'] != null) {
+                                  paddingTop = 6;
+                                } else {
+                                  paddingTop = 15;
+                                }
+                              }
+                            }
+                          });
+                        },
+                        hint: Text(
+                          context.tr('availability'),
                           style: const TextStyle(
                             fontSize: 12.0,
                           ),
-                          underline: Container(
-                            height: 1.6,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          isExpanded: true,
-                          value: _chosenModel,
-                          items: availabilityValues
-                              .map<DropdownMenuItem<String>>(
-                                  (Map<String, dynamic> values) {
-                            return DropdownMenuItem<String>(
-                              value: values['value'],
-                              child: Text(
-                                values['value']!,
-                                style: TextStyle(
-                                  color: brightness == Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _chosenModel = newValue!;
-                              for (var element in availabilityValues) {
-                                if (element['value'] == newValue) {
-                                  availabilityValue = element['search'];
-                                }
-                              }
-                            });
-                          },
-                          hint: Text(
-                            context.tr('availability'),
-                            style: const TextStyle(
-                              fontSize: 12.0,
-                            ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                AnimatedPadding(
+                  duration: const Duration(seconds: 2),
+                  padding:
+                      EdgeInsets.only(top: paddingTop, right: 10, left: 10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(double.maxFinite, 30),
+                      elevation: 5.0,
+                    ),
+                    onPressed: () {
+                      Map<String, String> searchFilters = {
+                        ...widget.cityValue != null
+                            ? {"city": widget.cityValue!}
+                            : {},
+                        ...widget.stateValue != null
+                            ? {"state": widget.stateValue!}
+                            : {},
+                        ...widget.countryValue != null
+                            ? {"country": widget.countryValue!}
+                            : {},
+                        ...widget.specialitiesValue != null
+                            ? {"specialities": widget.specialitiesValue!}
+                            : {},
+                        ...widget.genderValue != null
+                            ? {"gender": widget.genderValue!}
+                            : {},
+                        ...keyWordController.text.isNotEmpty
+                            ? {"keyWord": keyWordController.text}
+                            : {},
+                        ...availabilityValue != null
+                            ? {"available": availabilityValue!}
+                            : {}
+                      };
+                      context.push(Uri(
+                              path: '/doctors/search',
+                              queryParameters: searchFilters)
+                          .toString());
+                    },
+                    child: Text(
+                      context.tr('searchNow'),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ),
+                AnimatedPadding(
+                  duration: const Duration(seconds: 2),
+                  padding:
+                      EdgeInsets.only(top: paddingTop, right: 10, left: 10),
+                  child: SwipeableButtonView(
+                    indicatorColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
+                    isFinished: _isFinished,
+                    onFinish: () async {
+                      await Navigator.push(
+                        context,
+                        PageTransition(
+                          child: FilterScreen(
+                              title: 'title',
+                              description: 'description',
+                              specialitiesValue: widget.specialitiesValue,
+                              genderValue: widget.genderValue,
+                              countryValue: widget.countryValue,
+                              stateValue: widget.stateValue,
+                              cityValue: widget.cityValue,
+                              onSubmit: (
+                                String? specialities,
+                                String? gender,
+                                String? country,
+                                String? state,
+                                String? city,
+                              ) {
+                                setState(() {
+                                  if (specialities != null ||
+                                      gender != null ||
+                                      country != null ||
+                                      state != null ||
+                                      city != null) {
+                                    paddingTop = 6;
+                                  } else {
+                                    paddingTop = 15;
+                                  }
+                                });
+                                widget.updateFilterState(
+                                    specialities, gender, country, state, city);
+                              },
+                              onReset: () {
+                                keyWordController.text = '';
+                                setState(() {
+                                  keyWordValue = '';
+                                  availabilityValue = null;
+                                  paddingTop = 15;
+                                });
+                                widget.resetFilterState();
+                              }),
+                          type: PageTransitionType.fade,
+                        ),
+                      );
+
+                      setState(() {
+                        _isFinished = false;
+                      });
+                    },
+                    onWaitingProcess: () {
+                      Future.delayed(const Duration(microseconds: 300), () {
+                        setState(() {
+                          _isFinished = true;
+                        });
+                      });
+                    },
+                    activeColor: Theme.of(context).primaryColorLight,
+                    buttonColor: Theme.of(context).cardColor,
+                    buttonWidget: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                    buttonText: context.tr('filters'),
+                    buttontextstyle: const TextStyle(color: Colors.black),
+                  ),
+                ),
+                AnimatedCrossFade(
+                  crossFadeState: !_isFinished
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  duration: const Duration(milliseconds: 1000),
+                  firstChild: Row(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.tight,
+                        flex: 11,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            '$keyWordValue ${availabilityValue == null ? '' : _chosenModel} ${widget.genderValue ?? ''}  ${widget.specialitiesValue ?? ''}\n${widget.countryValue ?? ''} ${widget.stateValue ?? ''} ${widget.cityValue ?? ''}',
                           ),
                         ),
                       ),
+                      if (isFiltersHaveValue) ...[
+                        Flexible(
+                          fit: FlexFit.tight,
+                          flex: 2,
+                          child: IconButton(
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              padding: const EdgeInsets.all(0),
+                              splashFactory: NoSplash.splashFactory,
+                              hoverColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                            ),
+                            onPressed: () {
+                              widget.resetFilterState();
+                              keyWordController.text = '';
+                              setState(() {
+                                keyWordValue = '';
+                                availabilityValue = null;
+                                paddingTop = 15;
+                              });
+                            },
+                            icon: const Icon(Icons.close),
+                          ),
+                        )
+                      ]
                     ],
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(double.maxFinite, 30),
-                    elevation: 5.0,
-                  ),
-                  onPressed: () {
-                    Map<String, String> searchFilters = {
-                      ...widget.cityValue != null 
-                          ? {"city": widget.cityValue!}
-                          : {},
-                          ...widget.stateValue != null 
-                          ? {"state": widget.stateValue!}
-                          : {},
-                          ...widget.countryValue != null 
-                          ? {"country": widget.countryValue!}
-                          : {},
-                      ...widget.specialitiesValue != null 
-                          ? {"specialities": widget.specialitiesValue!}
-                          : {},
-                      ...widget.genderValue != null 
-                          ? {"gender": widget.genderValue!}
-                          : {},
-                      ...keyWordController.text.isNotEmpty 
-                          ? {"keyWord": keyWordController.text}
-                          : {},
-                      ...availabilityValue != null 
-                          ? {"available": availabilityValue!}
-                          : {}
-                    };
-                    context.go(Uri(path: '/doctors/search', queryParameters: searchFilters).toString());
-                  },
-                  child: Text(
-                    context.tr('searchNow'),
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
-                child: SwipeableButtonView(
-                  indicatorColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor),
-                  isFinished: _isFinished,
-                  onFinish: () async {
-                    await Navigator.push(
-                      context,
-                      PageTransition(
-                        child: FilterScreen(
-                          title: 'title',
-                          description: 'description',
-                          specialitiesValue: widget.specialitiesValue,
-                          genderValue: widget.genderValue,
-                          countryValue: widget.countryValue,
-                          stateValue: widget.stateValue,
-                          cityValue: widget.cityValue,
-                          onSubmit: (
-                            String? specialities,
-                            String? gender,
-                            String? country,
-                            String? state,
-                            String? city,
-                          ) {
-                            widget.updateFilterState(
-                                specialities, gender, country, state, city);
-                          },
-                        ),
-                        type: PageTransitionType.fade,
-                      ),
-                    );
-
-                    setState(() {
-                      _isFinished = false;
-                    });
-                  },
-                  onWaitingProcess: () {
-                    Future.delayed(const Duration(microseconds: 300), () {
-                      setState(() {
-                        _isFinished = true;
-                      });
-                    });
-                  },
-                  activeColor: Theme.of(context).primaryColorLight,
-                  buttonColor: Theme.of(context).cardColor,
-                  buttonWidget: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                  buttonText: context.tr('filters'),
-                  buttontextstyle: const TextStyle(color: Colors.black),
-                ),
-                // child: ElevatedButton(
-                //   style: ElevatedButton.styleFrom(
-                //     fixedSize: const Size(double.maxFinite, 30),
-                //     elevation: 5.0,
-                //     foregroundColor: Theme.of(context).primaryColor,
-                //     animationDuration: const Duration(milliseconds: 1000),
-                //     backgroundColor: Theme.of(context).primaryColorLight,
-                //     shadowColor: Theme.of(context).primaryColorLight,
-                //   ),
-                //   onPressed: () {
-                //     widget.toggleFilters();
-                //   },
-                //   child: Text(
-                //     context.tr('filters'),
-                //     style: const TextStyle(color: Colors.black),
-                //   ),
-                // ),
-              ),
-              // Text()
-              AnimatedCrossFade(
-                crossFadeState: !_isFinished
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                duration: const Duration(milliseconds: 1000),
-                firstChild: Text(
-                    '${widget.genderValue ?? ''}  ${widget.specialitiesValue ?? ''}\n${widget.countryValue ?? ''} ${widget.stateValue ?? ''} ${widget.cityValue ?? ''}'),
-                secondChild: const Text(''),
-              )
-            ],
-          ),
-        ),
-      ),
+                  secondChild: const Text(''),
+                )
+              ],
+            ),
+          )),
     );
   }
 }
@@ -661,6 +743,7 @@ class FilterScreen extends StatefulWidget {
   final String title;
   final String description;
   final dynamic onSubmit;
+  final Function onReset;
   final String? genderValue;
   final String? specialitiesValue;
   final String? countryValue;
@@ -671,6 +754,7 @@ class FilterScreen extends StatefulWidget {
     required this.title,
     required this.description,
     required this.onSubmit,
+    required this.onReset,
     required this.genderValue,
     required this.specialitiesValue,
     required this.countryValue,
@@ -911,13 +995,13 @@ class _FilterScreenState extends State<FilterScreen> {
                                             const EdgeInsets.only(left: 12.0),
                                         child: imageIsSvg
                                             ? SvgPicture.network(
-                                                '$imageSrc?random=${DateTime.now().millisecondsSinceEpoch}',
+                                                imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
                                                 width: 20,
                                                 height: 20,
                                                 fit: BoxFit.fitHeight,
                                               )
                                             : Image.network(
-                                                '$imageSrc?random=${DateTime.now().millisecondsSinceEpoch}',
+                                                imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
                                                 width: 20,
                                                 height: 20,
                                               ),
@@ -1583,6 +1667,7 @@ class _FilterScreenState extends State<FilterScreen> {
                             countryController.text = '';
                             stateController.text = '';
                             cityController.text = '';
+                            widget.onReset();
                           },
                           child: Text(
                             context.tr('reset'),

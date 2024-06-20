@@ -21,6 +21,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return AppBar(
       title: Text(context.tr(widget.title)),
       actions: [
+        
         Builder(
           builder: (context) {
             return IconButton(

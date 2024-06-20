@@ -64,7 +64,17 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     authService.getAuthService(context);
     clinicsService.getClinicData(context);
     specialitiesService.getSpecialitiesData(context);
-    doctorsService.getDoctorsData(context);
+    doctorsService.getDoctorsData(context, {
+      "keyWord": null,
+      "specialities": null,
+      "gender": null,
+      "country": null,
+      "state": null,
+      "city": null,
+      "sortBy": 'profile.userName',
+      "limit": 10,
+      "skip": 0,
+    });
   }
 
   @override
@@ -104,7 +114,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                 homeThemeType.isEmpty
                     ? widget.controller.homeThemeType
                     : homeThemeType),
-            
+
             // onGenerateRoute: (settings) => generateRoute(settings),
             // home: snapshot.hasData
             //     ? AnimatedBuilder(
@@ -318,139 +328,136 @@ class _DefaultState extends State<Default> {
     );
 
     ValueListenableBuilder bestDoctorsScrollView = ValueListenableBuilder(
-        valueListenable: isCollapsed,
-        builder: (context, value, child) {
-          return CarouselSlider(
-            items: doctors.map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  var subheading = context.tr(i.specialities[0].specialities);
-                  final name = "${i.firstName} ${i.lastName}";
-                  var cardImage = NetworkImage(i.profileImage.isEmpty
-                      ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
-                      : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
-                  var supportingText = i.aboutMe;
-                  return SizedBox(
-                    child: Card(
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Theme.of(context).primaryColorLight,
-                          width: 2.0,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
+      valueListenable: isCollapsed,
+      builder: (context, value, child) {
+        return CarouselSlider(
+          items: doctors.map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                var subheading = context.tr(i.specialities[0].specialities);
+                final name = "${i.firstName} ${i.lastName}";
+                var cardImage = NetworkImage(i.profileImage.isEmpty
+                    ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
+                    : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
+                var supportingText = i.aboutMe;
+                return SizedBox(
+                  child: Card(
+                    elevation: 4.0,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                        width: 2.0,
                       ),
-                      child: Column(
-                        children: [
-                          SizedBox(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 70,
+                          child: ListTile(
+                            title: Text("Dr. $name"),
+                            subtitle: Text(subheading),
+                            trailing: const Icon(Icons.favorite_outline),
+                          ),
+                        ),
+                        InkWell(
+                          splashColor: Theme.of(context).hintColor,
+                          onTap: () {},
+                          child: SizedBox(
                             width: MediaQuery.of(context).size.width,
-                            height: 70,
-                            child: ListTile(
-                              title: Text("Dr. $name"),
-                              subtitle: Text(subheading),
-                              trailing: const Icon(Icons.favorite_outline),
+                            height: 250,
+                            child: Ink.image(
+                              image: cardImage,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          InkWell(
-                            splashColor: Theme.of(context).hintColor,
-                            onTap: () {
-                              
-                            },
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: 250,
-                              child: Ink.image(
-                                image: cardImage,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              // height: 50,
-                              padding: const EdgeInsets.only(
-                                left: 16.0,
-                              ),
-                              alignment: Alignment.centerLeft,
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      style: TextStyle(
-                                        color: brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                      text: supportingText.length <= 240
-                                          ? supportingText
-                                          : supportingText.substring(0, 240),
+                        ),
+                        Expanded(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            // height: 50,
+                            padding:
+                                const EdgeInsets.only(left: 16.0, right: 16.0),
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    style: TextStyle(
+                                      color: brightness == Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
-                                    if (supportingText.length >= 240) ...[
-                                      TextSpan(
-                                          text: value
-                                              ? ' ...Read more'
-                                              : 'Read less',
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          recognizer: TapGestureRecognizer()
-                                            ..onTap = () {
+                                    text: supportingText.length <= 240
+                                        ? supportingText
+                                        : supportingText.substring(0, 240),
+                                  ),
+                                  if (supportingText.length >= 240) ...[
+                                    TextSpan(
+                                        text: value
+                                            ? ' ...Read more'
+                                            : 'Read less',
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            isCollapsed.value =
+                                                !isCollapsed.value;
+                                            showModalBottomSheet(
+                                              context: context,
+                                              useSafeArea: true,
+                                              isDismissible: true,
+                                              showDragHandle: true,
+                                              constraints: const BoxConstraints(
+                                                maxHeight: double.infinity,
+                                              ),
+                                              scrollControlDisabledMaxHeightRatio:
+                                                  1,
+                                              builder: (context) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: Text(
+                                                    supportingText,
+                                                    textAlign:
+                                                        TextAlign.justify,
+                                                    style: const TextStyle(
+                                                      fontSize: 18.0,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ).whenComplete(() {
                                               isCollapsed.value =
                                                   !isCollapsed.value;
-                                              showModalBottomSheet(
-                                                context: context,
-                                                useSafeArea: true,
-                                                isDismissible: false,
-                                                showDragHandle: true,
-                                                constraints:
-                                                    const BoxConstraints(
-                                                  maxHeight: double.infinity,
-                                                ),
-                                                scrollControlDisabledMaxHeightRatio:
-                                                    1,
-                                                builder: (context) {
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    child: Text(
-                                                      supportingText,
-                                                      textAlign:
-                                                          TextAlign.justify,
-                                                      style: const TextStyle(
-                                                        fontSize: 18.0,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ).whenComplete(() {
-                                                isCollapsed.value =
-                                                    !isCollapsed.value;
-                                              });
-                                            })
-                                    ],
+                                            });
+                                          })
                                   ],
-                                ),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              );
-            }).toList(),
-            options: CarouselOptions(
-              autoPlay: false,
-              enlargeCenterPage: true,
-              viewportFraction: 1,
-              aspectRatio: 2.0,
-              initialPage: 1,
-              height: 450,
-            ),
-          );
-        });
+                  ),
+                );
+              },
+            );
+          }).toList(),
+          options: CarouselOptions(
+            autoPlay: false,
+            enlargeCenterPage: true,
+            viewportFraction: 1,
+            aspectRatio: 2.0,
+            initialPage: 1,
+            height: 450,
+          ),
+        );
+      },
+    );
 
     return OrientationBuilder(
       builder: (BuildContext context, Orientation orientation) {
@@ -488,26 +495,28 @@ class _DefaultState extends State<Default> {
                 ),
                 bestDoctorsScrollView
               ],
-              ListTile(
-                title: Text(context.tr('howItsWork')),
-              ),
-              Flexible(
-                fit: FlexFit.loose,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/work-img.png'),
-                      fit: BoxFit.cover,
-                      opacity: 0.3,
+              if (clinics.isNotEmpty) ...[
+                ListTile(
+                  title: Text(context.tr('howItsWork')),
+                ),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/work-img.png'),
+                        fit: BoxFit.cover,
+                        opacity: 0.3,
+                      ),
+                    ),
+                    child: SizedBox(
+                      height: orientation == Orientation.portrait ? 400 : 500,
+                      width: MediaQuery.of(context).size.width,
+                      child: CustomAccordion(orientation: orientation),
                     ),
                   ),
-                  child: SizedBox(
-                    height: orientation == Orientation.portrait ? 400 : 500,
-                    width: MediaQuery.of(context).size.width,
-                    child: CustomAccordion(orientation: orientation),
-                  ),
                 ),
-              )
+              ],
             ],
           ),
         );

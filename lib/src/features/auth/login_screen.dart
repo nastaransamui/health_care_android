@@ -649,69 +649,77 @@ class _InputFieldState extends State<InputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextFormField(
-          keyboardType: TextInputType.emailAddress,
-          controller: widget.emailController,
-          onTapOutside: (event) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          enableSuggestions: true,
-          validator: ((value) {
-            if (value == null || value.isEmpty) {
-              return context.tr('emailEnter');
-            } else {
-              return validateEmail(value);
-            }
-          }),
-          decoration: InputDecoration(
-            errorStyle: TextStyle(color: Colors.redAccent.shade400),
-            alignLabelWithHint: true,
-            labelText: context.tr('email'),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none),
-            fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            filled: true,
-            prefixIcon: const Icon(Icons.email_sharp),
-            isDense: true,
+        Semantics(
+          label: context.tr('email'),
+          textField: true,
+          child: TextFormField(
+            keyboardType: TextInputType.emailAddress,
+            controller: widget.emailController,
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            enableSuggestions: true,
+            validator: ((value) {
+              if (value == null || value.isEmpty) {
+                return context.tr('emailEnter');
+              } else {
+                return validateEmail(value);
+              }
+            }),
+            decoration: InputDecoration(
+              errorStyle: TextStyle(color: Colors.redAccent.shade400),
+              alignLabelWithHint: true,
+              labelText: context.tr('email'),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none),
+              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              filled: true,
+              prefixIcon: const Icon(Icons.email_sharp),
+              isDense: true,
+            ),
           ),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: widget.passwordController,
-          enableSuggestions: true,
-          onTapOutside: (event) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          validator: ((value) {
-            if (value == null || value.isEmpty) {
-              return context.tr('passwordEnter');
-            } else {
-              return validatePassword(value);
-            }
-          }),
-          decoration: InputDecoration(
-            errorMaxLines: 3,
-            errorStyle: TextStyle(
-              color: Colors.redAccent.shade400,
-            ),
-            labelText: context.tr('password'),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none),
-            fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            filled: true,
-            prefixIcon: const Icon(Icons.password),
-            suffixIcon: IconButton(
-              onPressed: showPassword,
-              icon: Icon(
-                _isObscureText ? Icons.visibility_off : Icons.visibility,
+        Semantics(
+          label: context.tr('password'),
+          textField: true,
+          child: TextFormField(
+            controller: widget.passwordController,
+            enableSuggestions: true,
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
+            validator: ((value) {
+              if (value == null || value.isEmpty) {
+                return context.tr('passwordEnter');
+              } else {
+                return validatePassword(value);
+              }
+            }),
+            decoration: InputDecoration(
+              errorMaxLines: 3,
+              errorStyle: TextStyle(
+                color: Colors.redAccent.shade400,
               ),
+              labelText: context.tr('password'),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none),
+              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              filled: true,
+              prefixIcon: const Icon(Icons.password),
+              suffixIcon: IconButton(
+                onPressed: showPassword,
+                icon: Icon(
+                  _isObscureText ? Icons.visibility_off : Icons.visibility,
+                ),
+              ),
+              isDense: true,
+              alignLabelWithHint: true,
             ),
-            isDense: true,
-            alignLabelWithHint: true,
+            obscureText: _isObscureText,
           ),
-          obscureText: _isObscureText,
         ),
         const SizedBox(height: 10),
         ElevatedButton(

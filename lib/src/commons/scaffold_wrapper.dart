@@ -23,9 +23,7 @@ class _ScaffoldWrapperState extends State<ScaffoldWrapper> {
         appBar: CustomAppBar(title: widget.title),
         endDrawer: const EndDrawer(),
         drawer: const StartDrawer(),
-        body: Center(
-          child: widget.children,
-        ),
+        body: widget.children,
        bottomNavigationBar:  const BottomBar(showLogin: true),
       ),
     );
