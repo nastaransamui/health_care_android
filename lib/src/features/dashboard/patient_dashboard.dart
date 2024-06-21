@@ -502,7 +502,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                 ),
                                 height: 180,
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColorLight,
+                                  color: Colors.transparent,
                                   border: Border.all(
                                       color:
                                           Theme.of(context).primaryColorLight),

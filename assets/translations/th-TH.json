@@ -115,5 +115,7 @@
   "reset": "รีเซ็ต",
   "chooseFilters": "เลือกตัวกรอง",
   "search": "ค้นหาแพทย์",
-  "filterSelection": "ค้นหาด้วยตัวกรอง"
+  "filterSelection": "ค้นหาด้วยตัวกรอง",
+  "readMore": "...อ่านเพิ่มเติม",
+  "readLess": "อ่านน้อยลง"
 }

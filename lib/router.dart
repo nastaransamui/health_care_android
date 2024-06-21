@@ -9,6 +9,7 @@ import 'package:health_care/src/features/auth/login_screen.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
+import 'package:health_care/src/features/doctors/profile/doctors_profile.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
@@ -130,6 +131,15 @@ final router = GoRouter(
       name: 'doctorsSearch',
       builder: (context, state) {
         return DoctorSearch(queryParameters: state.uri.queryParameters);
+      },
+    ),
+    GoRoute(
+      path: '/doctors/profile/:id',
+      name: 'doctorsProfile',
+      builder: (context, state) {
+        return DoctorsProfile(
+          pathParameters: state.pathParameters,
+        );
       },
     )
   ],

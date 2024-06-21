@@ -1,4 +1,3 @@
-
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_slidable_panel/models.dart';
 import 'package:flutter_slidable_panel/widgets/slidable_panel.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -472,7 +472,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                     availabilityValue,
                                     localQueryParams);
                               },
-                              onReset: (){
+                              onReset: () {
                                 resetFilterState(localQueryParams);
                               },
                             ),
@@ -941,7 +941,7 @@ class _SlidableListTileState extends State<SlidableListTile>
       children: [
         Text(name),
         if (name == 'specialitiesServices') ...[
-         Table(
+          Table(
             border: TableBorder(
               horizontalInside:
                   BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
@@ -975,9 +975,8 @@ class _SlidableListTileState extends State<SlidableListTile>
                 ]
               ]
             ],
-          )     
-        
-         ] else if (name == 'educations') ...[
+          )
+        ] else if (name == 'educations') ...[
           Table(
             border: TableBorder(
               horizontalInside:
@@ -1271,7 +1270,7 @@ class _SlidableListTileState extends State<SlidableListTile>
                 ]
               ]
             ],
-          )     
+          )
         ] else if (name == 'registrations') ...[
           Table(
             border: TableBorder(
@@ -1342,7 +1341,6 @@ class _SlidableListTileState extends State<SlidableListTile>
               ]
             ],
           )
-        
         ]
       ],
     );
@@ -1392,6 +1390,9 @@ class _SlidableListTileState extends State<SlidableListTile>
         patientId = patientProfile!.userId;
       }
     }
+    final doctorId = singleDoctor.id;
+
+    final doctorIdEncrypted = encrypter.encrypt(doctorId, iv: iv);
 
     return SlidablePanel(
         controller: _slideController,
@@ -1643,26 +1644,38 @@ class _SlidableListTileState extends State<SlidableListTile>
                                         : Colors.pink,
                                     elevation: 12,
                                   ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        bottomRight: Radius.circular(8),
-                                      ),
-                                      image: DecorationImage(
-                                        image: singleDoctor.profileImage.isEmpty
-                                            ? const AssetImage(
-                                                'assets/images/default-avatar.png',
-                                              ) as ImageProvider
-                                            : CachedNetworkImageProvider(
-                                                singleDoctor.profileImage,
-                                              ),
-                                        fit: BoxFit.cover,
-                                      ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      context.pushNamed(
+                                        'doctorsProfile',
+                                        pathParameters: {
+                                          'id': Uri.encodeComponent(
+                                              doctorIdEncrypted.base64)
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          bottomRight: Radius.circular(8),
+                                        ),
+                                        image: DecorationImage(
+                                          image:
+                                              singleDoctor.profileImage.isEmpty
+                                                  ? const AssetImage(
+                                                      'assets/images/default-avatar.png',
+                                                    ) as ImageProvider
+                                                  : CachedNetworkImageProvider(
+                                                      singleDoctor.profileImage,
+                                                    ),
+                                          fit: BoxFit.cover,
+                                        ),
 
-                                      // your own shape
-                                      shape: BoxShape.rectangle,
+                                        // your own shape
+                                        shape: BoxShape.rectangle,
+                                      ),
+                                      height: 90,
                                     ),
-                                    height: 90,
                                   ),
                                 ),
                               ),
@@ -1675,7 +1688,32 @@ class _SlidableListTileState extends State<SlidableListTile>
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("Dr. $name"),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "Dr. $name",
+                                              style: TextStyle(
+                                                color: brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  context.pushNamed(
+                                                    'doctorsProfile',
+                                                    pathParameters: {
+                                                      'id': Uri.encodeComponent(
+                                                          doctorIdEncrypted
+                                                              .base64)
+                                                    },
+                                                  );
+                                                },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                       const SizedBox(height: 10),
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -1694,7 +1732,8 @@ class _SlidableListTileState extends State<SlidableListTile>
                                                   )
                                                 : CachedNetworkImage(
                                                     key: ValueKey(
-                                                        specialitiesImageSrc),
+                                                      specialitiesImageSrc,
+                                                    ),
                                                     width: 20,
                                                     height: 20,
                                                     imageUrl:
@@ -1775,7 +1814,7 @@ class _SlidableListTileState extends State<SlidableListTile>
                                                   ),
                                                 );
                                               }).toList())
-                                        ]
+                                        ]else ...[const SizedBox(height: 30,)]
                                       ],
                                     )),
                               ),
@@ -1885,8 +1924,10 @@ class _SlidableListTileState extends State<SlidableListTile>
                                                       100) ...[
                                                     TextSpan(
                                                         text: value
-                                                            ? ' ...Read more'
-                                                            : 'Read less',
+                                                            ? context
+                                                                .tr('readMore')
+                                                            : context
+                                                                .tr('readLess'),
                                                         style: TextStyle(
                                                           fontSize: 10,
                                                           color:

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 String ipApiUrl = 'http://ip-api.com/json';
 const double expandedHeight = 250;
@@ -95,3 +97,8 @@ List elements = [
     "icon": const FaIcon(FontAwesomeIcons.lock),
   },
 ];
+
+    final key = encrypt.Key.fromUtf8(dotenv.env['ENCRYPT_32_KEY']!);
+    final iv = encrypt.IV.fromLength(16);
+
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));

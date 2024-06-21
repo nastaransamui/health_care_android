@@ -758,7 +758,7 @@ class DoctorUserProfile {
       invoiceIds: List<dynamic>.from(map['invoice_ids']),
       reviewsArray: List<dynamic>.from(map['reviews_array']),
       rateArray: List<dynamic>.from(map['rate_array']),
-      timeSlotId: List<dynamic>.from(map['timeSlotId']),
+      timeSlotId: map['timeSlotId'] == null ? [] : List<dynamic>.from(map['timeSlotId']),
       patientsId: List<dynamic>.from(map['patients_id']),
       favsId: List<dynamic>.from(map['favs_id']),
       reservationsId: List<dynamic>.from(map['reservations_id']),

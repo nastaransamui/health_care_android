@@ -115,5 +115,7 @@
   "reset": "Reset",
   "chooseFilters": "Choose Filters",
   "search": "Search Doctors",
-  "filterSelection": "Search with filters"
+  "filterSelection": "Search with filters",
+  "readMore": " ...Read more",
+  "readLess": "Read less"
 }

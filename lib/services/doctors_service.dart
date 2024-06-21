@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:health_care/providers/doctors_provider.dart';
@@ -7,10 +8,11 @@ import 'package:session_storage/session_storage.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorsService {
-  Future<void> getDoctorsData(BuildContext context, Map<String, dynamic> queryParameters) async {
+  Future<void> getDoctorsData(
+      BuildContext context, Map<String, dynamic> queryParameters) async {
     var doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
     void doctorWithUpdate() {
-      socket.emit('doctorSearch', queryParameters );
+      socket.emit('doctorSearch', queryParameters);
       socket.on('doctorSearchReturn', (data) {
         if (data['status'] == 200) {
           doctorsProvider.setDoctors(data['doctors']);
@@ -25,14 +27,16 @@ class DoctorsService {
     // });
   }
 
-   Future<void> searchDoctorsData(BuildContext context, Map<String, dynamic> queryParameters) async {
+  Future<void> searchDoctorsData(
+      BuildContext context, Map<String, dynamic> queryParameters) async {
     var doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
-final session = SessionStorage();
+    final session = SessionStorage();
     void searchWithUpdate() {
-      socket.emit('doctorSearch', {...queryParameters, "limit": int.parse(session['limit']!)} );
+      socket.emit('doctorSearch',
+          {...queryParameters, "limit": int.parse(session['limit']!)});
       socket.on('doctorSearchReturn', (data) {
         if (data['status'] == 200) {
-          doctorsProvider.setDoctorsSearch(data['doctors'],  data['total']?? 0);
+          doctorsProvider.setDoctorsSearch(data['doctors'], data['total'] ?? 0);
         }
       });
     }
@@ -42,5 +46,21 @@ final session = SessionStorage();
     socket.on('updateDoctorSearch', (data) {
       searchWithUpdate();
     });
+  }
+
+  Future<void> findUserById(BuildContext context, String id) async {
+    var doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
+    void findUserWithUpdate() {
+      socket.emit('findUserById', {"_id": id});
+      socket.on('findUserByIdReturn', (data) {
+        if(data['status'] == 200){
+          log('${data['user']}');
+          doctorsProvider.setSingleDoctor(data['user']);
+        }
+      });
+    }
+
+    findUserWithUpdate();
+    socket.on('updateFindUserById', (data) => findUserWithUpdate());
   }
 }

@@ -51,7 +51,7 @@ class _BottomBarState extends State<BottomBar> {
                   .uri
                   .toString() !=
               '/${roleName}_dashboard') {
-            context.go('/${roleName}_dashboard');
+            context.push('/${roleName}_dashboard');
           }
         });
         break;
@@ -64,7 +64,7 @@ class _BottomBarState extends State<BottomBar> {
                   .uri
                   .toString() !=
               '/${roleName}_profile') {
-            context.go('/${roleName}_profile');
+            context.push('/${roleName}_profile');
           }
         });
         break;
@@ -89,7 +89,7 @@ class _BottomBarState extends State<BottomBar> {
       } else if (roleName == 'doctors') {
         if (doctorsProfile!.userProfile.profileImage.isNotEmpty) {
           imageUrl =
-              '${doctorsProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+              doctorsProfile.userProfile.profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
         }
       }
     }
@@ -152,7 +152,7 @@ class _BottomBarState extends State<BottomBar> {
             Builder(builder: (popoverContextOnly) {
               return GestureDetector(
                 child: CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColorLight,
+                  backgroundColor: Theme.of(context).primaryColor,
                   child: Stack(
                     children: [
                       Align(
@@ -168,6 +168,8 @@ class _BottomBarState extends State<BottomBar> {
                                   )
                                 : CachedNetworkImage(
                                     imageUrl: imageUrl,
+                                     fadeInDuration: const Duration(milliseconds:0),
+                                      fadeOutDuration: const Duration(milliseconds:0),
                                     errorWidget: (ccontext, url, error) {
                                       return Image.asset(
                                         'assets/images/default-avatar.png',
@@ -295,6 +297,8 @@ class _AuthListState extends State<AuthList> {
                                     )
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
+                                      fadeInDuration: const Duration(milliseconds:0),
+                                      fadeOutDuration: const Duration(milliseconds:0),
                                       errorWidget: (ccontext, url, error) {
                                         return Image.asset(
                                           'assets/images/default-avatar.png',
