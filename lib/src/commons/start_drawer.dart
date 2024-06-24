@@ -27,7 +27,6 @@ class _StartDrawerState extends State<StartDrawer> {
     var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
     var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
     var roleName = Provider.of<AuthProvider>(context).roleName;
-
     return SafeArea(
       child: Drawer(
         child: ListTileTheme(
@@ -43,21 +42,10 @@ class _StartDrawerState extends State<StartDrawer> {
                 ),
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/images/drawer.jpeg"),
+                    image: AssetImage("assets/images/drawer.jpg"),
                     fit: BoxFit.fill,
                   ),
                 ),
-                // otherAccountsPictures: [
-                //   IconButton(
-                //     key: icon_key,
-                //     onPressed: () => updateTheme(),
-                //     icon: Icon(
-                //       icon,
-                //       color: Colors.white,
-                //       size: 30,
-                //     ),
-                //   ),
-                // ],
               ),
               ListTile(
                 leading: const Icon(Icons.home),

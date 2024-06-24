@@ -27,7 +27,6 @@ IO.Socket socket = IO.io(
   dotenv.env['SOCKET_URL'],
   OptionBuilder()
       .setTransports(['websocket'])
-      // .setExtraHeaders({'foo': 'bar'}) // optional
       .disableAutoConnect()
       .build(),
 );
@@ -58,19 +57,10 @@ if (isLogin != null && isLogin) {
       'userData': "$userData",
       'token': 'Bearer $accessToken',
       'userid': userid //${parsedProfile?.userId}
-    }; // Update the extra headers.
-    // socket.io
-    //   ..disconnect()
-    //   ..connect();
+    }; 
   socket.connect();
   socket.onConnect((_) {
     print('conneted');
-
-    // socket.on('getUserProfileFromAdmin', (data) {
-    //   print(data);
-    //   // final themeFromAdmin = ThemeFromAdmin.fromJson(json.encode(data));
-    //   // streamSocket.addResponse(themeFromAdmin.toJson());
-    // });
   });
 
   socket.onConnectError((err){
@@ -79,7 +69,6 @@ if (isLogin != null && isLogin) {
 
 
   //When an event recieved from server, data is added to the stream
-  // socket.on('event', (data) => streamSocket.addResponse);
   socket.onDisconnect((_) => print('disconnect'));
 }
 

@@ -13,10 +13,11 @@ import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/device_service.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
-import 'package:health_care/src/utils/validate_email.dart';
-import 'package:health_care/src/utils/validate_password.dart';
+import 'package:health_care/src/features/auth/auth_container.dart';
+import 'package:health_care/src/features/auth/auth_header.dart';
+import 'package:health_care/src/features/auth/email_field.dart';
+import 'package:health_care/src/features/auth/password_field.dart';
 import 'package:health_care/stream_socket.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -196,69 +197,43 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _header(context),
-                Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
-                  child: Card(
-                    child: Stack(
-                      fit: StackFit.loose,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                            top: 20.0,
-                          ),
-                          child: SizedBox(
-                            child: Form(
-                              key: _formKey,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              child: Column(
-                                children: [
-                                  InputField(
-                                    emailController: widget.emailController,
-                                    passwordController:
-                                        widget.passwordController,
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      context.push('/forgot');
-                                    },
-                                    child: Text(
-                                      context.tr('forgotPasswordLink'),
-                                      style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(context.tr('haveAccount')),
-                                      TextButton(
-                                          onPressed: () {
-                                           context.push('/signup');
-                                          },
-                                          child: Text(
-                                            context.tr('signup'),
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                          ))
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                const AuthHeader(),
+                AuthContainer(
+                  formKey: _formKey,
+                  children: [
+                    InputField(
+                      emailController: widget.emailController,
+                      passwordController: widget.passwordController,
                     ),
-                  ),
-                ),
+                    TextButton(
+                      onPressed: () {
+                        context.push('/forgot');
+                      },
+                      child: Text(
+                        context.tr('forgotPasswordLink'),
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(context.tr('haveAccount')),
+                        TextButton(
+                            onPressed: () {
+                              context.push('/signup');
+                            },
+                            child: Text(
+                              context.tr('signup'),
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ))
+                      ],
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -274,63 +249,6 @@ class SubmitNotification extends Notification {
   final String passwordValue;
 
   SubmitNotification(this.emailValue, this.passwordValue);
-}
-
-_header(context) {
-  // var brightness = Theme.of(context).brightness;
-  return Container(
-    margin: const EdgeInsets.only(
-      top: 8.0,
-    ),
-    height: 180,
-    child: Lottie.asset(
-      "assets/images/authHeader1.json",
-      animate: true,
-      delegates: LottieDelegates(
-        values: [
-          ValueDelegate.colorFilter(
-            ['Shape 4', '**'],
-            value: ColorFilter.mode(
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Shape 3", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Shape 2", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Shape 1", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Layer 1", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColor,
-              BlendMode.src,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }
 
 class InputField extends StatefulWidget {
@@ -349,18 +267,14 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
-  bool _isObscureText = true;
+
 
   final formKey = GlobalKey<FormBuilderState>();
   var roleName = '';
   final AuthService authService = AuthService();
   double lifeTime = 2500;
   double duration = 200;
-  showPassword() {
-    setState(() {
-      _isObscureText = !_isObscureText;
-    });
-  }
+
 
   _formSubmit() {
     SubmitNotification(
@@ -649,78 +563,9 @@ class _InputFieldState extends State<InputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Semantics(
-          label: context.tr('email'),
-          textField: true,
-          child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            controller: widget.emailController,
-            onTapOutside: (event) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            enableSuggestions: true,
-            validator: ((value) {
-              if (value == null || value.isEmpty) {
-                return context.tr('emailEnter');
-              } else {
-                return validateEmail(value);
-              }
-            }),
-            decoration: InputDecoration(
-              errorStyle: TextStyle(color: Colors.redAccent.shade400),
-              alignLabelWithHint: true,
-              labelText: context.tr('email'),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: const Icon(Icons.email_sharp),
-              isDense: true,
-            ),
-          ),
-        ),
+        EmailField(emailController: widget.emailController),
         const SizedBox(height: 10),
-        Semantics(
-          label: context.tr('password'),
-          textField: true,
-          child: TextFormField(
-            controller: widget.passwordController,
-            enableSuggestions: true,
-            onTapOutside: (event) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            validator: ((value) {
-              if (value == null || value.isEmpty) {
-                return context.tr('passwordEnter');
-              } else {
-                return validatePassword(value);
-              }
-            }),
-            decoration: InputDecoration(
-              errorMaxLines: 3,
-              errorStyle: TextStyle(
-                color: Colors.redAccent.shade400,
-              ),
-              labelText: context.tr('password'),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: const Icon(Icons.password),
-              suffixIcon: IconButton(
-                onPressed: showPassword,
-                icon: Icon(
-                  _isObscureText ? Icons.visibility_off : Icons.visibility,
-                ),
-              ),
-              isDense: true,
-              alignLabelWithHint: true,
-            ),
-            obscureText: _isObscureText,
-          ),
-        ),
+        PasswordField(passwordController: widget.passwordController),
         const SizedBox(height: 10),
         ElevatedButton(
           onPressed: _formSubmit,

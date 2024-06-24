@@ -55,6 +55,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool? isLogin = prefs.getBool('isLogin');
     final String? roleName = prefs.getString('roleName');
     final String? userData = prefs.getString('userData');
+    ///Manual logout by removes all prefs
     // await prefs.remove('isLogin');
     // await prefs.remove('homeAccessToken');
     // await prefs.remove('profile');

@@ -765,7 +765,7 @@ class DoctorUserProfile {
       prescriptionsId: List<dynamic>.from(map['prescriptions_id']),
       lastUpdate: map['lastUpdate'] ?? '',
       id: map['id'] ?? '',
-      lastLogin: LastLogin.fromMap(map['lastLogin']),
+      lastLogin:map['lastLogin'] == null ? LastLogin(date: '', ipAddr: '', userAgent: '') : LastLogin.fromMap(map['lastLogin']),
       online: map['online'] ?? false,
       idle: map['idle'] ?? false,
     );

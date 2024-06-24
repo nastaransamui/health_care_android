@@ -1,0 +1,1116 @@
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:delayed_display/delayed_display.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:health_care/constants/global_variables.dart';
+import 'package:health_care/models/doctors.dart';
+
+class DoctorCard extends StatelessWidget {
+  final Doctors singleDoctor;
+  final double height;
+  final Function increaseHight;
+  final Function decreaseHight;
+  const DoctorCard({
+    super.key,
+    required this.singleDoctor,
+    required this.height,
+    required this.increaseHight,
+    required this.decreaseHight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        side:
+            BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      elevation: 5.0,
+      clipBehavior: Clip.hardEdge,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            PhotoRowWidget(singleDoctor: singleDoctor),
+            Divider(
+                color: Theme.of(context).primaryColor,
+                indent: 0,
+                endIndent: 0,
+                height: 5),
+            LocationAboutWidget(singleDoctor: singleDoctor),
+            Divider(
+              color: Theme.of(context).primaryColor,
+              indent: 0,
+              endIndent: 0,
+              height: 1,
+            ),
+            if (height == 200) ...[
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    visualDensity:
+                        const VisualDensity(horizontal: -4, vertical: -4),
+                    onPressed: () {
+                      increaseHight();
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
+                  )
+                ],
+              )
+            ] else ...[
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    visualDensity:
+                        const VisualDensity(horizontal: -4, vertical: -4),
+                    onPressed: () {
+                      decreaseHight();
+                    },
+                    icon: const Icon(Icons.arrow_drop_up),
+                  )
+                ],
+              ),
+              ServicesWidget(singleDoctor: singleDoctor)
+            ]
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PhotoRowWidget extends StatefulWidget {
+  final Doctors singleDoctor;
+  const PhotoRowWidget({
+    super.key,
+    required this.singleDoctor,
+  });
+
+  @override
+  State<PhotoRowWidget> createState() => _PhotoRowWidgetState();
+}
+
+class _PhotoRowWidgetState extends State<PhotoRowWidget> {
+  @override
+  Widget build(BuildContext context) {
+    var brightness = Theme.of(context).brightness;
+    final name =
+        "${widget.singleDoctor.firstName} ${widget.singleDoctor.lastName}";
+    final doctorId = widget.singleDoctor.id;
+
+    final doctorIdEncrypted = encrypter.encrypt(doctorId, iv: iv);
+    var subheading =
+        context.tr(widget.singleDoctor.specialities[0].specialities);
+    final specialitiesImageSrc = widget.singleDoctor.specialities[0].image;
+    final imageIsSvg = specialitiesImageSrc.endsWith('.svg');
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Flexible(
+            flex: 2,
+            fit: FlexFit.tight,
+            child: badges.Badge(
+              stackFit: StackFit.passthrough,
+              position: badges.BadgePosition.custom(
+                start: 4,
+                top: 4,
+              ),
+              badgeContent: AvatarGlow(
+                startDelay: const Duration(milliseconds: 1000),
+                glowColor: widget.singleDoctor.online
+                    ? Colors.green
+                    : Colors.transparent,
+                glowShape: BoxShape.circle,
+                animate: widget.singleDoctor.online,
+                repeat: widget.singleDoctor.online,
+                curve: Curves.fastOutSlowIn,
+                child: Material(
+                  elevation: 8.0,
+                  shape: const CircleBorder(),
+                  color: Colors.transparent,
+                  child: Icon(
+                    widget.singleDoctor.online ? Icons.check : Icons.close,
+                    color: Colors.white,
+                    size: 7,
+                  ),
+                ),
+              ),
+              badgeStyle: badges.BadgeStyle(
+                padding: const EdgeInsets.all(1),
+                shape: badges.BadgeShape.circle,
+                badgeColor:
+                    widget.singleDoctor.online ? Colors.green : Colors.pink,
+                elevation: 12,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  context.pushNamed(
+                    'doctorsProfile',
+                    pathParameters: {
+                      'id': Uri.encodeComponent(doctorIdEncrypted.base64)
+                    },
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      bottomRight: Radius.circular(8),
+                    ),
+                    image: DecorationImage(
+                      image: widget.singleDoctor.profileImage.isEmpty
+                          ? const AssetImage(
+                              'assets/images/default-avatar.png',
+                            ) as ImageProvider
+                          : CachedNetworkImageProvider(
+                              '${widget.singleDoctor.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}',
+                            ),
+                      fit: BoxFit.cover,
+                    ),
+
+                    // your own shape
+                    shape: BoxShape.rectangle,
+                  ),
+                  height: 90,
+                ),
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 3,
+            fit: FlexFit.tight,
+            child: SizedBox(
+              height: 80,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Dr. $name",
+                          style: TextStyle(
+                            color: brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context.pushNamed(
+                                'doctorsProfile',
+                                pathParameters: {
+                                  'id': Uri.encodeComponent(
+                                      doctorIdEncrypted.base64)
+                                },
+                              );
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(subheading),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 8.0,
+                        ),
+                        child: imageIsSvg
+                            ? SvgPicture.network(
+                                specialitiesImageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                width: 20,
+                                height: 20,
+                                fit: BoxFit.fitHeight,
+                              )
+                            : CachedNetworkImage(
+                                key: ValueKey(
+                                  specialitiesImageSrc,
+                                ),
+                                width: 20,
+                                height: 20,
+                                imageUrl: specialitiesImageSrc,
+                                errorWidget: (ccontext, url, error) {
+                                  return Image.asset(
+                                    'assets/images/default-avatar.png',
+                                  );
+                                },
+                              ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 2,
+            fit: FlexFit.tight,
+            child: SizedBox(
+                height: 80,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    RatingStars(
+                      value: 3.5,
+                      onValueChanged: (v) {},
+                      starCount: 5,
+                      starSize: 10,
+                      valueLabelVisibility: false,
+                      maxValue: 5,
+                      starSpacing: 2,
+                      maxValueVisibility: true,
+                      animationDuration: const Duration(milliseconds: 1000),
+                      starOffColor: const Color(0xffe7e8ea),
+                      starColor: Colors.yellow,
+                    ),
+                    Text(
+                      'Gender: ${widget.singleDoctor.gender == 'Mr' ? '👨' : '👩'} ${widget.singleDoctor.gender}',
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                    if (widget.singleDoctor.clinicImages.isNotEmpty) ...[
+                      CarouselSlider(
+                          options: CarouselOptions(
+                            height: 50.0,
+                            autoPlay: true,
+                            enlargeCenterPage: true,
+                          ),
+                          items: widget.singleDoctor.clinicImages.map((i) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    color: Theme.of(context).primaryColorLight,
+                                    width: 0.5),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              elevation: 5.0,
+                              clipBehavior: Clip.hardEdge,
+                              child: Image.network(
+                                semanticLabel: i.tags[0].title,
+                                fit: BoxFit.cover,
+                                i.src,
+                                width: 50,
+                                height: 50,
+                              ),
+                            );
+                          }).toList())
+                    ] else ...[
+                      const SizedBox(
+                        height: 30,
+                      )
+                    ]
+                  ],
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LocationAboutWidget extends StatefulWidget {
+  final Doctors singleDoctor;
+
+  const LocationAboutWidget({
+    super.key,
+    required this.singleDoctor,
+  });
+
+  @override
+  State<LocationAboutWidget> createState() => _LocationAboutWidgetState();
+}
+
+class _LocationAboutWidgetState extends State<LocationAboutWidget> {
+  @override
+  Widget build(BuildContext context) {
+    var brightness = Theme.of(context).brightness;
+
+    final isCollapsed = ValueNotifier<bool>(true);
+    return IntrinsicHeight(
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 12,
+              ),
+              child: Icon(
+                Icons.location_on,
+                color: Theme.of(context).primaryColorLight,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 8,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 5,
+                    child: Text(
+                      widget.singleDoctor.city,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 5,
+                    child: Text(
+                      widget.singleDoctor.state,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 5,
+                    child: Text(
+                      widget.singleDoctor.country,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            VerticalDivider(
+              width: 3,
+              thickness: 1,
+              indent: 0,
+              endIndent: 0,
+              color: Theme.of(context).primaryColorLight,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      context.tr('about'),
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: isCollapsed,
+                    builder: (context, value, child) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                style: TextStyle(
+                                  color: brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 10,
+                                ),
+                                text: widget.singleDoctor.aboutMe.length <= 100
+                                    ? widget.singleDoctor.aboutMe
+                                    : widget.singleDoctor.aboutMe
+                                        .substring(0, 100),
+                              ),
+                              if (widget.singleDoctor.aboutMe.length >=
+                                  100) ...[
+                                TextSpan(
+                                    text: value
+                                        ? context.tr('readMore')
+                                        : context.tr('readLess'),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        isCollapsed.value = !isCollapsed.value;
+                                        showModalBottomSheet(
+                                          context: context,
+                                          useSafeArea: true,
+                                          isDismissible: true,
+                                          showDragHandle: true,
+                                          constraints: const BoxConstraints(
+                                            maxHeight: double.infinity,
+                                          ),
+                                          scrollControlDisabledMaxHeightRatio:
+                                              1,
+                                          builder: (context) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: Text(
+                                                widget.singleDoctor.aboutMe,
+                                                textAlign: TextAlign.justify,
+                                                style: const TextStyle(
+                                                  fontSize: 18.0,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ).whenComplete(() {
+                                          isCollapsed.value =
+                                              !isCollapsed.value;
+                                        });
+                                      })
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            )
+          ]),
+    );
+  }
+}
+
+class ServicesWidget extends StatefulWidget {
+
+  final Doctors singleDoctor;
+  const ServicesWidget({
+    super.key,
+    required this.singleDoctor,
+  });
+
+  @override
+  State<ServicesWidget> createState() => _ServicesWidgetState();
+}
+
+class _ServicesWidgetState extends State<ServicesWidget> {
+  void showArrayDataModal(
+      BuildContext context, String name, List<dynamic> data) {
+    Widget children = Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Text(name),
+        if (name == 'specialitiesServices') ...[
+          Table(
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+            ),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              ...[
+                ...[
+                  ...data.map((e) {
+                    return TableRow(children: [
+                      Center(
+                        child: Text(
+                          e,
+                        ),
+                      ),
+                    ]);
+                  }),
+                ]
+              ]
+            ],
+          )
+        ] else if (name == 'educations') ...[
+          Table(
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+            ),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+              1: FlexColumnWidth(),
+              2: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              TableRow(
+                children: <Widget>[
+                  SizedBox(
+                    height: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('collage'),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: SizedBox(
+                      height: 32,
+                      width: 32,
+                      child: Center(
+                        child: Text(
+                          context.tr('degree'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('yearOfCompletion'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...[
+                ...[
+                  ...data.map((e) {
+                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
+                        .parseUTC('${e.yearOfCompletion}')
+                        .toLocal();
+                    String formattedDate = DateFormat("yyyy").format(dateValue);
+                    return TableRow(children: [
+                      Center(
+                        child: Text(
+                          e.collage,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          e.degree,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          formattedDate,
+                        ),
+                      ),
+                    ]);
+                  }),
+                ]
+              ]
+            ],
+          )
+        ] else if (name == 'experinces') ...[
+          Table(
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+            ),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+              1: FlexColumnWidth(),
+              2: FlexColumnWidth(),
+              3: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              TableRow(
+                children: <Widget>[
+                  SizedBox(
+                    height: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('designation'),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: SizedBox(
+                      height: 32,
+                      width: 32,
+                      child: Center(
+                        child: Text(
+                          context.tr('hospitalName'),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('from'),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('to'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...[
+                ...[
+                  ...data.map((e) {
+                    var fromDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
+                        .parseUTC('${e.from}')
+                        .toLocal();
+                    String formattedFromDate =
+                        DateFormat("yyyy MMM dd").format(fromDateValue);
+                    var toDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
+                        .parseUTC('${e.from}')
+                        .toLocal();
+                    String formattedToDate =
+                        DateFormat("yyyy MMM dd").format(toDateValue);
+                    return TableRow(children: [
+                      Center(
+                        child: Text(
+                          e.designation,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          e.hospitalName,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          formattedFromDate,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          formattedToDate,
+                        ),
+                      ),
+                    ]);
+                  }),
+                ]
+              ]
+            ],
+          )
+        ] else if (name == 'awards') ...[
+          Table(
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+            ),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+              1: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              TableRow(
+                children: <Widget>[
+                  SizedBox(
+                    height: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('award'),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: SizedBox(
+                      height: 32,
+                      width: 32,
+                      child: Center(
+                        child: Text(
+                          context.tr('year'),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...[
+                ...[
+                  ...data.map((e) {
+                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
+                        .parseUTC('${e.year}')
+                        .toLocal();
+                    String formattedYearDate =
+                        DateFormat("yyyy").format(yearValue);
+                    return TableRow(children: [
+                      Center(
+                        child: Text(
+                          e.award,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          formattedYearDate,
+                        ),
+                      ),
+                    ]);
+                  }),
+                ]
+              ]
+            ],
+          )
+        ] else if (name == 'memberships') ...[
+          Table(
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+            ),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              ...[
+                ...[
+                  ...data.map((e) {
+                    return TableRow(children: [
+                      Center(
+                        child: Text(
+                          e.membership,
+                        ),
+                      ),
+                    ]);
+                  }),
+                ]
+              ]
+            ],
+          )
+        ] else if (name == 'registrations') ...[
+          Table(
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+            ),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+              1: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              TableRow(
+                children: <Widget>[
+                  SizedBox(
+                    height: 32,
+                    child: Center(
+                      child: Text(
+                        context.tr('registration'),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: SizedBox(
+                      height: 32,
+                      width: 32,
+                      child: Center(
+                        child: Text(
+                          context.tr('year'),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...[
+                ...[
+                  ...data.map((e) {
+                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
+                        .parseUTC('${e.year}')
+                        .toLocal();
+                    String formattedYearDate =
+                        DateFormat("yyyy").format(yearValue);
+                    return TableRow(children: [
+                      Center(
+                        child: Text(
+                          e.registration,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          formattedYearDate,
+                        ),
+                      ),
+                    ]);
+                  }),
+                ]
+              ]
+            ],
+          )
+        ]
+      ],
+    );
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isDismissible: true,
+      showDragHandle: false,
+      barrierColor: Theme.of(context).cardColor.withOpacity(0.8),
+      constraints: BoxConstraints(
+        maxHeight: double.infinity,
+        minWidth: MediaQuery.of(context).size.width,
+        minHeight: MediaQuery.of(context).size.height / 5,
+      ),
+      scrollControlDisabledMaxHeightRatio: 1,
+      builder: (context) {
+        return Padding(
+            padding: const EdgeInsets.all(8),
+            child: SingleChildScrollView(child: children));
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DelayedDisplay(
+      delay: const Duration(milliseconds: 200),
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  showArrayDataModal(
+                    context,
+                    'specialitiesServices',
+                    widget.singleDoctor.specialitiesServices,
+                  );
+                },
+                child: Chip(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
+                  visualDensity:
+                      const VisualDensity(horizontal: 4, vertical: -3),
+                  padding: const EdgeInsets.all(0),
+                  label: Text(context.tr('services')),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showArrayDataModal(
+                    context,
+                    'educations',
+                    widget.singleDoctor.educations,
+                  );
+                },
+                child: Chip(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
+                  visualDensity:
+                      const VisualDensity(horizontal: 4, vertical: -3),
+                  padding: const EdgeInsets.all(0),
+                  label: Text(context.tr('educations')),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showArrayDataModal(
+                    context,
+                    'experinces',
+                    widget.singleDoctor.experinces,
+                  );
+                },
+                child: Chip(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
+                  visualDensity:
+                      const VisualDensity(horizontal: 4, vertical: -3),
+                  padding: const EdgeInsets.all(0),
+                  label: Text(context.tr('experinces')),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showArrayDataModal(
+                    context,
+                    'awards',
+                    widget.singleDoctor.awards,
+                  );
+                },
+                child: Chip(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
+                  visualDensity:
+                      const VisualDensity(horizontal: 4, vertical: -3),
+                  padding: const EdgeInsets.all(0),
+                  label: Text(context.tr('awards')),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  showArrayDataModal(
+                    context,
+                    'memberships',
+                    widget.singleDoctor.memberships,
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity:
+                        const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('memberships')),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showArrayDataModal(
+                    context,
+                    'registrations',
+                    widget.singleDoctor.registrations,
+                  );
+                },
+                child: Chip(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
+                  visualDensity:
+                      const VisualDensity(horizontal: 4, vertical: -3),
+                  padding: const EdgeInsets.all(0),
+                  label: Text(context.tr('registrations')),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

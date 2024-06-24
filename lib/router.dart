@@ -1,8 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
-import 'package:health_care/src/app.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
 import 'package:health_care/src/features/auth/login_screen.dart';
@@ -14,6 +14,10 @@ import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:health_care/src/landing/default.dart';
+import 'package:health_care/src/landing/general_0_page.dart';
+import 'package:health_care/src/landing/general_1_page.dart';
+import 'package:health_care/src/landing/general_2_page.dart';
 import 'package:provider/provider.dart';
 
 // GoRouter configuration
@@ -149,30 +153,3 @@ final router = GoRouter(
     );
   },
 );
-
-// Route<dynamic> generateRoute(RouteSettings routeSettings) {
-//   switch (routeSettings.name) {
-//     case PatientDashboard.routeName:
-//       return MaterialPageRoute(
-//         settings: routeSettings,
-//         builder: (_) => const PatientDashboard(),
-//       );
-//     case PharmacyScreen.routeName:
-//       return MaterialPageRoute(
-//         settings: routeSettings,
-//         builder: (_) => const PharmacyScreen(),
-//       );
-//     case BlogScreen.routeName:
-//       return MaterialPageRoute(
-//         settings: routeSettings,
-//         builder: (_) => const BlogScreen(),
-//       );
-//     default:
-//       return MaterialPageRoute(
-//         settings: routeSettings,
-//         builder: (_) => const SafeArea(
-//           child: NotFound404Error(),
-//         ),
-//       );
-//   }
-// }

@@ -51,7 +51,7 @@ class _BottomBarState extends State<BottomBar> {
                   .uri
                   .toString() !=
               '/${roleName}_dashboard') {
-            context.push('/${roleName}_dashboard');
+            context.go('/${roleName}_dashboard');
           }
         });
         break;
@@ -64,7 +64,7 @@ class _BottomBarState extends State<BottomBar> {
                   .uri
                   .toString() !=
               '/${roleName}_profile') {
-            context.push('/${roleName}_profile');
+            context.go('/${roleName}_profile');
           }
         });
         break;
@@ -88,8 +88,8 @@ class _BottomBarState extends State<BottomBar> {
         }
       } else if (roleName == 'doctors') {
         if (doctorsProfile!.userProfile.profileImage.isNotEmpty) {
-          imageUrl =
-              doctorsProfile.userProfile.profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
+          imageUrl = doctorsProfile.userProfile
+              .profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
         }
       }
     }
@@ -116,20 +116,18 @@ class _BottomBarState extends State<BottomBar> {
             padding: const EdgeInsets.only(bottom: 28.0),
             icon: const Icon(Icons.search),
             onPressed: () {
-              setState(() {
-                // _myPage.jumpToPage(1);
-              });
+              context.push(
+                Uri(path: '/doctors/search', queryParameters: {}).toString(),
+              );
             },
           ),
           IconButton(
             iconSize: 30.0,
             padding: const EdgeInsets.only(bottom: 28.0),
             icon: const Icon(Icons.notifications),
-            onPressed: () {
-              setState(() {
-                // _myPage.jumpToPage(2);
-              });
-            },
+            onPressed: widget.showLogin ?  () {
+              Scaffold.of(context).openEndDrawer();
+            } : null,
           ),
           if (!isLogin && widget.showLogin) ...[
             ...[
@@ -139,12 +137,6 @@ class _BottomBarState extends State<BottomBar> {
                 icon: const Icon(Icons.login),
                 onPressed: () {
                   context.go('/login');
-                  // setState(() {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => LoginScreen()),
-                  //   );
-                  // });
                 },
               )
             ],
@@ -168,8 +160,10 @@ class _BottomBarState extends State<BottomBar> {
                                   )
                                 : CachedNetworkImage(
                                     imageUrl: imageUrl,
-                                     fadeInDuration: const Duration(milliseconds:0),
-                                      fadeOutDuration: const Duration(milliseconds:0),
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 0),
+                                    fadeOutDuration:
+                                        const Duration(milliseconds: 0),
                                     errorWidget: (ccontext, url, error) {
                                       return Image.asset(
                                         'assets/images/default-avatar.png',
@@ -297,8 +291,10 @@ class _AuthListState extends State<AuthList> {
                                     )
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
-                                      fadeInDuration: const Duration(milliseconds:0),
-                                      fadeOutDuration: const Duration(milliseconds:0),
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 0),
+                                      fadeOutDuration:
+                                          const Duration(milliseconds: 0),
                                       errorWidget: (ccontext, url, error) {
                                         return Image.asset(
                                           'assets/images/default-avatar.png',
@@ -398,8 +394,6 @@ class _AuthListState extends State<AuthList> {
           InkWell(
             onTap: () {
               widget.authListClicked('logout', roleName);
-              // logoutSubmit(
-              //     context, patientProfile, doctorsProfile, isLogin, roleName);
             },
             child: SizedBox(
               height: 30,
@@ -427,38 +421,4 @@ class _AuthListState extends State<AuthList> {
       ),
     );
   }
-
-  // void logoutSubmit(
-  //     context, patientProfile, doctorsProfile, isLogin, roleName) {
-  //   late String services;
-  //   late String userid;
-  //   if (isLogin != null && isLogin) {
-  //     if (roleName == 'patient') {
-  //       services = patientProfile.services;
-  //       userid = patientProfile.userId;
-  //     } else if (roleName == 'doctors') {
-  //       services = doctorsProfile.services;
-  //       userid = doctorsProfile.userId;
-  //     }
-  //     Navigator.of(context).pop();
-  //     socket.emit('logOutSubmit', {userid, services});
-  //     socket.on('logOutReturn', (data) {
-  //       if (data['status'] != 200) {
-  //         showToast(
-  //           context,
-  //           Toast(
-  //             title: 'Failed',
-  //             description: data['reason'] ?? context.tr('logoutFailed'),
-  //             duration: Duration(milliseconds: 200.toInt()),
-  //             lifeTime: Duration(
-  //               milliseconds: 2500.toInt(),
-  //             ),
-  //           ),
-  //         );
-  //       } else {
-  //         authService.logoutService(context);
-  //       }
-  //     });
-  //   }
-  // }
 }

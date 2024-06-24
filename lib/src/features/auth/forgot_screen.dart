@@ -4,10 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
+import 'package:health_care/src/features/auth/auth_container.dart';
+import 'package:health_care/src/features/auth/auth_header.dart';
+import 'package:health_care/src/features/auth/email_field.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/loading_screen.dart';
-import 'package:health_care/src/utils/validate_email.dart';
-import 'package:lottie/lottie.dart';
 
 Future<void> func() async {}
 
@@ -61,74 +62,46 @@ class _ForgotScreenState extends State<ForgotScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _header(context),
-                Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
-                  child: Card(
-                    child: Stack(
-                      fit: StackFit.loose,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                            top: 20.0,
-                          ),
-                          child: SizedBox(
-                            child: Form(
-                              key: _formKey,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              child: Column(
-                                children: [
-                                  InputField(
-                                    emailController: widget.emailController,
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      context.go('/login');
-                                    },
-                                    child: Text(
-                                      context.tr('login'),
-                                      style: TextStyle(
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(context.tr('haveAccount')),
-                                      TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SignupScreen()),
-                                              );
-                                            });
-                                          },
-                                          child: Text(
-                                            context.tr('signup'),
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                          ))
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                const AuthHeader(),
+                AuthContainer(
+                  formKey: _formKey,
+                  children: [
+                    InputField(
+                      emailController: widget.emailController,
                     ),
-                  ),
-                ),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/login');
+                      },
+                      child: Text(
+                        context.tr('login'),
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(context.tr('haveAccount')),
+                        TextButton(
+                            onPressed: () {
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignupScreen()),
+                                );
+                              });
+                            },
+                            child: Text(
+                              context.tr('signup'),
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ))
+                      ],
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -147,62 +120,6 @@ class SubmitNotification extends Notification {
   );
 }
 
-_header(context) {
-  return Container(
-    margin: const EdgeInsets.only(
-      top: 24.0,
-    ),
-    height: 200,
-    child: Lottie.asset(
-      "assets/images/authHeader1.json",
-      animate: true,
-      delegates: LottieDelegates(
-        values: [
-          ValueDelegate.colorFilter(
-            ['Shape 4', '**'],
-            value: ColorFilter.mode(
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Shape 3", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Shape 2", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Shape 1", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColorLight,
-              BlendMode.src,
-            ),
-          ),
-          ValueDelegate.colorFilter(
-            ["Layer 1", '**'],
-            value: ColorFilter.mode(
-              // brightness == Brightness.dark ? Colors.white : Colors.black,
-              Theme.of(context).primaryColor,
-              BlendMode.src,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 class InputField extends StatefulWidget {
   final TextEditingController emailController;
 
@@ -216,13 +133,7 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
-  bool _isObscureText = true;
 
-  showPassword() {
-    setState(() {
-      _isObscureText = !_isObscureText;
-    });
-  }
 
   _formSubmit() {
     SubmitNotification(widget.emailController.text.trim()).dispatch(context);
@@ -235,35 +146,7 @@ class _InputFieldState extends State<InputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Semantics(
-          label: context.tr('email'),
-          child: TextFormField(
-            controller: widget.emailController,
-            enableSuggestions: true,
-            onTapOutside: (event) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            validator: ((value) {
-              if (value == null || value.isEmpty) {
-                return context.tr('emailEnter');
-              } else {
-                return validateEmail(value);
-              }
-            }),
-            decoration: InputDecoration(
-              errorStyle: TextStyle(color: Colors.redAccent.shade400),
-              labelText: context.tr('email'),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: const Icon(Icons.email_sharp),
-              isDense: true,
-              alignLabelWithHint: true
-            ),
-          ),
-        ),
+        EmailField(emailController: widget.emailController),
         const SizedBox(height: 10),
         ElevatedButton(
           onPressed: _formSubmit,
