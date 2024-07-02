@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -683,13 +682,9 @@ class _InputFieldState extends State<InputField> {
             return null; // Return null when the input is valid
           },
           onInputChanged: (PhoneNumber number) async {
-            log('onChan: $number');
             setState(() {
               dialCode = number.dialCode!;
             });
-          },
-          onInputValidated: (bool value) {
-            // log('onValidated: $value')
           },
           selectorConfig: const SelectorConfig(
             setSelectorButtonAsPrefixIcon: true,

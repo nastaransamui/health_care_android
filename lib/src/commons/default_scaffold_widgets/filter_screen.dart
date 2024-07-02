@@ -1,6 +1,5 @@
 
 
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -71,6 +70,9 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   void dispose() {
+    countryController.dispose();
+    stateController.dispose();
+    cityController.dispose();
     super.dispose(); // Always call super.dispose() at the end.
   }
 
@@ -519,6 +521,13 @@ class _FilterScreenState extends State<FilterScreen> {
                           offset: const Offset(0, 2),
                           constraints: const BoxConstraints(maxHeight: 500),
                           itemBuilder: (context, country) {
+                            List<InlineSpan> temp = highlightText(
+                                countryController.text,
+                                country.name,
+                                brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                Theme.of(context).primaryColor);
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -534,12 +543,10 @@ class _FilterScreenState extends State<FilterScreen> {
                                 Flexible(
                                   fit: FlexFit.loose,
                                   child: ListTile(
-                                    title: Text(
-                                      country.name,
-                                      style: TextStyle(
-                                          color: brightness == Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black),
+                                    title: Text.rich(
+                                      TextSpan(
+                                        children: temp,
+                                      ),
                                     ),
                                     subtitle: Text(
                                       country.subtitle ??
@@ -675,6 +682,13 @@ class _FilterScreenState extends State<FilterScreen> {
                           offset: const Offset(0, 2),
                           constraints: const BoxConstraints(maxHeight: 500),
                           itemBuilder: (context, state) {
+                            List<InlineSpan> temp = highlightText(
+                                stateController.text,
+                                state.name,
+                                brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                Theme.of(context).primaryColor);
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -690,12 +704,8 @@ class _FilterScreenState extends State<FilterScreen> {
                                 Flexible(
                                   fit: FlexFit.loose,
                                   child: ListTile(
-                                    title: Text(
-                                      state.name,
-                                      style: TextStyle(
-                                          color: brightness == Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black),
+                                    title: Text.rich(
+                                      TextSpan(children: temp)
                                     ),
                                     subtitle: Text(
                                       state.subtitle ??
@@ -830,6 +840,13 @@ class _FilterScreenState extends State<FilterScreen> {
                           offset: const Offset(0, 2),
                           constraints: const BoxConstraints(maxHeight: 500),
                           itemBuilder: (context, city) {
+                             List<InlineSpan> temp = highlightText(
+                                cityController.text,
+                                city.name,
+                                brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                Theme.of(context).primaryColor);
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -845,12 +862,8 @@ class _FilterScreenState extends State<FilterScreen> {
                                 Flexible(
                                   fit: FlexFit.loose,
                                   child: ListTile(
-                                    title: Text(
-                                      city.name,
-                                      style: TextStyle(
-                                          color: brightness == Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black),
+                                    title: Text.rich(
+                                      TextSpan(children: temp)
                                     ),
                                     subtitle: Text(
                                       city.subtitle ??
@@ -961,4 +974,39 @@ class _FilterScreenState extends State<FilterScreen> {
       ),
     );
   }
+}
+
+List<InlineSpan> highlightText(
+    String text, String fullName, Color normalColor, Color highlightColor) {
+  List<InlineSpan> temp = [];
+  final re = RegExp(text, caseSensitive: false);
+  List<String> splittedNamesOfCountry = fullName.split(re);
+  for (var i = 0; i < splittedNamesOfCountry.length - 1; i++) {
+    temp.add(
+      TextSpan(
+        text: splittedNamesOfCountry[i],
+        style: TextStyle(
+          height: 1.0,
+          color: normalColor,
+        ),
+      ),
+    );
+    temp.add(
+      TextSpan(
+        text: text,
+        style: TextStyle(
+          color: highlightColor,
+        ),
+      ),
+    );
+  }
+  temp.add(
+    TextSpan(
+      text: splittedNamesOfCountry.last,
+      style: TextStyle(
+        color: normalColor,
+      ),
+    ),
+  );
+  return temp;
 }

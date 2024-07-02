@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -129,7 +128,6 @@ class _ResetPasswordState extends State<ResetPassword> {
                 "user_Id": userFromToken!.userId,
                 "token": widget.pathParameters['token']!
               });
-              log('here we call with $passwordValue & $repeatPasswordValue');
             }
             }
             return true;
@@ -196,7 +194,6 @@ class InputFields extends StatefulWidget {
 
 class _InputFieldsState extends State<InputFields> {
   _resetSubmit() {
-    log('resetSubmit: ${widget.passwordController.text}, ${widget.repeatPasswordController.text}');
     SubmitNotification(widget.passwordController.text,
             widget.repeatPasswordController.text)
         .dispatch(context);

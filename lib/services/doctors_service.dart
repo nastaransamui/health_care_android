@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:health_care/providers/doctors_provider.dart';
@@ -54,7 +54,6 @@ class DoctorsService {
       socket.emit('findUserById', {"_id": id});
       socket.on('findUserByIdReturn', (data) {
         if(data['status'] == 200){
-          log('${data['user']}');
           doctorsProvider.setSingleDoctor(data['user']);
         }
       });

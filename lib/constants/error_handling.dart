@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:toastify/toastify.dart';
@@ -85,8 +84,9 @@ class CustomInfoToast extends StatelessWidget {
                         description,
                         overflow: TextOverflow.visible,
                         maxLines: 3,
-                        style:
-                            const TextStyle(height: 1.5, ),
+                        style: const TextStyle(
+                          height: 1.5,
+                        ),
                       ),
                     ],
                   ),
@@ -94,16 +94,16 @@ class CustomInfoToast extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-             Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.max,
               children: [
                 const Spacer(),
-                 ElevatedButton(
+                ElevatedButton(
                   onPressed: () {
                     Toastify.of(context).remove(this);
                     Future<void> logoutDelay() async {
-                    // Navigator.pop(context);
+                      // Navigator.pop(context);
                       await Future<void>.delayed(const Duration(seconds: 3),
                           () {
                         onLogout();
@@ -111,7 +111,11 @@ class CustomInfoToast extends StatelessWidget {
                     }
 
                     logoutDelay();
-                    showCupertinoModalPopup(
+                    showModalBottomSheet(
+                      isDismissible: false,
+                      enableDrag: false,
+                      showDragHandle: false,
+                      useSafeArea: true,
                       context: context,
                       builder: (context) => const LoadingScreen(),
                     );
@@ -127,7 +131,7 @@ class CustomInfoToast extends StatelessWidget {
                   child: const Text('logoutOthers'),
                 ),
                 const Spacer(), // Defaults to flex: 1
-                 ElevatedButton(
+                ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 40),
                     elevation: 5.0,

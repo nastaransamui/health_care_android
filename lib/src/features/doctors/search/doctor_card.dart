@@ -163,7 +163,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
               child: GestureDetector(
                 onTap: () {
                   context.pushNamed(
-                    'doctorsProfile',
+                    'doctorsSearchProfile',
                     pathParameters: {
                       'id': Uri.encodeComponent(doctorIdEncrypted.base64)
                     },
@@ -215,7 +215,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               context.pushNamed(
-                                'doctorsProfile',
+                                'doctorsSearchProfile',
                                 pathParameters: {
                                   'id': Uri.encodeComponent(
                                       doctorIdEncrypted.base64)

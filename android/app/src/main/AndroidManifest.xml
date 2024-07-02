@@ -25,7 +25,33 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+        android:host="web-mjcode.ddns.net"
+        android:pathPrefix="/"
+        android:scheme="http"
+        />
+                <data android:path="/login/" />
+                <data android:pathPattern="/reset-password/.*" />
+                <data android:pathPattern="/verify-email/.*" />
+            </intent-filter>
             <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+        android:host="web-mjcode.ddns.net"
+        android:pathPrefix="/"
+        android:scheme="branchtest"
+        />
+                <data android:path="/login/" />
+                <data android:pathPattern="/reset-password/.*" />
+                <data android:pathPattern="/verify-email/.*" />
+            </intent-filter>
+            <!-- <intent-filter android:autoVerify="true">
             <data android:scheme="branchtest"/>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -37,7 +63,7 @@
                 <data android:path="/login/" />
                 <data android:pathPattern="/reset-password/.*" />
                 <data android:pathPattern="/verify-email/.*" />
-            </intent-filter>
+            </intent-filter> -->
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

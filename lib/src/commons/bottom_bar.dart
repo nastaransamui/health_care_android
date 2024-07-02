@@ -125,9 +125,11 @@ class _BottomBarState extends State<BottomBar> {
             iconSize: 30.0,
             padding: const EdgeInsets.only(bottom: 28.0),
             icon: const Icon(Icons.notifications),
-            onPressed: widget.showLogin ?  () {
-              Scaffold.of(context).openEndDrawer();
-            } : null,
+            onPressed: widget.showLogin
+                ? () {
+                    Scaffold.of(context).openEndDrawer();
+                  }
+                : null,
           ),
           if (!isLogin && widget.showLogin) ...[
             ...[
@@ -155,9 +157,12 @@ class _BottomBarState extends State<BottomBar> {
                             height: 30.0,
                             // child: image,
                             child: imageUrl.isEmpty
-                                ? Image.asset(
-                                    'assets/images/default-avatar.png',
-                                  )
+                                ? roleName == 'doctors'
+                                    ? Image.asset(
+                                        'assets/images/doctors_profile.jpg')
+                                    : Image.asset(
+                                        'assets/images/default-avatar.png',
+                                      )
                                 : CachedNetworkImage(
                                     imageUrl: imageUrl,
                                     fadeInDuration:
@@ -165,7 +170,10 @@ class _BottomBarState extends State<BottomBar> {
                                     fadeOutDuration:
                                         const Duration(milliseconds: 0),
                                     errorWidget: (ccontext, url, error) {
-                                      return Image.asset(
+                                      return roleName == 'doctors'
+                                    ? Image.asset(
+                                        'assets/images/doctors_profile.jpg')
+                                    : Image.asset(
                                         'assets/images/default-avatar.png',
                                       );
                                     },
@@ -286,9 +294,12 @@ class _AuthListState extends State<AuthList> {
                               width: 70.0,
                               height: 70.0,
                               child: imageUrl.isEmpty
-                                  ? Image.asset(
-                                      'assets/images/default-avatar.png',
-                                    )
+                                  ? roleName == 'doctors'
+                                    ? Image.asset(
+                                        'assets/images/doctors_profile.jpg')
+                                    : Image.asset(
+                                        'assets/images/default-avatar.png',
+                                      )
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
                                       fadeInDuration:

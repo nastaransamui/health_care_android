@@ -1,8 +1,6 @@
-import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/services/doctors_service.dart';
@@ -10,34 +8,30 @@ import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
-class DoctorsProfile extends StatefulWidget {
+class DoctorsSearchProfile extends StatefulWidget {
   final Map<String, String> pathParameters;
-  const DoctorsProfile({
+  const DoctorsSearchProfile({
     super.key,
     required this.pathParameters,
   });
 
   @override
-  State<DoctorsProfile> createState() => _DoctorsProfileState();
+  State<DoctorsSearchProfile> createState() => _DoctorsSearchProfileState();
 }
 
-class _DoctorsProfileState extends State<DoctorsProfile> {
+class _DoctorsSearchProfileState extends State<DoctorsSearchProfile> {
   final DoctorsService doctorsService = DoctorsService();
   String? doctorId;
   DoctorUserProfile? doctor;
 
   @override
   void initState() {
-    var urlDec = Uri.decodeComponent(widget.pathParameters['id']!);
-    doctorId = encrypter.decrypt64(urlDec, iv: iv);
-    doctorsService.findUserById(context, '$doctorId');
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     doctor = Provider.of<DoctorsProvider>(context).singleDoctor;
-    log('$doctor');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -65,7 +59,7 @@ class _DoctorsProfileState extends State<DoctorsProfile> {
                     pathBackgroundColor: null),
               ),
               secondChild: SingleChildScrollView(
-                child: Text('$doctor'),
+                child: Text(doctor!.aboutMe),
               ),
               crossFadeState: doctor == null
                   ? CrossFadeState.showFirst
