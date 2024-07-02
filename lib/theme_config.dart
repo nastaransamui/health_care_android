@@ -121,6 +121,8 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
   switch (homeThemeType) {
     case 'dark':
       return ThemeData.dark().copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         textTheme: Typography().white.apply(fontFamily: 'Roboto_Condensed'),
         appBarTheme: AppBarTheme(
           titleTextStyle: const TextStyle(

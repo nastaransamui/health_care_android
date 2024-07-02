@@ -1,6 +1,6 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
@@ -9,6 +9,8 @@ import 'package:health_care/src/features/auth/auth_header.dart';
 import 'package:health_care/src/features/auth/email_field.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/loading_screen.dart';
+import 'package:health_care/stream_socket.dart';
+import 'package:toastify/toastify.dart';
 
 Future<void> func() async {}
 
@@ -35,6 +37,8 @@ class _ForgotScreenState extends State<ForgotScreen> {
   }
 
   bool loading = false;
+  double lifeTime = 10000;
+  double duration = 200;
   @override
   Widget build(
     BuildContext context,
@@ -50,11 +54,53 @@ class _ForgotScreenState extends State<ForgotScreen> {
           onNotification: (notification) {
             final email = notification.emailValue;
             if (_formKey.currentState!.validate() && email != '') {
-              showCupertinoModalPopup(
+              showModalBottomSheet(
+                isDismissible: false,
+                enableDrag: false,
+                showDragHandle: false,
+                useSafeArea: true,
                 context: context,
                 builder: (context) => const LoadingScreen(),
               );
-              removeLoading();
+              socket.emit(
+                  'forgetPassword', {"email": widget.emailController.text});
+              socket.on('forgetPasswordReturn', (data) {
+                if (data['status'] != 200) {
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    Navigator.of(context).maybePop();
+                    showToast(
+                      context,
+                      Toast(
+                        id: '_toastFailed',
+                        title: 'Failed',
+                        description: data['reason'],
+                        duration: Duration(milliseconds: duration.toInt()),
+                        lifeTime: Duration(
+                          milliseconds: lifeTime.toInt(),
+                        ),
+                      ),
+                    );
+                  });
+                } else {
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context).maybePop();
+                    showToast(
+                      context,
+                      Toast(
+                        id: '_toastSuccess',
+                        title: 'Success',
+                        description: data['message'],
+                        duration: Duration(milliseconds: duration.toInt()),
+                        lifeTime: Duration(
+                          milliseconds: lifeTime.toInt(),
+                        ),
+                      ),
+                    );
+                  });
+                }
+              });
+
+              // removeLoading();
             }
 
             return true;
@@ -69,26 +115,32 @@ class _ForgotScreenState extends State<ForgotScreen> {
                     InputField(
                       emailController: widget.emailController,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        context.go('/login');
-                      },
-                      child: Text(
-                        context.tr('login'),
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ),
-                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(context.tr('haveAccount')),
+                        TextButton(
+                          onPressed: () {
+                            context.go('/login');
+                          },
+                          child: Text(
+                            context.tr('login'),
+                            style: TextStyle(color: Theme.of(context).primaryColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(context.tr('haveNotAccount')),
                         TextButton(
                             onPressed: () {
                               setState(() {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SignupScreen()),
+                                      builder: (context) => const SignupScreen()),
                                 );
                               });
                             },
@@ -133,8 +185,6 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
-
-
   _formSubmit() {
     SubmitNotification(widget.emailController.text.trim()).dispatch(context);
   }

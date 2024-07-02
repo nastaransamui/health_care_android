@@ -17,6 +17,9 @@ class _AuthContainerState extends State<AuthContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+      ),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
       child: Card(
         child: Stack(

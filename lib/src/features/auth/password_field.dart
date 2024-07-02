@@ -1,12 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
 import 'package:health_care/src/utils/validate_password.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController passwordController;
+  final String fieldName;
   const PasswordField({
     super.key,
     required this.passwordController,
+    required this.fieldName,
   });
 
   @override
@@ -23,9 +26,11 @@ class _PasswordFieldState extends State<PasswordField> {
 
   @override
   Widget build(BuildContext context) {
+   
     return Semantics(
-      label: context.tr('password'),
+      label: context.tr(widget.fieldName),
       textField: true,
+      key: ValueKey(context.tr(widget.fieldName)),
       child: TextFormField(
         controller: widget.passwordController,
         enableSuggestions: true,
@@ -34,9 +39,11 @@ class _PasswordFieldState extends State<PasswordField> {
         },
         validator: ((value) {
           if (value == null || value.isEmpty) {
-            return context.tr('passwordEnter');
+            return context
+                .tr('passwordEnter', args: [context.tr(widget.fieldName)]);
           } else {
-            return validatePassword(value);
+            return validatePassword(
+                context, value, context.tr(widget.fieldName));
           }
         }),
         decoration: InputDecoration(
@@ -44,7 +51,7 @@ class _PasswordFieldState extends State<PasswordField> {
           errorStyle: TextStyle(
             color: Colors.redAccent.shade400,
           ),
-          labelText: context.tr('password'),
+          labelText: context.tr(widget.fieldName),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide.none),
@@ -55,6 +62,7 @@ class _PasswordFieldState extends State<PasswordField> {
             onPressed: showPassword,
             icon: Icon(
               _isObscureText ? Icons.visibility_off : Icons.visibility,
+              color: Theme.of(context).primaryColor,
             ),
           ),
           isDense: true,

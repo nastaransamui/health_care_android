@@ -14,17 +14,19 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
-    return  BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-      child: Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 20,
-          height: 200,
-          child:  Opacity(
-            opacity: 0.7,
-            child: Center(
-              child:
-                  SpinKitFadingCube(color: Theme.of(context).primaryColor, size: 50.0),
+    return  Scaffold(
+      body: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+        child: Center(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width - 20,
+            height: 200,
+            child:  Opacity(
+              opacity: 0.3,
+              child: Center(
+                child:
+                    SpinKitFadingCube(color: Theme.of(context).primaryColor, size: 50.0),
+              ),
             ),
           ),
         ),

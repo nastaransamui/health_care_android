@@ -190,7 +190,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
         patientId = patientProfile!.userId;
       } else if (roleName == 'doctors') {
         isFave = singleDoctor.favIds.contains(doctorsProfile?.userId);
-        patientId = patientProfile!.userId;
+        patientId = doctorsProfile!.userId;
       }
     }
 

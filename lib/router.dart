@@ -1,3 +1,4 @@
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/navigator_key.dart';
@@ -6,11 +7,14 @@ import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
 import 'package:health_care/src/features/auth/login_screen.dart';
+import 'package:health_care/src/features/auth/reset_password.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
+import 'package:health_care/src/features/auth/verify_email.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_profile.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
+import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
@@ -119,7 +123,7 @@ final router = GoRouter(
       path: '/signup',
       name: 'signup',
       builder: (context, state) {
-        return SignupScreen();
+        return const SignupScreen();
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -144,6 +148,57 @@ final router = GoRouter(
         return DoctorsProfile(
           pathParameters: state.pathParameters,
         );
+      },
+    ),
+    GoRoute(
+      path: '/loading',
+      name: 'loading',
+      builder: (context, state) {
+        return const LoadingScreen();
+      },
+    ),
+    GoRoute(
+      path: '/reset-password/:token',
+      name: 'resetPassword',
+      builder: (context, state) {
+        return ResetPassword(
+          pathParameters: state.pathParameters,
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName =Provider.of<AuthProvider>(context, listen: false).roleName;
+        if (!isLogin) {
+          return state.namedLocation('resetPassword', pathParameters: state.pathParameters);
+        } else {
+          if(roleName == 'doctors'){
+            return '/';
+          }else{
+            return '/patient_dashboard';
+          }
+        }
+      },
+    ),
+    GoRoute(
+      path: '/verify-email/:token',
+      name: 'verifyEmail',
+      builder: (context, state) {
+        return VerifyEmail(
+          pathParameters: state.pathParameters,
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName =Provider.of<AuthProvider>(context, listen: false).roleName;
+        if (!isLogin) {
+          return state.namedLocation('verifyEmail', pathParameters: state.pathParameters);
+        } else {
+          if(roleName == 'doctors'){
+            return '/';
+          }else{
+            return '/patient_dashboard';
+          }
+        }
       },
     )
   ],

@@ -17,6 +17,7 @@ import 'package:health_care/src/features/auth/auth_container.dart';
 import 'package:health_care/src/features/auth/auth_header.dart';
 import 'package:health_care/src/features/auth/email_field.dart';
 import 'package:health_care/src/features/auth/password_field.dart';
+import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
@@ -70,95 +71,104 @@ class _LoginScreenState extends State<LoginScreen> {
       switch (data['status']) {
         case 400:
         case 403:
-          showToast(
-            context,
-            Toast(
-              title: 'Failed',
-              description: data['reason'],
-              duration: Duration(milliseconds: duration.toInt()),
-              lifeTime: Duration(
-                milliseconds: lifeTime.toInt(),
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).maybePop();
+            showToast(
+              context,
+              Toast(
+                title: 'Failed',
+                description: data['reason'],
+                duration: Duration(milliseconds: duration.toInt()),
+                lifeTime: Duration(
+                  milliseconds: lifeTime.toInt(),
+                ),
               ),
-            ),
-          );
+            );
+          });
         case 500:
-          showToast(
-            context,
-            Toast(
-              title: 'Failed',
-              description: data['reason'],
-              duration: Duration(milliseconds: duration.toInt()),
-              lifeTime: Duration(
-                milliseconds: lifeTime.toInt(),
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).maybePop();
+            showToast(
+              context,
+              Toast(
+                title: 'Failed',
+                description: data['reason'],
+                duration: Duration(milliseconds: duration.toInt()),
+                lifeTime: Duration(
+                  milliseconds: lifeTime.toInt(),
+                ),
               ),
-            ),
-          );
+            );
+          });
           break;
         case 410:
-          showToast(
-            context,
-            Toast(
-              id: '_toast',
-              child: CustomInfoToast(
-                onLogout: () {
-                  socket.emit('logOutAllUsersSubmit', {
-                    "email": formData['email'],
-                    'services': 'password',
-                    "password": formData['password']
-                  });
-                  socket.once('logOutAllUsersReturn', (msg) {
-                    Navigator.pop(context);
-                    if (msg['status'] != 200) {
-                      showToast(
-                        context,
-                        Toast(
-                          title: 'Failed',
-                          description: msg['reason']!,
-                          duration: Duration(milliseconds: 200.toInt()),
-                          lifeTime: Duration(
-                            milliseconds: 2500.toInt(),
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).maybePop();
+            showToast(
+              context,
+              Toast(
+                id: '_toast',
+                child: CustomInfoToast(
+                  onLogout: () {
+                    socket.emit('logOutAllUsersSubmit', {
+                      "email": formData['email'],
+                      'services': 'password',
+                      "password": formData['password']
+                    });
+                    socket.once('logOutAllUsersReturn', (msg) {
+                      Navigator.pop(context);
+                      if (msg['status'] != 200) {
+                        showToast(
+                          context,
+                          Toast(
+                            title: 'Failed',
+                            description: msg['reason']!,
+                            duration: Duration(milliseconds: 200.toInt()),
+                            lifeTime: Duration(
+                              milliseconds: 2500.toInt(),
+                            ),
                           ),
-                        ),
-                      );
-                    } else {
-                      showToast(
-                        context,
-                        Toast(
-                          title: 'Succeded',
-                          description: msg['message']!,
-                          duration: Duration(milliseconds: 200.toInt()),
-                          lifeTime: Duration(
-                            milliseconds: 2500.toInt(),
+                        );
+                      } else {
+                        showToast(
+                          context,
+                          Toast(
+                            title: 'Succeded',
+                            description: msg['message']!,
+                            duration: Duration(milliseconds: 200.toInt()),
+                            lifeTime: Duration(
+                              milliseconds: 2500.toInt(),
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  });
-                },
-                title: '',
-                description:
-                    '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
-              ),
-              transitionBuilder: (animation, child, isRemoving) {
-                if (isRemoving) {
-                  return SizeTransition(
-                    sizeFactor: animation,
+                        );
+                      }
+                    });
+                  },
+                  title: '',
+                  description:
+                      '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
+                ),
+                transitionBuilder: (animation, child, isRemoving) {
+                  if (isRemoving) {
+                    return SizeTransition(
+                      sizeFactor: animation,
+                      child: child,
+                    );
+                  }
+                  return SlideTransition(
+                    position: animation.drive(
+                      Tween(
+                        begin: const Offset(1, 0),
+                        end: const Offset(0, 0),
+                      ),
+                    ),
                     child: child,
                   );
-                }
-                return SlideTransition(
-                  position: animation.drive(
-                    Tween(
-                      begin: const Offset(1, 0),
-                      end: const Offset(0, 0),
-                    ),
-                  ),
-                  child: child,
-                );
-              },
-            ),
-            width: MediaQuery.of(context).size.width - 10,
-          );
+                },
+              ),
+              width: MediaQuery.of(context).size.width - 10,
+            );
+          });
           break;
         default:
           var token = data['accessToken'];
@@ -189,6 +199,14 @@ class _LoginScreenState extends State<LoginScreen> {
             if (_formKey.currentState!.validate() &&
                 email != '' &&
                 password != '') {
+              showModalBottomSheet(
+                isDismissible: false,
+                enableDrag: false,
+                showDragHandle: false,
+                useSafeArea: true,
+                context: context,
+                builder: (context) => const LoadingScreen(),
+              );
               submitLogin(password, email, userData, deviceData, context);
             }
 
@@ -219,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(context.tr('haveAccount')),
+                        Text(context.tr('haveNotAccount')),
                         TextButton(
                             onPressed: () {
                               context.push('/signup');
@@ -267,19 +285,17 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
-
-
   final formKey = GlobalKey<FormBuilderState>();
   var roleName = '';
   final AuthService authService = AuthService();
   double lifeTime = 2500;
   double duration = 200;
 
-
   _formSubmit() {
     SubmitNotification(
-            widget.emailController.text.trim(), widget.passwordController.text)
-        .dispatch(context);
+      widget.emailController.text.trim(),
+      widget.passwordController.text,
+    ).dispatch(context);
   }
 
   @override
@@ -512,7 +528,7 @@ class _InputFieldState extends State<InputField> {
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
-                Text(context.tr('accoutDetails')),
+                Text(context.tr('accountDetails')),
                 Divider(
                   color: Theme.of(context).primaryColor,
                 ),
@@ -531,6 +547,7 @@ class _InputFieldState extends State<InputField> {
                         focusColor: Theme.of(context).primaryColor,
                         decoration: InputDecoration(
                           labelText: "${context.tr('userType')} *",
+                          border: InputBorder.none,
                         ),
                         initialValue: null,
                         name: 'roleName',
@@ -565,7 +582,10 @@ class _InputFieldState extends State<InputField> {
       children: [
         EmailField(emailController: widget.emailController),
         const SizedBox(height: 10),
-        PasswordField(passwordController: widget.passwordController),
+        PasswordField(
+          passwordController: widget.passwordController,
+          fieldName: 'password',
+        ),
         const SizedBox(height: 10),
         ElevatedButton(
           onPressed: _formSubmit,

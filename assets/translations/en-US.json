@@ -10,10 +10,12 @@
   "emailEnter": "Please enter your email",
   "emailValidate": "Enter a valid email address.",
   "password": "Password",
-  "passwordEnter": "Please enter your password",
+  "passwordEnter": "Please enter your {}",
+  "repeatPassword": "Repeat Password",
   "passwordValidate": "Password should be at least 8 characters long and should contain one number,one character and one special characters.",
   "forgotPasswordLink": "Forgot password?",
-  "haveAccount": "Dont have an account?",
+  "haveNotAccount": "Dont have an account?",
+  "haveAccount": "Already have an account?",
   "resetPassword": "Reset Password",
   "keyWord": "Key word",
   "availability": "Availability",
@@ -117,5 +119,10 @@
   "search": "Search Doctors",
   "filterSelection": "Search with filters",
   "readMore": " ...Read more",
-  "readLess": "Read less"
+  "readLess": "Read less",
+  "passwordNotSame": "New password and repeat password should be same.",
+  "verifyText": "Click below button to verified your account",
+  "directLoginLabel": "Add Password for direct login",
+  "verifyEmail": "Verify Email",
+  "verification": "Verification"
 }
