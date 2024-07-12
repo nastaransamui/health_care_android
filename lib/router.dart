@@ -24,6 +24,7 @@ import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:health_care/src/features/profile/doctors_dashboard_profile.dart';
+import 'package:health_care/src/features/profile/patients_dashboard_profile.dart';
 import 'package:health_care/src/landing/default.dart';
 import 'package:health_care/src/landing/general_0_page.dart';
 import 'package:health_care/src/landing/general_1_page.dart';
@@ -118,6 +119,46 @@ final router = GoRouter(
         var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
        if(doctorProfile != null){
          return  DoctorsDashboardProfile(doctorProfile: doctorProfile);
+       }else{
+         switch (homeActivePage) {
+              case 'general_0':
+                return const General0Page();
+              case 'general_1':
+                return const General1Page();
+              case 'general_2':
+                return const General2Page();
+              default:
+                return const Default();
+            }
+       }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName =
+            Provider.of<AuthProvider>(context, listen: false).roleName;
+
+        if (isLogin) {
+          if (roleName == 'doctors') {
+            return '/doctors_dashboard/doctors_profile';
+          } else if (roleName == 'patient') {
+            return '/patient_dashboard/patient_profile';
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+    ),
+    GoRoute(
+      path: '/patient_dashboard/patient_profile',
+      name: 'patientsDashboardProfile',
+      builder: (context, state) {
+        PatientsProfile? patientProfile;
+        patientProfile = Provider.of<AuthProvider>(context).patientProfile;
+        var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
+       if(patientProfile != null){
+         return  PatientsDashboardProfile(patientProfile: patientProfile);
        }else{
          switch (homeActivePage) {
               case 'general_0':

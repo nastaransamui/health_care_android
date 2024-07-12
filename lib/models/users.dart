@@ -60,8 +60,7 @@ class PatientsProfile {
 
   String toJson() => json.encode(toMap());
 
-  factory PatientsProfile.fromJson(String source) =>
-      PatientsProfile.fromMap(json.decode(source));
+  factory PatientsProfile.fromJson(String source) => PatientsProfile.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -82,11 +81,7 @@ class PatientsProfile {
 
   @override
   int get hashCode {
-    return accessToken.hashCode ^
-        userId.hashCode ^
-        services.hashCode ^
-        roleName.hashCode ^
-        userProfile.hashCode;
+    return accessToken.hashCode ^ userId.hashCode ^ services.hashCode ^ roleName.hashCode ^ userProfile.hashCode;
   }
 }
 
@@ -111,6 +106,10 @@ class PatientUserProfile {
   final List<dynamic> invoiceIds;
   final List<dynamic> reviewsArray;
   final List<dynamic> rateArray;
+  final List<dynamic> favsId;
+  final List<dynamic> reservationsId;
+  final List<dynamic> prescriptionsId;
+  final List<dynamic> doctorsId;
   final String lastUpdate;
   final bool online;
   final bool idle;
@@ -137,6 +136,10 @@ class PatientUserProfile {
     required this.invoiceIds,
     required this.reviewsArray,
     required this.rateArray,
+    required this.favsId,
+    required this.reservationsId,
+    required this.prescriptionsId,
+    required this.doctorsId,
     required this.lastUpdate,
     required this.online,
     required this.idle,
@@ -164,6 +167,10 @@ class PatientUserProfile {
     List<dynamic>? invoiceIds,
     List<dynamic>? reviewsArray,
     List<dynamic>? rateArray,
+    List<dynamic>? favsId,
+    List<dynamic>? reservationsId,
+    List<dynamic>? prescriptionsId,
+    List<dynamic>? doctorsId,
     String? lastUpdate,
     bool? online,
     bool? idle,
@@ -190,6 +197,10 @@ class PatientUserProfile {
       invoiceIds: invoiceIds ?? this.invoiceIds,
       reviewsArray: reviewsArray ?? this.reviewsArray,
       rateArray: rateArray ?? this.rateArray,
+      favsId: favsId ?? this.favsId,
+      reservationsId: reservationsId ?? this.reservationsId,
+      prescriptionsId: prescriptionsId ?? this.prescriptionsId,
+      doctorsId: doctorsId ?? this.doctorsId,
       lastUpdate: lastUpdate ?? this.lastUpdate,
       online: online ?? this.online,
       idle: idle ?? this.idle,
@@ -199,7 +210,7 @@ class PatientUserProfile {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-
+  
     result.addAll({'createdAt': createdAt});
     result.addAll({'firstName': firstName});
     result.addAll({'lastName': lastName});
@@ -220,11 +231,15 @@ class PatientUserProfile {
     result.addAll({'invoiceIds': invoiceIds});
     result.addAll({'reviewsArray': reviewsArray});
     result.addAll({'rateArray': rateArray});
+    result.addAll({'favsId': favsId});
+    result.addAll({'reservationsId': reservationsId});
+    result.addAll({'prescriptionsId': prescriptionsId});
+    result.addAll({'doctorsId': doctorsId});
     result.addAll({'lastUpdate': lastUpdate});
     result.addAll({'online': online});
     result.addAll({'idle': idle});
     result.addAll({'lastLogin': lastLogin.toMap()});
-
+  
     return result;
   }
 
@@ -250,6 +265,10 @@ class PatientUserProfile {
       invoiceIds: List<dynamic>.from(map['invoice_ids']),
       reviewsArray: List<dynamic>.from(map['reviews_array']),
       rateArray: List<dynamic>.from(map['rate_array']),
+      favsId: List<dynamic>.from(map['favs_id']),
+      reservationsId: List<dynamic>.from(map['reservations_id']),
+      prescriptionsId: List<dynamic>.from(map['prescriptions_id']),
+      doctorsId: List<dynamic>.from(map['doctors_id']),
       lastUpdate: map['lastUpdate'] ?? '',
       online: map['online'] ?? false,
       idle: map['idle'] ?? false,
@@ -259,71 +278,78 @@ class PatientUserProfile {
 
   String toJson() => json.encode(toMap());
 
-  factory PatientUserProfile.fromJson(String source) =>
-      PatientUserProfile.fromMap(json.decode(source));
+  factory PatientUserProfile.fromJson(String source) => PatientUserProfile.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'PatientUserProfile(createdAt: $createdAt, firstName: $firstName, lastName: $lastName, dob: $dob, bloodG: $bloodG, userName: $userName, mobileNumber: $mobileNumber, profileImage: $profileImage, gender: $gender, address1: $address1, address2: $address2, updatedAt: $updatedAt, city: $city, state: $state, zipCode: $zipCode, country: $country, isActive: $isActive, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, lastUpdate: $lastUpdate, online: $online, idle: $idle, lastLogin: $lastLogin)';
+    return 'PatientUserProfile(createdAt: $createdAt, firstName: $firstName, lastName: $lastName, dob: $dob, bloodG: $bloodG, userName: $userName, mobileNumber: $mobileNumber, profileImage: $profileImage, gender: $gender, address1: $address1, address2: $address2, updatedAt: $updatedAt, city: $city, state: $state, zipCode: $zipCode, country: $country, isActive: $isActive, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, favsId: $favsId, reservationsId: $reservationsId, prescriptionsId: $prescriptionsId, doctorsId: $doctorsId, lastUpdate: $lastUpdate, online: $online, idle: $idle, lastLogin: $lastLogin)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is PatientUserProfile &&
-        other.createdAt == createdAt &&
-        other.firstName == firstName &&
-        other.lastName == lastName &&
-        other.dob == dob &&
-        other.bloodG == bloodG &&
-        other.userName == userName &&
-        other.mobileNumber == mobileNumber &&
-        other.profileImage == profileImage &&
-        other.gender == gender &&
-        other.address1 == address1 &&
-        other.address2 == address2 &&
-        other.updatedAt == updatedAt &&
-        other.city == city &&
-        other.state == state &&
-        other.zipCode == zipCode &&
-        other.country == country &&
-        other.isActive == isActive &&
-        listEquals(other.invoiceIds, invoiceIds) &&
-        listEquals(other.reviewsArray, reviewsArray) &&
-        listEquals(other.rateArray, rateArray) &&
-        other.lastUpdate == lastUpdate &&
-        other.online == online &&
-        other.idle == idle &&
-        other.lastLogin == lastLogin;
+      other.createdAt == createdAt &&
+      other.firstName == firstName &&
+      other.lastName == lastName &&
+      other.dob == dob &&
+      other.bloodG == bloodG &&
+      other.userName == userName &&
+      other.mobileNumber == mobileNumber &&
+      other.profileImage == profileImage &&
+      other.gender == gender &&
+      other.address1 == address1 &&
+      other.address2 == address2 &&
+      other.updatedAt == updatedAt &&
+      other.city == city &&
+      other.state == state &&
+      other.zipCode == zipCode &&
+      other.country == country &&
+      other.isActive == isActive &&
+      listEquals(other.invoiceIds, invoiceIds) &&
+      listEquals(other.reviewsArray, reviewsArray) &&
+      listEquals(other.rateArray, rateArray) &&
+      listEquals(other.favsId, favsId) &&
+      listEquals(other.reservationsId, reservationsId) &&
+      listEquals(other.prescriptionsId, prescriptionsId) &&
+      listEquals(other.doctorsId, doctorsId) &&
+      other.lastUpdate == lastUpdate &&
+      other.online == online &&
+      other.idle == idle &&
+      other.lastLogin == lastLogin;
   }
 
   @override
   int get hashCode {
     return createdAt.hashCode ^
-        firstName.hashCode ^
-        lastName.hashCode ^
-        dob.hashCode ^
-        bloodG.hashCode ^
-        userName.hashCode ^
-        mobileNumber.hashCode ^
-        profileImage.hashCode ^
-        gender.hashCode ^
-        address1.hashCode ^
-        address2.hashCode ^
-        updatedAt.hashCode ^
-        city.hashCode ^
-        state.hashCode ^
-        zipCode.hashCode ^
-        country.hashCode ^
-        isActive.hashCode ^
-        invoiceIds.hashCode ^
-        reviewsArray.hashCode ^
-        rateArray.hashCode ^
-        lastUpdate.hashCode ^
-        online.hashCode ^
-        idle.hashCode ^
-        lastLogin.hashCode;
+      firstName.hashCode ^
+      lastName.hashCode ^
+      dob.hashCode ^
+      bloodG.hashCode ^
+      userName.hashCode ^
+      mobileNumber.hashCode ^
+      profileImage.hashCode ^
+      gender.hashCode ^
+      address1.hashCode ^
+      address2.hashCode ^
+      updatedAt.hashCode ^
+      city.hashCode ^
+      state.hashCode ^
+      zipCode.hashCode ^
+      country.hashCode ^
+      isActive.hashCode ^
+      invoiceIds.hashCode ^
+      reviewsArray.hashCode ^
+      rateArray.hashCode ^
+      favsId.hashCode ^
+      reservationsId.hashCode ^
+      prescriptionsId.hashCode ^
+      doctorsId.hashCode ^
+      lastUpdate.hashCode ^
+      online.hashCode ^
+      idle.hashCode ^
+      lastLogin.hashCode;
   }
 }
 
@@ -370,21 +396,16 @@ class LastLogin {
 
   String toJson() => json.encode(toMap());
 
-  factory LastLogin.fromJson(String source) =>
-      LastLogin.fromMap(json.decode(source));
+  factory LastLogin.fromJson(String source) => LastLogin.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'LastLogin(date: $date, ipAddr: $ipAddr, userAgent: $userAgent)';
+  String toString() => 'LastLogin(date: $date, ipAddr: $ipAddr, userAgent: $userAgent)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is LastLogin &&
-        other.date == date &&
-        other.ipAddr == ipAddr &&
-        other.userAgent == userAgent;
+    return other is LastLogin && other.date == date && other.ipAddr == ipAddr && other.userAgent == userAgent;
   }
 
   @override
@@ -424,13 +445,13 @@ class DoctorsProfile {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'accessToken': accessToken});
     result.addAll({'userId': userId});
     result.addAll({'services': services});
     result.addAll({'roleName': roleName});
     result.addAll({'userProfile': userProfile.toMap()});
-  
+
     return result;
   }
 
@@ -456,22 +477,18 @@ class DoctorsProfile {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is DoctorsProfile &&
-      other.accessToken == accessToken &&
-      other.userId == userId &&
-      other.services == services &&
-      other.roleName == roleName &&
-      other.userProfile == userProfile;
+        other.accessToken == accessToken &&
+        other.userId == userId &&
+        other.services == services &&
+        other.roleName == roleName &&
+        other.userProfile == userProfile;
   }
 
   @override
   int get hashCode {
-    return accessToken.hashCode ^
-      userId.hashCode ^
-      services.hashCode ^
-      roleName.hashCode ^
-      userProfile.hashCode;
+    return accessToken.hashCode ^ userId.hashCode ^ services.hashCode ^ roleName.hashCode ^ userProfile.hashCode;
   }
 }
 
@@ -675,8 +692,7 @@ class DoctorUserProfile {
     result.addAll({'clinicName': clinicName});
     result.addAll({'clinicAddress': clinicAddress});
     result.addAll({'aboutMe': aboutMe});
-    result
-        .addAll({'clinicImages': clinicImages.map((x) => x.toMap()).toList()});
+    result.addAll({'clinicImages': clinicImages.map((x) => x.toMap()).toList()});
     result.addAll({'profileImage': profileImage});
     result.addAll({'roleName': roleName});
     result.addAll({'services': services});
@@ -688,15 +704,13 @@ class DoctorUserProfile {
     result.addAll({'country': country});
     result.addAll({'pricing': pricing});
     result.addAll({'specialitiesServices': specialitiesServices});
-    result
-        .addAll({'specialities': specialities.map((x) => x.toMap()).toList()});
+    result.addAll({'specialities': specialities.map((x) => x.toMap()).toList()});
     result.addAll({'educations': educations.map((x) => x.toMap()).toList()});
     result.addAll({'experinces': experinces.map((x) => x.toMap()).toList()});
     result.addAll({'awards': awards.map((x) => x.toMap()).toList()});
     result.addAll({'memberships': memberships.map((x) => x.toMap()).toList()});
     result.addAll({'socialMedia': socialMedia});
-    result.addAll(
-        {'registrations': registrations.map((x) => x.toMap()).toList()});
+    result.addAll({'registrations': registrations.map((x) => x.toMap()).toList()});
     result.addAll({'accessToken': accessToken});
     result.addAll({'isActive': isActive});
     result.addAll({'invoiceIds': invoiceIds});
@@ -728,8 +742,7 @@ class DoctorUserProfile {
       clinicName: map['clinicName'] ?? '',
       clinicAddress: map['clinicAddress'] ?? '',
       aboutMe: map['aboutMe'] ?? '',
-      clinicImages: List<ClinicImages>.from(
-          map['clinicImages']?.map((x) => ClinicImages.fromMap(x))),
+      clinicImages: List<ClinicImages>.from(map['clinicImages']?.map((x) => ClinicImages.fromMap(x))),
       profileImage: map['profileImage'] ?? '',
       roleName: map['roleName'] ?? '',
       services: map['services'] ?? '',
@@ -741,18 +754,13 @@ class DoctorUserProfile {
       country: map['country'] ?? '',
       pricing: List<dynamic>.from(map['pricing']),
       specialitiesServices: List<String>.from(map['specialitiesServices']),
-      specialities: List<Specialities>.from(
-          map['specialities']?.map((x) => Specialities.fromMap(x))),
-      educations: List<Education>.from(
-          map['educations']?.map((x) => Education.fromMap(x))),
-      experinces: List<Experinces>.from(
-          map['experinces']?.map((x) => Experinces.fromMap(x))),
+      specialities: List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))),
+      educations: List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))),
+      experinces: List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))),
       awards: List<Award>.from(map['awards']?.map((x) => Award.fromMap(x))),
-      memberships: List<Memberships>.from(
-          map['memberships']?.map((x) => Memberships.fromMap(x))),
+      memberships: List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))),
       socialMedia: List<dynamic>.from(map['socialMedia']),
-      registrations: List<Registrations>.from(
-          map['registrations']?.map((x) => Registrations.fromMap(x))),
+      registrations: List<Registrations>.from(map['registrations']?.map((x) => Registrations.fromMap(x))),
       accessToken: map['accessToken'] ?? '',
       isActive: map['isActive'] ?? false,
       invoiceIds: List<dynamic>.from(map['invoice_ids']),
@@ -765,7 +773,7 @@ class DoctorUserProfile {
       prescriptionsId: List<dynamic>.from(map['prescriptions_id']),
       lastUpdate: map['lastUpdate'] ?? '',
       id: map['id'] ?? '',
-      lastLogin:map['lastLogin'] == null ? LastLogin(date: '', ipAddr: '', userAgent: '') : LastLogin.fromMap(map['lastLogin']),
+      lastLogin: map['lastLogin'] == null ? LastLogin(date: '', ipAddr: '', userAgent: '') : LastLogin.fromMap(map['lastLogin']),
       online: map['online'] ?? false,
       idle: map['idle'] ?? false,
     );
@@ -773,8 +781,7 @@ class DoctorUserProfile {
 
   String toJson() => json.encode(toMap());
 
-  factory DoctorUserProfile.fromJson(String source) =>
-      DoctorUserProfile.fromMap(json.decode(source));
+  factory DoctorUserProfile.fromJson(String source) => DoctorUserProfile.fromMap(json.decode(source));
 
   @override
   String toString() {

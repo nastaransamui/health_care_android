@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_3d_choice_chip/flutter_3d_choice_chip.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
@@ -71,8 +72,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          contentPadding:
-              const EdgeInsets.only(top: 5, left: 8, right: 8, bottom: 5),
+          contentPadding: const EdgeInsets.only(top: 5, left: 8, right: 8, bottom: 5),
           titlePadding: const EdgeInsets.all(0),
           title: Column(
             children: [
@@ -90,18 +90,12 @@ class _PatientDashboardState extends State<PatientDashboard> {
               children: [
                 DataTable(
                   border: TableBorder(
-                    horizontalInside: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.7),
-                    verticalInside: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.7),
-                    bottom: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.7),
-                    top: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.7),
-                    left: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.7),
-                    right: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.7),
+                    horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+                    verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+                    bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+                    top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+                    left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+                    right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
                   ),
                   headingRowHeight: 32.0,
                   showBottomBorder: true,
@@ -125,11 +119,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
                             )))),
                   ],
                   rows: dataTable.map((e) {
-                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
-                        .parseUTC(e['date'])
-                        .toLocal();
-                    String formattedDate =
-                        DateFormat("yyyy MMM dd HH:mm").format(dateValue);
+                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(e['date']).toLocal();
+                    String formattedDate = DateFormat("yyyy MMM dd HH:mm").format(dateValue);
                     return DataRow(
                       cells: [
                         DataCell(
@@ -202,8 +193,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     }
     if (patientProfile != null) {
       if (patientProfile.userProfile.profileImage.isNotEmpty) {
-        imageUrl =
-            '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+        imageUrl = '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
       }
     }
     var brightness = Theme.of(context).brightness;
@@ -221,9 +211,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               if (vitalSigns != null) {
                 vitalMap = vitalSigns.toMap();
                 if (vitalMap[i['title']].isNotEmpty) {
-                  vitalSignsController[i['title']]?.text = vitalMap[i['title']]
-                          [vitalMap[i['title']].length - 1]['value']
-                      .toString();
+                  vitalSignsController[i['title']]?.text = vitalMap[i['title']][vitalMap[i['title']].length - 1]['value'].toString();
                 }
               }
               return Container(
@@ -231,8 +219,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                 margin: const EdgeInsets.symmetric(horizontal: 5.0),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Theme.of(context).primaryColorLight, width: 2.0),
+                    side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   elevation: 5.0,
@@ -276,54 +263,42 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                     ValueDelegate.colorFilter(
                                       ["Layer 6 Outlines", '**'],
                                       value: ColorFilter.mode(
-                                        brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black,
                                         BlendMode.src,
                                       ),
                                     ),
                                     ValueDelegate.colorFilter(
                                       ["Layer 5 Outlines", '**'],
                                       value: ColorFilter.mode(
-                                        brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black,
                                         BlendMode.src,
                                       ),
                                     ),
                                     ValueDelegate.colorFilter(
                                       ["Layer 4 Outlines", '**'],
                                       value: ColorFilter.mode(
-                                        brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black,
                                         BlendMode.src,
                                       ),
                                     ),
                                     ValueDelegate.colorFilter(
                                       ["Layer 3 Outlines", '**'],
                                       value: ColorFilter.mode(
-                                        brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black,
                                         BlendMode.src,
                                       ),
                                     ),
                                     ValueDelegate.colorFilter(
                                       ["therometer outline", '**'],
                                       value: ColorFilter.mode(
-                                        brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black,
                                         BlendMode.src,
                                       ),
                                     ),
                                     ValueDelegate.colorFilter(
                                       ["Layer 2 Outlines", '**'],
                                       value: ColorFilter.mode(
-                                        brightness == Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black,
                                         BlendMode.src,
                                       ),
                                     ),
@@ -367,21 +342,15 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                 width: 40,
                                 child: TextField(
                                   onEditingComplete: () {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
+                                    FocusManager.instance.primaryFocus?.unfocus();
                                     var name = i['title'];
-                                    var value =
-                                        vitalSignsController[i['title']]?.text;
+                                    var value = vitalSignsController[i['title']]?.text;
                                     var userId = patientProfile!.userId;
 
                                     if (value!.isNotEmpty) {
                                       socket.emit(
                                         'vitalSignsUpdate',
-                                        {
-                                          "name": name,
-                                          "value": value,
-                                          "userId": userId
-                                        },
+                                        {"name": name, "value": value, "userId": userId},
                                       );
                                     }
                                   },
@@ -443,8 +412,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
           },
           child: Card(
             shape: RoundedRectangleBorder(
-              side: BorderSide(
-                  color: Theme.of(context).primaryColorLight, width: 2.0),
+              side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
               borderRadius: BorderRadius.circular(8.0),
             ),
             elevation: 8.0,
@@ -456,8 +424,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               },
               child: SizedBox(
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                   leading: i['icon'],
                   title: Text(name),
                   trailing: const Icon(Icons.arrow_forward),
@@ -470,260 +437,248 @@ class _PatientDashboardState extends State<PatientDashboard> {
     );
 
     return ScaffoldWrapper(
-          title: context.tr('patientDashboard'),
-          children: patientProfile == null
-              ? const LoadingScreen()
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 5,
+      key: const Key('patientDashboard'),
+      title: context.tr('patientDashboard'),
+      children: patientProfile == null
+          ? const LoadingScreen()
+          : SingleChildScrollView(
+              child: FadeinWidget(
+                isCenter: true,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        elevation: 5.0,
+                        clipBehavior: Clip.hardEdge,
+                        margin: const EdgeInsets.all(0),
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: 8.0,
+                              ),
+                              height: 180,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(color: Theme.of(context).primaryColorLight),
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.contain,
+                                  image: imageUrl.isEmpty
+                                      ? const AssetImage(
+                                          'assets/images/default-avatar.png',
+                                        ) as ImageProvider
+                                      : CachedNetworkImageProvider(imageUrl),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text("${patientProfile.userProfile.gender} ${patientProfile.userProfile.firstName} ${patientProfile.userProfile.lastName}"),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(patientProfile.userProfile.userName),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text("As: ${context.tr(patientProfile.roleName)}"),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.cake,
+                                  color: Theme.of(context).primaryColorLight,
+                                ),
+                                Text(
+                                    " ${patientProfile.userProfile.dob.isNotEmpty ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob).toLocal()) : '---- -- --'}"),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text("$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                Column(
+                                  children: [
+                                    Text(patientProfile.userProfile.city),
+                                    Text(patientProfile.userProfile.state),
+                                    Text(patientProfile.userProfile.country)
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        ),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).primaryColorLight,
-                                width: 2.0),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          elevation: 5.0,
-                          clipBehavior: Clip.hardEdge,
-                          margin: const EdgeInsets.all(0),
+                    ),
+                    ListTile(
+                      title: Text(context.tr('vitalSigns')),
+                    ),
+                    vitalSignScrollView,
+                    ListTile(
+                      title: Text(context.tr('bmiStatus')),
+                    ),
+                    Container(
+                      height: 300,
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        elevation: 5.0,
+                        clipBehavior: Clip.hardEdge,
+                        margin: const EdgeInsets.all(0),
+                        child: InkWell(
+                          splashColor: Theme.of(context).primaryColor,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BMIScreen(
+                                  vitalSigns: vitalSigns,
+                                  age: years == '--' ? 1 : int.parse(years),
+                                  gender: patientProfile.userProfile.gender,
+                                ),
+                              ),
+                            );
+                          },
                           child: Column(
                             children: [
+                              SizedBox(
+                                height: 45,
+                                child: ListTile(
+                                  title: Center(
+                                    child: Text(
+                                      context.tr('bmiStatus'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                // height: 100,
+                                child: PrettyGauge(
+                                  gaugeSize: 210,
+                                  minValue: 0,
+                                  maxValue: 40,
+                                  segments: [
+                                    GaugeSegment('UnderWeight', 18.5, Colors.red),
+                                    GaugeSegment('Normal', 6.4, Colors.green),
+                                    GaugeSegment('OverWeight', 5, Colors.orange),
+                                    GaugeSegment('Obese', 10.1, Colors.pink),
+                                  ],
+                                  valueWidget: const Text(
+                                    "",
+                                    style: TextStyle(fontSize: 40),
+                                  ),
+                                  currentValue: 0.5,
+                                  needleColor: Theme.of(context).primaryColorLight,
+                                  startMarkerStyle: const TextStyle(
+                                    fontSize: 10,
+                                  ),
+                                  endMarkerStyle: const TextStyle(
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
                               Container(
-                                margin: const EdgeInsets.only(
-                                  top: 8.0,
-                                ),
-                                height: 180,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  border: Border.all(
-                                      color:
-                                          Theme.of(context).primaryColorLight),
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.contain,
-                                    image: imageUrl.isEmpty
-                                        ? const AssetImage(
-                                            'assets/images/default-avatar.png',
-                                          ) as ImageProvider
-                                        : CachedNetworkImageProvider(imageUrl),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                  "${patientProfile.userProfile.gender} ${patientProfile.userProfile.firstName} ${patientProfile.userProfile.lastName}"),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(patientProfile.userProfile.userName),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                  "As: ${context.tr(patientProfile.roleName)}"),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.cake,
-                                    color: Theme.of(context).primaryColorLight,
-                                  ),
-                                  Text(
-                                      " ${patientProfile.userProfile.dob.isNotEmpty ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob).toLocal()) : '---- -- --'}"),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text("$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(patientProfile.userProfile.city),
-                                      Text(patientProfile.userProfile.state),
-                                      Text(patientProfile.userProfile.country)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  height: 50,
+                                  width: 140,
+                                  child: Center(
+                                    child: Text(
+                                      context.tr("bmi"),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'Roboto_Condensed',
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ))
                             ],
                           ),
                         ),
                       ),
-                      ListTile(
-                        title: Text(context.tr('vitalSigns')),
+                    ),
+                    ListTile(
+                      title: Text(context.tr('informations')),
+                    ),
+                    Container(
+                      // height: 250,
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                      height: 110,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return datasScrollView;
+                        },
+                        itemCount: 1,
                       ),
-                      vitalSignScrollView,
-                      ListTile(
-                        title: Text(context.tr('bmiStatus')),
-                      ),
-                      Container(
-                        height: 300,
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).primaryColorLight,
-                                width: 2.0),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          elevation: 5.0,
-                          clipBehavior: Clip.hardEdge,
-                          margin: const EdgeInsets.all(0),
-                          child: InkWell(
-                            splashColor: Theme.of(context).primaryColor,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BMIScreen(
-                                    vitalSigns: vitalSigns,
-                                    age: years == '--' ? 1 : int.parse(years),
-                                    gender: patientProfile.userProfile.gender,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 45,
-                                  child: ListTile(
-                                    title: Center(
-                                      child: Text(
-                                        context.tr('bmiStatus'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  // height: 100,
-                                  child: PrettyGauge(
-                                    gaugeSize: 210,
-                                    minValue: 0,
-                                    maxValue: 40,
-                                    segments: [
-                                      GaugeSegment(
-                                          'UnderWeight', 18.5, Colors.red),
-                                      GaugeSegment('Normal', 6.4, Colors.green),
-                                      GaugeSegment(
-                                          'OverWeight', 5, Colors.orange),
-                                      GaugeSegment('Obese', 10.1, Colors.pink),
-                                    ],
-                                    valueWidget: const Text(
-                                      "",
-                                      style: TextStyle(fontSize: 40),
-                                    ),
-                                    currentValue: 0.5,
-                                    needleColor:
-                                        Theme.of(context).primaryColorLight,
-                                    startMarkerStyle: const TextStyle(
-                                      fontSize: 10,
-                                    ),
-                                    endMarkerStyle: const TextStyle(
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    height: 50,
-                                    width: 140,
-                                    child: Center(
-                                      child: Text(
-                                        context.tr("bmi"),
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontFamily: 'Roboto_Condensed',
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                      ),
-                                    ))
-                              ],
-                            ),
-                          ),
+                    ),
+                    ListTile(
+                      title: Text(context.tr('links')),
+                    ),
+                    ...patientsDashboardLink.map((i) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                      ),
-                      ListTile(
-                        title: Text(context.tr('informations')),
-                      ),
-                      Container(
-                        // height: 250,
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        height: 110,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return datasScrollView;
+                        elevation: 8.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                        child: InkWell(
+                          splashColor: Theme.of(context).primaryColor,
+                          onTap: () {
+                            context.push(i['routeName']);
                           },
-                          itemCount: 1,
-                        ),
-                      ),
-                      ListTile(
-                        title: Text(context.tr('links')),
-                      ),
-                      ...patientsDashboardLink.map((i) {
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).primaryColorLight,
-                                width: 2.0),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          elevation: 8.0,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 6.0),
-                          child: InkWell(
-                            splashColor: Theme.of(context).primaryColor,
-                            onTap: () {
-                              context.push(i['routeName']);
-                            },
-                            child: SizedBox(
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0, vertical: 10.0),
-                                leading: i['icon'],
-                                title: Text(context.tr(i['name'])),
-                                trailing: const Icon(Icons.arrow_forward),
-                              ),
+                          child: SizedBox(
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                              leading: i['icon'],
+                              title: Text(context.tr(i['name'])),
+                              trailing: const Icon(Icons.arrow_forward),
                             ),
                           ),
-                        );
-                      }),
-                    ],
-                  ),
+                        ),
+                      );
+                    }),
+                  ],
                 ),
-        );
-      
+              ),
+            ),
+    );
   }
 }
 
@@ -764,13 +719,11 @@ class _BMIScreenState extends State<BMIScreen> {
       vitalMap = vitalSigns.toMap();
 
       if (vitalMap['height'].length > 0) {
-        var heightFromVital =
-            vitalMap['height'][vitalMap['height'].length - 1]['value'];
+        var heightFromVital = vitalMap['height'][vitalMap['height'].length - 1]['value'];
         _height = int.parse(heightFromVital);
       }
       if (vitalMap['weight'].length > 0) {
-        var weightFromVital =
-            vitalMap['weight'][vitalMap['weight'].length - 1]['value'];
+        var weightFromVital = vitalMap['weight'][vitalMap['weight'].length - 1]['value'];
         _weight = int.parse(weightFromVital);
       }
     }
@@ -833,8 +786,7 @@ class _BMIScreenState extends State<BMIScreen> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 30),
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                     child: SwipeableButtonView(
                       isFinished: _isFinished,
                       onFinish: () async {
@@ -902,9 +854,7 @@ class _GenderWidgetState extends State<GenderWidget> {
     var brightness = Theme.of(context).brightness;
 
     final ChoiceChip3DStyle selectedStyle = ChoiceChip3DStyle(
-        topColor: Theme.of(context).cardColor,
-        backColor: Theme.of(context).primaryColorLight,
-        borderRadius: BorderRadius.circular(20));
+        topColor: Theme.of(context).cardColor, backColor: Theme.of(context).primaryColorLight, borderRadius: BorderRadius.circular(20));
 
     final ChoiceChip3DStyle unselectedStyle = ChoiceChip3DStyle(
         topColor: brightness == Brightness.dark ? Colors.white : Colors.black,
@@ -920,9 +870,7 @@ class _GenderWidgetState extends State<GenderWidget> {
         children: [
           ChoiceChip3D(
               border: Border.all(
-                color: _gender == 1
-                    ? Theme.of(context).primaryColorLight
-                    : Theme.of(context).primaryColor,
+                color: _gender == 1 ? Theme.of(context).primaryColorLight : Theme.of(context).primaryColor,
               ),
               style: _gender == 1 ? selectedStyle : unselectedStyle,
               onSelected: () {
@@ -961,9 +909,7 @@ class _GenderWidgetState extends State<GenderWidget> {
           ),
           ChoiceChip3D(
               border: Border.all(
-                color: _gender == 2
-                    ? Theme.of(context).primaryColorLight
-                    : Theme.of(context).primaryColor,
+                color: _gender == 2 ? Theme.of(context).primaryColorLight : Theme.of(context).primaryColor,
               ),
               style: _gender == 2 ? selectedStyle : unselectedStyle,
               onSelected: () {
@@ -1128,8 +1074,7 @@ class _ScoreScreenState extends State<ScoreScreen> {
               children: [
                 Text(
                   context.tr("yourScore"),
-                  style: TextStyle(
-                      fontSize: 30, color: Theme.of(context).primaryColor),
+                  style: TextStyle(fontSize: 30, color: Theme.of(context).primaryColor),
                 ),
                 const SizedBox(
                   height: 10,

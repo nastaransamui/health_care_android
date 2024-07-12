@@ -13,6 +13,7 @@ import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/device_service.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/features/auth/auth_container.dart';
 import 'package:health_care/src/features/auth/auth_header.dart';
 import 'package:health_care/src/features/auth/email_field.dart';
@@ -218,41 +219,44 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: <Widget>[
                 const AuthHeader(),
-                AuthContainer(
-                  formKey: _loginFormKey,
-                  children: [
-                    InputField(
-                      emailController: widget.emailController,
-                      passwordController: widget.passwordController,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        context.push('/forgot');
-                      },
-                      child: Text(
-                        context.tr('forgotPasswordLink'),
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                FadeinWidget(
+                  isCenter: true,
+                  child: AuthContainer(
+                    formKey: _loginFormKey,
+                    children: [
+                      InputField(
+                        emailController: widget.emailController,
+                        passwordController: widget.passwordController,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.push('/forgot');
+                        },
+                        child: Text(
+                          context.tr('forgotPasswordLink'),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(context.tr('haveNotAccount')),
-                        TextButton(
-                            onPressed: () {
-                              context.push('/signup');
-                            },
-                            child: Text(
-                              context.tr('signup'),
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ))
-                      ],
-                    )
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(context.tr('haveNotAccount')),
+                          TextButton(
+                              onPressed: () {
+                                context.push('/signup');
+                              },
+                              child: Text(
+                                context.tr('signup'),
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ))
+                        ],
+                      )
+                    ],
+                  ),
                 )
               ],
             ),

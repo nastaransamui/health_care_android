@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/features/auth/auth_container.dart';
 import 'package:health_care/src/features/auth/auth_header.dart';
 import 'package:health_care/src/features/auth/email_field.dart';
@@ -109,50 +110,53 @@ class _ForgotScreenState extends State<ForgotScreen> {
             child: Column(
               children: <Widget>[
                 const AuthHeader(),
-                AuthContainer(
-                  formKey: _formKey,
-                  children: [
-                    InputField(
-                      emailController: widget.emailController,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(context.tr('haveAccount')),
-                        TextButton(
-                          onPressed: () {
-                            context.go('/login');
-                          },
-                          child: Text(
-                            context.tr('login'),
-                            style: TextStyle(color: Theme.of(context).primaryColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(context.tr('haveNotAccount')),
-                        TextButton(
+                FadeinWidget(
+                  isCenter: true,
+                  child: AuthContainer(
+                    formKey: _formKey,
+                    children: [
+                      InputField(
+                        emailController: widget.emailController,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(context.tr('haveAccount')),
+                          TextButton(
                             onPressed: () {
-                              setState(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SignupScreen()),
-                                );
-                              });
+                              context.go('/login');
                             },
                             child: Text(
-                              context.tr('signup'),
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ))
-                      ],
-                    )
-                  ],
+                              context.tr('login'),
+                              style: TextStyle(color: Theme.of(context).primaryColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(context.tr('haveNotAccount')),
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const SignupScreen()),
+                                  );
+                                });
+                              },
+                              child: Text(
+                                context.tr('signup'),
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ))
+                        ],
+                      )
+                    ],
+                  ),
                 )
               ],
             ),

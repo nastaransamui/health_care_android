@@ -600,6 +600,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
     }
 
     return ScaffoldWrapper(
+      key: const Key('doctor_profile'),
       title: context.tr('doctorProfile'),
       children: NotificationListener(
         onNotification: (notification) {
@@ -628,15 +629,15 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                 return Form(
                   key: profileFormKey,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    children: [
-                      
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      FadeinWidget(
-                        hasLoading: false,
-                        child: Center(
+                  child: FadeinWidget(
+                    isCenter: true,
+                    child: Column(
+                      children: [
+                        
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Center(
                           child: Stack(
                             children: <Widget>[
                               CircleAvatar(
@@ -700,15 +701,12 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                             ],
                           ),
                         ),
-                      ),
-                      Divider(
-                        color: Theme.of(context).primaryColorLight,
-                      ),
-                      const SizedBox(height: 10),
-                      //BasicInformation
-                      FadeinWidget(
-                        hasLoading: false,
-                        child: ProfileCardWidget(
+                        Divider(
+                          color: Theme.of(context).primaryColorLight,
+                        ),
+                        const SizedBox(height: 10),
+                        //BasicInformation
+                        ProfileCardWidget(
                           childrens: [
                             ProfileInputWidget(controller: emailController, readOnly: true, lable: context.tr('email')),
                             ProfileInputWidget(
@@ -856,12 +854,9 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                           ],
                           listTitle: context.tr('basicInfo'),
                         ),
-                      ),
-                      const SizedBox(height: 30),
-                      //aboutme
-                      FadeinWidget(
-                        hasLoading: false,
-                        child: ProfileCardWidget(
+                        const SizedBox(height: 30),
+                        //aboutme
+                        ProfileCardWidget(
                           listTitle: context.tr('aboutMe'),
                           childrens: [
                             ProfileInputWidget(
@@ -873,884 +868,794 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 30),
-                      //clinicInfo
-                      ProfileCardWidget(
-                        listTitle: context.tr('clinicInfo'),
-                        childrens: [
-                          ProfileInputWidget(controller: clinicNameController, readOnly: false, lable: context.tr('clinicName')),
-                          ProfileInputWidget(controller: clinicAddressController, readOnly: false, lable: context.tr('clinicAddress')),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (_clinicXfileFiles.length < 4) {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: ((builder) => bottomSheet('clinicImages', 'chooseClinicPhoto')),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                constraints: const BoxConstraints.expand(height: 100, width: double.infinity),
-                                child: DottedBorder(
-                                  dashPattern: const [8, 4],
-                                  strokeWidth: 2,
-                                  color: _clinicXfileFiles.length < 4
-                                      ? hexToColor(
-                                          secondaryDarkColorCodeReturn(homeThemeName),
-                                        )
-                                      : Theme.of(context).disabledColor,
-                                  padding: const EdgeInsets.all(8),
-                                  borderPadding: const EdgeInsets.all(4),
-                                  child: Center(
-                                    child: Text(
-                                      context.tr('max4File'),
-                                      style: TextStyle(
-                                        color: _clinicXfileFiles.length < 4
-                                            ? brightness == Brightness.dark
-                                                ? Colors.white
-                                                : Colors.blue
-                                            : Theme.of(context).disabledColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (_clinicXfileFiles.isNotEmpty) ...[
-                            CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 190.0,
-                                  autoPlay: false,
-                                  enlargeCenterPage: true,
-                                ),
-                                items: _clinicXfileFiles.map((image) {
-                                  var index = _clinicXfileFiles.indexOf(image);
-                                  return Stack(
-                                    children: [
-                                      SizedBox(
-                                        height: 180,
-                                        width: 180,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          child: Image.file(
-                                            File(image.path),
-                                            fit: BoxFit.fill,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: -10,
-                                        right: -10,
-                                        child: IconButton(
-                                          color: Colors.pinkAccent.shade400,
-                                          onPressed: () {
-                                            if (clinicImageFiles[index]['src'].startsWith(RegExp(r'^(http|https)://'))) {
-                                              setState(() {
-                                                deletedImages.add(clinicImageFiles[index]['random']);
-                                              });
-                                            }
-
-                                            setState(() {
-                                              _clinicXfileFiles.removeAt(index);
-                                              clinicImageFiles.removeAt(index);
-                                            });
-                                          },
-                                          icon: const Icon(Icons.delete),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList())
-                          ] else ...[
-                            const SizedBox(
-                              height: 30,
-                            )
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      //Contact details
-                      ProfileCardWidget(
-                        listTitle: context.tr('contactDetails'),
-                        childrens: [
-                          ProfileInputWidget(controller: address1Controller, readOnly: false, lable: context.tr('address1')),
-                          ProfileInputWidget(controller: address2Controller, readOnly: false, lable: context.tr('address2')),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              constraints: const BoxConstraints(maxHeight: 200),
-                              child: TypeAheadField<Countries>(
-                                controller: profileCountryController,
-                                hideWithKeyboard: false,
-                                suggestionsCallback: (search) => countrySuggestionsCallback(search),
-                                itemSeparatorBuilder: (context, index) {
-                                  return Divider(
-                                    height: 1,
-                                    color: Theme.of(context).primaryColor,
-                                  );
-                                },
-                                emptyBuilder: (context) => ListTile(
-                                  title: Text(
-                                    context.tr('noItem'),
-                                  ),
-                                ),
-                                errorBuilder: (context, error) {
-                                  return ListTile(
-                                    title: Text(
-                                      error.toString(),
-                                      style: TextStyle(color: Theme.of(context).primaryColor),
-                                    ),
-                                  );
-                                },
-                                loadingBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          color: Theme.of(context).primaryColorLight,
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                                builder: (context, controller, focusNode) {
-                                  return TextField(
-                                    // key: countryProfileKey,
-                                    controller: controller,
-                                    onTapOutside: (event) {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    },
-                                    focusNode: focusNode,
-                                    autofocus: false,
-                                    onChanged: (value) {
-                                      profileCountryController.text = value;
-                                    },
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColorLight,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 14.0,
-                                        horizontal: 8,
-                                      ),
-                                      suffixIcon: countryValue == null
-                                          ? null
-                                          : IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  profileCountryController.text = '';
-                                                  profileStateController.text = '';
-                                                  profileCityController.text = '';
-                                                  countryValue = null;
-                                                  stateValue = null;
-                                                  cityValue = null;
-                                                });
-                                              },
-                                              icon: Icon(
-                                                Icons.clear,
-                                                color: Theme.of(context).primaryColorLight,
-                                              ),
-                                            ),
-                                      border: const OutlineInputBorder(),
-                                      labelStyle: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                      labelText: context.tr('country'),
-                                    ),
-                                  );
-                                },
-                                decorationBuilder: (context, child) {
-                                  return Material(
-                                    type: MaterialType.card,
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderOnForeground: true,
-                                    child: child,
-                                  );
-                                },
-                                offset: const Offset(0, 2),
-                                constraints: const BoxConstraints(maxHeight: 500),
-                                itemBuilder: (context, country) {
-                                  List<InlineSpan> temp = highlightText(profileCountryController.text, country.name,
-                                      brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8, right: 8),
-                                        child: Text(
-                                          country.emoji,
-                                          style: const TextStyle(fontSize: 24.0),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        fit: FlexFit.loose,
-                                        child: ListTile(
-                                          title: Text.rich(
-                                            TextSpan(
-                                              children: temp,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            country.subtitle ?? '{$country.region} - ${country.subregion}',
-                                            style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  );
-                                },
-                                onSelected: (country) {
-                                  setState(() {
-                                    countryValue = country.name;
-                                  });
-                                  profileCountryController.text = '${country.emoji} - ${country.name}';
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              constraints: const BoxConstraints(maxHeight: 200),
-                              child: TypeAheadField<States>(
-                                controller: profileStateController,
-                                hideWithKeyboard: false,
-                                suggestionsCallback: (search) => stateSuggestionsCallback(search, countryValue),
-                                itemSeparatorBuilder: (context, index) {
-                                  return Divider(
-                                    height: 1,
-                                    color: Theme.of(context).primaryColor,
-                                  );
-                                },
-                                emptyBuilder: (context) => ListTile(
-                                  title: Text(
-                                    context.tr('noItem'),
-                                  ),
-                                ),
-                                errorBuilder: (context, error) {
-                                  return ListTile(
-                                    title: Text(
-                                      error.toString(),
-                                      style: TextStyle(color: Theme.of(context).primaryColor),
-                                    ),
-                                  );
-                                },
-                                loadingBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          color: Theme.of(context).primaryColorLight,
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                                builder: (context, controller, focusNode) {
-                                  return TextField(
-                                    // key: stateProfileKey,
-                                    controller: controller,
-                                    onTapOutside: (event) {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    },
-                                    focusNode: focusNode,
-                                    autofocus: false,
-                                    onChanged: (value) {
-                                      profileStateController.text = value;
-                                    },
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColorLight,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 14.0,
-                                        horizontal: 8,
-                                      ),
-                                      suffixIcon: stateValue == null
-                                          ? null
-                                          : IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  stateValue = null;
-                                                  cityValue = null;
-                                                  profileStateController.text = '';
-                                                  profileCityController.text = '';
-                                                });
-                                              },
-                                              icon: Icon(
-                                                Icons.clear,
-                                                color: Theme.of(context).primaryColorLight,
-                                              ),
-                                            ),
-                                      border: const OutlineInputBorder(),
-                                      labelStyle: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                      labelText: context.tr('state'),
-                                    ),
-                                  );
-                                },
-                                decorationBuilder: (context, child) {
-                                  return Material(
-                                    type: MaterialType.card,
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderOnForeground: true,
-                                    child: child,
-                                  );
-                                },
-                                offset: const Offset(0, 2),
-                                constraints: const BoxConstraints(maxHeight: 500),
-                                itemBuilder: (context, state) {
-                                  List<InlineSpan> temp = highlightText(profileStateController.text, state.name,
-                                      brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8, right: 8),
-                                        child: Text(
-                                          state.emoji,
-                                          style: const TextStyle(fontSize: 24.0),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        fit: FlexFit.loose,
-                                        child: ListTile(
-                                          title: Text.rich(TextSpan(children: temp)),
-                                          subtitle: Text(
-                                            state.subtitle ?? '{$state.countryName} - ${state.iso2}',
-                                            style: TextStyle(
-                                              color: brightness == Brightness.dark ? Colors.white : Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  );
-                                },
-                                onSelected: (state) {
-                                  setState(() {
-                                    countryValue = state.countryName;
-                                    stateValue = state.name;
-                                  });
-                                  profileStateController.text = '${state.emoji} - ${state.name}';
-                                  profileCountryController.text = '${state.emoji} - ${state.countryName}';
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              constraints: const BoxConstraints(maxHeight: 200),
-                              child: TypeAheadField<Cities>(
-                                controller: profileCityController,
-                                hideWithKeyboard: false,
-                                suggestionsCallback: (search) => citySuggestionsCallback(search, countryValue, stateValue),
-                                itemSeparatorBuilder: (context, index) {
-                                  return Divider(
-                                    height: 1,
-                                    color: Theme.of(context).primaryColor,
-                                  );
-                                },
-                                emptyBuilder: (context) => ListTile(
-                                  title: Text(
-                                    context.tr('noItem'),
-                                  ),
-                                ),
-                                errorBuilder: (context, error) {
-                                  return ListTile(
-                                    title: Text(
-                                      error.toString(),
-                                      style: TextStyle(color: Theme.of(context).primaryColor),
-                                    ),
-                                  );
-                                },
-                                loadingBuilder: (context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          color: Theme.of(context).primaryColorLight,
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                                builder: (context, controller, focusNode) {
-                                  return TextField(
-                                    // key: cityProfileKey,
-                                    controller: controller,
-                                    onTapOutside: (event) {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    },
-                                    focusNode: focusNode,
-                                    autofocus: false,
-                                    onChanged: (value) {
-                                      profileCityController.text = value;
-                                    },
-                                    decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColorLight,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 14.0,
-                                        horizontal: 8,
-                                      ),
-                                      suffixIcon: cityValue == null
-                                          ? null
-                                          : IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  cityValue = null;
-                                                  profileCityController.text = '';
-                                                });
-                                              },
-                                              icon: Icon(
-                                                Icons.clear,
-                                                color: Theme.of(context).primaryColorLight,
-                                              ),
-                                            ),
-                                      border: const OutlineInputBorder(),
-                                      labelStyle: const TextStyle(color: Colors.grey),
-                                      labelText: context.tr('city'),
-                                    ),
-                                  );
-                                },
-                                decorationBuilder: (context, child) {
-                                  return Material(
-                                    type: MaterialType.card,
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderOnForeground: true,
-                                    child: child,
-                                  );
-                                },
-                                offset: const Offset(0, 2),
-                                constraints: const BoxConstraints(maxHeight: 500),
-                                itemBuilder: (context, city) {
-                                  List<InlineSpan> temp = highlightText(profileCityController.text, city.name,
-                                      brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8, right: 8),
-                                        child: Text(
-                                          city.emoji,
-                                          style: const TextStyle(fontSize: 24.0),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        fit: FlexFit.loose,
-                                        child: ListTile(
-                                          title: Text.rich(TextSpan(children: temp)),
-                                          subtitle: Text(
-                                            city.subtitle ?? '{$city.countryName} - ${city.stateName}',
-                                            style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  );
-                                },
-                                onSelected: (city) {
-                                  setState(() {
-                                    countryValue = city.countryName;
-                                    stateValue = city.stateName;
-                                    cityValue = city.name;
-                                  });
-
-                                  profileStateController.text = '${city.emoji} - ${city.stateName}';
-                                  profileCountryController.text = '${city.emoji} - ${city.countryName}';
-                                  profileCityController.text = '${city.emoji} - ${city.name}';
-                                },
-                              ),
-                            ),
-                          ),
-                          ProfileInputWidget(controller: zipCodeController, readOnly: false, lable: context.tr('zipCode')),
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      //ServicesandSpecialization
-                      ProfileCardWidget(
-                        listTitle: context.tr('servicesAndSpecialization'),
-                        childrens: [
-                          if (doctorProfile.userProfile.specialitiesServices!.isNotEmpty) ...[
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 5.0,
-                                  foregroundColor: Theme.of(context).primaryColorLight,
-                                  animationDuration: const Duration(milliseconds: 1000),
-                                  backgroundColor: Theme.of(context).primaryColorLight,
-                                  shadowColor: Theme.of(context).primaryColorLight,
-                                ),
-                                onPressed: () {
-                                  specialitiesServices.clearTags();
-                                  // doctorProfile.userProfile.specialitiesServices!.clear();
-                                },
-                                child: Text(
-                                  context.tr('clearTags'),
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ],
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: TextFieldTags<String>(
-                              textfieldTagsController: specialitiesServices,
-                              initialTags: doctorProfile.userProfile.specialitiesServices,
-                              // textSeparators: const [ ' '],
-                              //For empty tag error
-                              validator: (tag) {
-                                return null;
-                              },
-                              letterCase: LetterCase.normal,
-                              inputFieldBuilder: (context, inputFieldValues) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: TextField(
-                                    maxLength: 100,
-                                    textAlignVertical: TextAlignVertical.top,
-                                    onTapOutside: (event) {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    },
-                                    onEditingComplete: () {},
-                                    textInputAction: TextInputAction.send,
-                                    onTap: () {
-                                      specialitiesServices.getFocusNode?.requestFocus();
-                                    },
-                                    controller: inputFieldValues.textEditingController,
-                                    focusNode: inputFieldValues.focusNode,
-                                    decoration: InputDecoration(
-                                      counterStyle: TextStyle(color: Theme.of(context).primaryColorLight),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.pinkAccent.shade400, width: 2),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.pinkAccent.shade400, width: 2),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                          width: 2,
-                                        ),
-                                      ),
-
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 14.0,
-                                        horizontal: 8,
-                                      ),
-                                      border: const OutlineInputBorder(),
-                                      labelStyle: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                      isDense: true,
-                                      // helperText: context.tr('Type&Press'),
-                                      helperStyle: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      label: Text(context.tr('pressForNewTag')),
-                                      floatingLabelBehavior:
-                                          inputFieldValues.tags.isNotEmpty ? FloatingLabelBehavior.always : FloatingLabelBehavior.auto,
-                                      errorText: specialitiesServices.getTags!.isEmpty ? context.tr('required') : null,
-                                      prefixIcon: inputFieldValues.tags.isNotEmpty
-                                          ? SingleChildScrollView(
-                                              controller: inputFieldValues.tagScrollController,
-                                              scrollDirection: Axis.vertical,
-                                              child: SizedBox(
-                                                width: MediaQuery.of(context).size.width / 2,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                    top: 8,
-                                                    bottom: 8,
-                                                    left: 8,
-                                                  ),
-                                                  child: Wrap(
-                                                      runSpacing: 4.0,
-                                                      spacing: 4.0,
-                                                      direction: Axis.horizontal,
-                                                      children: inputFieldValues.tags.map((String tag) {
-                                                        return Container(
-                                                          decoration: BoxDecoration(
-                                                            borderRadius: const BorderRadius.all(
-                                                              Radius.circular(20.0),
-                                                            ),
-                                                            color: brightness == Brightness.dark ? Colors.black : Colors.white,
-                                                          ),
-                                                          margin: const EdgeInsets.symmetric(
-                                                            horizontal: 5.0,
-                                                          ),
-                                                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                            mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              Flexible(
-                                                                fit: FlexFit.loose,
-                                                                child: InkWell(
-                                                                  child: Text(
-                                                                    tag,
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                    maxLines: 10,
-                                                                    softWrap: true,
-                                                                    style: TextStyle(
-                                                                      color: brightness == Brightness.dark ? Colors.white : Colors.black,
-                                                                    ),
-                                                                  ),
-                                                                  onTap: () {},
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                width: 4.0,
-                                                              ),
-                                                              InkWell(
-                                                                child: Icon(
-                                                                  Icons.cancel,
-                                                                  size: 14.0,
-                                                                  color: brightness == Brightness.dark ? Colors.white : Colors.black,
-                                                                ),
-                                                                onTap: () {
-                                                                  inputFieldValues.onTagRemoved(
-                                                                    tag,
-                                                                  );
-                                                                  // doctorProfile.userProfile.specialitiesServices!.remove(tag);
-                                                                },
-                                                              )
-                                                            ],
-                                                          ),
-                                                        );
-                                                      }).toList()),
-                                                ),
-                                              ),
-                                            )
-                                          : null,
-                                    ),
-                                    onChanged: (value) {
-                                      inputFieldValues.onTagChanged(value);
-                                    },
-                                    onSubmitted: (value) {
-                                      // doctorProfile.userProfile.specialitiesServices!.add(value);
-                                      inputFieldValues.onTagSubmitted(value);
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          if (specialities.isNotEmpty) ...[
+                        const SizedBox(height: 30),
+                        //clinicInfo
+                        ProfileCardWidget(
+                          listTitle: context.tr('clinicInfo'),
+                          childrens: [
+                            ProfileInputWidget(controller: clinicNameController, readOnly: false, lable: context.tr('clinicName')),
+                            ProfileInputWidget(controller: clinicAddressController, readOnly: false, lable: context.tr('clinicAddress')),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: DropdownButtonFormField<String>(
-                                decoration: decoration(context, context.tr('speciality')),
-                                isDense: true,
-                                validator: (value) => value == null ? context.tr('required') : null,
-                                value: speciality.text.isEmpty ? null : speciality.text,
-                                hint: Text(context.tr('speciality')),
-                                items: specialities.map<DropdownMenuItem<String>>((Specialities values) {
-                                  final name = context.tr(values.specialities);
-                                  final imageSrc = values.image;
-                                  final imageIsSvg = imageSrc.endsWith('.svg');
-                                  return DropdownMenuItem<String>(
-                                    value: values.specialities,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 12.0,
-                                          ),
-                                          child: imageIsSvg
-                                              ? SvgPicture.network(
-                                                  imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
-                                                  width: 20,
-                                                  height: 20,
-                                                  fit: BoxFit.fitHeight,
-                                                )
-                                              : Image.network(
-                                                  imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
-                                                  width: 20,
-                                                  height: 20,
-                                                ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (_clinicXfileFiles.length < 4) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: ((builder) => bottomSheet('clinicImages', 'chooseClinicPhoto')),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  constraints: const BoxConstraints.expand(height: 100, width: double.infinity),
+                                  child: DottedBorder(
+                                    dashPattern: const [8, 4],
+                                    strokeWidth: 2,
+                                    color: _clinicXfileFiles.length < 4
+                                        ? hexToColor(
+                                            secondaryDarkColorCodeReturn(homeThemeName),
+                                          )
+                                        : Theme.of(context).disabledColor,
+                                    padding: const EdgeInsets.all(8),
+                                    borderPadding: const EdgeInsets.all(4),
+                                    child: Center(
+                                      child: Text(
+                                        context.tr('max4File'),
+                                        style: TextStyle(
+                                          color: _clinicXfileFiles.length < 4
+                                              ? brightness == Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.blue
+                                              : Theme.of(context).disabledColor,
                                         ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          name,
-                                          style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (_clinicXfileFiles.isNotEmpty) ...[
+                              CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: 190.0,
+                                    autoPlay: false,
+                                    enlargeCenterPage: true,
+                                  ),
+                                  items: _clinicXfileFiles.map((image) {
+                                    var index = _clinicXfileFiles.indexOf(image);
+                                    return Stack(
+                                      children: [
+                                        SizedBox(
+                                          height: 180,
+                                          width: 180,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            child: Image.file(
+                                              File(image.path),
+                                              fit: BoxFit.fill,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: -10,
+                                          right: -10,
+                                          child: IconButton(
+                                            color: Colors.pinkAccent.shade400,
+                                            onPressed: () {
+                                              if (clinicImageFiles[index]['src'].startsWith(RegExp(r'^(http|https)://'))) {
+                                                setState(() {
+                                                  deletedImages.add(clinicImageFiles[index]['random']);
+                                                });
+                                              }
+                    
+                                              setState(() {
+                                                _clinicXfileFiles.removeAt(index);
+                                                clinicImageFiles.removeAt(index);
+                                              });
+                                            },
+                                            icon: const Icon(Icons.delete),
+                                          ),
                                         ),
                                       ],
+                                    );
+                                  }).toList())
+                            ] else ...[
+                              const SizedBox(
+                                height: 30,
+                              )
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //Contact details
+                        ProfileCardWidget(
+                          listTitle: context.tr('contactDetails'),
+                          childrens: [
+                            ProfileInputWidget(controller: address1Controller, readOnly: false, lable: context.tr('address1')),
+                            ProfileInputWidget(controller: address2Controller, readOnly: false, lable: context.tr('address2')),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                constraints: const BoxConstraints(maxHeight: 200),
+                                child: TypeAheadField<Countries>(
+                                  controller: profileCountryController,
+                                  hideWithKeyboard: false,
+                                  suggestionsCallback: (search) => countrySuggestionsCallback(search),
+                                  itemSeparatorBuilder: (context, index) {
+                                    return Divider(
+                                      height: 1,
+                                      color: Theme.of(context).primaryColor,
+                                    );
+                                  },
+                                  emptyBuilder: (context) => ListTile(
+                                    title: Text(
+                                      context.tr('noItem'),
+                                    ),
+                                  ),
+                                  errorBuilder: (context, error) {
+                                    return ListTile(
+                                      title: Text(
+                                        error.toString(),
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      ),
+                                    );
+                                  },
+                                  loadingBuilder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: Theme.of(context).primaryColorLight,
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  builder: (context, controller, focusNode) {
+                                    return TextField(
+                                      // key: countryProfileKey,
+                                      controller: controller,
+                                      onTapOutside: (event) {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      },
+                                      focusNode: focusNode,
+                                      autofocus: false,
+                                      onChanged: (value) {
+                                        profileCountryController.text = value;
+                                      },
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColorLight,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 14.0,
+                                          horizontal: 8,
+                                        ),
+                                        suffixIcon: countryValue == null
+                                            ? null
+                                            : IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    profileCountryController.text = '';
+                                                    profileStateController.text = '';
+                                                    profileCityController.text = '';
+                                                    countryValue = null;
+                                                    stateValue = null;
+                                                    cityValue = null;
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  color: Theme.of(context).primaryColorLight,
+                                                ),
+                                              ),
+                                        border: const OutlineInputBorder(),
+                                        labelStyle: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        labelText: context.tr('country'),
+                                      ),
+                                    );
+                                  },
+                                  decorationBuilder: (context, child) {
+                                    return Material(
+                                      type: MaterialType.card,
+                                      elevation: 4,
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderOnForeground: true,
+                                      child: child,
+                                    );
+                                  },
+                                  offset: const Offset(0, 2),
+                                  constraints: const BoxConstraints(maxHeight: 500),
+                                  itemBuilder: (context, country) {
+                                    List<InlineSpan> temp = highlightText(profileCountryController.text, country.name,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8, right: 8),
+                                          child: Text(
+                                            country.emoji,
+                                            style: const TextStyle(fontSize: 24.0),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          fit: FlexFit.loose,
+                                          child: ListTile(
+                                            title: Text.rich(
+                                              TextSpan(
+                                                children: temp,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              country.subtitle ?? '{$country.region} - ${country.subregion}',
+                                              style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                  onSelected: (country) {
+                                    setState(() {
+                                      countryValue = country.name;
+                                    });
+                                    profileCountryController.text = '${country.emoji} - ${country.name}';
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                constraints: const BoxConstraints(maxHeight: 200),
+                                child: TypeAheadField<States>(
+                                  controller: profileStateController,
+                                  hideWithKeyboard: false,
+                                  suggestionsCallback: (search) => stateSuggestionsCallback(search, countryValue),
+                                  itemSeparatorBuilder: (context, index) {
+                                    return Divider(
+                                      height: 1,
+                                      color: Theme.of(context).primaryColor,
+                                    );
+                                  },
+                                  emptyBuilder: (context) => ListTile(
+                                    title: Text(
+                                      context.tr('noItem'),
+                                    ),
+                                  ),
+                                  errorBuilder: (context, error) {
+                                    return ListTile(
+                                      title: Text(
+                                        error.toString(),
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      ),
+                                    );
+                                  },
+                                  loadingBuilder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: Theme.of(context).primaryColorLight,
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  builder: (context, controller, focusNode) {
+                                    return TextField(
+                                      // key: stateProfileKey,
+                                      controller: controller,
+                                      onTapOutside: (event) {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      },
+                                      focusNode: focusNode,
+                                      autofocus: false,
+                                      onChanged: (value) {
+                                        profileStateController.text = value;
+                                      },
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColorLight,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 14.0,
+                                          horizontal: 8,
+                                        ),
+                                        suffixIcon: stateValue == null
+                                            ? null
+                                            : IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    stateValue = null;
+                                                    cityValue = null;
+                                                    profileStateController.text = '';
+                                                    profileCityController.text = '';
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  color: Theme.of(context).primaryColorLight,
+                                                ),
+                                              ),
+                                        border: const OutlineInputBorder(),
+                                        labelStyle: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        labelText: context.tr('state'),
+                                      ),
+                                    );
+                                  },
+                                  decorationBuilder: (context, child) {
+                                    return Material(
+                                      type: MaterialType.card,
+                                      elevation: 4,
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderOnForeground: true,
+                                      child: child,
+                                    );
+                                  },
+                                  offset: const Offset(0, 2),
+                                  constraints: const BoxConstraints(maxHeight: 500),
+                                  itemBuilder: (context, state) {
+                                    List<InlineSpan> temp = highlightText(profileStateController.text, state.name,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8, right: 8),
+                                          child: Text(
+                                            state.emoji,
+                                            style: const TextStyle(fontSize: 24.0),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          fit: FlexFit.loose,
+                                          child: ListTile(
+                                            title: Text.rich(TextSpan(children: temp)),
+                                            subtitle: Text(
+                                              state.subtitle ?? '{$state.countryName} - ${state.iso2}',
+                                              style: TextStyle(
+                                                color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                  onSelected: (state) {
+                                    setState(() {
+                                      countryValue = state.countryName;
+                                      stateValue = state.name;
+                                    });
+                                    profileStateController.text = '${state.emoji} - ${state.name}';
+                                    profileCountryController.text = '${state.emoji} - ${state.countryName}';
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                constraints: const BoxConstraints(maxHeight: 200),
+                                child: TypeAheadField<Cities>(
+                                  controller: profileCityController,
+                                  hideWithKeyboard: false,
+                                  suggestionsCallback: (search) => citySuggestionsCallback(search, countryValue, stateValue),
+                                  itemSeparatorBuilder: (context, index) {
+                                    return Divider(
+                                      height: 1,
+                                      color: Theme.of(context).primaryColor,
+                                    );
+                                  },
+                                  emptyBuilder: (context) => ListTile(
+                                    title: Text(
+                                      context.tr('noItem'),
+                                    ),
+                                  ),
+                                  errorBuilder: (context, error) {
+                                    return ListTile(
+                                      title: Text(
+                                        error.toString(),
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      ),
+                                    );
+                                  },
+                                  loadingBuilder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: Theme.of(context).primaryColorLight,
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  builder: (context, controller, focusNode) {
+                                    return TextField(
+                                      // key: cityProfileKey,
+                                      controller: controller,
+                                      onTapOutside: (event) {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      },
+                                      focusNode: focusNode,
+                                      autofocus: false,
+                                      onChanged: (value) {
+                                        profileCityController.text = value;
+                                      },
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColorLight,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 14.0,
+                                          horizontal: 8,
+                                        ),
+                                        suffixIcon: cityValue == null
+                                            ? null
+                                            : IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    cityValue = null;
+                                                    profileCityController.text = '';
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  color: Theme.of(context).primaryColorLight,
+                                                ),
+                                              ),
+                                        border: const OutlineInputBorder(),
+                                        labelStyle: const TextStyle(color: Colors.grey),
+                                        labelText: context.tr('city'),
+                                      ),
+                                    );
+                                  },
+                                  decorationBuilder: (context, child) {
+                                    return Material(
+                                      type: MaterialType.card,
+                                      elevation: 4,
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderOnForeground: true,
+                                      child: child,
+                                    );
+                                  },
+                                  offset: const Offset(0, 2),
+                                  constraints: const BoxConstraints(maxHeight: 500),
+                                  itemBuilder: (context, city) {
+                                    List<InlineSpan> temp = highlightText(profileCityController.text, city.name,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8, right: 8),
+                                          child: Text(
+                                            city.emoji,
+                                            style: const TextStyle(fontSize: 24.0),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          fit: FlexFit.loose,
+                                          child: ListTile(
+                                            title: Text.rich(TextSpan(children: temp)),
+                                            subtitle: Text(
+                                              city.subtitle ?? '{$city.countryName} - ${city.stateName}',
+                                              style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                  onSelected: (city) {
+                                    setState(() {
+                                      countryValue = city.countryName;
+                                      stateValue = city.stateName;
+                                      cityValue = city.name;
+                                    });
+                    
+                                    profileStateController.text = '${city.emoji} - ${city.stateName}';
+                                    profileCountryController.text = '${city.emoji} - ${city.countryName}';
+                                    profileCityController.text = '${city.emoji} - ${city.name}';
+                                  },
+                                ),
+                              ),
+                            ),
+                            ProfileInputWidget(controller: zipCodeController, readOnly: false, lable: context.tr('zipCode'), keyboardType:  TextInputType.number,),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //ServicesandSpecialization
+                        ProfileCardWidget(
+                          listTitle: context.tr('servicesAndSpecialization'),
+                          childrens: [
+                            if (doctorProfile.userProfile.specialitiesServices!.isNotEmpty) ...[
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 5.0,
+                                    foregroundColor: Theme.of(context).primaryColorLight,
+                                    animationDuration: const Duration(milliseconds: 1000),
+                                    backgroundColor: Theme.of(context).primaryColorLight,
+                                    shadowColor: Theme.of(context).primaryColorLight,
+                                  ),
+                                  onPressed: () {
+                                    specialitiesServices.clearTags();
+                                    // doctorProfile.userProfile.specialitiesServices!.clear();
+                                  },
+                                  child: Text(
+                                    context.tr('clearTags'),
+                                    style: const TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: TextFieldTags<String>(
+                                textfieldTagsController: specialitiesServices,
+                                initialTags: doctorProfile.userProfile.specialitiesServices,
+                                // textSeparators: const [ ' '],
+                                //For empty tag error
+                                validator: (tag) {
+                                  return null;
+                                },
+                                letterCase: LetterCase.normal,
+                                inputFieldBuilder: (context, inputFieldValues) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: TextField(
+                                      maxLength: 100,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      onTapOutside: (event) {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      },
+                                      onEditingComplete: () {},
+                                      textInputAction: TextInputAction.send,
+                                      onTap: () {
+                                        specialitiesServices.getFocusNode?.requestFocus();
+                                      },
+                                      controller: inputFieldValues.textEditingController,
+                                      focusNode: inputFieldValues.focusNode,
+                                      decoration: InputDecoration(
+                                        counterStyle: TextStyle(color: Theme.of(context).primaryColorLight),
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.pinkAccent.shade400, width: 2),
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.pinkAccent.shade400, width: 2),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                    
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 14.0,
+                                          horizontal: 8,
+                                        ),
+                                        border: const OutlineInputBorder(),
+                                        labelStyle: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        isDense: true,
+                                        // helperText: context.tr('Type&Press'),
+                                        helperStyle: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        label: Text(context.tr('pressForNewTag')),
+                                        floatingLabelBehavior:
+                                            inputFieldValues.tags.isNotEmpty ? FloatingLabelBehavior.always : FloatingLabelBehavior.auto,
+                                        errorText: specialitiesServices.getTags!.isEmpty ? context.tr('required') : null,
+                                        prefixIcon: inputFieldValues.tags.isNotEmpty
+                                            ? SingleChildScrollView(
+                                                controller: inputFieldValues.tagScrollController,
+                                                scrollDirection: Axis.vertical,
+                                                child: SizedBox(
+                                                  width: MediaQuery.of(context).size.width / 2,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                      top: 8,
+                                                      bottom: 8,
+                                                      left: 8,
+                                                    ),
+                                                    child: Wrap(
+                                                        runSpacing: 4.0,
+                                                        spacing: 4.0,
+                                                        direction: Axis.horizontal,
+                                                        children: inputFieldValues.tags.map((String tag) {
+                                                          return Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: const BorderRadius.all(
+                                                                Radius.circular(20.0),
+                                                              ),
+                                                              color: brightness == Brightness.dark ? Colors.black : Colors.white,
+                                                            ),
+                                                            margin: const EdgeInsets.symmetric(
+                                                              horizontal: 5.0,
+                                                            ),
+                                                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Flexible(
+                                                                  fit: FlexFit.loose,
+                                                                  child: InkWell(
+                                                                    child: Text(
+                                                                      tag,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      maxLines: 10,
+                                                                      softWrap: true,
+                                                                      style: TextStyle(
+                                                                        color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                                                                      ),
+                                                                    ),
+                                                                    onTap: () {},
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 4.0,
+                                                                ),
+                                                                InkWell(
+                                                                  child: Icon(
+                                                                    Icons.cancel,
+                                                                    size: 14.0,
+                                                                    color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                                                                  ),
+                                                                  onTap: () {
+                                                                    inputFieldValues.onTagRemoved(
+                                                                      tag,
+                                                                    );
+                                                                    // doctorProfile.userProfile.specialitiesServices!.remove(tag);
+                                                                  },
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }).toList()),
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      onChanged: (value) {
+                                        inputFieldValues.onTagChanged(value);
+                                      },
+                                      onSubmitted: (value) {
+                                        // doctorProfile.userProfile.specialitiesServices!.add(value);
+                                        inputFieldValues.onTagSubmitted(value);
+                                      },
                                     ),
                                   );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  var index = specialities.indexWhere((map) => map.specialities == newValue);
-                                  setState(() {
-                                    specialityValue.clear();
-                                    specialityValue.add(specialities[index]);
-                                    speciality.text = newValue!;
-                                  });
                                 },
                               ),
                             ),
-                          ]
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      //Educations
-                      ProfileCardWidget(
-                        listTitle: context.tr('educations'),
-                        childrens: [
-                          if (educationController.isNotEmpty) ...[
-                            ...educationController.map((map) {
-                              var index = educationController.indexOf(map);
-                              return Card(
-                                elevation: 12,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    for (var entry in map.entries) ...[
-                                      entry.key != 'yearOfCompletion'
-                                          ? ProfileInputWidget(
-                                              controller: entry.value,
-                                              readOnly: false,
-                                              lable: context.tr(entry.key),
-                                              validator: ((value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return context.tr('${entry.key}Required');
-                                                }
-                                                return null;
-                                              }),
-                                            )
-                                          : ProfileInputWidget(
-                                              controller: entry.value,
-                                              readOnly: false,
-                                              lable: context.tr(entry.key),
-                                              validator: ((value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return context.tr('${entry.key}Required');
-                                                }
-                                                return null;
-                                              }),
-                                              keyboardType: TextInputType.none,
-                                              onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
-                                                    initialDatePickerMode: DatePickerMode.year,
-                                                    context: context,
-                                                    initialDate: DateTime.now(),
-                                                    firstDate: DateTime(1924),
-                                                    lastDate: DateTime.now());
-                                                if (pickedDate != null) {
-                                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
-
-                                                  setState(() {
-                                                    entry.value.text = formattedDate;
-                                                  });
-                                                }
-                                              },
+                            if (specialities.isNotEmpty) ...[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: DropdownButtonFormField<String>(
+                                  decoration: decoration(context, context.tr('speciality')),
+                                  isDense: true,
+                                  validator: (value) => value == null ? context.tr('required') : null,
+                                  value: speciality.text.isEmpty ? null : speciality.text,
+                                  hint: Text(context.tr('speciality')),
+                                  items: specialities.map<DropdownMenuItem<String>>((Specialities values) {
+                                    final name = context.tr(values.specialities);
+                                    final imageSrc = values.image;
+                                    final imageIsSvg = imageSrc.endsWith('.svg');
+                                    return DropdownMenuItem<String>(
+                                      value: values.specialities,
+                                      child: Row(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 12.0,
                                             ),
-                                    ],
-                                    IconButton(
-                                      color: Colors.pinkAccent.shade400,
-                                      onPressed: () {
-                                        setState(() {
-                                          educationController.removeAt(index);
-                                        });
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  ],
+                                            child: imageIsSvg
+                                                ? SvgPicture.network(
+                                                    imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                                    width: 20,
+                                                    height: 20,
+                                                    fit: BoxFit.fitHeight,
+                                                  )
+                                                : Image.network(
+                                                    imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                                    width: 20,
+                                                    height: 20,
+                                                  ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            name,
+                                            style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    var index = specialities.indexWhere((map) => map.specialities == newValue);
+                                    setState(() {
+                                      specialityValue.clear();
+                                      specialityValue.add(specialities[index]);
+                                      speciality.text = newValue!;
+                                    });
+                                  },
                                 ),
-                              );
-                            }),
-                          ],
-                          if (educationController.length < 5) ...[
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).primaryColorLight,
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  educationController.add({
-                                    "collage": TextEditingController(),
-                                    "degree": TextEditingController(),
-                                    "yearOfCompletion": TextEditingController(),
-                                  });
-                                });
-                              },
-                              icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
-                              label: Text(context.tr('addMore')),
-                            ),
-                          ]
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      //Experinces
-                      ProfileCardWidget(
-                        listTitle: context.tr('experinces'),
-                        childrens: [
-                          if (experinceController.isNotEmpty) ...[
-                            ...experinceController.map((map) {
-                              var index = experinceController.indexOf(map);
-                              return Card(
-                                elevation: 12,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    ...map.entries.map(
-                                      (entry) {
-                                        return entry.key != 'from' && entry.key != 'to'
+                            ]
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //Educations
+                        ProfileCardWidget(
+                          listTitle: context.tr('educations'),
+                          childrens: [
+                            if (educationController.isNotEmpty) ...[
+                              ...educationController.map((map) {
+                                var index = educationController.indexOf(map);
+                                return Card(
+                                  elevation: 12,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      for (var entry in map.entries) ...[
+                                        entry.key != 'yearOfCompletion'
                                             ? ProfileInputWidget(
                                                 controller: entry.value,
                                                 readOnly: false,
@@ -1772,425 +1677,515 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                   }
                                                   return null;
                                                 }),
-                                                suffixIcon: entry.value.text.isEmpty
-                                                    ? null
-                                                    : IconButton(
-                                                        splashColor: Colors.transparent,
-                                                        highlightColor: Colors.transparent,
-                                                        onPressed: () {
-                                                          if (entry.key == 'to') {
-                                                            setState(() {
-                                                              entry.value.text = '';
-                                                            });
-                                                          }
-                                                          if (entry.key == 'from') {
-                                                            experienceToDate[index][0] = 1934;
-                                                            experienceToDate[index][1] = 1;
-                                                            experienceToDate[index][2] = 1;
-                                                            setState(() {
-                                                              entry.value.text = '';
-                                                            });
-                                                          }
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.close,
-                                                          color: Theme.of(context).primaryColorLight,
-                                                        ),
-                                                      ),
                                                 keyboardType: TextInputType.none,
                                                 onTap: () async {
-                                                  if (entry.key == 'from') {
-                                                    int endFromYear = DateTime.now().year;
-                                                    int endFromMonth = DateTime.now().month;
-                                                    int endFromDay = DateTime.now().day;
-                                                    if (experinceController[index]['to']!.text.isNotEmpty) {
-                                                      DateFormat inputFormat = DateFormat("dd MMM yyyy");
-                                                      DateTime dateTime = inputFormat.parse(experinceController[index]['to']!.text);
-                                                      endFromYear = dateTime.year;
-                                                      endFromMonth = dateTime.month;
-                                                      endFromDay = dateTime.day;
-                                                    }
-                                                    DateTime? fromDate = await showDatePicker(
-                                                        initialDatePickerMode: DatePickerMode.year,
-                                                        context: context,
-                                                        firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
-                                                            experienceFromDate[index][2]),
-                                                        lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
-                                                    if (fromDate != null) {
-                                                      String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
-                                                      experienceToDate[index][0] = fromDate.year;
-                                                      experienceToDate[index][1] = fromDate.month;
-                                                      experienceToDate[index][2] = fromDate.day;
-                                                      setState(() {
-                                                        entry.value.text = formattedDate;
-                                                      });
-                                                    }
-                                                  } else {
-                                                    DateTime? toDate = await showDatePicker(
-                                                        initialDatePickerMode: DatePickerMode.year,
-                                                        context: context,
-                                                        firstDate: DateTime(
-                                                            experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
-                                                        lastDate: DateTime.now());
-
-                                                    if (toDate != null) {
-                                                      String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
-                                                      setState(() {
-                                                        entry.value.text = formattedDate;
-                                                      });
-                                                    }
+                                                  DateTime? pickedDate = await showDatePicker(
+                                                      initialDatePickerMode: DatePickerMode.year,
+                                                      context: context,
+                                                      initialDate: DateTime.now(),
+                                                      firstDate: DateTime(1924),
+                                                      lastDate: DateTime.now());
+                                                  if (pickedDate != null) {
+                                                    String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
+                    
+                                                    setState(() {
+                                                      entry.value.text = formattedDate;
+                                                    });
                                                   }
                                                 },
-                                              );
-                                      },
-                                    ),
-                                    // for (var entry in map.entries) ...[
-                                    //  ],
-                                    IconButton(
-                                      color: Colors.pinkAccent.shade400,
-                                      onPressed: () {
-                                        setState(() {
-                                          experinceController.removeAt(index);
-                                          experienceToDate.removeAt(index);
-                                          experienceFromDate.removeAt(index);
-                                        });
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  ],
+                                              ),
+                                      ],
+                                      IconButton(
+                                        color: Colors.pinkAccent.shade400,
+                                        onPressed: () {
+                                          setState(() {
+                                            educationController.removeAt(index);
+                                          });
+                                        },
+                                        icon: const Icon(Icons.delete),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                            if (educationController.length < 5) ...[
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context).primaryColorLight,
                                 ),
-                              );
-                            }),
-                          ],
-                          if (experinceController.length < 5) ...[
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).primaryColorLight,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  experinceController.add({
-                                    "hospitalName": TextEditingController(),
-                                    "from": TextEditingController(),
-                                    "to": TextEditingController(),
-                                    "designation": TextEditingController(),
+                                onPressed: () {
+                                  setState(() {
+                                    educationController.add({
+                                      "collage": TextEditingController(),
+                                      "degree": TextEditingController(),
+                                      "yearOfCompletion": TextEditingController(),
+                                    });
                                   });
-                                  experienceToDate.add([1934, 1, 1]);
-                                  experienceFromDate.add([1934, 1, 1]);
-                                });
-                              },
-                              icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
-                              label: Text(context.tr('addMore')),
-                            ),
-                          ]
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      //Awards
-                      ProfileCardWidget(
-                        childrens: [
-                          if (awardController.isNotEmpty) ...[
-                            ...awardController.map((map) {
-                              var index = awardController.indexOf(map);
-                              return Card(
-                                elevation: 12,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    for (var entry in map.entries) ...[
-                                      entry.key != 'year'
-                                          ? ProfileInputWidget(
-                                              controller: entry.value,
-                                              readOnly: false,
-                                              lable: context.tr(entry.key),
-                                              validator: ((value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return context.tr('${entry.key}Required');
-                                                }
-                                                return null;
-                                              }),
-                                            )
-                                          : ProfileInputWidget(
-                                              controller: entry.value,
-                                              readOnly: false,
-                                              lable: context.tr(entry.key),
-                                              validator: ((value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return context.tr('${entry.key}Required');
-                                                }
-                                                return null;
-                                              }),
-                                              keyboardType: TextInputType.none,
-                                              onTap: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text(context.tr('selectYear')),
-                                                      content: SizedBox(
-                                                        width: MediaQuery.of(context).size.width,
-                                                        height: 300,
-                                                        child: YearPicker(
-                                                          firstDate: DateTime(DateTime.now().year - 100, 1),
-                                                          lastDate: DateTime(DateTime.now().year, 1),
-                                                          selectedDate: DateTime.now(),
-                                                          onChanged: (DateTime dateTime) {
-                                                            Navigator.pop(context);
-                                                            setState(() {
-                                                              entry.value.text = dateTime.year.toString();
-                                                            });
+                                },
+                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                label: Text(context.tr('addMore')),
+                              ),
+                            ]
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //Experinces
+                        ProfileCardWidget(
+                          listTitle: context.tr('experinces'),
+                          childrens: [
+                            if (experinceController.isNotEmpty) ...[
+                              ...experinceController.map((map) {
+                                var index = experinceController.indexOf(map);
+                                return Card(
+                                  elevation: 12,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      ...map.entries.map(
+                                        (entry) {
+                                          return entry.key != 'from' && entry.key != 'to'
+                                              ? ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                )
+                                              : ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                  suffixIcon: entry.value.text.isEmpty
+                                                      ? null
+                                                      : IconButton(
+                                                          splashColor: Colors.transparent,
+                                                          highlightColor: Colors.transparent,
+                                                          onPressed: () {
+                                                            if (entry.key == 'to') {
+                                                              setState(() {
+                                                                entry.value.text = '';
+                                                              });
+                                                            }
+                                                            if (entry.key == 'from') {
+                                                              experienceToDate[index][0] = 1934;
+                                                              experienceToDate[index][1] = 1;
+                                                              experienceToDate[index][2] = 1;
+                                                              setState(() {
+                                                                entry.value.text = '';
+                                                              });
+                                                            }
                                                           },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                            color: Theme.of(context).primaryColorLight,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
+                                                  keyboardType: TextInputType.none,
+                                                  onTap: () async {
+                                                    if (entry.key == 'from') {
+                                                      int endFromYear = DateTime.now().year;
+                                                      int endFromMonth = DateTime.now().month;
+                                                      int endFromDay = DateTime.now().day;
+                                                      if (experinceController[index]['to']!.text.isNotEmpty) {
+                                                        DateFormat inputFormat = DateFormat("dd MMM yyyy");
+                                                        DateTime dateTime = inputFormat.parse(experinceController[index]['to']!.text);
+                                                        endFromYear = dateTime.year;
+                                                        endFromMonth = dateTime.month;
+                                                        endFromDay = dateTime.day;
+                                                      }
+                                                      DateTime? fromDate = await showDatePicker(
+                                                          initialDatePickerMode: DatePickerMode.year,
+                                                          context: context,
+                                                          firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
+                                                              experienceFromDate[index][2]),
+                                                          lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
+                                                      if (fromDate != null) {
+                                                        String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
+                                                        experienceToDate[index][0] = fromDate.year;
+                                                        experienceToDate[index][1] = fromDate.month;
+                                                        experienceToDate[index][2] = fromDate.day;
+                                                        setState(() {
+                                                          entry.value.text = formattedDate;
+                                                        });
+                                                      }
+                                                    } else {
+                                                      DateTime? toDate = await showDatePicker(
+                                                          initialDatePickerMode: DatePickerMode.year,
+                                                          context: context,
+                                                          firstDate: DateTime(
+                                                              experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
+                                                          lastDate: DateTime.now());
+                    
+                                                      if (toDate != null) {
+                                                        String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
+                                                        setState(() {
+                                                          entry.value.text = formattedDate;
+                                                        });
+                                                      }
+                                                    }
                                                   },
                                                 );
-                                              },
-                                            ),
+                                        },
+                                      ),
+                                      // for (var entry in map.entries) ...[
+                                      //  ],
+                                      IconButton(
+                                        color: Colors.pinkAccent.shade400,
+                                        onPressed: () {
+                                          setState(() {
+                                            experinceController.removeAt(index);
+                                            experienceToDate.removeAt(index);
+                                            experienceFromDate.removeAt(index);
+                                          });
+                                        },
+                                        icon: const Icon(Icons.delete),
+                                      ),
                                     ],
-                                    IconButton(
-                                      color: Colors.pinkAccent.shade400,
-                                      onPressed: () {
-                                        setState(() {
-                                          awardController.removeAt(index);
-                                        });
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  ],
+                                  ),
+                                );
+                              }),
+                            ],
+                            if (experinceController.length < 5) ...[
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context).primaryColorLight,
                                 ),
-                              );
-                            }),
-                          ],
-                          if (awardController.length < 5) ...[
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).primaryColorLight,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  awardController.add({
-                                    "award": TextEditingController(),
-                                    "year": TextEditingController(),
+                                onPressed: () {
+                                  setState(() {
+                                    experinceController.add({
+                                      "hospitalName": TextEditingController(),
+                                      "from": TextEditingController(),
+                                      "to": TextEditingController(),
+                                      "designation": TextEditingController(),
+                                    });
+                                    experienceToDate.add([1934, 1, 1]);
+                                    experienceFromDate.add([1934, 1, 1]);
                                   });
-                                });
-                              },
-                              icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
-                              label: Text(context.tr('addMore')),
-                            ),
-                          ]
-                        ],
-                        listTitle: context.tr('awards'),
-                      ),
-                      const SizedBox(height: 30),
-                      //Membership
-                      ProfileCardWidget(
-                        listTitle: context.tr('memberships'),
-                        childrens: [
-                          if (membershipController.isNotEmpty) ...[
-                            ...membershipController.map((map) {
-                              var index = membershipController.indexOf(map);
-                              return Card(
-                                elevation: 12,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    for (var entry in map.entries) ...[
-                                      ProfileInputWidget(
-                                        controller: entry.value,
-                                        readOnly: false,
-                                        lable: context.tr(entry.key),
-                                        validator: ((value) {
-                                          if (value == null || value.isEmpty) {
-                                            return context.tr('${entry.key}Required');
-                                          }
-                                          return null;
-                                        }),
-                                      )
-                                    ],
-                                    IconButton(
-                                      color: Colors.pinkAccent.shade400,
-                                      onPressed: () {
-                                        setState(() {
-                                          membershipController.removeAt(index);
-                                        });
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ],
-                          if (membershipController.length < 5) ...[
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).primaryColorLight,
+                                },
+                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                label: Text(context.tr('addMore')),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  membershipController.add({
-                                    "membership": TextEditingController(),
-                                  });
-                                });
-                              },
-                              icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
-                              label: Text(context.tr('addMore')),
-                            ),
-                          ]
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      //Registrations
-                      ProfileCardWidget(
-                        childrens: [
-                          if (registrationController.isNotEmpty) ...[
-                            ...registrationController.map((map) {
-                              var index = registrationController.indexOf(map);
-                              return Card(
-                                elevation: 12,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    for (var entry in map.entries) ...[
-                                      entry.key != 'year'
-                                          ? ProfileInputWidget(
-                                              controller: entry.value,
-                                              readOnly: false,
-                                              lable: context.tr(entry.key),
-                                              validator: ((value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return context.tr('${entry.key}Required');
-                                                }
-                                                return null;
-                                              }),
-                                            )
-                                          : ProfileInputWidget(
-                                              controller: entry.value,
-                                              readOnly: false,
-                                              lable: context.tr(entry.key),
-                                              validator: ((value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return context.tr('${entry.key}Required');
-                                                }
-                                                return null;
-                                              }),
-                                              keyboardType: TextInputType.none,
-                                              onTap: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text(context.tr('selectYear')),
-                                                      content: SizedBox(
-                                                        width: MediaQuery.of(context).size.width,
-                                                        height: 300,
-                                                        child: YearPicker(
-                                                          firstDate: DateTime(DateTime.now().year - 100, 1),
-                                                          lastDate: DateTime(DateTime.now().year, 1),
-                                                          selectedDate: DateTime.now(),
-                                                          onChanged: (DateTime dateTime) {
-                                                            Navigator.pop(context);
-                                                            setState(() {
-                                                              entry.value.text = dateTime.year.toString();
-                                                            });
-                                                          },
+                            ]
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //Awards
+                        ProfileCardWidget(
+                          childrens: [
+                            if (awardController.isNotEmpty) ...[
+                              ...awardController.map((map) {
+                                var index = awardController.indexOf(map);
+                                return Card(
+                                  elevation: 12,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      for (var entry in map.entries) ...[
+                                        entry.key != 'year'
+                                            ? ProfileInputWidget(
+                                                controller: entry.value,
+                                                readOnly: false,
+                                                lable: context.tr(entry.key),
+                                                validator: ((value) {
+                                                  if (value == null || value.isEmpty) {
+                                                    return context.tr('${entry.key}Required');
+                                                  }
+                                                  return null;
+                                                }),
+                                              )
+                                            : ProfileInputWidget(
+                                                controller: entry.value,
+                                                readOnly: false,
+                                                lable: context.tr(entry.key),
+                                                validator: ((value) {
+                                                  if (value == null || value.isEmpty) {
+                                                    return context.tr('${entry.key}Required');
+                                                  }
+                                                  return null;
+                                                }),
+                                                keyboardType: TextInputType.none,
+                                                onTap: () async {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(context.tr('selectYear')),
+                                                        content: SizedBox(
+                                                          width: MediaQuery.of(context).size.width,
+                                                          height: 300,
+                                                          child: YearPicker(
+                                                            firstDate: DateTime(DateTime.now().year - 100, 1),
+                                                            lastDate: DateTime(DateTime.now().year, 1),
+                                                            selectedDate: DateTime.now(),
+                                                            onChanged: (DateTime dateTime) {
+                                                              Navigator.pop(context);
+                                                              setState(() {
+                                                                entry.value.text = dateTime.year.toString();
+                                                              });
+                                                            },
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                      ],
+                                      IconButton(
+                                        color: Colors.pinkAccent.shade400,
+                                        onPressed: () {
+                                          setState(() {
+                                            awardController.removeAt(index);
+                                          });
+                                        },
+                                        icon: const Icon(Icons.delete),
+                                      ),
                                     ],
-                                    IconButton(
-                                      color: Colors.pinkAccent.shade400,
-                                      onPressed: () {
-                                        setState(() {
-                                          registrationController.removeAt(index);
-                                        });
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  ],
+                                  ),
+                                );
+                              }),
+                            ],
+                            if (awardController.length < 5) ...[
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context).primaryColorLight,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    awardController.add({
+                                      "award": TextEditingController(),
+                                      "year": TextEditingController(),
+                                    });
+                                  });
+                                },
+                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                label: Text(context.tr('addMore')),
+                              ),
+                            ]
+                          ],
+                          listTitle: context.tr('awards'),
+                        ),
+                        const SizedBox(height: 30),
+                        //Membership
+                        ProfileCardWidget(
+                          listTitle: context.tr('memberships'),
+                          childrens: [
+                            if (membershipController.isNotEmpty) ...[
+                              ...membershipController.map((map) {
+                                var index = membershipController.indexOf(map);
+                                return Card(
+                                  elevation: 12,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      for (var entry in map.entries) ...[
+                                        ProfileInputWidget(
+                                          controller: entry.value,
+                                          readOnly: false,
+                                          lable: context.tr(entry.key),
+                                          validator: ((value) {
+                                            if (value == null || value.isEmpty) {
+                                              return context.tr('${entry.key}Required');
+                                            }
+                                            return null;
+                                          }),
+                                        )
+                                      ],
+                                      IconButton(
+                                        color: Colors.pinkAccent.shade400,
+                                        onPressed: () {
+                                          setState(() {
+                                            membershipController.removeAt(index);
+                                          });
+                                        },
+                                        icon: const Icon(Icons.delete),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                            if (membershipController.length < 5) ...[
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context).primaryColorLight,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    membershipController.add({
+                                      "membership": TextEditingController(),
+                                    });
+                                  });
+                                },
+                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                label: Text(context.tr('addMore')),
+                              ),
+                            ]
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //Registrations
+                        ProfileCardWidget(
+                          childrens: [
+                            if (registrationController.isNotEmpty) ...[
+                              ...registrationController.map((map) {
+                                var index = registrationController.indexOf(map);
+                                return Card(
+                                  elevation: 12,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      for (var entry in map.entries) ...[
+                                        entry.key != 'year'
+                                            ? ProfileInputWidget(
+                                                controller: entry.value,
+                                                readOnly: false,
+                                                lable: context.tr(entry.key),
+                                                validator: ((value) {
+                                                  if (value == null || value.isEmpty) {
+                                                    return context.tr('${entry.key}Required');
+                                                  }
+                                                  return null;
+                                                }),
+                                              )
+                                            : ProfileInputWidget(
+                                                controller: entry.value,
+                                                readOnly: false,
+                                                lable: context.tr(entry.key),
+                                                validator: ((value) {
+                                                  if (value == null || value.isEmpty) {
+                                                    return context.tr('${entry.key}Required');
+                                                  }
+                                                  return null;
+                                                }),
+                                                keyboardType: TextInputType.none,
+                                                onTap: () async {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(context.tr('selectYear')),
+                                                        content: SizedBox(
+                                                          width: MediaQuery.of(context).size.width,
+                                                          height: 300,
+                                                          child: YearPicker(
+                                                            firstDate: DateTime(DateTime.now().year - 100, 1),
+                                                            lastDate: DateTime(DateTime.now().year, 1),
+                                                            selectedDate: DateTime.now(),
+                                                            onChanged: (DateTime dateTime) {
+                                                              Navigator.pop(context);
+                                                              setState(() {
+                                                                entry.value.text = dateTime.year.toString();
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                      ],
+                                      IconButton(
+                                        color: Colors.pinkAccent.shade400,
+                                        onPressed: () {
+                                          setState(() {
+                                            registrationController.removeAt(index);
+                                          });
+                                        },
+                                        icon: const Icon(Icons.delete),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                            if (registrationController.length < 5) ...[
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context).primaryColorLight,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    registrationController.add({
+                                      "registration": TextEditingController(),
+                                      "year": TextEditingController(),
+                                    });
+                                  });
+                                },
+                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                label: Text(context.tr('addMore')),
+                              ),
+                            ]
+                          ],
+                          listTitle: context.tr('registrations'),
+                        ),
+                        //Buttons
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(double.maxFinite, 30),
+                              elevation: 5.0,
+                              foregroundColor: Theme.of(context).primaryColorLight,
+                              animationDuration: const Duration(milliseconds: 1000),
+                              backgroundColor: Theme.of(context).primaryColorLight,
+                              shadowColor: Theme.of(context).primaryColorLight,
+                            ),
+                            onPressed: onFormSubmit,
+                            child: Text(
+                              context.tr('submit'),
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(double.maxFinite, 30),
+                              elevation: 5.0,
+                              foregroundColor: Colors.pinkAccent.shade400,
+                              animationDuration: const Duration(milliseconds: 1000),
+                              backgroundColor: Colors.pinkAccent.shade400,
+                              shadowColor: Colors.pinkAccent.shade400,
+                            ),
+                            onPressed: () {
+                              showToast(
+                                context,
+                                Toast(
+                                  id: '_deleteToast',
+                                  child: CustomInfoToast(
+                                    onConfirm: () {
+                                      confirmDeleteClick(userData!);
+                                    },
+                                    title: '',
+                                    description: context.tr('deleteAccountWarning'),
+                                    confirmText: 'delete',
+                                    closeText: 'cancel',
+                                  ),
                                 ),
                               );
-                            }),
-                          ],
-                          if (registrationController.length < 5) ...[
-                            TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).primaryColorLight,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  registrationController.add({
-                                    "registration": TextEditingController(),
-                                    "year": TextEditingController(),
-                                  });
-                                });
-                              },
-                              icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
-                              label: Text(context.tr('addMore')),
+                            },
+                            child: Text(
+                              context.tr('deleteAccount'),
+                              style: const TextStyle(color: Colors.black),
                             ),
-                          ]
-                        ],
-                        listTitle: context.tr('registrations'),
-                      ),
-                      //Buttons
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: const Size(double.maxFinite, 30),
-                            elevation: 5.0,
-                            foregroundColor: Theme.of(context).primaryColorLight,
-                            animationDuration: const Duration(milliseconds: 1000),
-                            backgroundColor: Theme.of(context).primaryColorLight,
-                            shadowColor: Theme.of(context).primaryColorLight,
-                          ),
-                          onPressed: onFormSubmit,
-                          child: Text(
-                            context.tr('submit'),
-                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: const Size(double.maxFinite, 30),
-                            elevation: 5.0,
-                            foregroundColor: Colors.pinkAccent.shade400,
-                            animationDuration: const Duration(milliseconds: 1000),
-                            backgroundColor: Colors.pinkAccent.shade400,
-                            shadowColor: Colors.pinkAccent.shade400,
-                          ),
-                          onPressed: () {
-                            showToast(
-                              context,
-                              Toast(
-                                id: '_deleteToast',
-                                child: CustomInfoToast(
-                                  onConfirm: () {
-                                    confirmDeleteClick(userData!);
-                                  },
-                                  title: '',
-                                  description: context.tr('deleteAccountWarning'),
-                                  confirmText: 'delete',
-                                  closeText: 'cancel',
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            context.tr('deleteAccount'),
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

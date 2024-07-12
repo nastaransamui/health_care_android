@@ -88,7 +88,7 @@ class _SearchCardState extends State<SearchCard> {
           ),
           child: SingleChildScrollView(
             child: FadeinWidget(
-              hasLoading: false,
+              isCenter: false,
               child: Column(
                 children: [
                   AnimatedPadding(

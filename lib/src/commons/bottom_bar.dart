@@ -50,8 +50,8 @@ class _BottomBarState extends State<BottomBar> {
       case 'dashboard':
         Navigator.pop(context);
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/${roleName}_dashboard') {
-            context.go('/${roleName}_dashboard');
+          if (location != '/${roleName}_dashboard') {
+            context.push('/${roleName}_dashboard');
           }
         });
         break;

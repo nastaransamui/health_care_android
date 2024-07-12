@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:health_care/constants/error_handling.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/device_service.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -189,47 +190,50 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               children: <Widget>[
                 const AuthHeader(),
-                AuthContainer(
-                  formKey: _signupFormKey,
-                  children: [
-                    InputField(
-                      firstNameController: firstNameController,
-                      lastNameController: lastNameController,
-                      mobileNumberController: mobileNumberController,
-                      emailController: emailController,
-                      passwordController: passwordController,
-                      repeatPasswordController: repeatPasswordController,
-                      userTypeController: userTypeController,
-                      passwordNotSame: passwordNotSame,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        context.push('/forgot');
-                      },
-                      child: Text(
-                        context.tr('forgotPasswordLink'),
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                FadeinWidget(
+                  isCenter: true,
+                  child: AuthContainer(
+                    formKey: _signupFormKey,
+                    children: [
+                      InputField(
+                        firstNameController: firstNameController,
+                        lastNameController: lastNameController,
+                        mobileNumberController: mobileNumberController,
+                        emailController: emailController,
+                        passwordController: passwordController,
+                        repeatPasswordController: repeatPasswordController,
+                        userTypeController: userTypeController,
+                        passwordNotSame: passwordNotSame,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.push('/forgot');
+                        },
+                        child: Text(
+                          context.tr('forgotPasswordLink'),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(context.tr('haveAccount')),
-                        TextButton(
-                          onPressed: () {
-                            context.go('/login');
-                          },
-                          child: Text(
-                            context.tr('login'),
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(context.tr('haveAccount')),
+                          TextButton(
+                            onPressed: () {
+                              context.go('/login');
+                            },
+                            child: Text(
+                              context.tr('login'),
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 )
               ],
             ),

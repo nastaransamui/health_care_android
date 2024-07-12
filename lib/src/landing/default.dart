@@ -52,7 +52,7 @@ class _DefaultState extends State<Default> {
                 ListTile(
                   title: Text(context.tr('clinics')),
                 ),
-                const FadeinWidget(hasLoading: false, child: ClinicsScrollView()),
+                const FadeinWidget(isCenter: false, child: ClinicsScrollView()),
               ],
               if (specialities.isNotEmpty) ...[
                 ListTile(
