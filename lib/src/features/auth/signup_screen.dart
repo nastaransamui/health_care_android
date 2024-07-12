@@ -40,7 +40,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final _signupFormKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final mobileNumberController = TextEditingController();
@@ -63,7 +63,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void resetForm() {
-    _formKey.currentState?.reset();
+    _signupFormKey.currentState?.reset();
     firstNameController.text = "";
     lastNameController.text = "";
     mobileNumberController.text = "";
@@ -163,7 +163,7 @@ class _SignupScreenState extends State<SignupScreen> {
               setState(() {
                 passwordNotSame = false;
               });
-              if (_formKey.currentState!.validate()) {
+              if (_signupFormKey.currentState!.validate()) {
                 showModalBottomSheet(
                   isDismissible: false,
                   enableDrag: false,
@@ -190,7 +190,7 @@ class _SignupScreenState extends State<SignupScreen> {
               children: <Widget>[
                 const AuthHeader(),
                 AuthContainer(
-                  formKey: _formKey,
+                  formKey: _signupFormKey,
                   children: [
                     InputField(
                       firstNameController: firstNameController,
@@ -401,7 +401,7 @@ class _InputFieldState extends State<InputField> {
                     Toast(
                       id: '_toast',
                       child: CustomInfoToast(
-                        onLogout: () {
+                        onConfirm: () {
                           socket.emit('logOutAllUsersSubmit', {
                             "email": formData['email'],
                             'services': 'google',
@@ -436,6 +436,8 @@ class _InputFieldState extends State<InputField> {
                           });
                         },
                         title: '',
+                         confirmText: 'logoutOthers',
+                        closeText: 'close',
                         description:
                             '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
                       ),
@@ -665,6 +667,7 @@ class _InputFieldState extends State<InputField> {
         EmailField(emailController: widget.emailController),
         const SizedBox(height: 10),
         InternationalPhoneNumberInput(
+          // initialValue: PhoneNumber(isoCode: userData !=null ? userData.countryCode : "TH" ),
           errorMessage: context.tr('required'),
           validator: (userInput) {
             if (userInput!.isEmpty) {
@@ -688,7 +691,7 @@ class _InputFieldState extends State<InputField> {
           },
           selectorConfig: const SelectorConfig(
             setSelectorButtonAsPrefixIcon: true,
-            selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+            selectorType: PhoneInputSelectorType.DIALOG,
             useBottomSheetSafeArea: true,
             leadingPadding: 10,
             trailingSpace: false,
@@ -701,7 +704,7 @@ class _InputFieldState extends State<InputField> {
           ),
           // initialValue: number,
           textFieldController: widget.mobileNumberController,
-          formatInput: true,
+          formatInput: false,
           keyboardType: const TextInputType.numberWithOptions(
             signed: true,
             decimal: true,

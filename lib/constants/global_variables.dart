@@ -5,6 +5,95 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 String ipApiUrl = 'http://ip-api.com/json';
 const double expandedHeight = 250;
 
+List dcotorsDashboarPatientHeader =[
+  {
+    "title": "totalPatient",
+    "icon": "",
+    "image": "assets/icon/doctor-dashboard-01.png",
+    "percent": 0.8
+  },
+  {
+    "title": "thisWeekPatients",
+    "icon": "",
+    "image": "assets/icon/doctor-dashboard-02.png",
+    "percent": 0.5
+  },
+  {
+    "title": "reservations",
+    "icon": "",
+    "image": "assets/icon/doctor-dashboard-03.png",
+    "percent": 0.3
+  }
+];
+List doctorDataScroll = [
+  {
+    "title": "thisWeekPatients",
+    "icon": const Icon(Icons.date_range),
+    "routeName": "/doctors_dashboard/appointments/this_week"
+  },
+  {
+    "title": "todayPatients",
+    "icon": const Icon(Icons.medication),
+    "routeName": "/doctors_dashboard/appointments/today"
+  },
+];
+List doctorsDashboardLink = [
+  {
+    'name': 'appointments',
+    'routeName': "/doctors_dashboard/appointments",
+    "icon": const FaIcon(FontAwesomeIcons.calendarCheck),
+  },
+  {
+    'name': 'myPatients',
+    'routeName': "/doctors_dashboard/my-patients",
+    "icon": const FaIcon(FontAwesomeIcons.userInjured),
+  },
+  {
+    'name': 'scheduleTiming',
+    'routeName': "/doctors_dashboard/schedule-timing",
+    "icon": const FaIcon(FontAwesomeIcons.hourglassStart),
+  },
+  {
+    'name': 'availableTiming',
+    'routeName': "/doctors_dashboard/available-timing",
+    "icon": const FaIcon(FontAwesomeIcons.clock),
+  },
+  {
+    'name': 'invoices',
+    'routeName': "/doctors_dashboard/invoices",
+    "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
+  },
+  {
+    'name': 'accounts',
+    'routeName': "/doctors_dashboard/accounts",
+    "icon": const FaIcon(FontAwesomeIcons.fileInvoiceDollar),
+  },
+  {
+    'name': 'reviews',
+    'routeName': "/doctors_dashboard/reviews",
+    "icon": const FaIcon(FontAwesomeIcons.star),
+  },
+  {
+    'name': 'message',
+    'routeName': "/doctors_dashboard/message",
+    "icon": const FaIcon(FontAwesomeIcons.comments),
+  },
+  {
+    'name': 'profileSettings',
+    'routeName': "/doctors_dashboard/doctors_profile",
+    "icon": const FaIcon(FontAwesomeIcons.userCog),
+  },
+  {
+    'name': 'socialMedia',
+    'routeName': "/doctors_dashboard/socialMedia",
+    "icon": const FaIcon(FontAwesomeIcons.shareAlt),
+  },
+  {
+    'name': 'changePassword',
+    'routeName': "/doctors_dashboard/changePassword",
+    "icon": const FaIcon(FontAwesomeIcons.lock),
+  },
+];
 List vitalBoxList = [
   {
     "title": 'heartRate',
@@ -55,7 +144,7 @@ List patinetDataScroll = [
   }
 ];
 
-List elements = [
+List patientsDashboardLink = [
   {
     'name': 'favourites',
     'routeName': "/patient_dashboard/favourites",
@@ -88,7 +177,7 @@ List elements = [
   },
   {
     'name': 'profileSettings',
-    'routeName': "/patient_dashboard/profileSettings",
+    'routeName': "/patient_dashboard/patient_profile",
     "icon": const FaIcon(FontAwesomeIcons.userCog),
   },
   {

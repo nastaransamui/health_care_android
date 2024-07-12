@@ -1,6 +1,4 @@
-
-
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +16,7 @@ class SpecialitiesScrollView extends StatefulWidget {
 class _SpecialitiesScrollViewState extends State<SpecialitiesScrollView> {
   @override
   Widget build(BuildContext context) {
-    final specialities =
-        Provider.of<SpecialitiesProvider>(context).specialities;
+    final specialities = Provider.of<SpecialitiesProvider>(context).specialities;
     var brightness = Theme.of(context).brightness;
     return ListView.builder(
       shrinkWrap: true,
@@ -40,8 +37,7 @@ class _SpecialitiesScrollViewState extends State<SpecialitiesScrollView> {
             final numberOfDoctors = i.usersId.length;
             return Card(
               shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    color: Theme.of(context).primaryColorLight, width: 2.0),
+                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               elevation: 5.0,
@@ -59,8 +55,7 @@ class _SpecialitiesScrollViewState extends State<SpecialitiesScrollView> {
                           borderRadius: BorderRadius.circular(8),
                           child: imageIsSvg
                               ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20.0, bottom: 20.0),
+                                  padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                                   child: SvgPicture.network(
                                     imageSrc,
                                     width: 60,
@@ -68,19 +63,31 @@ class _SpecialitiesScrollViewState extends State<SpecialitiesScrollView> {
                                     fit: BoxFit.fitHeight,
                                   ),
                                 )
-                              : Image.network(
-                                  imageSrc,
-                                  width: 100,
-                                  height: 100,
+                              : SizedBox(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageSrc,
+                                    fadeInDuration: const Duration(milliseconds: 0),
+                                    fadeOutDuration: const Duration(milliseconds: 0),
+                                    errorWidget: (ccontext, url, error) {
+                                      return Image.asset(
+                                        'assets/images/default-avatar.png',
+                                      );
+                                    },
+                                  ),
                                 ),
+                          // Image.network(
+                          //     imageSrc,
+                          //     width: 100,
+                          //     height: 100,
+                          //   ),
                         ),
                       ),
                     ),
                     Expanded(
                       child: ListTile(
-                        textColor: brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
+                        textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
                         title: Text(
                           name,
                           style: const TextStyle(

@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_care/router.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
@@ -38,6 +39,10 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   void authListClicked(String type, String roleName) {
+    final RouteMatch lastMatch = router.routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch ? lastMatch.matches : router.routerDelegate.currentConfiguration;
+    final String location = matchList.uri.toString();
+
     setState(() {
       typeClicked = type;
     });
@@ -45,12 +50,7 @@ class _BottomBarState extends State<BottomBar> {
       case 'dashboard':
         Navigator.pop(context);
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (GoRouter.of(context)
-                  .routerDelegate
-                  .currentConfiguration
-                  .uri
-                  .toString() !=
-              '/${roleName}_dashboard') {
+          if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/${roleName}_dashboard') {
             context.go('/${roleName}_dashboard');
           }
         });
@@ -58,13 +58,8 @@ class _BottomBarState extends State<BottomBar> {
       case 'profile':
         Navigator.pop(context);
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (GoRouter.of(context)
-                  .routerDelegate
-                  .currentConfiguration
-                  .uri
-                  .toString() !=
-              '/${roleName}_profile') {
-            context.go('/${roleName}_profile');
+          if (location != '/${roleName}_dashboard/${roleName}_profile') {
+            context.push('/${roleName}_dashboard/${roleName}_profile');
           }
         });
         break;
@@ -83,13 +78,11 @@ class _BottomBarState extends State<BottomBar> {
     if (isLogin) {
       if (roleName == 'patient') {
         if (patientProfile!.userProfile.profileImage.isNotEmpty) {
-          imageUrl =
-              '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+          imageUrl = '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
         }
       } else if (roleName == 'doctors') {
         if (doctorsProfile!.userProfile.profileImage.isNotEmpty) {
-          imageUrl = doctorsProfile.userProfile
-              .profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
+          imageUrl = '${doctorsProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}'; //
         }
       }
     }
@@ -158,24 +151,20 @@ class _BottomBarState extends State<BottomBar> {
                             // child: image,
                             child: imageUrl.isEmpty
                                 ? roleName == 'doctors'
-                                    ? Image.asset(
-                                        'assets/images/doctors_profile.jpg')
+                                    ? Image.asset('assets/images/doctors_profile.jpg')
                                     : Image.asset(
                                         'assets/images/default-avatar.png',
                                       )
                                 : CachedNetworkImage(
                                     imageUrl: imageUrl,
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 0),
-                                    fadeOutDuration:
-                                        const Duration(milliseconds: 0),
+                                    fadeInDuration: const Duration(milliseconds: 0),
+                                    fadeOutDuration: const Duration(milliseconds: 0),
                                     errorWidget: (ccontext, url, error) {
                                       return roleName == 'doctors'
-                                    ? Image.asset(
-                                        'assets/images/doctors_profile.jpg')
-                                    : Image.asset(
-                                        'assets/images/default-avatar.png',
-                                      );
+                                          ? Image.asset('assets/images/doctors_profile.jpg')
+                                          : Image.asset(
+                                              'assets/images/default-avatar.png',
+                                            );
                                     },
                                   ),
                           ),
@@ -199,8 +188,7 @@ class _BottomBarState extends State<BottomBar> {
                           if (roleName == 'patient' && patientProfile != null) {
                             services = patientProfile.services;
                             userid = patientProfile.userId;
-                          } else if (roleName == 'doctors' &&
-                              doctorsProfile != null) {
+                          } else if (roleName == 'doctors' && doctorsProfile != null) {
                             services = doctorsProfile.services;
                             userid = doctorsProfile.userId;
                           }
@@ -212,8 +200,7 @@ class _BottomBarState extends State<BottomBar> {
                               context,
                               Toast(
                                 title: 'Failed',
-                                description: data['reason'] ??
-                                    context.tr('logoutFailed'),
+                                description: data['reason'] ?? context.tr('logoutFailed'),
                                 duration: Duration(milliseconds: 200.toInt()),
                                 lifeTime: Duration(
                                   milliseconds: 2500.toInt(),
@@ -221,7 +208,7 @@ class _BottomBarState extends State<BottomBar> {
                               ),
                             );
                           } else {
-                            authService.logoutService(context);
+                            authService.logoutService();
                           }
                         });
                       }
@@ -295,17 +282,14 @@ class _AuthListState extends State<AuthList> {
                               height: 70.0,
                               child: imageUrl.isEmpty
                                   ? roleName == 'doctors'
-                                    ? Image.asset(
-                                        'assets/images/doctors_profile.jpg')
-                                    : Image.asset(
-                                        'assets/images/default-avatar.png',
-                                      )
+                                      ? Image.asset('assets/images/doctors_profile.jpg')
+                                      : Image.asset(
+                                          'assets/images/default-avatar.png',
+                                        )
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
-                                      fadeInDuration:
-                                          const Duration(milliseconds: 0),
-                                      fadeOutDuration:
-                                          const Duration(milliseconds: 0),
+                                      fadeInDuration: const Duration(milliseconds: 0),
+                                      fadeOutDuration: const Duration(milliseconds: 0),
                                       errorWidget: (ccontext, url, error) {
                                         return Image.asset(
                                           'assets/images/default-avatar.png',
@@ -331,9 +315,7 @@ class _AuthListState extends State<AuthList> {
                           children: <TextSpan>[
                             TextSpan(
                                 style: TextStyle(
-                                  color: brightness == Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color: brightness == Brightness.dark ? Colors.white : Colors.black,
                                 ),
                                 text:
                                     '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ${roleName == 'patient' ? patientProfile?.userProfile.firstName : doctorsProfile?.userProfile.firstName} \n ${roleName == 'patient' ? patientProfile?.userProfile.lastName : doctorsProfile?.userProfile.lastName} \n \n'),
@@ -341,9 +323,7 @@ class _AuthListState extends State<AuthList> {
                               text: context.tr(roleName),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
+                                color: brightness == Brightness.dark ? Colors.white : Colors.black,
                               ),
                             ),
                           ],

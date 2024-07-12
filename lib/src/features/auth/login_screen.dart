@@ -40,7 +40,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final _loginFormKey = GlobalKey<FormState>();
   final DeviceService deviceService = DeviceService();
   final AuthService authService = AuthService();
 
@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Toast(
                 id: '_toast',
                 child: CustomInfoToast(
-                  onLogout: () {
+                  onConfirm: () {
                     socket.emit('logOutAllUsersSubmit', {
                       "email": formData['email'],
                       'services': 'password',
@@ -145,6 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     });
                   },
                   title: '',
+                  confirmText: 'logoutOthers',
+                  closeText: 'close',
                   description:
                       '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
                 ),
@@ -196,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onNotification: (notification) {
             final email = notification.emailValue;
             final password = notification.passwordValue;
-            if (_formKey.currentState!.validate() &&
+            if (_loginFormKey.currentState!.validate() &&
                 email != '' &&
                 password != '') {
               showModalBottomSheet(
@@ -217,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 const AuthHeader(),
                 AuthContainer(
-                  formKey: _formKey,
+                  formKey: _loginFormKey,
                   children: [
                     InputField(
                       emailController: widget.emailController,
@@ -379,7 +381,7 @@ class _InputFieldState extends State<InputField> {
                     Toast(
                       id: '_toast',
                       child: CustomInfoToast(
-                        onLogout: () {
+                        onConfirm: () {
                           socket.emit('logOutAllUsersSubmit', {
                             "email": formData['email'],
                             'services': 'google',
@@ -414,6 +416,8 @@ class _InputFieldState extends State<InputField> {
                           });
                         },
                         title: '',
+                        confirmText: 'logoutOthers',
+                        closeText: 'close',
                         description:
                             '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
                       ),

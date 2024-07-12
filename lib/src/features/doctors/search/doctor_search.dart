@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -100,14 +99,14 @@ class _DoctorSearchState extends State<DoctorSearch> {
   }
 
   void loadMore() {
-    if (scrollController.position.pixels ==
-            scrollController.position.maxScrollExtent &&
-        !isLoading) {
-      limit = limit + 10;
-      isLoading = true;
+    if (scrollController.hasClients) {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent && !isLoading) {
+        limit = limit + 10;
+        isLoading = true;
 
-      session['limit'] = '$limit';
-      fetchDoctors();
+        session['limit'] = '$limit';
+        fetchDoctors();
+      }
     }
   }
 
@@ -120,11 +119,13 @@ class _DoctorSearchState extends State<DoctorSearch> {
   }
 
   void scrollDown() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-    );
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
     Future.delayed(const Duration(milliseconds: 300), () {
       filterWidgetScrollController.animateTo(
         filterWidgetScrollController.position.maxScrollExtent,
@@ -135,11 +136,13 @@ class _DoctorSearchState extends State<DoctorSearch> {
   }
 
   void scrollUp() {
-    scrollController.animateTo(
-      scrollController.position.minScrollExtent,
-      duration: const Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-    );
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.minScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
     Future.delayed(const Duration(milliseconds: 300), () {
       filterWidgetScrollController.animateTo(
         filterWidgetScrollController.position.minScrollExtent,
@@ -149,14 +152,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
     });
   }
 
-  void updateFilterState(
-      String? specialities,
-      String? gender,
-      String? country,
-      String? state,
-      String? city,
-      String? keyWord,
-      String? availability,
+  void updateFilterState(String? specialities, String? gender, String? country, String? state, String? city, String? keyWord, String? availability,
       Map<String, dynamic> localQueryParams) {
     setState(() {
       specialitiesValue = specialities;
@@ -168,12 +164,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
       availabilityValue = availability;
       isLoading = true;
     });
-    localQueryParams.removeWhere((k, v) =>
-        k == 'specialities' ||
-        k == 'gender' ||
-        k == 'country' ||
-        k == 'state' ||
-        k == 'city');
+    localQueryParams.removeWhere((k, v) => k == 'specialities' || k == 'gender' || k == 'country' || k == 'state' || k == 'city');
     Map<String, String> searchFilters = {
       ...localQueryParams,
       ...specialities != null ? {"specialities": specialities} : {},
@@ -213,9 +204,17 @@ class _DoctorSearchState extends State<DoctorSearch> {
 
   @override
   void dispose() {
+    super.dispose();
     scrollController.dispose();
     filterWidgetScrollController.dispose();
-    super.dispose();
+    keyWordController.dispose();
+    specialitiesValue = null;
+    genderValue = null;
+    countryValue = null;
+    stateValue = null;
+    cityValue = null;
+    keyWordValue = null;
+    availabilityValue = null;
   }
 
   @override
@@ -283,37 +282,28 @@ class _DoctorSearchState extends State<DoctorSearch> {
                               child: InputDecorator(
                                 decoration: InputDecoration(
                                   isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 0.0, horizontal: 10.0),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
                                   enabledBorder: OutlineInputBorder(
                                     // width: 0.0 produces a thin "hairline" border
-                                    borderSide: BorderSide(
-                                        color:
-                                            Theme.of(context).primaryColorLight,
-                                        width: 1),
+                                    borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
                                   ),
                                   border: const OutlineInputBorder(),
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    iconEnabledColor:
-                                        Theme.of(context).primaryColorLight,
+                                    iconEnabledColor: Theme.of(context).primaryColorLight,
                                     style: const TextStyle(
                                       fontSize: 12.0,
                                     ),
                                     isExpanded: true,
                                     value: _chosenModel,
-                                    items: availabilityValues
-                                        .map<DropdownMenuItem<String>>(
-                                            (Map<String, dynamic> values) {
+                                    items: availabilityValues.map<DropdownMenuItem<String>>((Map<String, dynamic> values) {
                                       return DropdownMenuItem<String>(
                                         value: values['value'],
                                         child: Text(
                                           values['value']!,
                                           style: TextStyle(
-                                            color: brightness == Brightness.dark
-                                                ? Colors.white
-                                                : Colors.black,
+                                            color: brightness == Brightness.dark ? Colors.white : Colors.black,
                                           ),
                                         ),
                                       );
@@ -329,12 +319,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                           availabilityValue = element['search'];
                                           Map<String, String> searchFilters = {
                                             ...localQueryParams,
-                                            ...element['search'] != null
-                                                ? {
-                                                    "available":
-                                                        element['search']
-                                                  }
-                                                : {},
+                                            ...element['search'] != null ? {"available": element['search']} : {},
                                           };
                                           context.replace(
                                             Uri(
@@ -362,37 +347,28 @@ class _DoctorSearchState extends State<DoctorSearch> {
                               child: InputDecorator(
                                 decoration: InputDecoration(
                                   isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 0.0, horizontal: 10.0),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
                                   enabledBorder: OutlineInputBorder(
                                     // width: 0.0 produces a thin "hairline" border
-                                    borderSide: BorderSide(
-                                        color:
-                                            Theme.of(context).primaryColorLight,
-                                        width: 1),
+                                    borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
                                   ),
                                   border: const OutlineInputBorder(),
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    iconEnabledColor:
-                                        Theme.of(context).primaryColorLight,
+                                    iconEnabledColor: Theme.of(context).primaryColorLight,
                                     style: const TextStyle(
                                       fontSize: 12.0,
                                     ),
                                     isExpanded: true,
                                     value: _sortByModel,
-                                    items: sortByValues
-                                        .map<DropdownMenuItem<String>>(
-                                            (Map<String, dynamic> values) {
+                                    items: sortByValues.map<DropdownMenuItem<String>>((Map<String, dynamic> values) {
                                       return DropdownMenuItem<String>(
                                         value: values['value'],
                                         child: Text(
                                           values['value']!,
                                           style: TextStyle(
-                                            color: brightness == Brightness.dark
-                                                ? Colors.white
-                                                : Colors.black,
+                                            color: brightness == Brightness.dark ? Colors.white : Colors.black,
                                           ),
                                         ),
                                       );
@@ -430,8 +406,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SwipeableButtonView(
-                          indicatorColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor),
+                          indicatorColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                           isFinished: _isFinished,
                           onFinish: () async {
                             await Navigator.push(
@@ -452,15 +427,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                     String? state,
                                     String? city,
                                   ) {
-                                    updateFilterState(
-                                        specialities,
-                                        gender,
-                                        country,
-                                        state,
-                                        city,
-                                        keyWordValue,
-                                        availabilityValue,
-                                        localQueryParams);
+                                    updateFilterState(specialities, gender, country, state, city, keyWordValue, availabilityValue, localQueryParams);
                                   },
                                   onReset: () {
                                     resetFilterState(localQueryParams);
@@ -469,14 +436,13 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                 type: PageTransitionType.fade,
                               ),
                             );
-              
+
                             setState(() {
                               _isFinished = false;
                             });
                           },
                           onWaitingProcess: () {
-                            Future.delayed(const Duration(microseconds: 300),
-                                () {
+                            Future.delayed(const Duration(microseconds: 300), () {
                               setState(() {
                                 _isFinished = true;
                               });
@@ -486,9 +452,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                           buttonColor: Theme.of(context).cardColor,
                           buttonWidget: Icon(
                             Icons.arrow_forward_ios_rounded,
-                            color: brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color: brightness == Brightness.dark ? Colors.white : Colors.black,
                           ),
                           buttonText: context.tr('filters'),
                           buttontextstyle: const TextStyle(color: Colors.black),
@@ -496,16 +460,13 @@ class _DoctorSearchState extends State<DoctorSearch> {
                       ),
                       if (localQueryParams.entries.isNotEmpty) ...[
                         AnimatedCrossFade(
-                          crossFadeState: !_isFinished
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond,
+                          crossFadeState: !_isFinished ? CrossFadeState.showFirst : CrossFadeState.showSecond,
                           duration: const Duration(milliseconds: 1000),
                           firstChild: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).primaryColorLight,
+                                backgroundColor: Theme.of(context).primaryColorLight,
                                 fixedSize: const Size(double.maxFinite, 30),
                                 elevation: 5.0,
                               ),
@@ -519,9 +480,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                         ),
                       ],
                       AnimatedCrossFade(
-                        crossFadeState: !_isFinished
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
+                        crossFadeState: !_isFinished ? CrossFadeState.showFirst : CrossFadeState.showSecond,
                         duration: const Duration(milliseconds: 1000),
                         firstChild: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -551,14 +510,11 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                 Flexible(
                                   fit: FlexFit.loose,
                                   child: ListTile(
-                                    textColor: brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black,
+                                    textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
                                     title: Text(
                                       context.tr('doctors'),
                                     ),
-                                    subtitle:
-                                        const Text('doctorsNumber').plural(
+                                    subtitle: const Text('doctorsNumber').plural(
                                       (totalDoctors ?? 0) as num,
                                       format: NumberFormat.compact(
                                         locale: context.locale.toString(),
@@ -566,33 +522,33 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                     ),
                                   ),
                                 ),
-                                if(doctors != null && doctors!.isNotEmpty) ...[IconButton(
-                                  onPressed: scrollUp,
-                                  icon: Icon(
-                                    Icons.arrow_upward,
-                                    color: Theme.of(context).primaryColor,
+                                if (doctors != null && doctors!.isNotEmpty) ...[
+                                  IconButton(
+                                    onPressed: scrollUp,
+                                    icon: Icon(
+                                      Icons.arrow_upward,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
                                   ),
-                                ),],
-                                if(doctors != null && doctors!.isNotEmpty) ...[IconButton(
-                                  onPressed: scrollDown,
-                                  icon: const Icon(Icons.arrow_downward),
-                                ),],
+                                ],
+                                if (doctors != null && doctors!.isNotEmpty) ...[
+                                  IconButton(
+                                    onPressed: scrollDown,
+                                    icon: const Icon(Icons.arrow_downward),
+                                  ),
+                                ],
                                 Flexible(
                                   fit: FlexFit.loose,
                                   child: ListTile(
-                                      textColor: brightness == Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      subtitle:
-                                          Text(context.tr('slideToSeeMore'))),
+                                      textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
+                                      subtitle: Text(context.tr('slideToSeeMore'))),
                                 ),
                               ],
                             ),
                             Flexible(
                               fit: FlexFit.loose,
                               child: SizedBox(
-                                height: MediaQuery.of(context).size.height / 2 +
-                                    200,
+                                height: MediaQuery.of(context).size.height / 2 + 200,
                                 child: Stack(
                                   alignment: Alignment.topLeft,
                                   children: [
@@ -603,30 +559,18 @@ class _DoctorSearchState extends State<DoctorSearch> {
                                             key: const ValueKey('doctorSearch'),
                                             controller: scrollController,
                                             shrinkWrap: true,
-                                            itemCount: doctors!.length +
-                                                (isLoading ? 1 : 0),
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              if (index + 1 ==
-                                                      doctors!.length &&
-                                                  doctors!.length <
-                                                      totalDoctors!) {
+                                            itemCount: doctors!.length + (isLoading ? 1 : 0),
+                                            itemBuilder: (BuildContext context, int index) {
+                                              if (index + 1 == doctors!.length && doctors!.length < totalDoctors!) {
                                                 return Center(
                                                   child: SizedBox(
                                                     height: 50,
                                                     width: 50,
                                                     child: LoadingIndicator(
-                                                        indicatorType: Indicator
-                                                            .ballRotateChase,
-                                                        colors: [
-                                                          Theme.of(context)
-                                                              .primaryColorLight,
-                                                          Theme.of(context)
-                                                              .primaryColor
-                                                        ],
+                                                        indicatorType: Indicator.ballRotateChase,
+                                                        colors: [Theme.of(context).primaryColorLight, Theme.of(context).primaryColor],
                                                         strokeWidth: 2.0,
-                                                        pathBackgroundColor:
-                                                            null),
+                                                        pathBackgroundColor: null),
                                                   ),
                                                 );
                                               } else {
@@ -651,10 +595,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                               width: 150,
                               child: LoadingIndicator(
                                   indicatorType: Indicator.ballRotateChase,
-                                  colors: [
-                                    Theme.of(context).primaryColorLight,
-                                    Theme.of(context).primaryColor
-                                  ],
+                                  colors: [Theme.of(context).primaryColorLight, Theme.of(context).primaryColor],
                                   strokeWidth: 2.0,
                                   pathBackgroundColor: null),
                             )
@@ -665,9 +606,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
                   ),
                 ),
                 secondChild: const Text(''),
-                crossFadeState: !_isFinished
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
+                crossFadeState: !_isFinished ? CrossFadeState.showFirst : CrossFadeState.showSecond,
                 duration: const Duration(milliseconds: 1000),
               )
             ],

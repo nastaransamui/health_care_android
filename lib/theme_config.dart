@@ -86,10 +86,10 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
       primaryColor = '#EF6C00';
       secondaryColor = '#9C27B0';
       break;
-    // case 'geenNature':
-    //   primaryColor = '#009688';
-    //   secondaryColor = '#76ff02';
-    // break;
+    case 'geenNature':
+      primaryColor = '#009688';
+      secondaryColor = '#76ff02';
+      break;
     case 'vampire':
       primaryColor = '#f44336';
       secondaryColor = '#607d8b';
@@ -166,6 +166,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         // colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color.fromARGB(255, 255, 0, 76)),
         colorScheme: ColorScheme.fromSeed(
           seedColor: hexToColor(primaryColor),
+          primary: hexToColor(primaryColor),
           brightness: Brightness.dark,
         ),
         textSelectionTheme: TextSelectionThemeData(
@@ -173,19 +174,21 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         ),
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: TextStyle(color: hexToColor(secondaryColor)),
-          // floatingLabelStyle: TextStyle(color: hexToColor(secondaryColor)),
+          errorStyle: TextStyle(color: Colors.redAccent.shade400),
+          
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
                 style: BorderStyle.solid, color: hexToColor(secondaryColor)),
           ),
         ),
         listTileTheme: ListTileThemeData(
-            iconColor: hexToColor(secondaryColor),
-            selectedTileColor: hexToColor(primaryColor),
-            selectedColor: hexToColor(secondaryColor),
-            textColor: hexToColor(primaryColor),
-            titleTextStyle: const TextStyle(
-                fontFamily: 'Roboto_Condensed', fontSize: 18.0)),
+          iconColor: hexToColor(secondaryColor),
+          selectedTileColor: hexToColor(primaryColor),
+          selectedColor: hexToColor(secondaryColor),
+          textColor: hexToColor(primaryColor),
+          titleTextStyle:
+              const TextStyle(fontFamily: 'Roboto_Condensed', fontSize: 18.0),
+        ),
       );
     default:
       return ThemeData.light().copyWith(
@@ -215,7 +218,11 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         bottomAppBarTheme: BottomAppBarTheme(
           color: hexToColor(primaryColor),
         ),
-        // colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.redAccent),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: hexToColor(primaryColor),
+          primary: hexToColor(primaryColor),
+          brightness: Brightness.light,
+        ),
 
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: hexToColor(secondaryColor),

@@ -43,8 +43,8 @@ class AuthService {
       var response = jsonDecode(payloadData);
       var roleName = response['roleName'];
       final bool? newIsLogin = prefs.getBool('isLogin');
-      var currentContext =
-          NavigationService.navigatorKey.currentContext as BuildContext;
+      // var currentContext =
+      //     NavigationService.navigatorKey.currentContext as BuildContext;
       if (response['accessToken'].isEmpty) {
         //logout
         if (newIsLogin != null) {
@@ -57,7 +57,7 @@ class AuthService {
             },
           );
 
-          logoutService(currentContext);
+          logoutService();
         }
       } else {
         final bool? isLogin = prefs.getBool('isLogin');
@@ -115,18 +115,35 @@ class AuthService {
       ..connect();
     authProvider.setAuth(token, true, payloadData);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (GoRouter.of(context)
-              .routerDelegate
-              .currentConfiguration
-              .uri
-              .toString() !=
-          '/') {
-        context.go('/');
+      if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
+        if (roleName == 'doctors') {
+          context.go('/doctors_dashboard');
+        } else if (roleName == 'patient') {
+          context.go('/patient_dashboard');
+        }
       }
     });
   }
 
-  Future<void> logoutService(BuildContext context) async {
+  Future<void> updateProfile(BuildContext context, String token) async {
+    var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var payloadData = verifyHomeAccessToken(token);
+    var response = jsonDecode(payloadData);
+    var roleName = response['roleName'];
+    prefs.setBool('isLogin', true);
+    prefs.setString('homeAccessToken', token);
+    prefs.setString('profile', payloadData);
+    prefs.setString('roleName', roleName);
+
+    authProvider.setAuth(token, true, payloadData);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Navigator.pop(context);
+    });
+  }
+
+  Future<void> logoutService() async {
+    BuildContext context = NavigationService.navigatorKey.currentContext!;
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('isLogin');
@@ -143,12 +160,7 @@ class AuthService {
       ..disconnect()
       ..connect();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (GoRouter.of(context)
-              .routerDelegate
-              .currentConfiguration
-              .uri
-              .toString() !=
-          '/') {
+      if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
         context.go('/');
       }
     });
@@ -160,8 +172,7 @@ class AuthService {
     await EasyLocalizationController.initEasyLocation();
 
     final controller = EasyLocalizationController(
-      saveLocale:
-          true, //mandatory to use EasyLocalizationController.savedLocale
+      saveLocale: true, //mandatory to use EasyLocalizationController.savedLocale
       fallbackLocale: const Locale(
         'en',
         'US',
@@ -181,8 +192,6 @@ class AuthService {
     await controller.loadTranslations();
 
     //load translations into exploitable data, kept in memory
-    Localization.load(controller.locale,
-        translations: controller.translations,
-        fallbackTranslations: controller.fallbackTranslations);
+    Localization.load(controller.locale, translations: controller.translations, fallbackTranslations: controller.fallbackTranslations);
   }
 }

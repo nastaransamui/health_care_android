@@ -497,7 +497,7 @@ class DoctorUserProfile {
   final String zipCode;
   final String country;
   final List<dynamic> pricing;
-  final List<dynamic> specialitiesServices;
+  late final List<String>? specialitiesServices;
   final List<Specialities> specialities;
   final List<Education> educations;
   final List<Experinces> experinces;
@@ -590,7 +590,7 @@ class DoctorUserProfile {
     String? zipCode,
     String? country,
     List<dynamic>? pricing,
-    List<dynamic>? specialitiesServices,
+    List<String>? specialitiesServices,
     List<Specialities>? specialities,
     List<Education>? educations,
     List<Experinces>? experinces,
@@ -740,7 +740,7 @@ class DoctorUserProfile {
       zipCode: map['zipCode'] ?? '',
       country: map['country'] ?? '',
       pricing: List<dynamic>.from(map['pricing']),
-      specialitiesServices: List<dynamic>.from(map['specialitiesServices']),
+      specialitiesServices: List<String>.from(map['specialitiesServices']),
       specialities: List<Specialities>.from(
           map['specialities']?.map((x) => Specialities.fromMap(x))),
       educations: List<Education>.from(

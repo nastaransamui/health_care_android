@@ -5,6 +5,7 @@ import 'package:health_care/providers/clinics_provider.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/specialities_provider.dart';
 import 'package:health_care/services/user_data_service.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/how_work_accordion.dart';
 import 'package:health_care/src/commons/silver_scaffold_wrapper.dart';
 import 'package:health_care/src/landing/defaultWidgets/best_doctor_scroll_view.dart';
@@ -51,7 +52,7 @@ class _DefaultState extends State<Default> {
                 ListTile(
                   title: Text(context.tr('clinics')),
                 ),
-                const ClinicsScrollView()
+                const FadeinWidget(hasLoading: false, child: ClinicsScrollView()),
               ],
               if (specialities.isNotEmpty) ...[
                 ListTile(

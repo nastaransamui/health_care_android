@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:toastify/toastify.dart';
@@ -16,15 +17,13 @@ void httpErrorHandle({
       break;
     case 400:
       if (context.mounted) {
-        var snackBar =
-            SnackBar(content: Text(jsonDecode(response.body)['msg']));
+        var snackBar = SnackBar(content: Text(jsonDecode(response.body)['msg']));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       break;
     case 500:
       if (context.mounted) {
-        var snackBar =
-            SnackBar(content: Text(jsonDecode(response.body)['error']));
+        var snackBar = SnackBar(content: Text(jsonDecode(response.body)['error']));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       break;
@@ -41,12 +40,18 @@ class CustomInfoToast extends StatelessWidget {
     super.key,
     required this.title,
     required this.description,
-    required this.onLogout,
+    required this.closeText,
+    required this.confirmText,
+    required this.onConfirm,
+    this.onCancel,
   });
 
   final String title;
   final String description;
-  final VoidCallback onLogout;
+  final String closeText;
+  final String confirmText;
+  final VoidCallback onConfirm;
+  final VoidCallback? onCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +88,7 @@ class CustomInfoToast extends StatelessWidget {
                       Text(
                         description,
                         overflow: TextOverflow.visible,
-                        maxLines: 3,
+                        maxLines: 4,
                         style: const TextStyle(
                           height: 1.5,
                         ),
@@ -102,15 +107,14 @@ class CustomInfoToast extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     Toastify.of(context).remove(this);
-                    Future<void> logoutDelay() async {
+                    Future<void> confirmDelay() async {
                       // Navigator.pop(context);
-                      await Future<void>.delayed(const Duration(seconds: 3),
-                          () {
-                        onLogout();
+                      await Future<void>.delayed(const Duration(milliseconds: 1000), () {
+                        onConfirm();
                       });
                     }
 
-                    logoutDelay();
+                    confirmDelay();
                     showModalBottomSheet(
                       isDismissible: false,
                       enableDrag: false,
@@ -128,7 +132,7 @@ class CustomInfoToast extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColorLight,
                     shadowColor: Theme.of(context).primaryColorLight,
                   ),
-                  child: const Text('logoutOthers'),
+                  child: Text(context.tr(confirmText)),
                 ),
                 const Spacer(), // Defaults to flex: 1
                 ElevatedButton(
@@ -142,8 +146,11 @@ class CustomInfoToast extends StatelessWidget {
                   ),
                   onPressed: () {
                     Toastify.of(context).removeAll();
+                    if (onCancel != null) {
+                      Navigator.maybePop(context);
+                    }
                   },
-                  child: const Text('close'),
+                  child: Text(context.tr(closeText)),
                 ),
                 const Spacer()
               ],

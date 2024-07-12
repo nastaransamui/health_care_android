@@ -38,6 +38,7 @@ class _StartDrawerState extends State<StartDrawer> {
                     ? '${roleName == 'patient' ? patientProfile?.userProfile.userName : doctorsProfile?.userProfile.userName}'
                     : ""),
                 currentAccountPicture: const CircleAvatar(
+                  backgroundColor: Colors.transparent,
                   backgroundImage: AssetImage("assets/icon/icon.png"),
                 ),
                 decoration: const BoxDecoration(

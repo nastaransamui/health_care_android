@@ -436,6 +436,7 @@ class ClinicImages {
   final bool isSelected;
   final String name;
   final String id;
+  final String uuid;
   final String random;
   final List<Tags> tags;
 
@@ -446,6 +447,7 @@ class ClinicImages {
     required this.isSelected,
     required this.name,
     required this.id,
+    required this.uuid,
     required this.random,
     required this.tags,
   });
@@ -467,6 +469,7 @@ class ClinicImages {
       isSelected: isSelected ?? this.isSelected,
       name: name ?? this.name,
       id: id ?? this.id,
+      uuid: uuid,
       random: random ?? this.random,
       tags: tags ?? this.tags,
     );
@@ -481,6 +484,7 @@ class ClinicImages {
     result.addAll({'isSelected': isSelected});
     result.addAll({'name': name});
     result.addAll({'_id': id});
+    result.addAll({'uuid': uuid});
     result.addAll({'random': random});
     result.addAll({'tags': tags.map((x) => x.toMap()).toList()});
 
@@ -495,6 +499,7 @@ class ClinicImages {
       isSelected: map['isSelected'] ?? false,
       name: map['name'] ?? '',
       id: map['id'] ?? '',
+      uuid: map['uuid'] ?? '',
       random: map['random'] ?? '',
       tags: List<Tags>.from(map['tags']?.map((x) => Tags.fromMap(x))),
     );
@@ -507,7 +512,7 @@ class ClinicImages {
 
   @override
   String toString() {
-    return 'ClinicImages(src: $src, width: $width, height: $height, isSelected: $isSelected, name: $name, id: $id, random: $random, tags: $tags)';
+    return 'ClinicImages(src: $src, width: $width, height: $height, isSelected: $isSelected, name: $name, id: $id, uuid: $uuid, random: $random, tags: $tags)';
   }
 
   @override
@@ -521,6 +526,7 @@ class ClinicImages {
         other.isSelected == isSelected &&
         other.name == name &&
         other.id == id &&
+        other.uuid == uuid &&
         other.random == random &&
         listEquals(other.tags, tags);
   }
@@ -533,6 +539,7 @@ class ClinicImages {
         isSelected.hashCode ^
         name.hashCode ^
         id.hashCode ^
+        uuid.hashCode ^
         random.hashCode ^
         tags.hashCode;
   }

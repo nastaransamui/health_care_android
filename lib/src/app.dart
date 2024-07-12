@@ -14,6 +14,7 @@ import 'package:health_care/services/specialities_service.dart';
 import 'package:health_care/services/theme_service.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:health_care/theme_config.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:bot_toast/bot_toast.dart';
 
@@ -61,6 +62,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    Jiffy.setLocale(context.locale.toString() == 'th_TH' ? 'th' : 'en');
     return StreamBuilder(
         stream: streamSocket.getResponse,
         initialData: '',

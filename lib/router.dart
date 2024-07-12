@@ -1,3 +1,4 @@
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/global_variables.dart';
@@ -14,6 +15,7 @@ import 'package:health_care/src/features/auth/reset_password.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/auth/verify_email.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
+import 'package:health_care/src/features/dashboard/doctor_dashboard.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
@@ -21,6 +23,7 @@ import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:health_care/src/features/profile/doctors_dashboard_profile.dart';
 import 'package:health_care/src/landing/default.dart';
 import 'package:health_care/src/landing/general_0_page.dart';
 import 'package:health_care/src/landing/general_1_page.dart';
@@ -66,12 +69,81 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/patient_dashboard',
-      name: 'patient_dashboard',
+      name: 'patientDashboard',
       builder: (context, state) => const PatientDashboard(),
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName =
+            Provider.of<AuthProvider>(context, listen: false).roleName;
         if (isLogin) {
-          return '/patient_dashboard';
+          if (roleName == 'doctors') {
+            return '/doctors_dashboard';
+          } else if (roleName == 'patient') {
+            return '/patient_dashboard';
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+    ),
+    GoRoute(
+      path: '/doctors_dashboard',
+      name: 'doctorsDashboard',
+      builder: (context, state) => const DoctorDashboard(),
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName =
+            Provider.of<AuthProvider>(context, listen: false).roleName;
+        if (isLogin) {
+          if (roleName == 'doctors') {
+            return '/doctors_dashboard';
+          } else if (roleName == 'patient') {
+            return '/patient_dashboard';
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+    ),
+    GoRoute(
+      path: '/doctors_dashboard/doctors_profile',
+      name: 'doctorsDashboardProfile',
+      builder: (context, state) {
+        DoctorsProfile? doctorProfile;
+        doctorProfile = Provider.of<AuthProvider>(context).doctorsProfile;
+        var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
+       if(doctorProfile != null){
+         return  DoctorsDashboardProfile(doctorProfile: doctorProfile);
+       }else{
+         switch (homeActivePage) {
+              case 'general_0':
+                return const General0Page();
+              case 'general_1':
+                return const General1Page();
+              case 'general_2':
+                return const General2Page();
+              default:
+                return const Default();
+            }
+       }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName =
+            Provider.of<AuthProvider>(context, listen: false).roleName;
+
+        if (isLogin) {
+          if (roleName == 'doctors') {
+            return '/doctors_dashboard/doctors_profile';
+          } else if (roleName == 'patient') {
+            return '/patient_dashboard/patient_profile';
+          } else {
+            return null;
+          }
         } else {
           return null;
         }

@@ -469,9 +469,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
       }).toList(),
     );
 
-    return OrientationBuilder(
-      builder: (BuildContext context, Orientation orientation) {
-        return ScaffoldWrapper(
+    return ScaffoldWrapper(
           title: context.tr('patientDashboard'),
           children: patientProfile == null
               ? const LoadingScreen()
@@ -548,7 +546,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text("$years years $months months $days days"),
+                              Text("$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
                               const SizedBox(
                                 height: 5,
                               ),
@@ -693,7 +691,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                       ListTile(
                         title: Text(context.tr('links')),
                       ),
-                      ...elements.map((i) {
+                      ...patientsDashboardLink.map((i) {
                         return Card(
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
@@ -714,7 +712,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 20.0, vertical: 10.0),
                                 leading: i['icon'],
-                                title: Text(i['name']),
+                                title: Text(context.tr(i['name'])),
                                 trailing: const Icon(Icons.arrow_forward),
                               ),
                             ),
@@ -725,8 +723,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                   ),
                 ),
         );
-      },
-    );
+      
   }
 }
 
