@@ -1225,19 +1225,62 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
   }
 
   void takePhoto(ImageSource source) async {
+    if (mounted) {
+      showModalBottomSheet(
+        isDismissible: false,
+        enableDrag: false,
+        showDragHandle: false,
+        useSafeArea: true,
+        context: context,
+        builder: (context) => const LoadingScreen(),
+      ).whenComplete(() {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).maybePop();
+        });
+      });
+    }
     final pickedFile = await _patientProfileImagePicker.pickImage(
       source: source,
+      maxWidth: 100,
+      maxHeight: 100,
+      imageQuality: 50,
     );
-    setState(() {
-      patientProfileImageFiles = [
-        {
-          "profileImage": File(pickedFile!.path),
-          "profileImageName": pickedFile.name,
-          "profileImageExtentionNoDot": pickedFile.name.split('.').last,
+        if (pickedFile != null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).maybePop();
+      });
+      var size = await File(pickedFile.path).length();
+      if (size < 2000000) {
+        setState(() {
+          patientProfileImageFiles = [
+            {
+              "profileImage": File(pickedFile.path),
+              "profileImageName": pickedFile.name,
+              "profileImageExtentionNoDot": pickedFile.name.split('.').last,
+            }
+          ];
+          _patientProfileimageFile = pickedFile;
+        });
+      } else {
+        if (mounted) {
+          showToast(
+            context,
+            Toast(
+              title: 'Failed',
+              description: context.tr('imageSizeExtend'),
+              duration: Duration(milliseconds: 200.toInt()),
+              lifeTime: Duration(
+                milliseconds: 2500.toInt(),
+              ),
+            ),
+          );
         }
-      ];
-      _patientProfileimageFile = pickedFile;
-      Navigator.of(context).maybePop();
-    });
+      }
+    } else {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).maybePop();
+      });
+    }
+
   }
 }

@@ -1,6 +1,5 @@
-import 'dart:developer';
+// import 'dart:developer';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -494,7 +493,6 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
     socket.emit('deleteUser', data);
     socket.once('deleteUserReturn', (msg) {
       Navigator.maybePop(context);
-      log('$msg');
       if (msg['status'] != 200) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           showModalBottomSheet(
@@ -586,7 +584,6 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
@@ -633,7 +630,6 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                     isCenter: true,
                     child: Column(
                       children: [
-                        
                         const SizedBox(
                           height: 5,
                         ),
@@ -757,11 +753,11 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                   if (!RegExp(r'^(\+|00)?[0-9]+$').hasMatch(userInput)) {
                                     return context.tr('phoneValidate'); //'Please enter a valid phone number';
                                   }
-                        
+
                                   if (userInput.length < 7 || userInput.length > 12) {
                                     return context.tr('required');
                                   }
-                        
+
                                   return null; // Return null when the input is valid
                                 },
                                 onInputChanged: (PhoneNumber number) async {
@@ -843,7 +839,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     lastDate: DateTime.now());
                                 if (pickedDate != null) {
                                   String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
-                        
+
                                   setState(() {
                                     dobController.text = formattedDate;
                                   });
@@ -949,7 +945,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                   deletedImages.add(clinicImageFiles[index]['random']);
                                                 });
                                               }
-                    
+
                                               setState(() {
                                                 _clinicXfileFiles.removeAt(index);
                                                 clinicImageFiles.removeAt(index);
@@ -1398,7 +1394,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                       stateValue = city.stateName;
                                       cityValue = city.name;
                                     });
-                    
+
                                     profileStateController.text = '${city.emoji} - ${city.stateName}';
                                     profileCountryController.text = '${city.emoji} - ${city.countryName}';
                                     profileCityController.text = '${city.emoji} - ${city.name}';
@@ -1406,7 +1402,12 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 ),
                               ),
                             ),
-                            ProfileInputWidget(controller: zipCodeController, readOnly: false, lable: context.tr('zipCode'), keyboardType:  TextInputType.number,),
+                            ProfileInputWidget(
+                              controller: zipCodeController,
+                              readOnly: false,
+                              lable: context.tr('zipCode'),
+                              keyboardType: TextInputType.number,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 30),
@@ -1483,7 +1484,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                             width: 2,
                                           ),
                                         ),
-                    
+
                                         contentPadding: const EdgeInsets.symmetric(
                                           vertical: 14.0,
                                           horizontal: 8,
@@ -1687,7 +1688,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                       lastDate: DateTime.now());
                                                   if (pickedDate != null) {
                                                     String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
-                    
+
                                                     setState(() {
                                                       entry.value.text = formattedDate;
                                                     });
@@ -1826,7 +1827,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                           firstDate: DateTime(
                                                               experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
                                                           lastDate: DateTime.now());
-                    
+
                                                       if (toDate != null) {
                                                         String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
                                                         setState(() {
@@ -2409,36 +2410,76 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
   }
 
   void takePhotoForClinic(ImageSource source) async {
+    if (mounted) {
+      showModalBottomSheet(
+        isDismissible: false,
+        enableDrag: false,
+        showDragHandle: false,
+        useSafeArea: true,
+        context: context,
+        builder: (context) => const LoadingScreen(),
+      ).whenComplete(() {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).maybePop();
+        });
+      });
+    }
     final pickedFile = await _profileImagePicker.pickImage(
       source: source,
+      maxWidth: 100,
+      maxHeight: 100,
+      imageQuality: 50,
     );
     if (pickedFile != null) {
-      File fileFromImage = File(pickedFile.path); // Or any other way to get a File instance.
-      var decodedImage = await decodeImageFromList(fileFromImage.readAsBytesSync());
-      if (_clinicXfileFiles.length < 4) {
-        _clinicXfileFiles = [..._clinicXfileFiles, pickedFile];
-        clinicImageFiles = [
-          ...clinicImageFiles,
-          {
-            // "src": File(pickedFile.path),
-            "src": pickedFile.path,
-            "width": decodedImage.width,
-            "height": decodedImage.height,
-            "isSelected": false,
-            "name": pickedFile.name,
-            "random": generateRandomString(19),
-            "tags": [
-              {"value": "value", "title": pickedFile.name}
-            ]
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).maybePop();
+      });
+      var size = await File(pickedFile.path).length();
+      if (size < 2000000) {
+        if (_clinicXfileFiles.length < 4) {
+          File fileFromImage = File(pickedFile.path); // Or any other way to get a File instance.
+          var decodedImage = await decodeImageFromList(fileFromImage.readAsBytesSync());
+          _clinicXfileFiles = [..._clinicXfileFiles, pickedFile];
+          clinicImageFiles = [
+            ...clinicImageFiles,
+            {
+              // "src": File(pickedFile.path),
+              "src": pickedFile.path,
+              "width": decodedImage.width,
+              "height": decodedImage.height,
+              "isSelected": false,
+              "name": pickedFile.name,
+              "random": generateRandomString(19),
+              "tags": [
+                {"value": "value", "title": pickedFile.name}
+              ]
+            }
+          ];
+          setState(() {
+            clinicImageFiles = clinicImageFiles;
+          });
+        } else {
+          if (mounted) {
+            showToast(
+              context,
+              Toast(
+                title: 'Failed',
+                description: context.tr('max4FileExtend'),
+                duration: Duration(milliseconds: 200.toInt()),
+                lifeTime: Duration(
+                  milliseconds: 2500.toInt(),
+                ),
+              ),
+            );
           }
-        ];
+        }
       } else {
         if (mounted) {
           showToast(
             context,
             Toast(
               title: 'Failed',
-              description: context.tr('max4FileExtend'),
+              description: context.tr('imageSizeExtend'),
               duration: Duration(milliseconds: 200.toInt()),
               lifeTime: Duration(
                 milliseconds: 2500.toInt(),
@@ -2447,27 +2488,70 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
           );
         }
       }
+    } else {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).maybePop();
+      });
     }
-    setState(() {
-      clinicImageFiles = clinicImageFiles;
-      Navigator.of(context).maybePop();
-    });
   }
 
   void takePhoto(ImageSource source) async {
+    if (mounted) {
+      showModalBottomSheet(
+        isDismissible: false,
+        enableDrag: false,
+        showDragHandle: false,
+        useSafeArea: true,
+        context: context,
+        builder: (context) => const LoadingScreen(),
+      ).whenComplete(() {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).maybePop();
+        });
+      });
+    }
     final pickedFile = await _profileImagePicker.pickImage(
       source: source,
+      maxWidth: 100,
+      maxHeight: 100,
+      imageQuality: 50,
     );
-    setState(() {
-      profileImageFiles = [
-        {
-          "profileImage": File(pickedFile!.path),
-          "profileImageName": pickedFile.name,
-          "profileImageExtentionNoDot": pickedFile.name.split('.').last,
+
+    if (pickedFile != null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).maybePop();
+      });
+      var size = await File(pickedFile.path).length();
+      if (size < 2000000) {
+        setState(() {
+          profileImageFiles = [
+            {
+              "profileImage": File(pickedFile.path),
+              "profileImageName": pickedFile.name,
+              "profileImageExtentionNoDot": pickedFile.name.split('.').last,
+            }
+          ];
+          _profileimageFile = pickedFile;
+        });
+      } else {
+        if (mounted) {
+          showToast(
+            context,
+            Toast(
+              title: 'Failed',
+              description: context.tr('imageSizeExtend'),
+              duration: Duration(milliseconds: 200.toInt()),
+              lifeTime: Duration(
+                milliseconds: 2500.toInt(),
+              ),
+            ),
+          );
         }
-      ];
-      _profileimageFile = pickedFile;
-      Navigator.of(context).maybePop();
-    });
+      }
+    } else {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).maybePop();
+      });
+    }
   }
 }
