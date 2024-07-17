@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/users.dart';
@@ -51,19 +50,14 @@ class _DoctorsSearchProfileState extends State<DoctorsSearchProfile> {
                 width: 150,
                 child: LoadingIndicator(
                     indicatorType: Indicator.ballRotateChase,
-                    colors: [
-                      Theme.of(context).primaryColorLight,
-                      Theme.of(context).primaryColor
-                    ],
+                    colors: [Theme.of(context).primaryColorLight, Theme.of(context).primaryColor],
                     strokeWidth: 2.0,
                     pathBackgroundColor: null),
               ),
               secondChild: SingleChildScrollView(
-                child: Text(doctor!.aboutMe),
+                child: Text('$doctor'),
               ),
-              crossFadeState: doctor == null
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
+              crossFadeState: doctor == null ? CrossFadeState.showFirst : CrossFadeState.showSecond,
               duration: const Duration(milliseconds: 1000),
             ),
           ),

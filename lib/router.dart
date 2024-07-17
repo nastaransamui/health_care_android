@@ -69,7 +69,7 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/patient_dashboard',
+      path: '/patient/dashboard',
       name: 'patientDashboard',
       builder: (context, state) => const PatientDashboard(),
       redirect: (context, state) {
@@ -78,9 +78,9 @@ final router = GoRouter(
             Provider.of<AuthProvider>(context, listen: false).roleName;
         if (isLogin) {
           if (roleName == 'doctors') {
-            return '/doctors_dashboard';
+            return '/doctors/dashboard';
           } else if (roleName == 'patient') {
-            return '/patient_dashboard';
+            return '/patient/dashboard';
           } else {
             return null;
           }
@@ -90,7 +90,7 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/doctors_dashboard',
+      path: '/doctors/dashboard',
       name: 'doctorsDashboard',
       builder: (context, state) => const DoctorDashboard(),
       redirect: (context, state) {
@@ -99,19 +99,19 @@ final router = GoRouter(
             Provider.of<AuthProvider>(context, listen: false).roleName;
         if (isLogin) {
           if (roleName == 'doctors') {
-            return '/doctors_dashboard';
+            return '/doctors/dashboard';
           } else if (roleName == 'patient') {
-            return '/patient_dashboard';
+            return '/patient/dashboard';
           } else {
-            return null;
+          return '/';
           }
         } else {
-          return null;
+          return '/';
         }
       },
     ),
     GoRoute(
-      path: '/doctors_dashboard/doctors_profile',
+      path: '/doctors/dashboard/profile',
       name: 'doctorsDashboardProfile',
       builder: (context, state) {
         DoctorsProfile? doctorProfile;
@@ -139,19 +139,19 @@ final router = GoRouter(
 
         if (isLogin) {
           if (roleName == 'doctors') {
-            return '/doctors_dashboard/doctors_profile';
+            return '/doctors/dashboard/profile';
           } else if (roleName == 'patient') {
-            return '/patient_dashboard/patient_profile';
+            return '/patient/dashboard/profile';
           } else {
-            return null;
+            return '/';
           }
         } else {
-          return null;
+          return '/';
         }
       },
     ),
     GoRoute(
-      path: '/patient_dashboard/patient_profile',
+      path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',
       builder: (context, state) {
         PatientsProfile? patientProfile;
@@ -179,14 +179,14 @@ final router = GoRouter(
 
         if (isLogin) {
           if (roleName == 'doctors') {
-            return '/doctors_dashboard/doctors_profile';
+            return '/doctors/dashboard/profile';
           } else if (roleName == 'patient') {
-            return '/patient_dashboard/patient_profile';
+            return '/patient/dashboard/profile';
           } else {
-            return null;
+            return '/';
           }
         } else {
-          return null;
+          return '/';
         }
       },
     ),
@@ -216,7 +216,7 @@ final router = GoRouter(
         if (!isLogin) {
           return '/login';
         } else {
-          return '/login';
+          return '/';
         }
       },
     ),
@@ -280,7 +280,7 @@ final router = GoRouter(
             pathParameters: state.pathParameters,
           );
         } else {
-          return null;
+          return '/doctors/search';
         }
       },
     ),
@@ -310,7 +310,7 @@ final router = GoRouter(
           if (roleName == 'doctors') {
             return '/';
           } else {
-            return '/patient_dashboard';
+            return '/patient/dashboard';
           }
         }
       },
@@ -334,7 +334,7 @@ final router = GoRouter(
           if (roleName == 'doctors') {
             return '/';
           } else {
-            return '/patient_dashboard';
+            return '/patient/dashboard';
           }
         }
       },

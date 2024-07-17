@@ -117,9 +117,9 @@ class AuthService {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
         if (roleName == 'doctors') {
-          context.go('/doctors_dashboard');
+          context.go('/doctors/dashboard');
         } else if (roleName == 'patient') {
-          context.go('/patient_dashboard');
+          context.go('/patient/dashboard');
         }
       }
     });

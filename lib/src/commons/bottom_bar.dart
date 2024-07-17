@@ -50,16 +50,16 @@ class _BottomBarState extends State<BottomBar> {
       case 'dashboard':
         Navigator.pop(context);
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (location != '/${roleName}_dashboard') {
-            context.push('/${roleName}_dashboard');
+          if (location != '/$roleName/dashboard') {
+            context.push('/$roleName/dashboard');
           }
         });
         break;
       case 'profile':
         Navigator.pop(context);
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          if (location != '/${roleName}_dashboard/${roleName}_profile') {
-            context.push('/${roleName}_dashboard/${roleName}_profile');
+          if (location != '/$roleName/dashboard/profile') {
+            context.push('/$roleName/dashboard/profile');
           }
         });
         break;

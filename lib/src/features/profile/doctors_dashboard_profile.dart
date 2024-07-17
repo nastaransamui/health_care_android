@@ -47,7 +47,7 @@ import 'package:health_care/stream_socket.dart';
 import 'package:health_care/theme_config.dart';
 
 class DoctorsDashboardProfile extends StatefulWidget {
-  static const String routeName = '/doctors_dashboard/doctors_profile';
+  static const String routeName = '/doctors/dashboard/profile';
   final DoctorsProfile doctorProfile;
   const DoctorsDashboardProfile({
     super.key,

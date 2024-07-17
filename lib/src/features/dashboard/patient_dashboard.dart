@@ -29,7 +29,7 @@ import 'package:health_care/stream_socket.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 class PatientDashboard extends StatefulWidget {
-  static const String routeName = '/patient_dashboard';
+  static const String routeName = '/patient/dashboard';
   const PatientDashboard({super.key});
 
   @override

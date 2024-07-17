@@ -32,7 +32,7 @@ import 'package:provider/provider.dart';
 import 'package:toastify/toastify.dart';
 
 class PatientsDashboardProfile extends StatefulWidget {
-  static const String routeName = '/patient_dashboard/patient_profile';
+  static const String routeName = '/patient/dashboard/profile';
   final PatientsProfile patientProfile;
   const PatientsDashboardProfile({
     super.key,

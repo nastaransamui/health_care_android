@@ -15,7 +15,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class DoctorDashboard extends StatefulWidget {
-  static const String routeName = '/doctors_dashboard';
+  static const String routeName = '/doctors/dashboard';
   const DoctorDashboard({super.key});
 
   @override
