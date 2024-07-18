@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/models/users.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -25,48 +24,44 @@ StreamSocket streamSocket = StreamSocket();
 
 IO.Socket socket = IO.io(
   dotenv.env['SOCKET_URL'],
-  OptionBuilder()
-      .setTransports(['websocket'])
-      .disableAutoConnect()
-      .build(),
+  OptionBuilder().setTransports(['websocket']).disableAutoConnect().build(),
 );
 
-void initiateSocket(isLogin, profile,roleName, userData) {
-    late String accessToken = '';
-    late String userid = '';
-if (isLogin != null && isLogin) {
-      if (roleName == 'patient') {
-        final parsedPatient = PatientsProfile.fromJson(
-          jsonEncode(
-            jsonDecode(profile!),
-          ),
-        );
-        accessToken = parsedPatient.accessToken;
-        userid = parsedPatient.userId;
-      } else if (roleName == 'doctors') {
-        final parsedDoctor = DoctorsProfile.fromJson(
-          jsonEncode(
-            jsonDecode(profile!),
-          ),
-        );
-        accessToken = parsedDoctor.accessToken;
-        userid = parsedDoctor.userId;
-      }
+void initiateSocket(isLogin, profile, roleName, userData) {
+  late String accessToken = '';
+  late String userid = '';
+  if (isLogin != null && isLogin) {
+    if (roleName == 'patient') {
+      final parsedPatient = PatientsProfile.fromJson(
+        jsonEncode(
+          jsonDecode(profile!),
+        ),
+      );
+      accessToken = parsedPatient.accessToken;
+      userid = parsedPatient.userId;
+    } else if (roleName == 'doctors') {
+      final parsedDoctor = DoctorsProfile.fromJson(
+        jsonEncode(
+          jsonDecode(profile!),
+        ),
+      );
+      accessToken = parsedDoctor.accessToken;
+      userid = parsedDoctor.userId;
     }
-    socket.io.options?['extraHeaders'] = {
-      'userData': "$userData",
-      'token': 'Bearer $accessToken',
-      'userid': userid //${parsedProfile?.userId}
-    }; 
+  }
+  socket.io.options?['extraHeaders'] = {
+    'userData': "$userData",
+    'token': 'Bearer $accessToken',
+    'userid': userid //${parsedProfile?.userId}
+  };
   socket.connect();
   socket.onConnect((_) {
     print('conneted');
   });
 
-  socket.onConnectError((err){
+  socket.onConnectError((err) {
     print('err: $err');
   });
-
 
   //When an event recieved from server, data is added to the stream
   socket.onDisconnect((_) => print('disconnect'));

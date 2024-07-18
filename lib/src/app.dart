@@ -62,41 +62,35 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     Jiffy.setLocale(context.locale.toString() == 'th_TH' ? 'th' : 'en');
     return StreamBuilder(
-        stream: streamSocket.getResponse,
-        initialData: '',
-        builder: (context, snapshot) {
-          var homeThemeName = Provider.of<ThemeProvider>(context).homeThemeName;
-          var homeThemeType = Provider.of<ThemeProvider>(context).homeThemeType;
-          if (snapshot.hasData) {
-            var data = snapshot.data;
-            if (data!.isNotEmpty) {
-              var response = jsonDecode(data);
-              homeThemeName = response['homeThemeName'];
-              homeThemeType = response['homeThemeType'];
-              // homeActivePage = response['homeActivePage'];
-            }
+      stream: streamSocket.getResponse,
+      initialData: '',
+      builder: (context, snapshot) {
+        var homeThemeName = Provider.of<ThemeProvider>(context).homeThemeName;
+        var homeThemeType = Provider.of<ThemeProvider>(context).homeThemeType;
+        if (snapshot.hasData) {
+          var data = snapshot.data;
+          if (data!.isNotEmpty) {
+            var response = jsonDecode(data);
+            homeThemeName = response['homeThemeName'];
+            homeThemeType = response['homeThemeType'];
+            // homeActivePage = response['homeActivePage'];
           }
-          return MaterialApp.router(
-            routerConfig: router,
-            builder: BotToastInit(), //1. call BotToastInit
-            // navigatorObservers: [BotToastNavigatorObserver()],
-            debugShowCheckedModeBanner: false,
-            restorationScopeId: 'health_care',
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            theme: themDataLive(
-                homeThemeName.isEmpty
-                    ? widget.controller.homeThemeName
-                    : homeThemeName,
-                homeThemeType.isEmpty
-                    ? widget.controller.homeThemeType
-                    : homeThemeType),
-          );
-        });
+        }
+        return MaterialApp.router(
+          routerConfig: router,
+          builder: BotToastInit(), //1. call BotToastInit
+          // navigatorObservers: [BotToastNavigatorObserver()],
+          debugShowCheckedModeBanner: false,
+          restorationScopeId: 'health_care',
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          theme: themDataLive(homeThemeName.isEmpty ? widget.controller.homeThemeName : homeThemeName,
+              homeThemeType.isEmpty ? widget.controller.homeThemeType : homeThemeType),
+        );
+      },
+    );
   }
 }
-
