@@ -33,8 +33,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    DoctorsProfile? doctorProfile =
-        Provider.of<AuthProvider>(context).doctorsProfile;
+    DoctorsProfile? doctorProfile = Provider.of<AuthProvider>(context).doctorsProfile;
     late String years = '--';
     late String months = '--';
     late String days = '--';
@@ -53,8 +52,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     }
     if (doctorProfile != null) {
       if (doctorProfile.userProfile.profileImage.isNotEmpty) {
-        imageUrl =
-            '${doctorProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+        imageUrl = '${doctorProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
       }
     }
     var brightness = Theme.of(context).brightness;
@@ -72,8 +70,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
               margin: const EdgeInsets.symmetric(horizontal: 5),
               child: Card(
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                      color: Theme.of(context).primaryColorLight, width: 2.0),
+                  side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 elevation: 5.0,
@@ -88,12 +85,8 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         height: 40,
                         child: Center(
                           child: Text(
-                            context.tr(i['title']!, args: [
-                              '${doctorProfile?.userProfile.patientsId.length}'
-                            ]),
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Theme.of(context).primaryColor),
+                            context.tr(i['title']!, args: ['${doctorProfile?.userProfile.patientsId.length}']),
+                            style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
                           ),
                         ),
                       ),
@@ -111,9 +104,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                                 i['image']!,
                                 width: 85,
                                 height: 85,
-                                color: brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
+                                color: brightness == Brightness.dark ? Colors.white : Colors.black,
                               ),
                         circularStrokeCap: CircularStrokeCap.butt,
                         backgroundColor: Theme.of(context).primaryColorLight,
@@ -127,9 +118,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         child: Center(
                           child: Text(
                             Jiffy.now().yMMMEd,
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Theme.of(context).primaryColor),
+                            style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
                           ),
                         ),
                       ),
@@ -159,8 +148,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
           },
           child: Card(
             shape: RoundedRectangleBorder(
-              side: BorderSide(
-                  color: Theme.of(context).primaryColorLight, width: 2.0),
+              side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
               borderRadius: BorderRadius.circular(8.0),
             ),
             elevation: 8.0,
@@ -172,8 +160,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
               },
               child: SizedBox(
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                   leading: i['icon'],
                   title: Text(name),
                   trailing: const Icon(Icons.arrow_forward),
@@ -202,9 +189,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                       margin: const EdgeInsets.symmetric(horizontal: 5.0),
                       child: Card(
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: Theme.of(context).primaryColorLight,
-                              width: 2.0),
+                          side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         elevation: 5.0,
@@ -219,8 +204,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                               height: 180,
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
-                                border: Border.all(
-                                    color: Theme.of(context).primaryColorLight),
+                                border: Border.all(color: Theme.of(context).primaryColorLight),
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   fit: BoxFit.contain,
@@ -228,7 +212,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                                       ? const AssetImage(
                                           'assets/images/doctors_profile.jpg',
                                         ) as ImageProvider
-                                      : CachedNetworkImageProvider(imageUrl),
+                                      : CachedNetworkImageProvider(
+                                          imageUrl,
+                                        ),
                                 ),
                               ),
                             ),
@@ -264,8 +250,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                             const SizedBox(
                               height: 5,
                             ),
-                            Text(
-                                "$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
+                            Text("$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
                             const SizedBox(
                               height: 5,
                             ),
@@ -317,36 +302,32 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                       ),
                     ),
                     ListTile(
-                          title: Text(context.tr('links')),
+                      title: Text(context.tr('links')),
+                    ),
+                    ...doctorsDashboardLink.map((i) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        ...doctorsDashboardLink.map((i) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Theme.of(context).primaryColorLight,
-                                  width: 2.0),
-                              borderRadius: BorderRadius.circular(8.0),
+                        elevation: 8.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                        child: InkWell(
+                          splashColor: Theme.of(context).primaryColor,
+                          onTap: () {
+                            context.push(i['routeName']);
+                          },
+                          child: SizedBox(
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                              leading: i['icon'],
+                              title: Text(context.tr(i['name'])),
+                              trailing: const Icon(Icons.arrow_forward),
                             ),
-                            elevation: 8.0,
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 6.0),
-                            child: InkWell(
-                              splashColor: Theme.of(context).primaryColor,
-                              onTap: () {
-                                context.push(i['routeName']);
-                              },
-                              child: SizedBox(
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0, vertical: 10.0),
-                                  leading: i['icon'],
-                                  title: Text(context.tr(i['name'])),
-                                  trailing: const Icon(Icons.arrow_forward),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),

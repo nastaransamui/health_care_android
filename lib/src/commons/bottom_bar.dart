@@ -157,6 +157,7 @@ class _BottomBarState extends State<BottomBar> {
                                       )
                                 : CachedNetworkImage(
                                     imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
                                     fadeInDuration: const Duration(milliseconds: 0),
                                     fadeOutDuration: const Duration(milliseconds: 0),
                                     errorWidget: (ccontext, url, error) {
@@ -271,7 +272,7 @@ class _AuthListState extends State<AuthList> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColorLight,
+                    backgroundColor: Colors.transparent,
                     child: Stack(
                       children: [
                         Align(
@@ -288,6 +289,7 @@ class _AuthListState extends State<AuthList> {
                                         )
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
                                       fadeInDuration: const Duration(milliseconds: 0),
                                       fadeOutDuration: const Duration(milliseconds: 0),
                                       errorWidget: (ccontext, url, error) {

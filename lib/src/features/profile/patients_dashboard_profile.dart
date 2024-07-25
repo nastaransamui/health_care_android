@@ -1115,7 +1115,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
 
   Widget bottomSheet(String imageType, String text) {
     return Container(
-      height: 100.0,
+      height: 150.0,
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.symmetric(
         horizontal: 20,
@@ -1125,6 +1125,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
         children: <Widget>[
           Text(
             context.tr(text),
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 20.0,
             ),
@@ -1241,9 +1242,9 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
     }
     final pickedFile = await _patientProfileImagePicker.pickImage(
       source: source,
-      maxWidth: 100,
-      maxHeight: 100,
-      imageQuality: 50,
+      maxWidth: 500,
+      maxHeight: 500,
+      imageQuality: 80,
     );
         if (pickedFile != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {

@@ -43,11 +43,8 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   final SpecialitiesService specialitiesService = SpecialitiesService();
-  final GlobalObjectKey countryKey = const GlobalObjectKey('country');
   final countryController = TextEditingController();
-  final GlobalObjectKey stateKey = const GlobalObjectKey('state');
   final stateController = TextEditingController();
-  final GlobalObjectKey cityKey = const GlobalObjectKey('city');
   final cityController = TextEditingController();
   String? genderValue;
   String? specialitiesValue;
@@ -455,7 +452,6 @@ class _FilterScreenState extends State<FilterScreen> {
                           },
                           builder: (context, controller, focusNode) {
                             return TextField(
-                              key: countryKey,
                               controller: controller,
                               onTapOutside: (event) {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -617,7 +613,6 @@ class _FilterScreenState extends State<FilterScreen> {
                           },
                           builder: (context, controller, focusNode) {
                             return TextField(
-                              key: stateKey,
                               controller: controller,
                               onTapOutside: (event) {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -780,7 +775,6 @@ class _FilterScreenState extends State<FilterScreen> {
                           },
                           builder: (context, controller, focusNode) {
                             return TextField(
-                              key: cityKey,
                               controller: controller,
                               onTapOutside: (event) {
                                 FocusManager.instance.primaryFocus?.unfocus();

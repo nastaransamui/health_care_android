@@ -28,10 +28,14 @@ class DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
     return Card(
       shape: RoundedRectangleBorder(
-        side:
-            BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
+        side: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
         borderRadius: BorderRadius.circular(8.0),
       ),
       elevation: 5.0,
@@ -40,11 +44,7 @@ class DoctorCard extends StatelessWidget {
         child: Column(
           children: [
             PhotoRowWidget(singleDoctor: singleDoctor),
-            Divider(
-                color: Theme.of(context).primaryColor,
-                indent: 0,
-                endIndent: 0,
-                height: 5),
+            Divider(color: Theme.of(context).primaryColor, indent: 0, endIndent: 0, height: 5),
             LocationAboutWidget(singleDoctor: singleDoctor),
             Divider(
               color: Theme.of(context).primaryColor,
@@ -52,7 +52,7 @@ class DoctorCard extends StatelessWidget {
               endIndent: 0,
               height: 1,
             ),
-            if (height == 200) ...[
+            if (useMobileLayout ? height == 200 : height == 300) ...[
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -60,10 +60,9 @@ class DoctorCard extends StatelessWidget {
                   IconButton(
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    visualDensity:
-                        const VisualDensity(horizontal: -4, vertical: -4),
+                    visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                     onPressed: () {
-                      increaseHight();
+                      increaseHight(useMobileLayout);
                     },
                     icon: const Icon(Icons.arrow_drop_down),
                   )
@@ -77,10 +76,9 @@ class DoctorCard extends StatelessWidget {
                   IconButton(
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    visualDensity:
-                        const VisualDensity(horizontal: -4, vertical: -4),
+                    visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                     onPressed: () {
-                      decreaseHight();
+                      decreaseHight(useMobileLayout);
                     },
                     icon: const Icon(Icons.arrow_drop_up),
                   )
@@ -110,15 +108,19 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
-    final name =
-        "${widget.singleDoctor.firstName} ${widget.singleDoctor.lastName}";
+    final name = "${widget.singleDoctor.firstName} ${widget.singleDoctor.lastName}";
     final doctorId = widget.singleDoctor.id;
 
     final doctorIdEncrypted = encrypter.encrypt(doctorId, iv: iv);
-    var subheading =
-        context.tr(widget.singleDoctor.specialities[0].specialities);
+    var subheading = context.tr(widget.singleDoctor.specialities[0].specialities);
     final specialitiesImageSrc = widget.singleDoctor.specialities[0].image;
     final imageIsSvg = specialitiesImageSrc.endsWith('.svg');
+    // The equivalent of the "smallestWidth" qualifier on Android.
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -135,9 +137,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
               ),
               badgeContent: AvatarGlow(
                 startDelay: const Duration(milliseconds: 1000),
-                glowColor: widget.singleDoctor.online
-                    ? Colors.green
-                    : Colors.transparent,
+                glowColor: widget.singleDoctor.online ? Colors.green : Colors.transparent,
                 glowShape: BoxShape.circle,
                 animate: widget.singleDoctor.online,
                 repeat: widget.singleDoctor.online,
@@ -156,17 +156,14 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
               badgeStyle: badges.BadgeStyle(
                 padding: const EdgeInsets.all(1),
                 shape: badges.BadgeShape.circle,
-                badgeColor:
-                    widget.singleDoctor.online ? Colors.green : Colors.pink,
+                badgeColor: widget.singleDoctor.online ? Colors.green : Colors.pink,
                 elevation: 12,
               ),
               child: GestureDetector(
                 onTap: () {
                   context.pushNamed(
                     'doctorsSearchProfile',
-                    pathParameters: {
-                      'id': Uri.encodeComponent(doctorIdEncrypted.base64)
-                    },
+                    pathParameters: {'id': Uri.encodeComponent(doctorIdEncrypted.base64)},
                   );
                 },
                 child: Container(
@@ -188,7 +185,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                     // your own shape
                     shape: BoxShape.rectangle,
                   ),
-                  height: 90,
+                  height: useMobileLayout ? 90 : 150,
                 ),
               ),
             ),
@@ -197,10 +194,10 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
             flex: 3,
             fit: FlexFit.tight,
             child: SizedBox(
-              height: 80,
+              height: useMobileLayout ? 80 : 150,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: useMobileLayout ? MainAxisAlignment.center : MainAxisAlignment.spaceEvenly,
                 children: [
                   RichText(
                     text: TextSpan(
@@ -208,18 +205,14 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                         TextSpan(
                           text: "Dr. $name",
                           style: TextStyle(
-                            color: brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                            fontSize: useMobileLayout ? 10 : 20,
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               context.pushNamed(
                                 'doctorsSearchProfile',
-                                pathParameters: {
-                                  'id': Uri.encodeComponent(
-                                      doctorIdEncrypted.base64)
-                                },
+                                pathParameters: {'id': Uri.encodeComponent(doctorIdEncrypted.base64)},
                               );
                             },
                         ),
@@ -230,7 +223,13 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(subheading),
+                      Text(
+                        subheading,
+                        style: TextStyle(
+                          color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                          fontSize: useMobileLayout ? 10 : 20,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 8.0,
@@ -238,16 +237,16 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                         child: imageIsSvg
                             ? SvgPicture.network(
                                 specialitiesImageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
-                                width: 20,
-                                height: 20,
+                                width: useMobileLayout ? 20 : 50,
+                                height: useMobileLayout ? 20 : 50,
                                 fit: BoxFit.fitHeight,
                               )
                             : CachedNetworkImage(
                                 key: ValueKey(
                                   specialitiesImageSrc,
                                 ),
-                                width: 20,
-                                height: 20,
+                                width: useMobileLayout ? 20 : 50,
+                                height: useMobileLayout ? 20 : 50,
                                 imageUrl: specialitiesImageSrc,
                                 errorWidget: (ccontext, url, error) {
                                   return Image.asset(
@@ -266,10 +265,10 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
             flex: 2,
             fit: FlexFit.tight,
             child: SizedBox(
-                height: 80,
+                height: useMobileLayout ? 80 : 150,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: useMobileLayout ? MainAxisAlignment.end : MainAxisAlignment.spaceEvenly,
                   children: [
                     RatingStars(
                       value: 3.5,
@@ -285,25 +284,23 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                       starColor: Colors.yellow,
                     ),
                     Text(
-                      'Gender: ${widget.singleDoctor.gender == 'Mr' ? '👨' : '👩'} ${widget.singleDoctor.gender}',
+                      '${context.tr('gender')}: ${widget.singleDoctor.gender == 'Mr' ? '👨' : '👩'} ${widget.singleDoctor.gender}',
                       textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: 10,
+                      style: TextStyle(
+                        fontSize: useMobileLayout ? 10 : 20,
                       ),
                     ),
                     if (widget.singleDoctor.clinicImages.isNotEmpty) ...[
                       CarouselSlider(
                           options: CarouselOptions(
-                            height: 50.0,
+                            height: useMobileLayout ? 50.0 : 80,
                             autoPlay: true,
                             enlargeCenterPage: true,
                           ),
                           items: widget.singleDoctor.clinicImages.map((i) {
                             return Card(
                               shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: Theme.of(context).primaryColorLight,
-                                    width: 0.5),
+                                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 0.5),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               elevation: 5.0,
@@ -312,14 +309,14 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                                 semanticLabel: i.tags[0].title,
                                 fit: BoxFit.cover,
                                 i.src,
-                                width: 50,
-                                height: 50,
+                                width: useMobileLayout ? 50.0 : 80,
+                                height: useMobileLayout ? 50.0 : 80,
                               ),
                             );
                           }).toList())
                     ] else ...[
-                      const SizedBox(
-                        height: 30,
+                      SizedBox(
+                        height: useMobileLayout ? 30.0 : 50.0,
                       )
                     ]
                   ],
@@ -347,162 +344,155 @@ class _LocationAboutWidgetState extends State<LocationAboutWidget> {
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
+    // The equivalent of the "smallestWidth" qualifier on Android.
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
 
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
     final isCollapsed = ValueNotifier<bool>(true);
     return IntrinsicHeight(
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: 12,
-              ),
-              child: Icon(
-                Icons.location_on,
-                color: Theme.of(context).primaryColorLight,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 8,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 5,
-                    child: Text(
-                      widget.singleDoctor.city,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 20,
+            horizontal: 12,
+          ),
+          child: Icon(
+            Icons.location_on,
+            color: Theme.of(context).primaryColorLight,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 8,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 5,
+                child: Text(
+                  widget.singleDoctor.city,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: useMobileLayout ? 10 : 14,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 5,
-                    child: Text(
-                      widget.singleDoctor.state,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 5,
-                    child: Text(
-                      widget.singleDoctor.country,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            VerticalDivider(
-              width: 3,
-              thickness: 1,
-              indent: 0,
-              endIndent: 0,
-              color: Theme.of(context).primaryColorLight,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 5,
+                child: Text(
+                  widget.singleDoctor.state,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: useMobileLayout ? 10 : 14,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 5,
+                child: Text(
+                  widget.singleDoctor.country,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: useMobileLayout ? 10 : 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        VerticalDivider(
+          width: 3,
+          thickness: 1,
+          indent: 0,
+          endIndent: 0,
+          color: Theme.of(context).primaryColorLight,
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  context.tr('about'),
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: isCollapsed,
+                builder: (context, value, child) {
+                  return Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      context.tr('about'),
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).primaryColor,
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            style: TextStyle(
+                              color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                              fontSize: useMobileLayout ? 10 : 14,
+                            ),
+                            text: widget.singleDoctor.aboutMe.length <= 100
+                                ? widget.singleDoctor.aboutMe
+                                : widget.singleDoctor.aboutMe.substring(0, 100),
+                          ),
+                          if (widget.singleDoctor.aboutMe.length >= 100) ...[
+                            TextSpan(
+                                text: value ? context.tr('readMore') : context.tr('readLess'),
+                                style: TextStyle(
+                                  fontSize: useMobileLayout? 10: 14,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    isCollapsed.value = !isCollapsed.value;
+                                    showModalBottomSheet(
+                                      context: context,
+                                      useSafeArea: true,
+                                      isDismissible: true,
+                                      showDragHandle: true,
+                                      constraints: const BoxConstraints(
+                                        maxHeight: double.infinity,
+                                      ),
+                                      scrollControlDisabledMaxHeightRatio: 1,
+                                      builder: (context) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Text(
+                                            widget.singleDoctor.aboutMe,
+                                            textAlign: TextAlign.justify,
+                                            style: const TextStyle(
+                                              fontSize: 18.0,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).whenComplete(() {
+                                      isCollapsed.value = !isCollapsed.value;
+                                    });
+                                  })
+                          ],
+                        ],
                       ),
                     ),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: isCollapsed,
-                    builder: (context, value, child) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                style: TextStyle(
-                                  color: brightness == Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 10,
-                                ),
-                                text: widget.singleDoctor.aboutMe.length <= 100
-                                    ? widget.singleDoctor.aboutMe
-                                    : widget.singleDoctor.aboutMe
-                                        .substring(0, 100),
-                              ),
-                              if (widget.singleDoctor.aboutMe.length >=
-                                  100) ...[
-                                TextSpan(
-                                    text: value
-                                        ? context.tr('readMore')
-                                        : context.tr('readLess'),
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        isCollapsed.value = !isCollapsed.value;
-                                        showModalBottomSheet(
-                                          context: context,
-                                          useSafeArea: true,
-                                          isDismissible: true,
-                                          showDragHandle: true,
-                                          constraints: const BoxConstraints(
-                                            maxHeight: double.infinity,
-                                          ),
-                                          scrollControlDisabledMaxHeightRatio:
-                                              1,
-                                          builder: (context) {
-                                            return Padding(
-                                              padding: const EdgeInsets.all(8),
-                                              child: Text(
-                                                widget.singleDoctor.aboutMe,
-                                                textAlign: TextAlign.justify,
-                                                style: const TextStyle(
-                                                  fontSize: 18.0,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ).whenComplete(() {
-                                          isCollapsed.value =
-                                              !isCollapsed.value;
-                                        });
-                                      })
-                              ],
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
-            )
-          ]),
+            ],
+          ),
+        )
+      ]),
     );
   }
 }
 
 class ServicesWidget extends StatefulWidget {
-
   final Doctors singleDoctor;
   const ServicesWidget({
     super.key,
@@ -514,27 +504,20 @@ class ServicesWidget extends StatefulWidget {
 }
 
 class _ServicesWidgetState extends State<ServicesWidget> {
-  void showArrayDataModal(
-      BuildContext context, String name, List<dynamic> data) {
+  void showArrayDataModal(BuildContext context, String name, List<dynamic> data) {
     Widget children = Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Text(name),
+        Text(context.tr(name)),
         if (name == 'specialitiesServices') ...[
           Table(
             border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              verticalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              bottom:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              top:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              left:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              right:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
             ),
             columnWidths: const <int, TableColumnWidth>{
               0: FlexColumnWidth(),
@@ -559,18 +542,12 @@ class _ServicesWidgetState extends State<ServicesWidget> {
         ] else if (name == 'educations') ...[
           Table(
             border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              verticalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              bottom:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              top:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              left:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              right:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
             ),
             columnWidths: const <int, TableColumnWidth>{
               0: FlexColumnWidth(),
@@ -614,9 +591,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
-                        .parseUTC('${e.yearOfCompletion}')
-                        .toLocal();
+                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.yearOfCompletion}').toLocal();
                     String formattedDate = DateFormat("yyyy").format(dateValue);
                     return TableRow(children: [
                       Center(
@@ -643,18 +618,12 @@ class _ServicesWidgetState extends State<ServicesWidget> {
         ] else if (name == 'experinces') ...[
           Table(
             border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              verticalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              bottom:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              top:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              left:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              right:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
             ),
             columnWidths: const <int, TableColumnWidth>{
               0: FlexColumnWidth(),
@@ -708,16 +677,10 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var fromDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
-                        .parseUTC('${e.from}')
-                        .toLocal();
-                    String formattedFromDate =
-                        DateFormat("yyyy MMM dd").format(fromDateValue);
-                    var toDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
-                        .parseUTC('${e.from}')
-                        .toLocal();
-                    String formattedToDate =
-                        DateFormat("yyyy MMM dd").format(toDateValue);
+                    var fromDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.from}').toLocal();
+                    String formattedFromDate = DateFormat("yyyy MMM dd").format(fromDateValue);
+                    var toDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.from}').toLocal();
+                    String formattedToDate = DateFormat("yyyy MMM dd").format(toDateValue);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -748,18 +711,12 @@ class _ServicesWidgetState extends State<ServicesWidget> {
         ] else if (name == 'awards') ...[
           Table(
             border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              verticalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              bottom:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              top:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              left:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              right:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
             ),
             columnWidths: const <int, TableColumnWidth>{
               0: FlexColumnWidth(),
@@ -793,11 +750,8 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
-                        .parseUTC('${e.year}')
-                        .toLocal();
-                    String formattedYearDate =
-                        DateFormat("yyyy").format(yearValue);
+                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.year}').toLocal();
+                    String formattedYearDate = DateFormat("yyyy").format(yearValue);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -818,18 +772,12 @@ class _ServicesWidgetState extends State<ServicesWidget> {
         ] else if (name == 'memberships') ...[
           Table(
             border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              verticalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              bottom:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              top:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              left:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              right:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
             ),
             columnWidths: const <int, TableColumnWidth>{
               0: FlexColumnWidth(),
@@ -854,18 +802,12 @@ class _ServicesWidgetState extends State<ServicesWidget> {
         ] else if (name == 'registrations') ...[
           Table(
             border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              verticalInside:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              bottom:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              top:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              left:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
-              right:
-                  BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              horizontalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              verticalInside: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              bottom: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              top: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              left: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
+              right: BorderSide(color: Theme.of(context).primaryColor, width: 0.7),
             ),
             columnWidths: const <int, TableColumnWidth>{
               0: FlexColumnWidth(),
@@ -899,11 +841,8 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ")
-                        .parseUTC('${e.year}')
-                        .toLocal();
-                    String formattedYearDate =
-                        DateFormat("yyyy").format(yearValue);
+                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.year}').toLocal();
+                    String formattedYearDate = DateFormat("yyyy").format(yearValue);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -937,135 +876,37 @@ class _ServicesWidgetState extends State<ServicesWidget> {
       ),
       scrollControlDisabledMaxHeightRatio: 1,
       builder: (context) {
-        return Padding(
-            padding: const EdgeInsets.all(8),
-            child: SingleChildScrollView(child: children));
+        return Padding(padding: const EdgeInsets.all(8), child: SingleChildScrollView(child: children));
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // The equivalent of the "smallestWidth" qualifier on Android.
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
     return DelayedDisplay(
       delay: const Duration(milliseconds: 200),
       child: Column(
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showArrayDataModal(
-                    context,
-                    'specialitiesServices',
-                    widget.singleDoctor.specialitiesServices,
-                  );
-                },
-                child: Chip(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColorLight,
-                    ),
-                    borderRadius: BorderRadius.circular(
-                      20,
-                    ),
-                  ),
-                  visualDensity:
-                      const VisualDensity(horizontal: 4, vertical: -3),
-                  padding: const EdgeInsets.all(0),
-                  label: Text(context.tr('services')),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showArrayDataModal(
-                    context,
-                    'educations',
-                    widget.singleDoctor.educations,
-                  );
-                },
-                child: Chip(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColorLight,
-                    ),
-                    borderRadius: BorderRadius.circular(
-                      20,
-                    ),
-                  ),
-                  visualDensity:
-                      const VisualDensity(horizontal: 4, vertical: -3),
-                  padding: const EdgeInsets.all(0),
-                  label: Text(context.tr('educations')),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showArrayDataModal(
-                    context,
-                    'experinces',
-                    widget.singleDoctor.experinces,
-                  );
-                },
-                child: Chip(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColorLight,
-                    ),
-                    borderRadius: BorderRadius.circular(
-                      20,
-                    ),
-                  ),
-                  visualDensity:
-                      const VisualDensity(horizontal: 4, vertical: -3),
-                  padding: const EdgeInsets.all(0),
-                  label: Text(context.tr('experinces')),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showArrayDataModal(
-                    context,
-                    'awards',
-                    widget.singleDoctor.awards,
-                  );
-                },
-                child: Chip(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColorLight,
-                    ),
-                    borderRadius: BorderRadius.circular(
-                      20,
-                    ),
-                  ),
-                  visualDensity:
-                      const VisualDensity(horizontal: 4, vertical: -3),
-                  padding: const EdgeInsets.all(0),
-                  label: Text(context.tr('awards')),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showArrayDataModal(
-                    context,
-                    'memberships',
-                    widget.singleDoctor.memberships,
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          // Seprate tablate from mobile with 1 or 2 rows
+          if (useMobileLayout) ...[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'specialitiesServices',
+                      widget.singleDoctor.specialitiesServices,
+                    );
+                  },
                   child: Chip(
                     backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
@@ -1076,39 +917,287 @@ class _ServicesWidgetState extends State<ServicesWidget> {
                         20,
                       ),
                     ),
-                    visualDensity:
-                        const VisualDensity(horizontal: 4, vertical: -3),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
                     padding: const EdgeInsets.all(0),
-                    label: Text(context.tr('memberships')),
+                    label: Text(context.tr('services')),
                   ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showArrayDataModal(
-                    context,
-                    'registrations',
-                    widget.singleDoctor.registrations,
-                  );
-                },
-                child: Chip(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColorLight,
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'educations',
+                      widget.singleDoctor.educations,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(
-                      20,
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('educations')),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'experinces',
+                      widget.singleDoctor.experinces,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('experinces')),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'awards',
+                      widget.singleDoctor.awards,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('awards')),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'memberships',
+                      widget.singleDoctor.memberships,
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: useMobileLayout ? 8.0 : 18.0),
+                    child: Chip(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          20,
+                        ),
+                      ),
+                      visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                      padding: const EdgeInsets.all(0),
+                      label: Text(context.tr('memberships')),
                     ),
                   ),
-                  visualDensity:
-                      const VisualDensity(horizontal: 4, vertical: -3),
-                  padding: const EdgeInsets.all(0),
-                  label: Text(context.tr('registrations')),
                 ),
-              )
-            ],
-          ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'registrations',
+                      widget.singleDoctor.registrations,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('registrations')),
+                  ),
+                )
+              ],
+            ),
+          ] else ...[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'specialitiesServices',
+                      widget.singleDoctor.specialitiesServices,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('services')),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'educations',
+                      widget.singleDoctor.educations,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('educations')),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'experinces',
+                      widget.singleDoctor.experinces,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('experinces')),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'awards',
+                      widget.singleDoctor.awards,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('awards')),
+                  ),
+                ),
+             GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'memberships',
+                      widget.singleDoctor.memberships,
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: useMobileLayout ? 8.0 : 18.0),
+                    child: Chip(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Theme.of(context).primaryColorLight,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          20,
+                        ),
+                      ),
+                      visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                      padding: const EdgeInsets.all(0),
+                      label: Text(context.tr('memberships')),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showArrayDataModal(
+                      context,
+                      'registrations',
+                      widget.singleDoctor.registrations,
+                    );
+                  },
+                  child: Chip(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
+                    ),
+                    visualDensity: const VisualDensity(horizontal: 4, vertical: -3),
+                    padding: const EdgeInsets.all(0),
+                    label: Text(context.tr('registrations')),
+                  ),
+                )
+              
+              ],
+            ),
+          ]
         ],
       ),
     );

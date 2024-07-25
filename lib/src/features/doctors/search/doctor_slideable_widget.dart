@@ -1,5 +1,3 @@
-
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable_panel/flutter_slidable_panel.dart';
@@ -25,19 +23,11 @@ class DoctorSlideableWidget extends StatefulWidget {
   State<DoctorSlideableWidget> createState() => _DoctorSlideableWidgetState();
 }
 
-class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
-    with TickerProviderStateMixin {
+class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with TickerProviderStateMixin {
   final SlideController _slideController = SlideController(
     usePreActionController: true,
     usePostActionController: true,
   );
-
-  @override
-  void dispose() {
-    _slideController.dispose();
-    _heartController.dispose();
-    super.dispose();
-  }
 
   var height = 200.0;
   bool isFavIconLoading = false;
@@ -47,8 +37,25 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
     upperBound: 1,
     duration: const Duration(seconds: 1),
   )..repeat(reverse: true);
-  late final Animation<double> _scaleAnimation =
-      Tween<double>(begin: 0.6, end: 1.2).animate(_heartController);
+  late final Animation<double> _scaleAnimation = Tween<double>(begin: 0.6, end: 1.2).animate(_heartController);
+
+  @override
+  void didChangeDependencies() {
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
+    height = useMobileLayout ? 200 : 300;
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _slideController.dispose();
+    _heartController.dispose();
+    super.dispose();
+  }
 
   void addDoctorToFav(Doctors doctor, String patientId) {
     var doctorId = doctor.id;
@@ -109,8 +116,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
     setState(() {
       isFavIconLoading = true;
     });
-    socket.emit(
-        'removeDocFromFav', {'doctorId': doctorId, 'patientId': patientId});
+    socket.emit('removeDocFromFav', {'doctorId': doctorId, 'patientId': patientId});
     socket.on('removeDocFromFavReturn', (dynamic msg) {
       if (msg['status'] != 200) {
         showModalBottomSheet(
@@ -159,15 +165,15 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
     });
   }
 
-  void increaseHight() {
+  void increaseHight(useMobileLayout) {
     setState(() {
-      height = 280.0;
+      height = useMobileLayout ? 280.0 : 350.0;
     });
   }
 
-  void decreaseHight() {
+  void decreaseHight(useMobileLayout) {
     setState(() {
-      height = 200.0;
+      height = useMobileLayout ? 200.0 : 300.0;
     });
   }
 
@@ -193,10 +199,14 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
         patientId = doctorsProfile!.userId;
       }
     }
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
 
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
     return SlidablePanel(
       controller: _slideController,
-      maxSlideThreshold: 0.5,
+      maxSlideThreshold:useMobileLayout? 0.5 : 0.2,
       axis: Axis.horizontal,
       preActionLayout: ActionLayout.spaceEvenly(ActionMotion.drawer),
       onSlideStart: () {
@@ -249,8 +259,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
           style: IconButton.styleFrom(
             backgroundColor: Colors.transparent,
             padding: const EdgeInsets.all(0),
-            foregroundColor:
-                isFave ? Colors.pink[600] : Theme.of(context).primaryColorLight,
+            foregroundColor: isFave ? Colors.pink[600] : Theme.of(context).primaryColorLight,
             splashFactory: NoSplash.splashFactory,
             hoverColor: Colors.transparent,
             highlightColor: Colors.transparent,
@@ -286,8 +295,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
         TextButton(
             onPressed: () async {
               _slideController.toggleAction(1);
-              final result = await Share.share(
-                  'check out my website http://web-mjcode.ddns.net/');
+              final result = await Share.share('check out my website http://web-mjcode.ddns.net/');
               if (result.status == ShareResultStatus.dismissed) {
                 _slideController.toggleAction(1);
               }
@@ -307,57 +315,65 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget>
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(18), right: Radius.circular(18)),
-                border: Border.all(color: Theme.of(context).primaryColor),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Icon(Icons.thumb_up_sharp),
-                  Text('98%'),
-                  Text(
-                    '(252 votes)',
-                  )
-                ],
-              ),
-            ),
-            Flexible(
-              fit: FlexFit.loose,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 30),
-                  elevation: 5.0,
-                  foregroundColor: Theme.of(context).primaryColor,
-                  animationDuration: const Duration(milliseconds: 1000),
-                  backgroundColor: Theme.of(context).primaryColorLight,
-                  shadowColor: Theme.of(context).primaryColorLight,
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(18), right: Radius.circular(18)),
+                  border: Border.all(color: Theme.of(context).primaryColor),
                 ),
-                onPressed: singleDoctor.timeslots.isEmpty ? null : () {},
-                child: Text(
-                  context.tr('bookAppointment'),
-                  style: const TextStyle(color: Colors.black),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Icon(Icons.thumb_up_sharp),
+                    Text('98%'),
+                    Text(
+                      '(252 votes)',
+                    )
+                  ],
                 ),
               ),
             ),
             Flexible(
               fit: FlexFit.loose,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 30),
-                  elevation: 5.0,
-                  foregroundColor: Theme.of(context).primaryColor,
-                  animationDuration: const Duration(milliseconds: 1000),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  shadowColor: Theme.of(context).primaryColor,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(double.maxFinite, 30),
+                    elevation: 5.0,
+                    foregroundColor: Theme.of(context).primaryColor,
+                    animationDuration: const Duration(milliseconds: 1000),
+                    backgroundColor: Theme.of(context).primaryColorLight,
+                    shadowColor: Theme.of(context).primaryColorLight,
+                  ),
+                  onPressed: singleDoctor.timeslots.isEmpty ? null : () {},
+                  child: Text(
+                    context.tr('bookAppointment'),
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 ),
-                onPressed: singleDoctor.timeslots.isEmpty ? null : () {},
-                child: Text(
-                  context.tr('onlineConsult'),
-                  style: const TextStyle(color: Colors.black),
+              ),
+            ),
+            Flexible(
+              fit: FlexFit.loose,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(double.maxFinite, 30),
+                    elevation: 5.0,
+                    foregroundColor: Theme.of(context).primaryColor,
+                    animationDuration: const Duration(milliseconds: 1000),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    shadowColor: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: singleDoctor.timeslots.isEmpty ? null : () {},
+                  child: Text(
+                    context.tr('onlineConsult'),
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 ),
               ),
             ),

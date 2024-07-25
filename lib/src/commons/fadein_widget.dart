@@ -18,15 +18,26 @@ class _FadeinWidgetState extends State<FadeinWidget> {
   bool _isFinished = false;
   Future<void> removeLoader() async {
     Future.delayed(const Duration(microseconds: 1000), () {
-      setState(() {
+     if(mounted){
+       setState(() {
         _isFinished = true;
       });
+     }
     });
   }
 
   @override
+  void initState() {
+   removeLoader();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    removeLoader();
     return AnimatedCrossFade(
       firstChild: widget.child,
       firstCurve: Curves.easeInCubic,

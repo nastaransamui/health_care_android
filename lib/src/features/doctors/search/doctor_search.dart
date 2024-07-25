@@ -82,7 +82,6 @@ class _DoctorSearchState extends State<DoctorSearch> {
     keyWordValue = widget.queryParameters['keyWord'];
     availabilityValue = widget.queryParameters['available'];
     keyWordController.text = widget.queryParameters['keyWord'] ?? '';
-
     fetchDoctors();
   }
 
@@ -246,6 +245,11 @@ class _DoctorSearchState extends State<DoctorSearch> {
         _chosenModel = element['value'];
       }
     }
+       var shortestSide = MediaQuery.of(context).size.shortestSide;
+
+// Determine if we should use mobile layout or not, 600 here is
+// a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
     return ScaffoldWrapper(
       title: 'search',
       children: SizedBox(
@@ -503,52 +507,55 @@ class _DoctorSearchState extends State<DoctorSearch> {
                       children: [
                         if (!_isFinished) ...[
                           if (!isLoading) ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  fit: FlexFit.loose,
-                                  child: ListTile(
-                                    textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
-                                    title: Text(
-                                      context.tr('doctors'),
-                                    ),
-                                    subtitle: const Text('doctorsNumber').plural(
-                                      (totalDoctors ?? 0) as num,
-                                      format: NumberFormat.compact(
-                                        locale: context.locale.toString(),
+                            SizedBox(
+                              height: 80,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: ListTile(
+                                      textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
+                                      title: Text(
+                                        context.tr('doctors'),
+                                      ),
+                                      subtitle: const Text('doctorsNumber').plural(
+                                        (totalDoctors ?? 0) as num,
+                                        format: NumberFormat.compact(
+                                          locale: context.locale.toString(),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                if (doctors != null && doctors!.isNotEmpty) ...[
-                                  IconButton(
-                                    onPressed: scrollUp,
-                                    icon: Icon(
-                                      Icons.arrow_upward,
-                                      color: Theme.of(context).primaryColor,
+                                  if (doctors != null && doctors!.isNotEmpty) ...[
+                                    IconButton(
+                                      onPressed: scrollUp,
+                                      icon: Icon(
+                                        Icons.arrow_upward,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
                                     ),
+                                  ],
+                                  if (doctors != null && doctors!.isNotEmpty) ...[
+                                    IconButton(
+                                      onPressed: scrollDown,
+                                      icon: const Icon(Icons.arrow_downward),
+                                    ),
+                                  ],
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: ListTile(
+                                        textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
+                                        subtitle: Text(context.tr('slideToSeeMore'))),
                                   ),
                                 ],
-                                if (doctors != null && doctors!.isNotEmpty) ...[
-                                  IconButton(
-                                    onPressed: scrollDown,
-                                    icon: const Icon(Icons.arrow_downward),
-                                  ),
-                                ],
-                                Flexible(
-                                  fit: FlexFit.loose,
-                                  child: ListTile(
-                                      textColor: brightness == Brightness.dark ? Colors.white : Colors.black,
-                                      subtitle: Text(context.tr('slideToSeeMore'))),
-                                ),
-                              ],
+                              ),
                             ),
                             Flexible(
                               fit: FlexFit.loose,
                               child: SizedBox(
-                                height: MediaQuery.of(context).size.height / 2 + 200,
+                                height:useMobileLayout ? (MediaQuery.of(context).size.height / 2 + 200) - 80 : MediaQuery.of(context).size.height -200,
                                 child: Stack(
                                   alignment: Alignment.topLeft,
                                   children: [
