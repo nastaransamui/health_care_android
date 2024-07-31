@@ -1,6 +1,3 @@
-
-
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
@@ -26,6 +23,14 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
       valueListenable: isCollapsed,
       builder: (context, value, child) {
         return CarouselSlider(
+          options: CarouselOptions(
+            autoPlay: false,
+            enlargeCenterPage: true,
+            // viewportFraction: 1,
+            // aspectRatio: 2.0,
+            // initialPage: 1,
+            height: 350,
+          ),
           items: doctors.map<Widget>((i) {
             return Builder(
               builder: (BuildContext context) {
@@ -61,7 +66,7 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
                           onTap: () {},
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width,
-                            height: 250,
+                            height: 150,
                             child: Ink.image(
                               image: cardImage,
                               fit: BoxFit.cover,
@@ -72,34 +77,24 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             // height: 50,
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16.0),
+                            padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                             alignment: Alignment.centerLeft,
                             child: RichText(
                               text: TextSpan(
                                 children: [
                                   TextSpan(
                                     style: TextStyle(
-                                      color: brightness == Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
+                                      color: brightness == Brightness.dark ? Colors.white : Colors.black,
                                     ),
-                                    text: supportingText.length <= 240
-                                        ? supportingText
-                                        : supportingText.substring(0, 240),
+                                    text: supportingText.length <= 240 ? supportingText : supportingText.substring(0, 240),
                                   ),
                                   if (supportingText.length >= 240) ...[
                                     TextSpan(
-                                        text: value
-                                            ? ' ...Read more'
-                                            : 'Read less',
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).primaryColor),
+                                        text: value ? ' ...Read more' : 'Read less',
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
-                                            isCollapsed.value =
-                                                !isCollapsed.value;
+                                            isCollapsed.value = !isCollapsed.value;
                                             showModalBottomSheet(
                                               context: context,
                                               useSafeArea: true,
@@ -108,16 +103,13 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
                                               constraints: const BoxConstraints(
                                                 maxHeight: double.infinity,
                                               ),
-                                              scrollControlDisabledMaxHeightRatio:
-                                                  1,
+                                              scrollControlDisabledMaxHeightRatio: 1,
                                               builder: (context) {
                                                 return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
+                                                  padding: const EdgeInsets.all(8),
                                                   child: Text(
                                                     supportingText,
-                                                    textAlign:
-                                                        TextAlign.justify,
+                                                    textAlign: TextAlign.justify,
                                                     style: const TextStyle(
                                                       fontSize: 18.0,
                                                     ),
@@ -125,8 +117,7 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
                                                 );
                                               },
                                             ).whenComplete(() {
-                                              isCollapsed.value =
-                                                  !isCollapsed.value;
+                                              isCollapsed.value = !isCollapsed.value;
                                             });
                                           })
                                   ],
@@ -142,14 +133,6 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
               },
             );
           }).toList(),
-          options: CarouselOptions(
-            autoPlay: false,
-            enlargeCenterPage: true,
-            viewportFraction: 1,
-            aspectRatio: 2.0,
-            initialPage: 1,
-            height: 450,
-          ),
         );
       },
     );

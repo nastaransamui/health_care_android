@@ -1,29 +1,26 @@
-
-
-
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class HowWorkAccordion extends StatefulWidget {
-  const HowWorkAccordion({super.key,});
+class FrequentlyAskedQuestions extends StatefulWidget {
+  const FrequentlyAskedQuestions({
+    super.key,
+  });
   static const headerStyle = TextStyle(
     fontSize: 18,
   );
-  static const contentStyleHeader = TextStyle(
-      color: Color(0xff999999), fontSize: 14, fontWeight: FontWeight.w700);
-  static const contentStyle =
-      TextStyle(fontSize: 14, fontWeight: FontWeight.normal);
+  static const contentStyleHeader = TextStyle(color: Color(0xff999999), fontSize: 14, fontWeight: FontWeight.w700);
+  static const contentStyle = TextStyle(fontSize: 14, fontWeight: FontWeight.normal);
   @override
-  State<HowWorkAccordion> createState() => _HowWorkAccordionState();
+  State<FrequentlyAskedQuestions> createState() => _FrequentlyAskedQuestionsState();
 }
 
-class _HowWorkAccordionState extends State<HowWorkAccordion> {
-  var isSearchOpen = false;
+class _FrequentlyAskedQuestionsState extends State<FrequentlyAskedQuestions> with SingleTickerProviderStateMixin {
+  var isSearchOpen = true;
   var isCheckDoctorProfileOpen = false;
   var isScheduleAppointmentOpen = false;
   var isSolutionOpen = false;
@@ -32,7 +29,7 @@ class _HowWorkAccordionState extends State<HowWorkAccordion> {
     final loremIpsum = context.tr('lorem');
 
     return Accordion(
-      disableScrolling:false,
+      disableScrolling: true,
       headerBorderColor: Theme.of(context).primaryColor,
       headerBorderColorOpened: Theme.of(context).primaryColor,
       headerBackgroundColorOpened: Theme.of(context).primaryColorLight,
@@ -73,21 +70,18 @@ class _HowWorkAccordionState extends State<HowWorkAccordion> {
               top: 0.0,
               bottom: 0.0,
             ),
-            child: SvgPicture.asset(
-              'assets/icon/search_doctor.svg',
-              width: 30,
-              height: 30,
-              fit: BoxFit.fitHeight,
-              colorFilter: isSearchOpen
-                  ? ColorFilter.mode(
-                      Theme.of(context).primaryColor, BlendMode.srcIn)
-                  : ColorFilter.mode(
-                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
-            ),
+            child: isSearchOpen
+                ? FaIcon(
+                    FontAwesomeIcons.minus,
+                    color: Theme.of(context).primaryColor,
+                  )
+                : FaIcon(
+                    FontAwesomeIcons.plus,
+                    color: Theme.of(context).primaryColorLight,
+                  ),
           ),
-          header: Text(context.tr('searchDoctor'),
-              style: HowWorkAccordion.headerStyle),
-          content: Text(loremIpsum, style: HowWorkAccordion.contentStyle),
+          header: Text(context.tr('faq1'), style: FrequentlyAskedQuestions.headerStyle),
+          content: Text(loremIpsum, style: FrequentlyAskedQuestions.contentStyle),
           onOpenSection: () {
             setState(() {
               isSearchOpen = true;
@@ -130,21 +124,18 @@ class _HowWorkAccordionState extends State<HowWorkAccordion> {
               top: 0.0,
               bottom: 0.0,
             ),
-            child: SvgPicture.asset(
-              'assets/icon/profile_doctor.svg',
-              width: 30,
-              height: 30,
-              fit: BoxFit.fitHeight,
-              colorFilter: isCheckDoctorProfileOpen
-                  ? ColorFilter.mode(
-                      Theme.of(context).primaryColor, BlendMode.srcIn)
-                  : ColorFilter.mode(
-                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
-            ),
+            child: isCheckDoctorProfileOpen
+                ? FaIcon(
+                    FontAwesomeIcons.minus,
+                    color: Theme.of(context).primaryColor,
+                  )
+                : FaIcon(
+                    FontAwesomeIcons.plus,
+                    color: Theme.of(context).primaryColorLight,
+                  ),
           ),
-          header: Text(context.tr('checkDoctorProfile'),
-              style: HowWorkAccordion.headerStyle),
-          content: Text(loremIpsum, style: HowWorkAccordion.contentStyle),
+          header: Text(context.tr('faq2'), style: FrequentlyAskedQuestions.headerStyle),
+          content: Text(loremIpsum, style: FrequentlyAskedQuestions.contentStyle),
           onOpenSection: () {
             setState(() {
               isCheckDoctorProfileOpen = true;
@@ -187,21 +178,18 @@ class _HowWorkAccordionState extends State<HowWorkAccordion> {
               top: 0.0,
               bottom: 0.0,
             ),
-            child: SvgPicture.asset(
-              'assets/icon/schedule_doctor.svg',
-              width: 30,
-              height: 30,
-              fit: BoxFit.fitHeight,
-              colorFilter: isScheduleAppointmentOpen
-                  ? ColorFilter.mode(
-                      Theme.of(context).primaryColor, BlendMode.srcIn)
-                  : ColorFilter.mode(
-                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
-            ),
+            child: isScheduleAppointmentOpen
+                ? FaIcon(
+                    FontAwesomeIcons.minus,
+                    color: Theme.of(context).primaryColor,
+                  )
+                : FaIcon(
+                    FontAwesomeIcons.plus,
+                    color: Theme.of(context).primaryColorLight,
+                  ),
           ),
-          header: Text(context.tr('scheduleAppointment'),
-              style: HowWorkAccordion.headerStyle),
-          content: Text(loremIpsum, style: HowWorkAccordion.contentStyle),
+          header: Text(context.tr('faq3'), style: FrequentlyAskedQuestions.headerStyle),
+          content: Text(loremIpsum, style: FrequentlyAskedQuestions.contentStyle),
           onOpenSection: () {
             setState(() {
               isCheckDoctorProfileOpen = false;
@@ -244,21 +232,18 @@ class _HowWorkAccordionState extends State<HowWorkAccordion> {
               top: 0.0,
               bottom: 0.0,
             ),
-            child: SvgPicture.asset(
-              'assets/icon/solution_doctor.svg',
-              width: 30,
-              height: 30,
-              fit: BoxFit.fitHeight,
-              colorFilter: isSolutionOpen
-                  ? ColorFilter.mode(
-                      Theme.of(context).primaryColor, BlendMode.srcIn)
-                  : ColorFilter.mode(
-                      Theme.of(context).primaryColorLight, BlendMode.srcIn),
-            ),
+            child: isSolutionOpen
+                ? FaIcon(
+                    FontAwesomeIcons.minus,
+                    color: Theme.of(context).primaryColor,
+                  )
+                : FaIcon(
+                    FontAwesomeIcons.plus,
+                    color: Theme.of(context).primaryColorLight,
+                  ),
           ),
-          header: Text(context.tr('getSolution'),
-              style: HowWorkAccordion.headerStyle),
-          content: Text(loremIpsum, style: HowWorkAccordion.contentStyle),
+          header: Text(context.tr('faq4'), style: FrequentlyAskedQuestions.headerStyle),
+          content: Text(loremIpsum, style: FrequentlyAskedQuestions.contentStyle),
           onOpenSection: () {
             setState(() {
               isCheckDoctorProfileOpen = false;

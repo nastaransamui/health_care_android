@@ -1,4 +1,3 @@
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/global_variables.dart';
@@ -52,16 +51,17 @@ final router = GoRouter(
                 return const General1Page();
               case 'general_2':
                 return const General2Page();
-              default:
+              case 'default':
                 return const Default();
+              default:
+                return const LoadingScreen();
             }
           }),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             // Change the opacity of the screen using a Curve based on the the animation's
             // value
             return FadeTransition(
-              opacity:
-                  CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+              opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
               child: child,
             );
           },
@@ -74,8 +74,7 @@ final router = GoRouter(
       builder: (context, state) => const PatientDashboard(),
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName =
-            Provider.of<AuthProvider>(context, listen: false).roleName;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
         if (isLogin) {
           if (roleName == 'doctors') {
             return '/doctors/dashboard';
@@ -95,15 +94,14 @@ final router = GoRouter(
       builder: (context, state) => const DoctorDashboard(),
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName =
-            Provider.of<AuthProvider>(context, listen: false).roleName;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
         if (isLogin) {
           if (roleName == 'doctors') {
             return '/doctors/dashboard';
           } else if (roleName == 'patient') {
             return '/patient/dashboard';
           } else {
-          return '/';
+            return '/';
           }
         } else {
           return '/';
@@ -117,25 +115,24 @@ final router = GoRouter(
         DoctorsProfile? doctorProfile;
         doctorProfile = Provider.of<AuthProvider>(context).doctorsProfile;
         var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
-       if(doctorProfile != null){
-         return  DoctorsDashboardProfile(doctorProfile: doctorProfile);
-       }else{
-         switch (homeActivePage) {
-              case 'general_0':
-                return const General0Page();
-              case 'general_1':
-                return const General1Page();
-              case 'general_2':
-                return const General2Page();
-              default:
-                return const Default();
-            }
-       }
+        if (doctorProfile != null) {
+          return DoctorsDashboardProfile(doctorProfile: doctorProfile);
+        } else {
+          switch (homeActivePage) {
+            case 'general_0':
+              return const General0Page();
+            case 'general_1':
+              return const General1Page();
+            case 'general_2':
+              return const General2Page();
+            default:
+              return const Default();
+          }
+        }
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName =
-            Provider.of<AuthProvider>(context, listen: false).roleName;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
 
         if (isLogin) {
           if (roleName == 'doctors') {
@@ -157,25 +154,24 @@ final router = GoRouter(
         PatientsProfile? patientProfile;
         patientProfile = Provider.of<AuthProvider>(context).patientProfile;
         var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
-       if(patientProfile != null){
-         return  PatientsDashboardProfile(patientProfile: patientProfile);
-       }else{
-         switch (homeActivePage) {
-              case 'general_0':
-                return const General0Page();
-              case 'general_1':
-                return const General1Page();
-              case 'general_2':
-                return const General2Page();
-              default:
-                return const Default();
-            }
-       }
+        if (patientProfile != null) {
+          return PatientsDashboardProfile(patientProfile: patientProfile);
+        } else {
+          switch (homeActivePage) {
+            case 'general_0':
+              return const General0Page();
+            case 'general_1':
+              return const General1Page();
+            case 'general_2':
+              return const General2Page();
+            default:
+              return const Default();
+          }
+        }
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName =
-            Provider.of<AuthProvider>(context, listen: false).roleName;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
 
         if (isLogin) {
           if (roleName == 'doctors') {
@@ -272,8 +268,7 @@ final router = GoRouter(
         var urlDec = Uri.decodeComponent(state.pathParameters['id']!);
         doctorId = encrypter.decrypt64(urlDec, iv: iv);
         doctorsService.findUserById(context, doctorId);
-        doctor =
-            Provider.of<DoctorsProvider>(context, listen: false).singleDoctor;
+        doctor = Provider.of<DoctorsProvider>(context, listen: false).singleDoctor;
         if (doctor != null) {
           return state.namedLocation(
             'doctorsSearchProfile',
@@ -301,11 +296,9 @@ final router = GoRouter(
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName =
-            Provider.of<AuthProvider>(context, listen: false).roleName;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
         if (!isLogin) {
-          return state.namedLocation('resetPassword',
-              pathParameters: state.pathParameters);
+          return state.namedLocation('resetPassword', pathParameters: state.pathParameters);
         } else {
           if (roleName == 'doctors') {
             return '/';
@@ -325,11 +318,9 @@ final router = GoRouter(
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName =
-            Provider.of<AuthProvider>(context, listen: false).roleName;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
         if (!isLogin) {
-          return state.namedLocation('verifyEmail',
-              pathParameters: state.pathParameters);
+          return state.namedLocation('verifyEmail', pathParameters: state.pathParameters);
         } else {
           if (roleName == 'doctors') {
             return '/';
