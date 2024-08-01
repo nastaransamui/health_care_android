@@ -95,7 +95,8 @@ class _CustomGeneralWrapperState extends State<CustomGeneralWrapper> {
 
     final List<Widget> images = [];
     for (var i = 0; i < general0Images.length; i++) {
-      images.add(Card(
+      images.add(
+        Card(
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         elevation: 4,

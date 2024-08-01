@@ -90,7 +90,7 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
                                   ),
                                   if (supportingText.length >= 240) ...[
                                     TextSpan(
-                                        text: value ? ' ...Read more' : 'Read less',
+                                        text: value ? context.tr('readMore') : context.tr('readLess'),
                                         style: TextStyle(color: Theme.of(context).primaryColor),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {

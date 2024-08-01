@@ -212,5 +212,14 @@
   "chooseClinicPhoto": "Choose clinic photo from gallery or camera.",
   "imageSizeExtend": "Image size must be less than 2 Mb.",
   "max4FileExtend": "Too many files.(Maximum 4 images)",
-  "bloodG": "Blood group"
+  "bloodG": "Blood group",
+  "meetOurDoctor": "Meet our doctors.",
+  "latestArticles": "Latest articles",
+  "getYourAnswer": "Get your answers",
+  "testimonial": "Testimonials",
+  "faq1": "First ask question.",
+  "faq2": "Second ask question.",
+  "faq3": "Third ask question.",
+  "faq4": "Fourth ask question.",
+  "readMoreButton": "Read More"
 }
