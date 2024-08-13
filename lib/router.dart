@@ -24,6 +24,7 @@ import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/src/features/profile/doctors_dashboard_profile.dart';
 import 'package:health_care/src/features/profile/patients_dashboard_profile.dart';
+import 'package:health_care/src/landing/clinics/cardio_home.dart';
 import 'package:health_care/src/landing/default.dart';
 import 'package:health_care/src/landing/general_0_page.dart';
 import 'package:health_care/src/landing/general_1_page.dart';
@@ -185,6 +186,12 @@ final router = GoRouter(
           return '/';
         }
       },
+    ),
+    //Clinics
+    GoRoute(
+      path: '/cardiohome',
+      name: 'cardiohome',
+      builder: (context, state) => const CardioHome(),
     ),
     GoRoute(
       path: '/pharmacy',

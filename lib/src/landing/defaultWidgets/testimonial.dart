@@ -66,6 +66,7 @@ class FancyCard extends StatelessWidget {
               child: image,
             ),
             Text(
+              textAlign: TextAlign.center,
               title,
             ),
           ],

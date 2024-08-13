@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/router.dart';
 import 'package:popover/popover.dart';
@@ -95,7 +96,7 @@ class _BottomBarState extends State<BottomBar> {
           IconButton(
             iconSize: 30.0,
             padding: const EdgeInsets.only(bottom: 28.0),
-            icon: const Icon(Icons.home),
+            icon: const FaIcon(FontAwesomeIcons.home),
             onPressed: () {
               SchedulerBinding.instance.addPostFrameCallback(
                 (_) {
@@ -289,7 +290,7 @@ class _AuthListState extends State<AuthList> {
                                         )
                                   : CachedNetworkImage(
                                       imageUrl: imageUrl,
-                                    fit: BoxFit.cover,
+                                      fit: BoxFit.cover,
                                       fadeInDuration: const Duration(milliseconds: 0),
                                       fadeOutDuration: const Duration(milliseconds: 0),
                                       errorWidget: (ccontext, url, error) {
@@ -308,29 +309,30 @@ class _AuthListState extends State<AuthList> {
                     width: 10.0,
                   ),
                   ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 150),
-                      child: RichText(
-                        text: TextSpan(
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                                style: TextStyle(
-                                  color: brightness == Brightness.dark ? Colors.white : Colors.black,
-                                ),
-                                text:
-                                    '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ${roleName == 'patient' ? patientProfile?.userProfile.firstName : doctorsProfile?.userProfile.firstName} \n ${roleName == 'patient' ? patientProfile?.userProfile.lastName : doctorsProfile?.userProfile.lastName} \n \n'),
-                            TextSpan(
-                              text: context.tr(roleName),
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
                                 color: brightness == Brightness.dark ? Colors.white : Colors.black,
                               ),
+                              text:
+                                  '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ${roleName == 'patient' ? patientProfile?.userProfile.firstName : doctorsProfile?.userProfile.firstName} \n ${roleName == 'patient' ? patientProfile?.userProfile.lastName : doctorsProfile?.userProfile.lastName} \n \n'),
+                          TextSpan(
+                            text: context.tr(roleName),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: brightness == Brightness.dark ? Colors.white : Colors.black,
                             ),
-                          ],
-                        ),
-                      )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
