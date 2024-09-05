@@ -31,7 +31,9 @@ class _ForgotScreenState extends State<ForgotScreen> {
   Future<void> removeLoading() async {
     await Future<void>.delayed(const Duration(seconds: 3), () {
       _formKey.currentState!.reset();
-      Navigator.pop(context);
+      if(mounted){
+        Navigator.pop(context);
+      }
       FocusManager.instance.primaryFocus?.unfocus();
       widget.emailController.text = '';
     });

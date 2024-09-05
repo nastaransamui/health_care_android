@@ -69,7 +69,6 @@ class _CardioHomeState extends State<CardioHome> {
   Widget build(BuildContext context) {
     var homeThemeName = Provider.of<ThemeProvider>(context).homeThemeName;
     String primaryColor = primaryColorCodeReturn(homeThemeName);
-    print(MediaQuery.of(context).size.height);
     return PageScaffoldWrapper(
       title: 'apptitle',
       children: SingleChildScrollView(
