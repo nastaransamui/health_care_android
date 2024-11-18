@@ -30,9 +30,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-        android:host="web-mjcode.ddns.net"
+        android:host="health-care.duckdns.org"
         android:pathPrefix="/"
-        android:scheme="http"
+        android:scheme="https"
         />
                 <data android:path="/login/" />
                 <data android:pathPattern="/reset-password/.*" />
@@ -43,7 +43,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-        android:host="web-mjcode.ddns.net"
+        android:host="health-care.duckdns.org"
         android:pathPrefix="/"
         android:scheme="branchtest"
         />
@@ -59,7 +59,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="http" />
-                <data android:host="web-mjcode.ddns.net" />
+                <data android:host="health-care.duckdns.org" />
                 <data android:path="/login/" />
                 <data android:pathPattern="/reset-password/.*" />
                 <data android:pathPattern="/verify-email/.*" />
