@@ -24,21 +24,21 @@ class _CardioHomeTestimonialState extends State<CardioHomeTestimonial> {
   Widget build(BuildContext context) {
     final List<Widget> fancyCards = <Widget>[
       testimonialCard(
-        "http://web-mjcode.ddns.net/assets/images/clients/client-07.jpg",
+        "https://health-care.duckdns.org/assets/images/clients/client-07.webp",
         "Martin Philips",
         4.5,
         context.tr('cardioTestimentOne'),
         context.tr('lorem'),
       ),
       testimonialCard(
-        "http://web-mjcode.ddns.net/assets/images/clients/client-08.jpg",
+        "https://health-care.duckdns.org/assets/images/clients/client-08.webp",
         "Christina Louis",
         4,
         context.tr('cardioTestimentTwo'),
         context.tr('lorem'),
       ),
       testimonialCard(
-        "http://web-mjcode.ddns.net/assets/images/clients/client-09.jpg",
+        "https://health-care.duckdns.org/assets/images/clients/client-09.webp",
         "James Anderson",
         5,
         context.tr('cardioTestimentThree'),

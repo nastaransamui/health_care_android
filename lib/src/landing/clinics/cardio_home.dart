@@ -84,7 +84,7 @@ class _CardioHomeState extends State<CardioHome> {
                   decoration: BoxDecoration(
                       image: DecorationImage(
                     alignment: Alignment.bottomLeft,
-                    image: NetworkImage("http://web-mjcode.ddns.net/assets/images/bg/home-10-banner_$primaryColor.png", scale: 1),
+                    image: NetworkImage("https://health-care.duckdns.org/assets/images/bg/home-10-banner_$primaryColor.webp", scale: 1),
                     fit: BoxFit.fitHeight,
                   )),
                 ),
@@ -108,7 +108,7 @@ class _CardioHomeState extends State<CardioHome> {
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         alignment: Alignment.centerLeft,
-                        image: NetworkImage("http://web-mjcode.ddns.net/assets/images/bg/hexagen-group-1.png", scale: 1),
+                        image: NetworkImage("https://health-care.duckdns.org/assets/images/bg/hexagen-group-1.webp", scale: 1),
                         fit: BoxFit.fitHeight,
                       ),
                     ),

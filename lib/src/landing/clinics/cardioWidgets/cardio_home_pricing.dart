@@ -178,7 +178,7 @@ class _CardioHomePricingState extends State<CardioHomePricing> with TickerProvid
                   Padding(
                     padding: const EdgeInsets.only(top: 18.0),
                     child: Image.network(
-                      '${dotenv.env['webUrl']}/assets/images/bg/heart-plus.png',
+                      '${dotenv.env['webUrl']}/assets/images/bg/heart-plus.webp',
                       opacity: const AlwaysStoppedAnimation(0.7),
                       color: Theme.of(context).primaryColorLight,
                     ),

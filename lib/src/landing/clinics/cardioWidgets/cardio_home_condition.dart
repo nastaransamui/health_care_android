@@ -106,7 +106,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                               ),
                               child: Ink.image(
                                 image: const NetworkImage(
-                                  'http://web-mjcode.ddns.net/assets/images/features/feature-13.jpg',
+                                  'https://health-care.duckdns.org/assets/images/features/feature-13.webp',
                                 ),
                                 child: InkWell(
                                   splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
@@ -142,7 +142,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                               ),
                               child: Ink.image(
                                 image: const NetworkImage(
-                                  'http://web-mjcode.ddns.net/assets/images/features/feature-15.jpg',
+                                  'https://health-care.duckdns.org/assets/images/features/feature-15.webp',
                                 ),
                                 child: InkWell(
                                   splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
@@ -183,7 +183,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                               ),
                               child: Ink.image(
                                 image: const NetworkImage(
-                                  'http://web-mjcode.ddns.net/assets/images/features/feature-14.jpg',
+                                  'https://health-care.duckdns.org/assets/images/features/feature-14.webp',
                                 ),
                                 child: InkWell(
                                   splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
@@ -219,7 +219,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                               ),
                               child: Ink.image(
                                 image: const NetworkImage(
-                                  'http://web-mjcode.ddns.net/assets/images/features/feature-16.jpg',
+                                  'https://health-care.duckdns.org/assets/images/features/feature-16.webp',
                                 ),
                                 child: InkWell(
                                   splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
@@ -279,7 +279,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
               child: ScaleTransition(
                 scale: _heartConditionAnimation,
                 child: Image.network(
-                  'http://web-mjcode.ddns.net/assets/images/bg/health-care.png',
+                  'https://health-care.duckdns.org/assets/images/bg/health-care.webp',
                   width: 90,
                   height: 90,
                   fit: BoxFit.fitHeight,

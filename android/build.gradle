@@ -6,6 +6,10 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
+// android {
+//     namespace 'dev.fluttercommunity.plus.device_info'
+// }
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }

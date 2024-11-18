@@ -186,73 +186,73 @@ final iv = encrypt.IV.fromLength(16);
 final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
 List<Map<String, String>> whyUsList = [
-  {"title": "personalized", "svgIcon": "http://web-mjcode.ddns.net/assets/images/icons/health-care-love.svg"},
-  {"title": "expert", "svgIcon": "http://web-mjcode.ddns.net/assets/images/icons/user-doctor.svg"},
-  {"title": "regularly", "svgIcon": "http://web-mjcode.ddns.net/assets/images/icons/healthcare.svg"},
-  {"title": "treatment", "svgIcon": "http://web-mjcode.ddns.net/assets/images/icons/drugs-svg.svg"},
-  {"title": "minimally", "svgIcon": "http://web-mjcode.ddns.net/assets/images/icons/syringe-svg.svg"},
+  {"title": "personalized", "svgIcon": "https://health-care.duckdns.org/assets/images/icons/health-care-love.svg"},
+  {"title": "expert", "svgIcon": "https://health-care.duckdns.org/assets/images/icons/user-doctor.svg"},
+  {"title": "regularly", "svgIcon": "https://health-care.duckdns.org/assets/images/icons/healthcare.svg"},
+  {"title": "treatment", "svgIcon": "https://health-care.duckdns.org/assets/images/icons/drugs-svg.svg"},
+  {"title": "minimally", "svgIcon": "https://health-care.duckdns.org/assets/images/icons/syringe-svg.svg"},
 ];
 
 List<Map<String, String>> ourServicesList = [
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/features/feature-07.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/features/feature-07.webp",
     "content": "heartValveDisease",
-    "doctorImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-19.jpg",
+    "doctorImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-19.webp",
     "doctorName": "Dr Anoop Shetty"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/features/feature-08.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/features/feature-08.webp",
     "content": "coronaryArteryDisease",
-    "doctorImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-20.jpg",
+    "doctorImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-20.webp",
     "doctorName": "Dr Simon Pearse"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/features/feature-09.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/features/feature-09.webp",
     "content": "highBloodPressure",
-    "doctorImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-21.jpg",
+    "doctorImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-21.webp",
     "doctorName": "Dr Rajan Sharma"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/features/feature-10.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/features/feature-10.webp",
     "content": "heartAttack",
-    "doctorImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-22.jpg",
+    "doctorImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-22.webp",
     "doctorName": "Dr John Paul"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/features/feature-11.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/features/feature-11.webp",
     "content": "heartPalpitations",
-    "doctorImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-23.jpg",
+    "doctorImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-23.webp",
     "doctorName": "Dr Marry Peter"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/features/feature-12.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/features/feature-12.webp",
     "content": "heartPalpitations",
-    "doctorImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-24.jpg",
+    "doctorImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-24.webp",
     "doctorName": "Dr Juliana"
   },
 ];
 
 List<Map<String, dynamic>> cardioHomeSpecialistsList = [
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-13.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-13.webp",
     "starsCount": 4.5,
     "specialities": 'cardioLogist',
     "doctorName": "Dr Jonathan Behar"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-14.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-14.webp",
     "starsCount": 4,
     "specialities": 'consultCardioLogist',
     "doctorName": "Dr Piers Clifford"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-15.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-15.webp",
     "starsCount": 4.5,
     "specialities": 'cardioLogist',
     "doctorName": "Dr Rajan Sharma"
   },
   {
-    "mainImage": "http://web-mjcode.ddns.net/assets/images/doctors/doctor-16.jpg",
+    "mainImage": "https://health-care.duckdns.org/assets/images/doctors/doctor-16.webp",
     "starsCount": 5,
     "specialities": 'consultCardioLogist',
     "doctorName": "Dr Julian Collinson"

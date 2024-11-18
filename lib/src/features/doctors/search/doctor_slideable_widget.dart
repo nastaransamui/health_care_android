@@ -295,7 +295,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
         TextButton(
             onPressed: () async {
               _slideController.toggleAction(1);
-              final result = await Share.share('check out my website http://web-mjcode.ddns.net/');
+              final result = await Share.share('check out my website https://health-care.duckdns.org/');
               if (result.status == ShareResultStatus.dismissed) {
                 _slideController.toggleAction(1);
               }

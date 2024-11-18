@@ -93,7 +93,7 @@ class _CardioHomeBannerState extends State<CardioHomeBanner> with TickerProvider
                         ).createShader(bounds);
                       },
                       child: Image.network(
-                        'http://web-mjcode.ddns.net/assets/images/bg/heart-bg.png',
+                        'https://health-care.duckdns.org/assets/images/bg/heart-bg.webp',
                         width: 90,
                         height: 90,
                         fit: BoxFit.fitHeight,

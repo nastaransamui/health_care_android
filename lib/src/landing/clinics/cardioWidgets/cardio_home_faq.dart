@@ -205,7 +205,7 @@ class _CardioHomeFaqState extends State<CardioHomeFaq> {
                         image: DecorationImage(
                           opacity: 0.3,
                           image: NetworkImage(
-                            '${dotenv.env['webUrl']}/assets/images/faq-img-2.jpg',
+                            '${dotenv.env['webUrl']}/assets/images/faq-img-2.webp',
                           ),
                           fit: BoxFit.cover,
                         ),

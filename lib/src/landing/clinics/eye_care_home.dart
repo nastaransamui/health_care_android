@@ -37,7 +37,7 @@ class _EyeCareHomeState extends State<EyeCareHome> {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       alignment: Alignment.topCenter,
-                      image: NetworkImage("http://web-mjcode.ddns.net/assets/images/bg/ban-bg-01.png", scale: 1),
+                      image: NetworkImage("https://health-care.duckdns.org/assets/images/bg/ban-bg-01.webp", scale: 1),
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -48,12 +48,12 @@ class _EyeCareHomeState extends State<EyeCareHome> {
                 padding: const EdgeInsets.only(top: 380.0),
                 child: EyeCareCircleAvatar(
                   imagesList: const [
-                    'http://web-mjcode.ddns.net/assets/images/doctors/doctor-13.jpg',
-                    'http://web-mjcode.ddns.net/assets/images/doctors/doctor-14.jpg',
-                    'http://web-mjcode.ddns.net/assets/images/doctors/doctor-15.jpg',
-                    'http://web-mjcode.ddns.net/assets/images/doctors/doctor-16.jpg',
-                    'http://web-mjcode.ddns.net/assets/images/doctors/doctor-17.jpg',
-                    'http://web-mjcode.ddns.net/assets/images/doctors/doctor-18.jpg'
+                    'https://health-care.duckdns.org/assets/images/doctors/doctor-13.webp',
+                    'https://health-care.duckdns.org/assets/images/doctors/doctor-14.webp',
+                    'https://health-care.duckdns.org/assets/images/doctors/doctor-15.webp',
+                    'https://health-care.duckdns.org/assets/images/doctors/doctor-16.webp',
+                    'https://health-care.duckdns.org/assets/images/doctors/doctor-17.webp',
+                    'https://health-care.duckdns.org/assets/images/doctors/doctor-18.webp'
                   ],
                   title: context.tr('eyeClinicExperience'),
                 ),
@@ -102,7 +102,7 @@ class _EyeCareBannerState extends State<EyeCareBanner> {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
-              'http://web-mjcode.ddns.net/assets/images/banner-11.png',
+              'https://health-care.duckdns.org/assets/images/banner-11.webp',
             ),
             fit: BoxFit.cover,
             opacity: 0.5,
@@ -252,23 +252,23 @@ class EyeCareSpecialists extends StatefulWidget {
 
 List<Map<String, String>> eyeSpecialitiesImages = [
   {
-    "image": 'http://web-mjcode.ddns.net/assets/images/clients/clinic-011.png',
+    "image": 'https://health-care.duckdns.org/assets/images/clients/clinic-011.webp',
     "title": 'Keratoconus',
   },
   {
-    "image": 'http://web-mjcode.ddns.net/assets/images/clients/clinic-012.png',
+    "image": 'https://health-care.duckdns.org/assets/images/clients/clinic-012.webp',
     "title": 'Cataract',
   },
   {
-    "image": 'http://web-mjcode.ddns.net/assets/images/clients/clinic-013.png',
+    "image": 'https://health-care.duckdns.org/assets/images/clients/clinic-013.webp',
     "title": 'Corneal',
   },
   {
-    "image": 'http://web-mjcode.ddns.net/assets/images/clients/clinic-014.png',
+    "image": 'https://health-care.duckdns.org/assets/images/clients/clinic-014.webp',
     "title": 'Keratoconus',
   },
   {
-    "image": 'http://web-mjcode.ddns.net/assets/images/clients/clinic-015.png',
+    "image": 'https://health-care.duckdns.org/assets/images/clients/clinic-015.webp',
     "title": 'Glaucoma',
   },
 ];
@@ -497,7 +497,7 @@ class _EyeCareWhoWeAreState extends State<EyeCareWhoWeAre> {
             image: DecorationImage(
               fit: BoxFit.contain,
               colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
-              image: const NetworkImage('http://web-mjcode.ddns.net/assets/images/hospital.png'),
+              image: const NetworkImage('https://health-care.duckdns.org/assets/images/hospital.webp'),
             ),
           ),
         ),

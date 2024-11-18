@@ -43,7 +43,7 @@ class CardioHomeApointment extends StatelessWidget {
                       ).createShader(bounds);
                     },
                     child: Image.network(
-                      'http://web-mjcode.ddns.net/assets/images/bg/heart-plus.png',
+                      'https://health-care.duckdns.org/assets/images/bg/heart-plus.webp',
                     ),
                   ),
                 ),
@@ -62,7 +62,7 @@ class CardioHomeApointment extends StatelessWidget {
                       ).createShader(bounds);
                     },
                     child: Image.network(
-                      'http://web-mjcode.ddns.net/assets/images/bg/hand.png',
+                      'https://health-care.duckdns.org/assets/images/bg/hand.webp',
                     ),
                   ),
                 ),
