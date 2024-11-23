@@ -646,7 +646,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                               'assets/images/doctors_profile.jpg',
                                             )
                                           : CachedNetworkImage(
-                                            fit: BoxFit.cover,
+                                              fit: BoxFit.cover,
                                               imageUrl: imageUrl,
                                               fadeInDuration: const Duration(milliseconds: 0),
                                               fadeOutDuration: const Duration(milliseconds: 0),
@@ -838,13 +838,11 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     initialDate: DateTime.now(),
                                     firstDate: DateTime(1924),
                                     lastDate: DateTime.now());
-                                if (pickedDate != null) {
-                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
+                                String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
 
-                                  setState(() {
-                                    dobController.text = formattedDate;
-                                  });
-                                }
+                                setState(() {
+                                  dobController.text = formattedDate;
+                                });
                               },
                             ),
                             const SizedBox(height: 10),
@@ -1687,13 +1685,11 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                       initialDate: DateTime.now(),
                                                       firstDate: DateTime(1924),
                                                       lastDate: DateTime.now());
-                                                  if (pickedDate != null) {
-                                                    String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
+                                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
 
-                                                    setState(() {
-                                                      entry.value.text = formattedDate;
-                                                    });
-                                                  }
+                                                  setState(() {
+                                                    entry.value.text = formattedDate;
+                                                  });
                                                 },
                                               ),
                                       ],
@@ -1812,15 +1808,13 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                           firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
                                                               experienceFromDate[index][2]),
                                                           lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
-                                                      if (fromDate != null) {
-                                                        String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
-                                                        experienceToDate[index][0] = fromDate.year;
-                                                        experienceToDate[index][1] = fromDate.month;
-                                                        experienceToDate[index][2] = fromDate.day;
-                                                        setState(() {
-                                                          entry.value.text = formattedDate;
-                                                        });
-                                                      }
+                                                      String formattedDate = DateFormat('dd MMM yyyy').format(fromDate!);
+                                                      experienceToDate[index][0] = fromDate.year;
+                                                      experienceToDate[index][1] = fromDate.month;
+                                                      experienceToDate[index][2] = fromDate.day;
+                                                      setState(() {
+                                                        entry.value.text = formattedDate;
+                                                      });
                                                     } else {
                                                       DateTime? toDate = await showDatePicker(
                                                           initialDatePickerMode: DatePickerMode.year,
@@ -1829,12 +1823,10 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                               experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
                                                           lastDate: DateTime.now());
 
-                                                      if (toDate != null) {
-                                                        String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
-                                                        setState(() {
-                                                          entry.value.text = formattedDate;
-                                                        });
-                                                      }
+                                                      String formattedDate = DateFormat('dd MMM yyyy').format(toDate!);
+                                                      setState(() {
+                                                        entry.value.text = formattedDate;
+                                                      });
                                                     }
                                                   },
                                                 );

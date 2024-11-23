@@ -592,14 +592,12 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
                                     initialDate: DateTime.now(),
                                     firstDate: DateTime(1924),
                                     lastDate: DateTime.now());
-                                if (pickedDate != null) {
-                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
-                        
-                                  setState(() {
-                                    patientDobController.text = formattedDate;
-                                  });
-                                }
-                              },
+                                String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
+                      
+                                setState(() {
+                                  patientDobController.text = formattedDate;
+                                });
+                                                            },
                             ),
                             const SizedBox(height: 10),
                           ],
