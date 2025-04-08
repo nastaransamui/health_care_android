@@ -29,7 +29,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.healthCareApp"
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
     ndkVersion = "27.0.12077973"
     compileOptions {
@@ -38,7 +38,11 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
+    }
+
+    kotlin {
+        jvmToolchain(17)
     }
 
     sourceSets {

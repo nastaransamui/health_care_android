@@ -1,3 +1,17 @@
+buildscript {
+    ext.kotlin_version = '1.8.21'
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -7,16 +21,25 @@ allprojects {
 
 rootProject.buildDir = '../build'
 
-// android {
-//     namespace 'dev.fluttercommunity.plus.device_info'
-// }
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 }
-// subprojects {
-//     project.evaluationDependsOn(':app')
-// }
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
+}
+gradle.projectsEvaluated {
+    // Set the JDK path here
+    if (JavaVersion.current() == JavaVersion.VERSION_17) {
+        // If the current JDK is version 17, set the Java home to your desired JDK location
+        allprojects {
+            tasks.withType(JavaCompile) {
+                options.fork = true
+                options.forkOptions.javaHome = file('/usr/lib/jvm/java-17-openjdk-amd64')
+            }
+        }
+    }
 }

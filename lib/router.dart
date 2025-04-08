@@ -4,7 +4,7 @@ import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
-import 'package:health_care/providers/doctors_provider.dart';
+// import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
@@ -116,21 +116,15 @@ final router = GoRouter(
       builder: (context, state) {
         DoctorsProfile? doctorProfile;
         doctorProfile = Provider.of<AuthProvider>(context).doctorsProfile;
-        var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
-        if (doctorProfile != null) {
-          return DoctorsDashboardProfile(doctorProfile: doctorProfile);
-        } else {
-          switch (homeActivePage) {
-            case 'general_0':
-              return const General0Page();
-            case 'general_1':
-              return const General1Page();
-            case 'general_2':
-              return const General2Page();
-            default:
-              return const Default();
-          }
+        // var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
+        // Check if doctorProfile is null, if it is, provide a fallback or show an error
+        if (doctorProfile == null) {
+          // You could display a loading spinner or an error message here
+          return const LoadingScreen(); // Or any other widget like an error message
         }
+
+        // Pass non-null doctorProfile to DoctorsDashboardProfile
+        return DoctorsDashboardProfile(doctorProfile: doctorProfile);
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -155,21 +149,15 @@ final router = GoRouter(
       builder: (context, state) {
         PatientsProfile? patientProfile;
         patientProfile = Provider.of<AuthProvider>(context).patientProfile;
-        var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
-        if (patientProfile != null) {
-          return PatientsDashboardProfile(patientProfile: patientProfile);
-        } else {
-          switch (homeActivePage) {
-            case 'general_0':
-              return const General0Page();
-            case 'general_1':
-              return const General1Page();
-            case 'general_2':
-              return const General2Page();
-            default:
-              return const Default();
-          }
+        // var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
+        // Check if patientProfile is null, if it is, provide a fallback or show an error
+        if (patientProfile == null) {
+          // You could display a loading spinner or an error message here
+          return const LoadingScreen(); // Or any other widget like an error message
         }
+
+        // Pass non-null patientProfile to PatientsDashboardProfile
+        return PatientsDashboardProfile(patientProfile: patientProfile);
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -277,19 +265,15 @@ final router = GoRouter(
       redirect: (context, state) {
         final DoctorsService doctorsService = DoctorsService();
         String? doctorId;
-        DoctorUserProfile? doctor;
+        // DoctorUserProfile? doctor;
         var urlDec = Uri.decodeComponent(state.pathParameters['id']!);
         doctorId = encrypter.decrypt64(urlDec, iv: iv);
         doctorsService.findUserById(context, doctorId);
-        doctor = Provider.of<DoctorsProvider>(context, listen: false).singleDoctor;
-        if (doctor != null) {
-          return state.namedLocation(
-            'doctorsSearchProfile',
-            pathParameters: state.pathParameters,
-          );
-        } else {
-          return '/doctors/search';
-        }
+        // doctor = Provider.of<DoctorsProvider>(context, listen: false).singleDoctor;
+        return state.namedLocation(
+          'doctorsSearchProfile',
+          pathParameters: state.pathParameters,
+        );
       },
     ),
     GoRoute(

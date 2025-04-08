@@ -41,8 +41,8 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     late String days = '--';
     late String imageUrl = '';
 
-   if (doctorProfile != null && doctorProfile.userProfile.dob != "") {
-  DateTime dob = doctorProfile.userProfile.dob; // Already DateTime
+   if (doctorProfile?.userProfile.dob != "") {
+  DateTime dob = doctorProfile?.userProfile.dob; // Already DateTime
   DateTime today = DateTime.now();
 
   DateTime b = DateTime(dob.year, dob.month, dob.day); // use dob.day instead of dob.date
@@ -57,12 +57,10 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
   days = '$d';
 
 }
-    if (doctorProfile != null) {
-      if (doctorProfile.userProfile.profileImage.isNotEmpty) {
-        imageUrl = doctorProfile.userProfile.profileImage;
-      }
+    if (doctorProfile!.userProfile.profileImage.isNotEmpty) {
+      imageUrl = doctorProfile.userProfile.profileImage;
     }
-    var brightness = Theme.of(context).brightness;
+      var brightness = Theme.of(context).brightness;
     CarouselSlider patientsScrollView = CarouselSlider(
       options: CarouselOptions(
         height: 215.0,
@@ -92,7 +90,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         height: 40,
                         child: Center(
                           child: Text(
-                            context.tr(i['title']!, args: ['${doctorProfile?.userProfile.patientsId.length}']),
+                            context.tr(i['title']!, args: ['${doctorProfile.userProfile.patientsId.length}']),
                             style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
                           ),
                         ),
@@ -181,7 +179,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
 
     return ScaffoldWrapper(
       title: context.tr('doctorDashboard'),
-      children: doctorProfile == null
+      children: 
+      // ignore: unnecessary_null_comparison
+      doctorProfile == null
           ? const LoadingScreen()
           : SingleChildScrollView(
               child: FadeinWidget(
