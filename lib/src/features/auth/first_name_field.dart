@@ -42,7 +42,7 @@ class _FirstNameFieldState extends State<FirstNameField> {
               borderSide: BorderSide.none),
           fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
           filled: true,
-          prefixIcon: const Icon(Icons.abc),
+          prefixIcon:  Icon(Icons.account_circle, color: Theme.of(context).primaryColorLight),
           isDense: true,
           alignLabelWithHint: true,
         ),

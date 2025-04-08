@@ -96,21 +96,25 @@ class VitalSigns {
 }
 
 class VitalSignValues {
-  final String value;
-  final String date;
+  final int value;
+  final DateTime date;
+  final int id;
 
   VitalSignValues({
     required this.value,
     required this.date,
+    required this.id
   });
 
   VitalSignValues copyWith({
-    String? value,
-    String? date,
+    int? value,
+    DateTime? date,
+    int ? id,
   }) {
     return VitalSignValues(
       value: value ?? this.value,
       date: date ?? this.date,
+      id: id ?? this.id
     );
   }
 
@@ -119,14 +123,17 @@ class VitalSignValues {
 
     result.addAll({'value': value});
     result.addAll({'date': date});
+    result.addAll({'id': id});
 
     return result;
   }
 
   factory VitalSignValues.fromMap(Map<String, dynamic> map) {
     return VitalSignValues(
-      value: map['value'] ?? '',
-      date: map['date'] ?? '',
+      value: map['value']?? 0,
+      date: DateTime.parse(map['date']).toLocal(),
+      id: map['id'] ?? 0,
+
     );
   }
 
@@ -136,7 +143,7 @@ class VitalSignValues {
       VitalSignValues.fromMap(json.decode(source));
 
   @override
-  String toString() => 'VitalSignValues(value: $value, date: $date)';
+  String toString() => 'VitalSignValues(value: $value, date: $date, id: $id)';
 
   @override
   bool operator ==(Object other) {
@@ -144,7 +151,8 @@ class VitalSignValues {
 
     return other is VitalSignValues &&
         other.value == value &&
-        other.date == date;
+        other.date == date&&
+        other.id == id;
   }
 
   @override

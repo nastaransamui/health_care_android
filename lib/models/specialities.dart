@@ -1,19 +1,20 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
 class Specialities {
-  final String id;
+  final String? id; // _id is optional
+  final int specialityId; // Changed to match the `id` type as number in TypeScript
   final String specialities;
   final String description;
   final String image;
   final String imageId;
-  final List<dynamic> usersId;
-  final String createdAt;
-  final String updatedAt;
+  final List<String> usersId; // users_id is a list of strings
+  final DateTime createdAt; // Date type in TypeScript is converted to DateTime in Dart
+  final DateTime updatedAt; // Same as createdAt
 
   Specialities({
-    required this.id,
+    this.id,
+    required this.specialityId,
     required this.specialities,
     required this.description,
     required this.image,
@@ -25,16 +26,18 @@ class Specialities {
 
   Specialities copyWith({
     String? id,
+    int? specialityId,
     String? specialities,
     String? description,
     String? image,
     String? imageId,
     List<String>? usersId,
-    String? createdAt,
-    String? updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return Specialities(
       id: id ?? this.id,
+      specialityId: specialityId ?? this.specialityId,
       specialities: specialities ?? this.specialities,
       description: description ?? this.description,
       image: image ?? this.image,
@@ -48,37 +51,42 @@ class Specialities {
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 
-    result.addAll({'id': id});
+    result.addAll({'_id': id});
+    result.addAll({'id': specialityId});
     result.addAll({'specialities': specialities});
     result.addAll({'description': description});
     result.addAll({'image': image});
     result.addAll({'imageId': imageId});
-    result.addAll({'usersId': usersId});
-    result.addAll({'createdAt': createdAt});
-    result.addAll({'updatedAt': updatedAt});
+    result.addAll({'users_id': usersId});
+    result.addAll({'createdAt': createdAt.toIso8601String()});
+    result.addAll({'updatedAt': updatedAt.toIso8601String()});
     return result;
   }
 
   factory Specialities.fromMap(Map<String, dynamic> map) {
     return Specialities(
-      id: map['_id'] ?? '',
+      id: map['_id'], // _id is optional
+      specialityId: map['id'], // Match with the TypeScript `id` field
       specialities: map['specialities'] ?? '',
       description: map['description'] ?? '',
       image: map['image'] ?? '',
       imageId: map['imageId'] ?? '',
-      usersId: List<String>.from(map['users_id']),
-      createdAt: map['createdAt'] ?? '',
-      updatedAt: map['updatedAt'] ?? '',
+      usersId: map['users_id'] != null 
+      ? List<String>.from(map['users_id']) 
+      : [],
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  // factory Specialities.fromJson(String source) => Specialities.fromMap(json.decode(source));
+  factory Specialities.fromJson(String source) =>
+      Specialities.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'Specialities(id: $id, specialities: $specialities, description: $description, image: $image, imageId: $imageId, usersId: $usersId, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Specialities(id: $id, specialityId: $specialityId, specialities: $specialities, description: $description, image: $image, imageId: $imageId, usersId: $usersId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -87,6 +95,7 @@ class Specialities {
 
     return other is Specialities &&
         other.id == id &&
+        other.specialityId == specialityId &&
         other.specialities == specialities &&
         other.description == description &&
         other.image == image &&
@@ -99,6 +108,7 @@ class Specialities {
   @override
   int get hashCode {
     return id.hashCode ^
+        specialityId.hashCode ^
         specialities.hashCode ^
         description.hashCode ^
         image.hashCode ^

@@ -137,45 +137,53 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
   Future<void> onFormSubmit() async {
     if (_patientProfileFormKey.currentState!.validate()) {
       Map<String, dynamic> data = {};
-      data['createdAt'] = widget.patientProfile.userProfile.createdAt;
-      data['userName'] = patientEmailController.text;
-      data['firstName'] = patientFirstNameController.text.trim();
-      data['lastName'] = patientLastNameController.text.trim();
-      data['mobileNumber'] = '$dialCode${patientMobileNumberController.text}';
-      data['gender'] = patientGenderController.text;
-      if (patientDobController.text.isNotEmpty) {
-        data['dob'] = DateFormat("yyyy-MM-ddTHH:mm:ssZ").format(DateFormat("dd MMM yyyy").parseUTC(patientDobController.text).toLocal());
-      } else {
-        data['dob'] = widget.patientProfile.userProfile.dob;
-      }
+      data['accessToken'] = widget.patientProfile.accessToken;
       data['address1'] = patientAddress1Controller.text;
       data['address2'] = patientAddress2Controller.text;
-      data['country'] = countryValue ?? '';
-      data['state'] = stateValue ?? '';
-      data['city'] = cityValue ?? '';
-      data['zipCode'] = patientzipCodeController.text;
+      data['billingsIds'] = widget.patientProfile.userProfile.billingsIds;
       data['bloodG'] = bloodGController.text;
+      data['city'] = cityValue ?? '';
+      data['country'] = countryValue ?? '';
+      data['createdAt'] = widget.patientProfile.userProfile.createdAt.toIso8601String();
+      data['dependentsArray'] = widget.patientProfile.userProfile.dependentsArray;
+      if (patientDobController.text.isNotEmpty) {
+        DateTime parsedDate = DateFormat("dd MMM yyyy").parse(patientDobController.text);
+        String isoString = parsedDate.toIso8601String();
+        data['dob'] = isoString;
+      } else {
+        data['dob'] = widget.patientProfile.userProfile.dob ?? '';
+      }
+      data['doctors_id'] = widget.patientProfile.userProfile.doctorsId;
+      data['favs_id'] = widget.patientProfile.userProfile.favsId;
+      data['firstName'] = patientFirstNameController.text.trim();
+      data['fullName'] = "${patientFirstNameController.text.trim()} ${patientLastNameController.text.trim()}";
+      data['gender'] = patientGenderController.text;
+      data['invoice_ids'] = widget.patientProfile.userProfile.invoiceIds;
+      data['isActive'] = widget.patientProfile.userProfile.isActive;
+      data['lastLogin'] = widget.patientProfile.userProfile.lastLogin;
+      data['lastName'] = patientLastNameController.text.trim();
+      data['lastUpdate'] = widget.patientProfile.userProfile.lastUpdate.toIso8601String();
+      data['medicalRecordsArray'] = widget.patientProfile.userProfile.medicalRecordsArray;
+      data['mobileNumber'] = '$dialCode${patientMobileNumberController.text}';
+      data['online'] = true;
+      data['prescriptions_id'] = widget.patientProfile.userProfile.prescriptionsId;
+      data['profileImage'] = widget.patientProfile.userProfile.profileImage;
+      data['rate_array'] = widget.patientProfile.userProfile.rateArray;
+      data['reservations_id'] = widget.patientProfile.userProfile.reservationsId;
+      data['reviews_array'] = widget.patientProfile.userProfile.reviewsArray;
       data['roleName'] = widget.patientProfile.roleName;
       data['services'] = widget.patientProfile.services;
-       data['accessToken'] = widget.patientProfile.accessToken;
-      data['isActive'] = widget.patientProfile.userProfile.isActive;
-      data['invoice_ids'] = widget.patientProfile.userProfile.invoiceIds;
-      data['reviews_array'] = widget.patientProfile.userProfile.reviewsArray;
-      data['rate_array'] = widget.patientProfile.userProfile.rateArray;
-       data['reservations_id'] = widget.patientProfile.userProfile.reservationsId;
-      data['prescriptions_id'] = widget.patientProfile.userProfile.prescriptionsId;
-      data['online'] = true;
-      data['lastLogin'] = widget.patientProfile.userProfile.lastLogin;
+      data['state'] = stateValue ?? '';
+      data['userName'] = patientEmailController.text;
+      data['zipCode'] = patientzipCodeController.text;
       data['_id'] = widget.patientProfile.userId;
-       data['userId'] = widget.patientProfile.userId;
-       data['doctors_id'] = widget.patientProfile.userProfile.doctorsId;
-       data['favs_id'] = widget.patientProfile.userProfile.favsId;
-       data['profileImage'] = widget.patientProfile.userProfile.profileImage;
-       data['clinicImagesFiles'] = [];
-       data['profileImageFiles'] = [];
-       if(patientProfileImageFiles.isNotEmpty){
+      data['userId'] = widget.patientProfile.userId;
+      data['id'] = widget.patientProfile.userProfile.patientsId;
+      data['clinicImagesFiles'] = [];
+      data['profileImageFiles'] = [];
+      if (patientProfileImageFiles.isNotEmpty) {
         for (var i = 0; i < patientProfileImageFiles.length; i++) {
-           var element = patientProfileImageFiles[i];
+          var element = patientProfileImageFiles[i];
           final fileFromImage = patientProfileImageFiles[i]['profileImage'];
           List<int> fileBytes = await fileFromImage.readAsBytes();
           Uint8List fileUint8List = Uint8List.fromList(fileBytes);
@@ -185,15 +193,13 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
             'profileImageExtentionNoDot': element['profileImageExtentionNoDot']
           });
         }
-       }
-       if (deletedImages.isNotEmpty) {
+      }
+      if (deletedImages.isNotEmpty) {
         data['deletedImages'] = deletedImages;
       } else {
         data['deletedImages'] = [];
       }
-      
-      // log(data.toString());
-            if (mounted) {
+      if (mounted) {
         showModalBottomSheet(
           isDismissible: false,
           enableDrag: false,
@@ -204,7 +210,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
         );
       }
       socket.emit('profileUpdate', data);
-       socket.once('profileUpdateReturn', (msg) {
+      socket.once('profileUpdateReturn', (msg) {
         if (msg['status'] != 200) {
           Navigator.pop(context);
           SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -227,7 +233,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
             Future deleteImageFromCache() async {
               late String imageUrl = '';
               if (widget.patientProfile.userProfile.profileImage.isNotEmpty) {
-                imageUrl = widget.patientProfile.userProfile.profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
+                imageUrl = widget.patientProfile.userProfile.profileImage;
               }
               await CachedNetworkImage.evictFromCache(imageUrl);
             }
@@ -242,7 +248,6 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
           });
         }
       });
-    
     }
   }
 
@@ -311,7 +316,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
     PatientsProfile patientsProfile = widget.patientProfile;
     late String imageUrl = '';
     if (patientsProfile.userProfile.profileImage.isNotEmpty) {
-      imageUrl = patientsProfile.userProfile.profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
+      imageUrl = patientsProfile.userProfile.profileImage;
     }
     return ScaffoldWrapper(
       key: const Key('patient_profile'),
@@ -470,11 +475,11 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
                                   if (!RegExp(r'^(\+|00)?[0-9]+$').hasMatch(userInput)) {
                                     return context.tr('phoneValidate'); //'Please enter a valid phone number';
                                   }
-                        
+
                                   if (userInput.length < 7 || userInput.length > 12) {
                                     return context.tr('required');
                                   }
-                        
+
                                   return null; // Return null when the input is valid
                                 },
                                 onInputChanged: (PhoneNumber number) async {
@@ -592,12 +597,14 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
                                     initialDate: DateTime.now(),
                                     firstDate: DateTime(1924),
                                     lastDate: DateTime.now());
-                                String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
-                      
-                                setState(() {
-                                  patientDobController.text = formattedDate;
-                                });
-                                                            },
+                                if (pickedDate != null) {
+                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
+
+                                  setState(() {
+                                    patientDobController.text = formattedDate;
+                                  });
+                                }
+                              },
                             ),
                             const SizedBox(height: 10),
                           ],
@@ -1032,7 +1039,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
                                       stateValue = city.stateName;
                                       cityValue = city.name;
                                     });
-                    
+
                                     patientStateController.text = '${city.emoji} - ${city.stateName}';
                                     patientCountryController.text = '${city.emoji} - ${city.countryName}';
                                     patientCityController.text = '${city.emoji} - ${city.name}';
@@ -1040,10 +1047,16 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
                                 ),
                               ),
                             ),
-                            ProfileInputWidget(controller: patientzipCodeController, readOnly: false, lable: context.tr('zipCode'), keyboardType: TextInputType.number,),
+                            ProfileInputWidget(
+                              controller: patientzipCodeController,
+                              readOnly: false,
+                              lable: context.tr('zipCode'),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: 10),
                           ],
                         ),
-                    
+
                         //Buttons
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -1244,7 +1257,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
       maxHeight: 500,
       imageQuality: 80,
     );
-        if (pickedFile != null) {
+    if (pickedFile != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).maybePop();
       });
@@ -1280,6 +1293,5 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
         Navigator.of(context).maybePop();
       });
     }
-
   }
 }

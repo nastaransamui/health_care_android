@@ -1,3 +1,5 @@
+
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -34,6 +36,7 @@ class DoctorCard extends StatelessWidget {
 // a common breakpoint for a typical 7-inch tablet.
     final bool useMobileLayout = shortestSide < 600;
     return Card(
+      color: Theme.of(context).dialogBackgroundColor,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
         borderRadius: BorderRadius.circular(8.0),
@@ -108,19 +111,23 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
-    final name = "${widget.singleDoctor.firstName} ${widget.singleDoctor.lastName}";
+    final name = widget.singleDoctor.fullName;
     final doctorId = widget.singleDoctor.id;
-
-    final doctorIdEncrypted = encrypter.encrypt(doctorId, iv: iv);
+double doctorStarRate = widget.singleDoctor.rateArray.isEmpty 
+    ? 0 
+    : widget.singleDoctor.rateArray.reduce((acc, number) => acc + number) / widget.singleDoctor.rateArray.length;
+    final doctorIdEncrypted = encrypter.encrypt(doctorId!, iv: iv);
     var subheading = context.tr(widget.singleDoctor.specialities[0].specialities);
     final specialitiesImageSrc = widget.singleDoctor.specialities[0].image;
-    final imageIsSvg = specialitiesImageSrc.endsWith('.svg');
+    final uri = Uri.parse(specialitiesImageSrc);
+    final imageIsSvg = uri.path.endsWith('.svg');
     // The equivalent of the "smallestWidth" qualifier on Android.
     var shortestSide = MediaQuery.of(context).size.shortestSide;
 
 // Determine if we should use mobile layout or not, 600 here is
 // a common breakpoint for a typical 7-inch tablet.
     final bool useMobileLayout = shortestSide < 600;
+
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -139,8 +146,8 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                 startDelay: const Duration(milliseconds: 1000),
                 glowColor: widget.singleDoctor.online ? Colors.green : Colors.transparent,
                 glowShape: BoxShape.circle,
-                animate: widget.singleDoctor.online,
-                repeat: widget.singleDoctor.online,
+                animate: true,
+                repeat: true,
                 curve: Curves.fastOutSlowIn,
                 child: Material(
                   elevation: 8.0,
@@ -148,7 +155,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                   color: Colors.transparent,
                   child: Icon(
                     widget.singleDoctor.online ? Icons.check : Icons.close,
-                    color: Colors.white,
+                    color: Colors.transparent,
                     size: 7,
                   ),
                 ),
@@ -174,10 +181,10 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                     image: DecorationImage(
                       image: widget.singleDoctor.profileImage.isEmpty
                           ? const AssetImage(
-                              'assets/images/default-avatar.png',
+                              'assets/images/doctors_profile.jpg',
                             ) as ImageProvider
                           : CachedNetworkImageProvider(
-                              '${widget.singleDoctor.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}',
+                              widget.singleDoctor.profileImage,
                             ),
                       fit: BoxFit.cover,
                     ),
@@ -236,7 +243,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                         ),
                         child: imageIsSvg
                             ? SvgPicture.network(
-                                specialitiesImageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                specialitiesImageSrc, 
                                 width: useMobileLayout ? 20 : 50,
                                 height: useMobileLayout ? 20 : 50,
                                 fit: BoxFit.fitHeight,
@@ -271,7 +278,7 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
                   mainAxisAlignment: useMobileLayout ? MainAxisAlignment.end : MainAxisAlignment.spaceEvenly,
                   children: [
                     RatingStars(
-                      value: 3.5,
+                      value: doctorStarRate,
                       onValueChanged: (v) {},
                       starCount: 5,
                       starSize: 10,
@@ -446,7 +453,7 @@ class _LocationAboutWidgetState extends State<LocationAboutWidget> {
                             TextSpan(
                                 text: value ? context.tr('readMore') : context.tr('readLess'),
                                 style: TextStyle(
-                                  fontSize: useMobileLayout? 10: 14,
+                                  fontSize: useMobileLayout ? 10 : 14,
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 recognizer: TapGestureRecognizer()
@@ -591,8 +598,6 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.yearOfCompletion}').toLocal();
-                    String formattedDate = DateFormat("yyyy").format(dateValue);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -606,7 +611,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
                       ),
                       Center(
                         child: Text(
-                          formattedDate,
+                          e.yearOfCompletion,
                         ),
                       ),
                     ]);
@@ -677,10 +682,8 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var fromDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.from}').toLocal();
-                    String formattedFromDate = DateFormat("yyyy MMM dd").format(fromDateValue);
-                    var toDateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.from}').toLocal();
-                    String formattedToDate = DateFormat("yyyy MMM dd").format(toDateValue);
+                    String formattedFromDate = DateFormat("yyyy MMM dd").format(e.from);
+                    String formattedToDate = DateFormat("yyyy MMM dd").format(e.to);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -750,8 +753,6 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.year}').toLocal();
-                    String formattedYearDate = DateFormat("yyyy").format(yearValue);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -760,7 +761,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
                       ),
                       Center(
                         child: Text(
-                          formattedYearDate,
+                          e.year,
                         ),
                       ),
                     ]);
@@ -841,8 +842,6 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               ...[
                 ...[
                   ...data.map((e) {
-                    var yearValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC('${e.year}').toLocal();
-                    String formattedYearDate = DateFormat("yyyy").format(yearValue);
                     return TableRow(children: [
                       Center(
                         child: Text(
@@ -851,7 +850,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
                       ),
                       Center(
                         child: Text(
-                          formattedYearDate,
+                          e.year,
                         ),
                       ),
                     ]);
@@ -868,6 +867,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
       useSafeArea: true,
       isDismissible: true,
       showDragHandle: false,
+      backgroundColor: Theme.of(context).canvasColor,
       barrierColor: Theme.of(context).cardColor.withOpacity(0.8),
       constraints: BoxConstraints(
         maxHeight: double.infinity,
@@ -1145,7 +1145,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
                     label: Text(context.tr('awards')),
                   ),
                 ),
-             GestureDetector(
+                GestureDetector(
                   onTap: () {
                     showArrayDataModal(
                       context,
@@ -1194,7 +1194,6 @@ class _ServicesWidgetState extends State<ServicesWidget> {
                     label: Text(context.tr('registrations')),
                   ),
                 )
-              
               ],
             ),
           ]

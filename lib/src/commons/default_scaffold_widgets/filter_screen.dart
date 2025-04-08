@@ -260,7 +260,8 @@ class _FilterScreenState extends State<FilterScreen> {
                                 var brightness = Theme.of(context).brightness;
                                 final name = context.tr(value.specialities);
                                 final imageSrc = value.image;
-                                final imageIsSvg = imageSrc.endsWith('.svg');
+                                final uri = Uri.parse(imageSrc);
+                                    final imageIsSvg = uri.path.endsWith('.svg');
                                 return DropdownMenuItem<String>(
                                   value: value.specialities,
                                   child: Row(
@@ -270,13 +271,13 @@ class _FilterScreenState extends State<FilterScreen> {
                                             const EdgeInsets.only(left: 12.0),
                                         child: imageIsSvg
                                             ? SvgPicture.network(
-                                                imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                                imageSrc, 
                                                 width: 20,
                                                 height: 20,
                                                 fit: BoxFit.fitHeight,
                                               )
                                             : Image.network(
-                                                imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                                imageSrc, 
                                                 width: 20,
                                                 height: 20,
                                               ),

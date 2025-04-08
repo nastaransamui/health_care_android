@@ -291,5 +291,19 @@
   "specialties": "ความเชี่ยวชาญพิเศษ",
   "eyeGreatPlace": "ศูนย์ดูแลดวงตาแห่งโรงพยาบาล",
   "who": "ใคร",
-  "weAre": "พวกเราคือ"
+  "weAre": "พวกเราคือ",
+  "financialDetails": "การเงิน",
+  "bookingsFee": "ค่าธรรมเนียมการจอง",
+  "currency": "สกุลเงิน",
+  "blog": "บล็อก",
+  "contactUs": "ติดต่อเรา",
+  "conditions": "เงื่อนไข",
+  "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+  "termsAndConditions": "ข้อกำหนดและเงื่อนไข",
+  "faq": "คำถามที่พบบ่อย",
+  "aboutUs": "เกี่ยวกับเรา",
+  "bookAppointment": "นัดหมาย",
+  "onlineConsult": "ปรึกษาออนไลน์",
+  "rates": "อัตราค่าบริการ",
+  "medicalrecords": "บันทึกทางการแพทย์"
 }

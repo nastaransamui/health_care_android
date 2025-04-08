@@ -188,8 +188,9 @@ class _EyeCareCircleAvatarState extends State<EyeCareCircleAvatar> with TickerPr
 
   @override
   void dispose() {
-    _controller[0].dispose();
-    _controller[1].dispose();
+   for (var controller in _controller) {
+    controller.dispose();
+  }
     super.dispose();
   }
 

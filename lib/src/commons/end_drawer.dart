@@ -12,6 +12,7 @@ class _EndDrawerState extends State<EndDrawer> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Drawer(
+         backgroundColor: Theme.of(context).canvasColor,
         child: ListView(
           children: [
             Container(),

@@ -1,4 +1,4 @@
-// import 'dart:developer';
+import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_care/models/doctors.dart';
 import 'package:health_care/models/user_data.dart';
 import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
@@ -62,7 +63,8 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
   final AuthService authService = AuthService();
   final ScrollController profileScrollController = ScrollController();
   final profileFormKey = GlobalKey<FormState>();
-
+  bool showValidation = false;
+  String? currencyError;
   final ImagePicker _profileImagePicker = ImagePicker();
   XFile? _profileimageFile;
   List<Map<String, dynamic>> profileImageFiles = [];
@@ -84,18 +86,18 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
   final aboutMeController = TextEditingController();
   final clinicNameController = TextEditingController();
   final clinicAddressController = TextEditingController();
-  // final GlobalObjectKey countryProfileKey = const GlobalObjectKey('profilecountry');
   final profileCountryController = TextEditingController();
-  // final GlobalObjectKey stateProfileKey = const GlobalObjectKey('profilestate');
   final profileStateController = TextEditingController();
-  // final GlobalObjectKey cityProfileKey = const GlobalObjectKey('profilecity');
   final profileCityController = TextEditingController();
   final address1Controller = TextEditingController();
   final address2Controller = TextEditingController();
   final zipCodeController = TextEditingController();
   final specialitiesServices = StringTagController();
   final speciality = TextEditingController();
+  final profileCurrencyController = TextEditingController();
+  final bookingsFeeController = TextEditingController();
   List<Specialities> specialityValue = [];
+  List<Currency> currencyValue = [];
   List<Map<String, TextEditingController>> educationController = [];
   List<Map<String, TextEditingController>> experinceController = [];
   List<Map<String, TextEditingController>> awardController = [];
@@ -130,8 +132,13 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       dialCode = '+${mobileNumber.dialCode!}';
     }
     genderController.text = doctorProfile.userProfile.gender;
-    if (doctorProfile.userProfile.dob.isNotEmpty) {
-      dobController.text = DateFormat("dd MMM yyyy").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(doctorProfile.userProfile.dob).toLocal());
+    if (doctorProfile.userProfile.dob != "") {
+      try {
+        String formattedDob = DateFormat("dd MMM yyyy").format(doctorProfile.userProfile.dob.toLocal());
+        dobController.text = formattedDob;
+      } catch (e) {
+        log("DOB parsing error: $e");
+      }
     }
     aboutMeController.text = doctorProfile.userProfile.aboutMe;
     clinicNameController.text = doctorProfile.userProfile.clinicAddress;
@@ -175,15 +182,20 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       speciality.text = doctorProfile.userProfile.specialities.first.specialities;
       specialityValue = doctorProfile.userProfile.specialities;
     }
+    if (doctorProfile.userProfile.currency.isNotEmpty) {
+      profileCurrencyController.text = "${doctorProfile.userProfile.currency.first.currencyName} ${doctorProfile.userProfile.currency.first.emoji}";
+      currencyValue = doctorProfile.userProfile.currency;
+    }
+    bookingsFeeController.text = "${doctorProfile.userProfile.bookingsFee} %";
     if (doctorProfile.userProfile.educations.isNotEmpty) {
       educationController.clear();
       for (var i = 0; i < doctorProfile.userProfile.educations.length; i++) {
         var element = doctorProfile.userProfile.educations[i];
+        // String formattedYear = DateFormat("dd MMM yyyy").format();
         educationController.add({
           "collage": TextEditingController(text: element.collage),
           "degree": TextEditingController(text: element.degree),
-          "yearOfCompletion": TextEditingController(
-              text: DateFormat("dd MMM yyyy").format(DateFormat("yyyy-MM-ddTHH:mm:ss.Z").parseUTC(element.yearOfCompletion).toLocal())),
+          "yearOfCompletion": TextEditingController(text: element.yearOfCompletion),
         });
       }
     }
@@ -192,10 +204,13 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       experinceController.clear();
       for (var i = 0; i < doctorProfile.userProfile.experinces.length; i++) {
         var element = doctorProfile.userProfile.experinces[i];
+        String formattedFromYear = DateFormat("dd MMM yyyy").format(element.from.toLocal());
+        String formattedToYear = DateFormat("dd MMM yyyy").format(element.to.toLocal());
+
         experinceController.add({
           "hospitalName": TextEditingController(text: element.hospitalName),
-          "from": TextEditingController(text: DateFormat("dd MMM yyyy").format(DateFormat("yyyy-MM-ddTHH:mm:ss.Z").parseUTC(element.from).toLocal())),
-          "to": TextEditingController(text: DateFormat("dd MMM yyyy").format(DateFormat("yyyy-MM-ddTHH:mm:ss.Z").parseUTC(element.to).toLocal())),
+          "from": TextEditingController(text: formattedFromYear),
+          "to": TextEditingController(text: formattedToYear),
           "designation": TextEditingController(text: element.designation),
         });
         experienceToDate.add([1934, 1, 1]);
@@ -206,9 +221,10 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       awardController.clear();
       for (var i = 0; i < doctorProfile.userProfile.awards.length; i++) {
         var element = doctorProfile.userProfile.awards[i];
+
         awardController.add({
           "award": TextEditingController(text: element.award),
-          'year': TextEditingController(text: DateFormat("yyyy").format(DateFormat("yyyy-MM-ddTHH:mm:ss.Z").parseUTC(element.year).toLocal())),
+          'year': TextEditingController(text: element.year),
         });
       }
     }
@@ -225,9 +241,10 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       registrationController.clear();
       for (var i = 0; i < doctorProfile.userProfile.registrations.length; i++) {
         var element = doctorProfile.userProfile.registrations[i];
+
         registrationController.add({
           "registration": TextEditingController(text: element.registration),
-          "year": TextEditingController(text: DateFormat('yyyy').format(DateFormat("yyyy-MM-ddTHH:mm:ss.Z").parseUTC(element.year).toLocal())),
+          "year": TextEditingController(text: element.year),
         });
       }
     }
@@ -248,65 +265,75 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
   }
 
   Future<void> onFormSubmit() async {
+    setState(() {
+      showValidation = true;
+      currencyError = profileCurrencyController.text.trim().isEmpty ? context.tr('required') : null;
+    });
+
     if (profileFormKey.currentState!.validate() && specialitiesServices.getTags!.isNotEmpty) {
       Map<String, dynamic> data = {};
-      data['createdAt'] = widget.doctorProfile.userProfile.createdAt;
-      data['userName'] = emailController.text;
-      data['firstName'] = firstNameController.text.trim();
-      data['lastName'] = lastNameController.text.trim();
-      data['mobileNumber'] = '$dialCode${mobileNumberController.text}';
-      data['gender'] = genderController.text;
-      if (dobController.text.isNotEmpty) {
-        data['dob'] = DateFormat("yyyy-MM-ddTHH:mm:ssZ").format(DateFormat("dd MMM yyyy").parseUTC(dobController.text).toLocal());
-      } else {
-        data['dob'] = widget.doctorProfile.userProfile.dob;
-      }
-
       data['aboutMe'] = aboutMeController.text;
-      data['clinicName'] = clinicNameController.text;
-      data['clinicAddress'] = clinicAddressController.text;
-
-      data['clinicImages'] = widget.doctorProfile.userProfile.clinicImages.map((x) => x.toMap()).toList();
-      data['profileImage'] = widget.doctorProfile.userProfile.profileImage;
-      data['roleName'] = widget.doctorProfile.roleName;
-      data['services'] = widget.doctorProfile.services;
-
+      data['accessToken'] = widget.doctorProfile.accessToken;
       data['address1'] = address1Controller.text;
       data['address2'] = address2Controller.text;
-      data['country'] = countryValue ?? '';
-      data['state'] = stateValue ?? '';
-      data['city'] = cityValue ?? '';
-      data['zipCode'] = zipCodeController.text;
-      data['pricing'] = widget.doctorProfile.userProfile.pricing;
-      data['specialitiesServices'] = specialitiesServices.getTags;
-      if (specialityValue.isNotEmpty) {
-        data['specialities'] = [
-          {
-            "specialities": specialityValue.first.specialities,
-            "description": specialityValue.first.description,
-            "image": specialityValue.first.image,
-            "imageId": specialityValue.first.imageId,
-            "users_id": specialityValue.first.usersId,
-          }
-        ];
-      }
-      data['educations'] = [];
-      if (deletedImages.isNotEmpty) {
-        data['deletedImages'] = deletedImages;
-        for (var i = 0; i < deletedImages.length; i++) {
-          var random = deletedImages[i];
-          data['clinicImages'].removeWhere((img) => img['random'] == random);
+      data['awards'] = [];
+      if (awardController.isNotEmpty) {
+        for (var element in awardController) {
+          Map<String, dynamic> award = {};
+          element.forEach((k, v) {
+            String value = v.text;
+            award[k] = value;
+          });
+          data['awards'].add(award);
         }
       } else {
-        data['deletedImages'] = [];
+        data['awards'].clear();
       }
+      data['bankId'] = widget.doctorProfile.userProfile.bankId;
+      data['billingsIds'] = widget.doctorProfile.userProfile.billingsIds;
+      data['bookingsFee'] = widget.doctorProfile.userProfile.bookingsFee;
+      data['city'] = cityValue ?? '';
+      data['clinicAddress'] = clinicAddressController.text;
+      data['clinicImages'] = widget.doctorProfile.userProfile.clinicImages.map((x) => x.toMap()).toList();
+      data['clinicName'] = clinicNameController.text;
+      data['country'] = countryValue ?? '';
+      data['createdAt'] = widget.doctorProfile.userProfile.createdAt.toIso8601String();
+      data['currency'] = currencyValue
+          .map((c) => {
+                '_id': c.id,
+                'id': c.currencyId,
+                'name': c.name,
+                'isActive': c.isActive,
+                'iso3': c.iso3,
+                'iso2': c.iso2,
+                'numeric_code': c.numericCode,
+                'currency': c.currency,
+                'currency_name': c.currencyName,
+                'currency_symbol': c.currencySymbol,
+                'emoji': c.emoji,
+                'patients_id': c.patientsId,
+                'doctors_id': c.doctorsId,
+              })
+          .toList();
+      if (dobController.text.isNotEmpty) {
+        // data['dob'] = DateFormat("yyyy-MM-ddTHH:mm:ssZ").format(DateFormat("dd MMM yyyy").parseUTC(dobController.text).toLocal());
+        DateTime parsedDate = DateFormat("dd MMM yyyy").parse(dobController.text);
+
+// To preserve the correct timezone offset:
+        String isoString = parsedDate.toIso8601String(); // gives e.g. "2025-04-03T00:00:00.000"
+
+        data['dob'] = isoString;
+      } else {
+        data['dob'] = widget.doctorProfile.userProfile.dob ?? '';
+      }
+      data['educations'] = [];
       if (educationController.isNotEmpty) {
         for (var element in educationController) {
           Map<String, dynamic> educate = {};
           element.forEach((k, v) {
             String value = v.text;
             if (k == 'yearOfCompletion') {
-              value = DateFormat("yyyy-MM-ddTHH:mm:ss.Z").format(DateFormat("dd MMM yyyy").parseUTC(v.text).toLocal());
+              value = v.text;
             }
             educate[k] = value;
           });
@@ -321,32 +348,27 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
           Map<String, dynamic> experince = {};
           element.forEach((k, v) {
             String value = v.text;
-            if (k == 'from' || k == 'to') {
-              value = DateFormat("yyyy-MM-ddTHH:mm:ss.Z").format(DateFormat("dd MMM yyyy").parseUTC(v.text).toLocal());
+            if ((k == 'from' || k == 'to') && v.text.isNotEmpty) {
+              DateTime parsed = DateFormat("dd MMM yyyy").parse(v.text);
+              value = parsed.toIso8601String();
             }
             experince[k] = value;
           });
           data['experinces'].add(experince);
         }
       } else {
-        data['experinces'].clear();
+        data['experinces'] = [];
       }
-      data['awards'] = [];
-      if (awardController.isNotEmpty) {
-        for (var element in awardController) {
-          Map<String, dynamic> award = {};
-          element.forEach((k, v) {
-            String value = v.text;
-            if (k == 'year') {
-              value = DateFormat("yyyy-MM-ddTHH:mm:ss.Z").format(DateFormat("yyyy").parseUTC(v.text).toLocal());
-            }
-            award[k] = value;
-          });
-          data['awards'].add(award);
-        }
-      } else {
-        data['awards'].clear();
-      }
+      data['favs_id'] = widget.doctorProfile.userProfile.favsId;
+      data['firstName'] = firstNameController.text.trim();
+      data['fullName'] = "${firstNameController.text.trim()} ${lastNameController.text.trim()}";
+      data['gender'] = genderController.text;
+      data['invoice_ids'] = widget.doctorProfile.userProfile.invoiceIds;
+      data['isActive'] = widget.doctorProfile.userProfile.isActive;
+      data['isVerified'] = widget.doctorProfile.userProfile.isVerified;
+      data['lastLogin'] = widget.doctorProfile.userProfile.lastLogin;
+      data['lastName'] = lastNameController.text.trim();
+      data['lastUpdate'] = widget.doctorProfile.userProfile.lastUpdate.toIso8601String();
       data['memberships'] = [];
       if (membershipController.isNotEmpty) {
         for (var element in membershipController) {
@@ -357,7 +379,28 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       } else {
         data['memberships'].clear();
       }
-      data['socialMedia'] = widget.doctorProfile.userProfile.socialMedia;
+      data['mobileNumber'] = '$dialCode${mobileNumberController.text}';
+      data['online'] = true;
+      data['patients_id'] = widget.doctorProfile.userProfile.patientsId;
+      data['prescriptions_id'] = widget.doctorProfile.userProfile.prescriptionsId;
+
+      data['profileImage'] = widget.doctorProfile.userProfile.profileImage;
+      data['profileImageFiles'] = [];
+      if (profileImageFiles.isNotEmpty) {
+        for (var i = 0; i < profileImageFiles.length; i++) {
+          var element = profileImageFiles[i];
+          final fileFromImage = profileImageFiles[i]['profileImage'];
+          List<int> fileBytes = await fileFromImage.readAsBytes();
+          Uint8List fileUint8List = Uint8List.fromList(fileBytes);
+          data['profileImageFiles'].add({
+            'profileImage': fileUint8List,
+            'profileImageName': element['profileImageName'],
+            'profileImageExtentionNoDot': element['profileImageExtentionNoDot']
+          });
+        }
+      }
+      data['rate_array'] = widget.doctorProfile.userProfile.rateArray;
+      data['recommendArray'] = widget.doctorProfile.userProfile.recommendArray;
       data['registrations'] = [];
       if (registrationController.isNotEmpty) {
         for (var element in registrationController) {
@@ -365,7 +408,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
           element.forEach((k, v) {
             String value = v.text;
             if (k == 'year') {
-              value = DateFormat("yyyy-MM-ddTHH:mm:ss.Z").format(DateFormat("yyyy").parseUTC(v.text).toLocal());
+              value = v.text;
             }
             regist[k] = value;
           });
@@ -374,20 +417,44 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       } else {
         data['registrations'].clear();
       }
-      data['accessToken'] = widget.doctorProfile.accessToken;
-      data['isActive'] = widget.doctorProfile.userProfile.isActive;
-      data['invoice_ids'] = widget.doctorProfile.userProfile.invoiceIds;
       data['reviews_array'] = widget.doctorProfile.userProfile.reviewsArray;
-      data['rate_array'] = widget.doctorProfile.userProfile.rateArray;
-      data['timeSlotId'] = widget.doctorProfile.userProfile.timeSlotId;
-      data['patients_id'] = widget.doctorProfile.userProfile.patientsId;
-      data['favs_id'] = widget.doctorProfile.userProfile.favsId;
       data['reservations_id'] = widget.doctorProfile.userProfile.reservationsId;
-      data['prescriptions_id'] = widget.doctorProfile.userProfile.prescriptionsId;
-      data['lastUpdate'] = widget.doctorProfile.userProfile.lastUpdate;
-      data['online'] = true;
-      data['lastLogin'] = widget.doctorProfile.userProfile.lastLogin;
-      data['_id'] = widget.doctorProfile.userId;
+      data['roleName'] = widget.doctorProfile.roleName;
+      data['services'] = widget.doctorProfile.services;
+      data['socialMedia'] = widget.doctorProfile.userProfile.socialMedia;
+      data['specialitiesServices'] = specialitiesServices.getTags;
+      if (specialityValue.isNotEmpty) {
+        data['specialities'] = [
+          {
+            "specialities": specialityValue.first.specialities,
+            "description": specialityValue.first.description,
+            "image": specialityValue.first.image,
+            "imageId": specialityValue.first.imageId,
+            "users_id": specialityValue.first.usersId,
+            "createdAt": specialityValue.first.createdAt.toIso8601String(),
+            "updatedAt": specialityValue.first.updatedAt.toIso8601String(),
+            "id": specialityValue.first.specialityId,
+            "_id": specialityValue.first.id
+          }
+        ];
+      }
+      data['state'] = stateValue ?? '';
+      data['timeSlotId'] = widget.doctorProfile.userProfile.timeSlotId;
+      data['zipCode'] = zipCodeController.text;
+      data["id"] = widget.doctorProfile.userProfile.doctorsId;
+      data['userName'] = emailController.text;
+      data['userId'] = widget.doctorProfile.userId;
+
+      if (deletedImages.isNotEmpty) {
+        data['deletedImages'] = deletedImages;
+        for (var i = 0; i < deletedImages.length; i++) {
+          var random = deletedImages[i];
+          data['clinicImages'].removeWhere((img) => img['random'] == random);
+        }
+      } else {
+        data['deletedImages'] = [];
+      }
+
       data['clinicImagesFiles'] = [];
       if (clinicImageFiles.isNotEmpty) {
         for (var i = 0; i < clinicImageFiles.length; i++) {
@@ -413,21 +480,6 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
           }
         }
       }
-      data['profileImageFiles'] = [];
-      if (profileImageFiles.isNotEmpty) {
-        for (var i = 0; i < profileImageFiles.length; i++) {
-          var element = profileImageFiles[i];
-          final fileFromImage = profileImageFiles[i]['profileImage'];
-          List<int> fileBytes = await fileFromImage.readAsBytes();
-          Uint8List fileUint8List = Uint8List.fromList(fileBytes);
-          data['profileImageFiles'].add({
-            'profileImage': fileUint8List,
-            'profileImageName': element['profileImageName'],
-            'profileImageExtentionNoDot': element['profileImageExtentionNoDot']
-          });
-        }
-      }
-      data['userId'] = widget.doctorProfile.userId;
 
       if (mounted) {
         showModalBottomSheet(
@@ -439,7 +491,19 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
           builder: (context) => const LoadingScreen(),
         );
       }
-      socket.emit('profileUpdate', data);
+      dynamic convertDateTimes(dynamic value) {
+        if (value is DateTime) {
+          return value.toIso8601String(); // or use your preferred format
+        } else if (value is Map) {
+          return value.map((k, v) => MapEntry(k, convertDateTimes(v)));
+        } else if (value is List) {
+          return value.map(convertDateTimes).toList();
+        } else {
+          return value;
+        }
+      }
+
+      socket.emit('profileUpdate', convertDateTimes(data));
       socket.once('profileUpdateReturn', (msg) {
         if (msg['status'] != 200) {
           Navigator.pop(context);
@@ -463,7 +527,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
             Future deleteImageFromCache() async {
               late String imageUrl = '';
               if (widget.doctorProfile.userProfile.profileImage.isNotEmpty) {
-                imageUrl = widget.doctorProfile.userProfile.profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
+                imageUrl = widget.doctorProfile.userProfile.profileImage;
               }
               await CachedNetworkImage.evictFromCache(imageUrl);
             }
@@ -584,6 +648,37 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
     }
   }
 
+  Future<void> _selectYear(BuildContext context, TextEditingController controller) async {
+    final currentYear = DateTime.now().year;
+    int? selectedYear;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.tr('selectYear')),
+          content: SizedBox(
+            width: 300,
+            height: 300,
+            child: YearPicker(
+              firstDate: DateTime(1924),
+              lastDate: DateTime(currentYear),
+              selectedDate: DateTime.now(),
+              onChanged: (DateTime dateTime) {
+                selectedYear = dateTime.year;
+                Navigator.pop(context); // close the dialog
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedYear != null) {
+      controller.text = selectedYear.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
@@ -593,7 +688,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
     DoctorsProfile doctorProfile = widget.doctorProfile;
     late String imageUrl = '';
     if (doctorProfile.userProfile.profileImage.isNotEmpty) {
-      imageUrl = doctorProfile.userProfile.profileImage; //?random=${DateTime.now().millisecondsSinceEpoch}
+      imageUrl = doctorProfile.userProfile.profileImage; 
     }
 
     return ScaffoldWrapper(
@@ -833,16 +928,18 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                               keyboardType: TextInputType.none,
                               onTap: () async {
                                 DateTime? pickedDate = await showDatePicker(
-                                    initialDatePickerMode: DatePickerMode.year,
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(1924),
-                                    lastDate: DateTime.now());
-                                String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
-
-                                setState(() {
-                                  dobController.text = formattedDate;
-                                });
+                                  initialDatePickerMode: DatePickerMode.year,
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1924),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (pickedDate != null) {
+                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
+                                  setState(() {
+                                    dobController.text = formattedDate;
+                                  });
+                                }
                               },
                             ),
                             const SizedBox(height: 10),
@@ -860,7 +957,15 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                               lable: context.tr('aboutMe'),
                               keyboardType: TextInputType.multiline,
                               minLines: 5,
+                              validator: (userInput) {
+                                if (!showValidation) return null;
+                                if (userInput!.isEmpty) {
+                                  return context.tr('required');
+                                }
+                                return null;
+                              },
                             ),
+                            const SizedBox(height: 10),
                           ],
                         ),
                         const SizedBox(height: 30),
@@ -1407,6 +1512,174 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                               lable: context.tr('zipCode'),
                               keyboardType: TextInputType.number,
                             ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        //Financial
+                        ProfileCardWidget(
+                          listTitle: context.tr("financialDetails"),
+                          childrens: [
+                            ProfileInputWidget(controller: bookingsFeeController, readOnly: true, lable: context.tr('bookingsFee')),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                constraints: const BoxConstraints(maxHeight: 200),
+                                child: TypeAheadField<Currency>(
+                                  controller: profileCurrencyController,
+                                  hideWithKeyboard: false,
+                                  suggestionsCallback: (search) => currencySuggestionsCallback(search),
+                                  itemSeparatorBuilder: (context, index) {
+                                    return Divider(
+                                      height: 1,
+                                      color: Theme.of(context).primaryColor,
+                                    );
+                                  },
+                                  emptyBuilder: (context) => ListTile(
+                                    title: Text(
+                                      context.tr("noItem"),
+                                    ),
+                                  ),
+                                  errorBuilder: (context, error) {
+                                    return ListTile(
+                                      title: Text(
+                                        error.toString(),
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      ),
+                                    );
+                                  },
+                                  loadingBuilder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: Theme.of(context).primaryColorLight,
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  builder: (context, controller, focusNode) {
+                                    return TextField(
+                                      controller: controller,
+                                      onTapOutside: (event) {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      },
+                                      focusNode: focusNode,
+                                      autofocus: false,
+                                      onChanged: (value) {
+                                        profileCurrencyController.text = value;
+                                      },
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Theme.of(context).primaryColorLight,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 14.0,
+                                          horizontal: 8,
+                                        ),
+                                        suffixIcon: profileCurrencyController.text == ""
+                                            ? null
+                                            : IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    profileCurrencyController.text = "";
+                                                    currencyError = profileCurrencyController.text.trim().isEmpty ? context.tr('required') : null;
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  color: Theme.of(context).primaryColorLight,
+                                                ),
+                                              ),
+                                        border: const OutlineInputBorder(),
+                                        labelStyle: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        labelText: context.tr('currency'),
+                                      ),
+                                    );
+                                  },
+                                  decorationBuilder: (context, child) {
+                                    return Material(
+                                      type: MaterialType.card,
+                                      elevation: 4,
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderOnForeground: true,
+                                      child: child,
+                                    );
+                                  },
+                                  offset: const Offset(0, 2),
+                                  constraints: const BoxConstraints(maxHeight: 500),
+                                  itemBuilder: (context, currency) {
+                                    List<InlineSpan> temp = highlightText(profileCurrencyController.text, currency.name,
+                                        brightness == Brightness.dark ? Colors.white : Colors.black, Theme.of(context).primaryColor);
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8, right: 8),
+                                          child: Text(
+                                            currency.emoji,
+                                            style: const TextStyle(fontSize: 24.0),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          fit: FlexFit.loose,
+                                          child: ListTile(
+                                            title: Text.rich(
+                                              TextSpan(
+                                                children: temp,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                              currency.subtitle ?? '${currency.subtitle}',
+                                              style: TextStyle(color: brightness == Brightness.dark ? Colors.white : Colors.black),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                  onSelected: (currency) {
+                                    setState(() {
+                                      currency.searchString = null;
+                                      currency.subtitle = null;
+                                      currencyValue = [currency];
+                                      currencyError = null;
+                                    });
+                                    profileCurrencyController.text = '${currency.currencyName} - ${currency.emoji}';
+                                  },
+                                ),
+                              ),
+                            ),
+                            if (currencyError != null)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 12.0),
+                                  child: Text(
+                                    currencyError!,
+                                    style: TextStyle(
+                                      color: Colors.pinkAccent.shade400,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 10),
                           ],
                         ),
                         const SizedBox(height: 30),
@@ -1500,7 +1773,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                         label: Text(context.tr('pressForNewTag')),
                                         floatingLabelBehavior:
                                             inputFieldValues.tags.isNotEmpty ? FloatingLabelBehavior.always : FloatingLabelBehavior.auto,
-                                        errorText: specialitiesServices.getTags!.isEmpty ? context.tr('required') : null,
+                                        errorText: showValidation && specialitiesServices.getTags!.isEmpty ? context.tr('required') : null,
                                         prefixIcon: inputFieldValues.tags.isNotEmpty
                                             ? SingleChildScrollView(
                                                 controller: inputFieldValues.tagScrollController,
@@ -1591,13 +1864,17 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 child: DropdownButtonFormField<String>(
                                   decoration: decoration(context, context.tr('speciality')),
                                   isDense: true,
-                                  validator: (value) => value == null ? context.tr('required') : null,
+                                  validator: (value) {
+                                    if (!showValidation) return null;
+                                    return value == null ? context.tr('required') : null;
+                                  },
                                   value: speciality.text.isEmpty ? null : speciality.text,
                                   hint: Text(context.tr('speciality')),
                                   items: specialities.map<DropdownMenuItem<String>>((Specialities values) {
                                     final name = context.tr(values.specialities);
                                     final imageSrc = values.image;
-                                    final imageIsSvg = imageSrc.endsWith('.svg');
+                                    final uri = Uri.parse(imageSrc);
+                                    final imageIsSvg = uri.path.endsWith('.svg');
                                     return DropdownMenuItem<String>(
                                       value: values.specialities,
                                       child: Row(
@@ -1608,13 +1885,13 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                             ),
                                             child: imageIsSvg
                                                 ? SvgPicture.network(
-                                                    imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                                    imageSrc, 
                                                     width: 20,
                                                     height: 20,
                                                     fit: BoxFit.fitHeight,
                                                   )
                                                 : Image.network(
-                                                    imageSrc, //?random=${DateTime.now().millisecondsSinceEpoch}
+                                                    imageSrc, 
                                                     width: 20,
                                                     height: 20,
                                                   ),
@@ -1638,7 +1915,8 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                   },
                                 ),
                               ),
-                            ]
+                            ],
+                            const SizedBox(height: 10),
                           ],
                         ),
                         const SizedBox(height: 30),
@@ -1677,19 +1955,24 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                   }
                                                   return null;
                                                 }),
+                                                suffixIcon: entry.value.text.isEmpty
+                                                    ? null
+                                                    : IconButton(
+                                                        splashColor: Colors.transparent,
+                                                        highlightColor: Colors.transparent,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            entry.value.text = '';
+                                                          });
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.close,
+                                                          color: Theme.of(context).primaryColorLight,
+                                                        ),
+                                                      ),
                                                 keyboardType: TextInputType.none,
                                                 onTap: () async {
-                                                  DateTime? pickedDate = await showDatePicker(
-                                                      initialDatePickerMode: DatePickerMode.year,
-                                                      context: context,
-                                                      initialDate: DateTime.now(),
-                                                      firstDate: DateTime(1924),
-                                                      lastDate: DateTime.now());
-                                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
-
-                                                  setState(() {
-                                                    entry.value.text = formattedDate;
-                                                  });
+                                                  await _selectYear(context, entry.value);
                                                 },
                                               ),
                                       ],
@@ -1724,7 +2007,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
-                            ]
+                            ],
                           ],
                         ),
                         const SizedBox(height: 30),
@@ -1808,13 +2091,15 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                           firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
                                                               experienceFromDate[index][2]),
                                                           lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
-                                                      String formattedDate = DateFormat('dd MMM yyyy').format(fromDate!);
-                                                      experienceToDate[index][0] = fromDate.year;
-                                                      experienceToDate[index][1] = fromDate.month;
-                                                      experienceToDate[index][2] = fromDate.day;
-                                                      setState(() {
-                                                        entry.value.text = formattedDate;
-                                                      });
+                                                      if (fromDate != null) {
+                                                        String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
+                                                        experienceToDate[index][0] = fromDate.year;
+                                                        experienceToDate[index][1] = fromDate.month;
+                                                        experienceToDate[index][2] = fromDate.day;
+                                                        setState(() {
+                                                          entry.value.text = formattedDate;
+                                                        });
+                                                      }
                                                     } else {
                                                       DateTime? toDate = await showDatePicker(
                                                           initialDatePickerMode: DatePickerMode.year,
@@ -1822,11 +2107,12 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                           firstDate: DateTime(
                                                               experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
                                                           lastDate: DateTime.now());
-
-                                                      String formattedDate = DateFormat('dd MMM yyyy').format(toDate!);
-                                                      setState(() {
-                                                        entry.value.text = formattedDate;
-                                                      });
+                                                      if (toDate != null) {
+                                                        String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
+                                                        setState(() {
+                                                          entry.value.text = formattedDate;
+                                                        });
+                                                      }
                                                     }
                                                   },
                                                 );
@@ -1908,31 +2194,24 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                   }
                                                   return null;
                                                 }),
+                                                suffixIcon: entry.value.text.isEmpty
+                                                    ? null
+                                                    : IconButton(
+                                                        splashColor: Colors.transparent,
+                                                        highlightColor: Colors.transparent,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            entry.value.text = '';
+                                                          });
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.close,
+                                                          color: Theme.of(context).primaryColorLight,
+                                                        ),
+                                                      ),
                                                 keyboardType: TextInputType.none,
                                                 onTap: () async {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text(context.tr('selectYear')),
-                                                        content: SizedBox(
-                                                          width: MediaQuery.of(context).size.width,
-                                                          height: 300,
-                                                          child: YearPicker(
-                                                            firstDate: DateTime(DateTime.now().year - 100, 1),
-                                                            lastDate: DateTime(DateTime.now().year, 1),
-                                                            selectedDate: DateTime.now(),
-                                                            onChanged: (DateTime dateTime) {
-                                                              Navigator.pop(context);
-                                                              setState(() {
-                                                                entry.value.text = dateTime.year.toString();
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
+                                                  await _selectYear(context, entry.value);
                                                 },
                                               ),
                                       ],
@@ -2063,31 +2342,24 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                   }
                                                   return null;
                                                 }),
+                                                suffixIcon: entry.value.text.isEmpty
+                                                    ? null
+                                                    : IconButton(
+                                                        splashColor: Colors.transparent,
+                                                        highlightColor: Colors.transparent,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            entry.value.text = '';
+                                                          });
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.close,
+                                                          color: Theme.of(context).primaryColorLight,
+                                                        ),
+                                                      ),
                                                 keyboardType: TextInputType.none,
                                                 onTap: () async {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text(context.tr('selectYear')),
-                                                        content: SizedBox(
-                                                          width: MediaQuery.of(context).size.width,
-                                                          height: 300,
-                                                          child: YearPicker(
-                                                            firstDate: DateTime(DateTime.now().year - 100, 1),
-                                                            lastDate: DateTime(DateTime.now().year, 1),
-                                                            selectedDate: DateTime.now(),
-                                                            onChanged: (DateTime dateTime) {
-                                                              Navigator.pop(context);
-                                                              setState(() {
-                                                                entry.value.text = dateTime.year.toString();
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
+                                                  await _selectYear(context, entry.value);
                                                 },
                                               ),
                                       ],

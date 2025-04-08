@@ -1,7 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:math';
-
+import 'dart:developer' as dev;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -102,31 +102,55 @@ class _PatientDashboardState extends State<PatientDashboard> {
                   horizontalMargin: dataTable.isNotEmpty ? 16 : 50,
                   columns: [
                     DataColumn(
-                        label: Flexible(
-                            fit: FlexFit.tight,
-                            child: Center(
-                                child: Text(
-                              "${context.tr('value')} / $unit",
-                              textAlign: TextAlign.center,
-                            )))),
+                      label: Flexible(
+                        fit: FlexFit.tight,
+                        child: Center(
+                          child: Text(
+                            context.tr('id'),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
                     DataColumn(
-                        label: Flexible(
-                            fit: FlexFit.tight,
-                            child: Center(
-                                child: Text(
-                              context.tr('date'),
-                              textAlign: TextAlign.center,
-                            )))),
+                      label: Flexible(
+                        fit: FlexFit.tight,
+                        child: Center(
+                          child: Text(
+                            "${context.tr('value')} / $unit",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Flexible(
+                        fit: FlexFit.tight,
+                        child: Center(
+                          child: Text(
+                            context.tr('date'),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                   rows: dataTable.map((e) {
-                    var dateValue = DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(e['date']).toLocal();
-                    String formattedDate = DateFormat("yyyy MMM dd HH:mm").format(dateValue);
+                    String formattedDate = DateFormat("yyyy MMM dd HH:mm").format(e['date']);
                     return DataRow(
                       cells: [
                         DataCell(
                           Center(
                             child: Text(
-                              e['value'],
+                              e['id'].toString(),
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Center(
+                            child: Text(
+                              e['value'].toString(),
                               style: const TextStyle(fontSize: 14),
                             ),
                           ),
@@ -135,7 +159,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                           Center(
                             child: Text(
                               formattedDate,
-                              style: const TextStyle(fontSize: 14),
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ),
                         ),
@@ -174,6 +198,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
   @override
   Widget build(BuildContext context) {
     var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
+
     final vitalSigns = Provider.of<VitalProvider>(context).vitalSign;
     late String years = '--';
     late String months = '--';
@@ -193,7 +218,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     }
     if (patientProfile != null) {
       if (patientProfile.userProfile.profileImage.isNotEmpty) {
-        imageUrl = '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+        imageUrl = patientProfile.userProfile.profileImage;
       }
     }
     var brightness = Theme.of(context).brightness;
@@ -211,7 +236,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               if (vitalSigns != null) {
                 vitalMap = vitalSigns.toMap();
                 if (vitalMap[i['title']].isNotEmpty) {
-                  vitalSignsController[i['title']]?.text = vitalMap[i['title']][vitalMap[i['title']].length - 1]['value'].toString();
+                  vitalSignsController[i['title']]?.text = vitalMap[i['title']][0]['value'].toString();
                 }
               }
               return Container(
@@ -346,11 +371,11 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                     var name = i['title'];
                                     var value = vitalSignsController[i['title']]?.text;
                                     var userId = patientProfile!.userId;
-
+                                    dev.log("$name, $value, $userId");
                                     if (value!.isNotEmpty) {
                                       socket.emit(
                                         'vitalSignsUpdate',
-                                        {"name": name, "value": value, "userId": userId},
+                                        {"name": name, "value": int.tryParse(value), "userId": userId},
                                       );
                                     }
                                   },
@@ -484,7 +509,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
                             const SizedBox(
                               height: 5,
                             ),
-                            Text("${patientProfile.userProfile.gender} ${patientProfile.userProfile.firstName} ${patientProfile.userProfile.lastName}"),
+                            Text(
+                                "${patientProfile.userProfile.gender} ${patientProfile.userProfile.firstName} ${patientProfile.userProfile.lastName}"),
                             const SizedBox(
                               height: 5,
                             ),
@@ -650,7 +676,13 @@ class _PatientDashboardState extends State<PatientDashboard> {
                     ListTile(
                       title: Text(context.tr('links')),
                     ),
-                    ...patientsDashboardLink.map((i) {
+                    ...patientsDashboardLink.where((item) {
+                      // Hide 'changePassword' if services (e.g. Google login) is present
+                      if (item['name'] == 'changePassword' && patientProfile.services == "google") {
+                        return false;
+                      }
+                      return true;
+                    }).map((i) {
                       return Card(
                         shape: RoundedRectangleBorder(
                           side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
@@ -973,6 +1005,28 @@ class SliderWidget extends StatefulWidget {
 }
 
 class _SliderWidgetState extends State<SliderWidget> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value.toString());
+  }
+
+  @override
+  void didUpdateWidget(covariant SliderWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      _controller.text = widget.value.toString();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -994,9 +1048,42 @@ class _SliderWidgetState extends State<SliderWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.value.toString(),
-                    style: const TextStyle(fontSize: 40),
+                  SizedBox(
+                    width: 45,
+                    height: 45,
+                    child: TextField(
+                      maxLength: 3,
+                      controller: _controller,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        counterText: '',
+                        hintText: "-- ",
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      onChanged: (value) {
+                        int? intValue = int.tryParse(value);
+                        if (intValue != null && intValue >= widget.min.toInt() && intValue <= widget.max.toInt()) {
+                          setState(() {
+                            widget.value = intValue;
+                            _controller.text = intValue.toString(); // update text safely
+                            _controller.selection = TextSelection.fromPosition(
+                              TextPosition(offset: _controller.text.length),
+                            );
+                          });
+                          widget.onChange(intValue);
+                        }
+                      },
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
@@ -1016,6 +1103,7 @@ class _SliderWidgetState extends State<SliderWidget> {
                 thumbColor: Theme.of(context).primaryColor,
                 activeColor: Theme.of(context).primaryColorLight,
                 onChanged: (value) {
+                  _controller = TextEditingController(text: "${value.toInt()}");
                   setState(() {
                     widget.value = value.toInt();
                   });

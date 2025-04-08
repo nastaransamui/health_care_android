@@ -291,5 +291,19 @@
   "specialties": "Specialties",
   "eyeGreatPlace": "The Great Place Of Eyecare Hospital Center",
   "who": "Who",
-  "weAre": "We Are"
+  "weAre": "We Are",
+  "financialDetails": "Financial",
+  "bookingsFee": "Bookings Fee",
+  "currency": "Currency",
+  "blog": "Blog",
+  "contactUs": "Contact us",
+  "conditions": "Conditions",
+  "privacyPolicy": "Privacy Policy",
+  "termsAndConditions": "Terms & Conditions",
+  "faq": "FAQ",
+  "aboutUs": "About us",
+  "bookAppointment": "Book Appointment",
+  "onlineConsult": "Online Consult",
+  "rates": "Rates",
+  "medicalrecords": "Medical Records"
 }

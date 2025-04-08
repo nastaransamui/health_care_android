@@ -1,6 +1,7 @@
 
 import 'package:health_care/models/cities.dart';
 import 'package:health_care/models/countries.dart';
+import 'package:health_care/models/doctors.dart';
 import 'package:health_care/models/states.dart';
 import 'package:health_care/stream_socket.dart';
 
@@ -96,6 +97,38 @@ Future<List<Countries>> countrySuggestionsCallback(String search) async {
       const Duration(milliseconds: 300),
       () async {
         return cities.toList();
+      },
+    );
+  }
+
+
+Future<List<Currency>> currencySuggestionsCallback(String search) async {
+    if (search.isNotEmpty) {
+      socket.emit('currencySearch', {'searchText': search});
+    }
+    List<Currency> currency = [];
+    socket.on(
+      'currencySearchReturn',
+      (data) async {
+        if (data['status'] == 200) {
+          currency.clear();
+          var m = data['currency'];
+
+          for (int i = 0; i < m.length; i++) {
+            final currenciesFromAdmin = Currency.fromMap(m[i]);
+            currency.add(currenciesFromAdmin);
+          }
+
+          return currency;
+        } else {
+          return currency;
+        }
+      },
+    );
+    return Future<List<Currency>>.delayed(
+      const Duration(milliseconds: 300),
+      () async {
+        return currency.toList();
       },
     );
   }

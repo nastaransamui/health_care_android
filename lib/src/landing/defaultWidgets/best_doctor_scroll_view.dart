@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -37,8 +38,8 @@ class _BestDoctorsScrollViewState extends State<BestDoctorsScrollView> {
                 var subheading = context.tr(i.specialities[0].specialities);
                 final name = "${i.firstName} ${i.lastName}";
                 var cardImage = NetworkImage(i.profileImage.isEmpty
-                    ? 'http://admin-mjcode.ddns.net/assets/img/doctors/doctors_profile.jpg'
-                    : '${i.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}');
+                    ? '${dotenv.env['adminUrl']}/assets/img/doctors/doctors_profile.jpg'
+                    : i.profileImage);
                 var supportingText = i.aboutMe;
                 return SizedBox(
                   child: Card(

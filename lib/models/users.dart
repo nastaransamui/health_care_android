@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 
 import 'package:health_care/models/doctors.dart';
+import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/specialities.dart';
 
 class PatientsProfile {
@@ -86,193 +86,163 @@ class PatientsProfile {
 }
 
 class PatientUserProfile {
-  final String createdAt;
-  final String firstName;
-  final String lastName;
-  final String dob;
-  final String bloodG;
-  final String userName;
-  final String mobileNumber;
-  final String profileImage;
-  final String gender;
   final String address1;
   final String address2;
-  final String updatedAt;
+  final List<String> billingsIds;
+  final String bloodG;
   final String city;
-  final String state;
-  final String zipCode;
   final String country;
+  final DateTime createdAt;
+  final List<String> dependentsArray;
+  final dynamic dob;
+  final List<String> doctorsId;
+  final List<String> favsId;
+  final String firstName;
+  final String fullName;
+  final String gender;
+  final bool? idle;
+  final List<String> invoiceIds;
   final bool isActive;
-  final List<dynamic> invoiceIds;
-  final List<dynamic> reviewsArray;
-  final List<dynamic> rateArray;
-  final List<dynamic> favsId;
-  final List<dynamic> reservationsId;
-  final List<dynamic> prescriptionsId;
-  final List<dynamic> doctorsId;
-  final String lastUpdate;
-  final bool online;
-  final bool idle;
+  final bool? isVerified;
   final LastLogin lastLogin;
+  final String lastName;
+  final DateTime lastUpdate;
+  final List<String> medicalRecordsArray;
+  final String mobileNumber;
+  final bool online;
+  final List<String> prescriptionsId;
+  final String profileImage;
+  final List<double> rateArray;
+  final List<String> reservationsId;
+  final List<String> reviewsArray;
+  final String roleName;
+  final String services;
+  final String state;
+  final String userName;
+  final String zipCode;
+  final String? id;
+  final int patientsId;
 
   PatientUserProfile({
-    required this.createdAt,
-    required this.firstName,
-    required this.lastName,
-    required this.dob,
-    required this.bloodG,
-    required this.userName,
-    required this.mobileNumber,
-    required this.profileImage,
-    required this.gender,
     required this.address1,
     required this.address2,
-    required this.updatedAt,
+    required this.billingsIds,
+    required this.bloodG,
     required this.city,
-    required this.state,
-    required this.zipCode,
     required this.country,
-    required this.isActive,
-    required this.invoiceIds,
-    required this.reviewsArray,
-    required this.rateArray,
-    required this.favsId,
-    required this.reservationsId,
-    required this.prescriptionsId,
+    required this.createdAt,
+    required this.dependentsArray,
+    required this.dob,
     required this.doctorsId,
-    required this.lastUpdate,
-    required this.online,
+    required this.favsId,
+    required this.firstName,
+    required this.fullName,
+    required this.gender,
     required this.idle,
+    required this.invoiceIds,
+    required this.isActive,
+    required this.isVerified,
     required this.lastLogin,
+    required this.lastName,
+    required this.lastUpdate,
+    required this.medicalRecordsArray,
+    required this.mobileNumber,
+    required this.online,
+    required this.prescriptionsId,
+    required this.profileImage,
+    required this.rateArray,
+    required this.reservationsId,
+    required this.reviewsArray,
+    required this.roleName,
+    required this.services,
+    required this.state,
+    required this.userName,
+    required this.zipCode,
+    required this.id,
+    required this.patientsId,
   });
-
-  PatientUserProfile copyWith({
-    String? createdAt,
-    String? firstName,
-    String? lastName,
-    String? dob,
-    String? bloodG,
-    String? userName,
-    String? mobileNumber,
-    String? profileImage,
-    String? gender,
-    String? address1,
-    String? address2,
-    String? updatedAt,
-    String? city,
-    String? state,
-    String? zipCode,
-    String? country,
-    bool? isActive,
-    List<dynamic>? invoiceIds,
-    List<dynamic>? reviewsArray,
-    List<dynamic>? rateArray,
-    List<dynamic>? favsId,
-    List<dynamic>? reservationsId,
-    List<dynamic>? prescriptionsId,
-    List<dynamic>? doctorsId,
-    String? lastUpdate,
-    bool? online,
-    bool? idle,
-    LastLogin? lastLogin,
-  }) {
-    return PatientUserProfile(
-      createdAt: createdAt ?? this.createdAt,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      dob: dob ?? this.dob,
-      bloodG: bloodG ?? this.bloodG,
-      userName: userName ?? this.userName,
-      mobileNumber: mobileNumber ?? this.mobileNumber,
-      profileImage: profileImage ?? this.profileImage,
-      gender: gender ?? this.gender,
-      address1: address1 ?? this.address1,
-      address2: address2 ?? this.address2,
-      updatedAt: updatedAt ?? this.updatedAt,
-      city: city ?? this.city,
-      state: state ?? this.state,
-      zipCode: zipCode ?? this.zipCode,
-      country: country ?? this.country,
-      isActive: isActive ?? this.isActive,
-      invoiceIds: invoiceIds ?? this.invoiceIds,
-      reviewsArray: reviewsArray ?? this.reviewsArray,
-      rateArray: rateArray ?? this.rateArray,
-      favsId: favsId ?? this.favsId,
-      reservationsId: reservationsId ?? this.reservationsId,
-      prescriptionsId: prescriptionsId ?? this.prescriptionsId,
-      doctorsId: doctorsId ?? this.doctorsId,
-      lastUpdate: lastUpdate ?? this.lastUpdate,
-      online: online ?? this.online,
-      idle: idle ?? this.idle,
-      lastLogin: lastLogin ?? this.lastLogin,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    result.addAll({'createdAt': createdAt});
-    result.addAll({'firstName': firstName});
-    result.addAll({'lastName': lastName});
-    result.addAll({'dob': dob});
-    result.addAll({'bloodG': bloodG});
-    result.addAll({'userName': userName});
-    result.addAll({'mobileNumber': mobileNumber});
-    result.addAll({'profileImage': profileImage});
-    result.addAll({'gender': gender});
+
     result.addAll({'address1': address1});
     result.addAll({'address2': address2});
-    result.addAll({'updatedAt': updatedAt});
+    result.addAll({'billingsIds': billingsIds});
+    result.addAll({'bloodG': bloodG});
     result.addAll({'city': city});
-    result.addAll({'state': state});
-    result.addAll({'zipCode': zipCode});
     result.addAll({'country': country});
-    result.addAll({'isActive': isActive});
-    result.addAll({'invoiceIds': invoiceIds});
-    result.addAll({'reviewsArray': reviewsArray});
-    result.addAll({'rateArray': rateArray});
-    result.addAll({'favsId': favsId});
-    result.addAll({'reservationsId': reservationsId});
-    result.addAll({'prescriptionsId': prescriptionsId});
+    result.addAll({'createdAt': createdAt});
+    result.addAll({'dependentsArray': dependentsArray});
+    result.addAll({'dob': dob});
     result.addAll({'doctorsId': doctorsId});
-    result.addAll({'lastUpdate': lastUpdate});
-    result.addAll({'online': online});
+    result.addAll({'favsId': favsId});
+    result.addAll({'firstName': firstName});
+    result.addAll({'fullName': fullName});
+    result.addAll({'gender': gender});
     result.addAll({'idle': idle});
+    result.addAll({'invoiceIds': invoiceIds});
+    result.addAll({'isActive': isActive});
+    result.addAll({'isVerified': isVerified});
     result.addAll({'lastLogin': lastLogin.toMap()});
-  
+    result.addAll({'lastName': lastName});
+    result.addAll({'lastUpdate': lastUpdate});
+    result.addAll({'medicalRecordsArray': medicalRecordsArray});
+    result.addAll({'mobileNumber': mobileNumber});
+    result.addAll({'online': online});
+    result.addAll({'prescriptionsId': prescriptionsId});
+    result.addAll({'profileImage': profileImage});
+    result.addAll({'rateArray': rateArray});
+    result.addAll({'reservationsId': reservationsId});
+    result.addAll({'reviewsArray': reviewsArray});
+    result.addAll({'roleName': roleName});
+    result.addAll({'services': services});
+    result.addAll({'state': state});
+    result.addAll({'userName': userName});
+    result.addAll({'zipCode': zipCode});
+    result.addAll({'id': id});
+    result.addAll({'patientsId': patientsId});
+
     return result;
   }
 
   factory PatientUserProfile.fromMap(Map<String, dynamic> map) {
     return PatientUserProfile(
-      createdAt: map['createdAt'] ?? '',
-      firstName: map['firstName'] ?? '',
-      lastName: map['lastName'] ?? '',
-      dob: map['dob'] ?? '',
-      bloodG: map['bloodG'] ?? '',
-      userName: map['userName'] ?? '',
-      mobileNumber: map['mobileNumber'] ?? '',
-      profileImage: map['profileImage'] ?? '',
-      gender: map['gender'] ?? '',
       address1: map['address1'] ?? '',
       address2: map['address2'] ?? '',
-      updatedAt: map['updatedAt'] ?? '',
+      billingsIds: List<String>.from(map['billingsIds']),
+      bloodG: map['bloodG'] ?? '',
       city: map['city'] ?? '',
-      state: map['state'] ?? '',
-      zipCode: map['zipCode'] ?? '',
       country: map['country'] ?? '',
-      isActive: map['isActive'] ?? false,
-      invoiceIds: List<dynamic>.from(map['invoice_ids']),
-      reviewsArray: List<dynamic>.from(map['reviews_array']),
-      rateArray: List<dynamic>.from(map['rate_array']),
-      favsId: List<dynamic>.from(map['favs_id']),
-      reservationsId: List<dynamic>.from(map['reservations_id']),
-      prescriptionsId: List<dynamic>.from(map['prescriptions_id']),
-      doctorsId: List<dynamic>.from(map['doctors_id']),
-      lastUpdate: map['lastUpdate'] ?? '',
-      online: map['online'] ?? false,
+      createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(),
+      dependentsArray: List<String>.from(map['dependentsArray']),
+      dob: map['dob'] ?? '',
+      doctorsId: List<String>.from(map['doctors_id']),
+      favsId: List<String>.from(map['favs_id']),
+      firstName: map['firstName'] ?? '',
+      fullName: map['fullName'] ?? '',
+      gender: map['gender'] ?? '',
       idle: map['idle'] ?? false,
+      invoiceIds: List<String>.from(map['invoice_ids']),
+      isActive: map['isActive'] ?? false,
+      isVerified: map['isVerified'] ?? false,
       lastLogin: LastLogin.fromMap(map['lastLogin']),
+      lastName: map['lastName'] ?? '',
+      lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(),
+      medicalRecordsArray: List<String>.from(map['medicalRecordsArray']),
+      mobileNumber: map['mobileNumber'] ?? '',
+      online: map['online'] ?? false,
+      prescriptionsId: List<String>.from(map['prescriptions_id']),
+      profileImage: map['profileImage'] ?? '',
+      rateArray: List<double>.from(map['rate_array']),
+      reservationsId: List<String>.from(map['reservations_id']),
+      reviewsArray: List<String>.from(map['reviews_array']),
+      roleName: map['roleName'] ?? '',
+      services: map['services'] ?? '',
+      state: map['state'] ?? '',
+      userName: map['userName'] ?? '',
+      zipCode: map['zipCode'] ?? '',
+      id: map['_id'] ?? '',
+      patientsId: map['id'] ?? '',
     );
   }
 
@@ -280,76 +250,89 @@ class PatientUserProfile {
 
   factory PatientUserProfile.fromJson(String source) => PatientUserProfile.fromMap(json.decode(source));
 
+
+
+  PatientUserProfile copyWith({
+    String? address1,
+    String? address2,
+    List<String>? billingsIds,
+    String? bloodG,
+    String? city,
+    String? country,
+    DateTime? createdAt,
+    List<String>? dependentsArray,
+    dynamic dob,
+    List<String>? doctorsId,
+    List<String>? favsId,
+    String? firstName,
+    String? fullName,
+    String? gender,
+    bool? idle,
+    List<String>? invoiceIds,
+    bool? isActive,
+    bool? isVerified,
+    LastLogin? lastLogin,
+    String? lastName,
+    DateTime? lastUpdate,
+    List<String>? medicalRecordsArray,
+    String? mobileNumber,
+    bool? online,
+    List<String>? prescriptionsId,
+    String? profileImage,
+    List<double>? rateArray,
+    List<String>? reservationsId,
+    List<String>? reviewsArray,
+    String? roleName,
+    String? services,
+    String? state,
+    String? userName,
+    String? zipCode,
+    String? id,
+    int? patientsId,
+  }) {
+    return PatientUserProfile(
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      billingsIds: billingsIds ?? this.billingsIds,
+      bloodG: bloodG ?? this.bloodG,
+      city: city ?? this.city,
+      country: country ?? this.country,
+      createdAt: createdAt ?? this.createdAt,
+      dependentsArray: dependentsArray ?? this.dependentsArray,
+      dob: dob ?? this.dob,
+      doctorsId: doctorsId ?? this.doctorsId,
+      favsId: favsId ?? this.favsId,
+      firstName: firstName ?? this.firstName,
+      fullName: fullName ?? this.fullName,
+      gender: gender ?? this.gender,
+      idle: idle ?? this.idle,
+      invoiceIds: invoiceIds ?? this.invoiceIds,
+      isActive: isActive ?? this.isActive,
+      isVerified: isVerified ?? this.isVerified,
+      lastLogin: lastLogin ?? this.lastLogin,
+      lastName: lastName ?? this.lastName,
+      lastUpdate: lastUpdate ?? this.lastUpdate,
+      medicalRecordsArray: medicalRecordsArray ?? this.medicalRecordsArray,
+      mobileNumber: mobileNumber ?? this.mobileNumber,
+      online: online ?? this.online,
+      prescriptionsId: prescriptionsId ?? this.prescriptionsId,
+      profileImage: profileImage ?? this.profileImage,
+      rateArray: rateArray ?? this.rateArray,
+      reservationsId: reservationsId ?? this.reservationsId,
+      reviewsArray: reviewsArray ?? this.reviewsArray,
+      roleName: roleName ?? this.roleName,
+      services: services ?? this.services,
+      state: state ?? this.state,
+      userName: userName ?? this.userName,
+      zipCode: zipCode ?? this.zipCode,
+      id: id ?? this.id,
+      patientsId: patientsId ?? this.patientsId,
+    );
+  }
+
   @override
   String toString() {
-    return 'PatientUserProfile(createdAt: $createdAt, firstName: $firstName, lastName: $lastName, dob: $dob, bloodG: $bloodG, userName: $userName, mobileNumber: $mobileNumber, profileImage: $profileImage, gender: $gender, address1: $address1, address2: $address2, updatedAt: $updatedAt, city: $city, state: $state, zipCode: $zipCode, country: $country, isActive: $isActive, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, favsId: $favsId, reservationsId: $reservationsId, prescriptionsId: $prescriptionsId, doctorsId: $doctorsId, lastUpdate: $lastUpdate, online: $online, idle: $idle, lastLogin: $lastLogin)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-  
-    return other is PatientUserProfile &&
-      other.createdAt == createdAt &&
-      other.firstName == firstName &&
-      other.lastName == lastName &&
-      other.dob == dob &&
-      other.bloodG == bloodG &&
-      other.userName == userName &&
-      other.mobileNumber == mobileNumber &&
-      other.profileImage == profileImage &&
-      other.gender == gender &&
-      other.address1 == address1 &&
-      other.address2 == address2 &&
-      other.updatedAt == updatedAt &&
-      other.city == city &&
-      other.state == state &&
-      other.zipCode == zipCode &&
-      other.country == country &&
-      other.isActive == isActive &&
-      listEquals(other.invoiceIds, invoiceIds) &&
-      listEquals(other.reviewsArray, reviewsArray) &&
-      listEquals(other.rateArray, rateArray) &&
-      listEquals(other.favsId, favsId) &&
-      listEquals(other.reservationsId, reservationsId) &&
-      listEquals(other.prescriptionsId, prescriptionsId) &&
-      listEquals(other.doctorsId, doctorsId) &&
-      other.lastUpdate == lastUpdate &&
-      other.online == online &&
-      other.idle == idle &&
-      other.lastLogin == lastLogin;
-  }
-
-  @override
-  int get hashCode {
-    return createdAt.hashCode ^
-      firstName.hashCode ^
-      lastName.hashCode ^
-      dob.hashCode ^
-      bloodG.hashCode ^
-      userName.hashCode ^
-      mobileNumber.hashCode ^
-      profileImage.hashCode ^
-      gender.hashCode ^
-      address1.hashCode ^
-      address2.hashCode ^
-      updatedAt.hashCode ^
-      city.hashCode ^
-      state.hashCode ^
-      zipCode.hashCode ^
-      country.hashCode ^
-      isActive.hashCode ^
-      invoiceIds.hashCode ^
-      reviewsArray.hashCode ^
-      rateArray.hashCode ^
-      favsId.hashCode ^
-      reservationsId.hashCode ^
-      prescriptionsId.hashCode ^
-      doctorsId.hashCode ^
-      lastUpdate.hashCode ^
-      online.hashCode ^
-      idle.hashCode ^
-      lastLogin.hashCode;
+    return 'PatientUserProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, reservationsId: $reservationsId, reviewsArray: $reviewsArray, roleName: $roleName, services: $services, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
   }
 }
 
@@ -493,397 +476,357 @@ class DoctorsProfile {
 }
 
 class DoctorUserProfile {
-  final String createdAt;
-  final String userName;
-  final String firstName;
-  final String lastName;
-  final String mobileNumber;
-  final String gender;
-  final String dob;
-  final String clinicName;
-  final String clinicAddress;
   final String aboutMe;
-  final List<ClinicImages> clinicImages;
-  final String profileImage;
-  final String roleName;
-  final String services;
+  final String accessToken;
   final String address1;
   final String address2;
+  final List<Award> awards;
+  final String bankId;
+  final List<String> billingsIds;
+  final int bookingsFee;
   final String city;
-  final String state;
-  final String zipCode;
+  final String clinicAddress;
+  final List<ClinicImages> clinicImages;
+  final String clinicName;
   final String country;
-  final List<dynamic> pricing;
-  late final List<String>? specialitiesServices;
-  final List<Specialities> specialities;
+  final DateTime createdAt;
+  final List<Currency> currency;
+  final dynamic dob;
   final List<Education> educations;
   final List<Experinces> experinces;
-  final List<Award> awards;
-  final List<Memberships> memberships;
-  final List<dynamic> socialMedia;
-  final List<Registrations> registrations;
-  final String accessToken;
-  final bool isActive;
-  final List<dynamic> invoiceIds;
-  final List<dynamic> reviewsArray;
-  final List<dynamic> rateArray;
-  final List<dynamic> timeSlotId;
-  final List<dynamic> patientsId;
   final List<dynamic> favsId;
-  final List<dynamic> reservationsId;
-  final List<dynamic> prescriptionsId;
-  final String lastUpdate;
-  final String id;
+  final String firstName;
+  final String fullName;
+  final String gender;
+  final bool? idle;
+  final List<String> invoiceIds;
+  final bool isActive;
+  final bool? isVerified;
   final LastLogin lastLogin;
+  final String lastName;
+  final DateTime lastUpdate;
+  final List<Memberships> memberships;
+  final String mobileNumber;
+  final String userName;
   final bool online;
-  final bool idle;
+  final List<String> patientsId;
+  final List<String> prescriptionsId;
+  final String profileImage;
+  final List<double> rateArray;
+  final List<int> recommendArray;
+  final List<Registrations> registrations;
+  final List<String> reviewsArray;
+  final List<String> reservationsId;
+  final String roleName;
+  final String services;
+  final List<SocialMedia> socialMedia;
+  final List<Specialities> specialities;
+  final List<String>? specialitiesServices;
+  final String state;
+  final List<String> timeSlotId;
+  final List<DoctorsTimeSlot>? timeslots;
+  final String zipCode;
+  final String? id;
+  final int doctorsId;
 
   DoctorUserProfile({
-    required this.createdAt,
-    required this.userName,
-    required this.firstName,
-    required this.lastName,
-    required this.mobileNumber,
-    required this.gender,
-    required this.dob,
-    required this.clinicName,
-    required this.clinicAddress,
     required this.aboutMe,
-    required this.clinicImages,
-    required this.profileImage,
-    required this.roleName,
-    required this.services,
+    required this.accessToken,
     required this.address1,
     required this.address2,
+    required this.awards,
+    required this.bankId,
+    required this.billingsIds,
+    required this.bookingsFee,
     required this.city,
-    required this.state,
-    required this.zipCode,
+    required this.clinicAddress,
+    required this.clinicImages,
+    required this.clinicName,
     required this.country,
-    required this.pricing,
-    required this.specialitiesServices,
-    required this.specialities,
+    required this.createdAt,
+    required this.currency,
+    required this.dob,
     required this.educations,
     required this.experinces,
-    required this.awards,
-    required this.memberships,
-    required this.socialMedia,
-    required this.registrations,
-    required this.accessToken,
-    required this.isActive,
-    required this.invoiceIds,
-    required this.reviewsArray,
-    required this.rateArray,
-    required this.timeSlotId,
-    required this.patientsId,
     required this.favsId,
-    required this.reservationsId,
-    required this.prescriptionsId,
-    required this.lastUpdate,
-    required this.id,
-    required this.lastLogin,
-    required this.online,
+    required this.firstName,
+    required this.fullName,
+    required this.gender,
     required this.idle,
+    required this.invoiceIds,
+    required this.isActive,
+    required this.isVerified,
+    required this.lastLogin,
+    required this.lastName,
+    required this.lastUpdate,
+    required this.memberships,
+    required this.mobileNumber,
+    required this.userName,
+    required this.online,
+    required this.patientsId,
+    required this.prescriptionsId,
+    required this.profileImage,
+    required this.rateArray,
+    required this.recommendArray,
+    required this.registrations,
+    required this.reviewsArray,
+    required this.reservationsId,
+    required this.roleName,
+    required this.services,
+    required this.socialMedia,
+    required this.specialities,
+    required this.specialitiesServices,
+    required this.state,
+    required this.timeSlotId,
+    required this.timeslots,
+    required this.zipCode,
+    required this.id,
+    required this.doctorsId,
   });
-
-  DoctorUserProfile copyWith({
-    String? createdAt,
-    String? userName,
-    String? firstName,
-    String? lastName,
-    String? mobileNumber,
-    String? gender,
-    String? dob,
-    String? clinicName,
-    String? clinicAddress,
-    String? aboutMe,
-    List<ClinicImages>? clinicImages,
-    String? profileImage,
-    String? roleName,
-    String? services,
-    String? address1,
-    String? address2,
-    String? city,
-    String? state,
-    String? zipCode,
-    String? country,
-    List<dynamic>? pricing,
-    List<String>? specialitiesServices,
-    List<Specialities>? specialities,
-    List<Education>? educations,
-    List<Experinces>? experinces,
-    List<Award>? awards,
-    List<Memberships>? memberships,
-    List<dynamic>? socialMedia,
-    List<Registrations>? registrations,
-    String? accessToken,
-    bool? isActive,
-    List<dynamic>? invoiceIds,
-    List<dynamic>? reviewsArray,
-    List<dynamic>? rateArray,
-    List<dynamic>? timeSlotId,
-    List<dynamic>? patientsId,
-    List<dynamic>? favsId,
-    List<dynamic>? reservationsId,
-    List<dynamic>? prescriptionsId,
-    String? lastUpdate,
-    String? id,
-    LastLogin? lastLogin,
-    bool? online,
-    bool? idle,
-  }) {
+  factory DoctorUserProfile.fromJson(Map<String, dynamic> json) {
     return DoctorUserProfile(
-      createdAt: createdAt ?? this.createdAt,
-      userName: userName ?? this.userName,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      mobileNumber: mobileNumber ?? this.mobileNumber,
-      gender: gender ?? this.gender,
-      dob: dob ?? this.dob,
-      clinicName: clinicName ?? this.clinicName,
-      clinicAddress: clinicAddress ?? this.clinicAddress,
-      aboutMe: aboutMe ?? this.aboutMe,
-      clinicImages: clinicImages ?? this.clinicImages,
-      profileImage: profileImage ?? this.profileImage,
-      roleName: roleName ?? this.roleName,
-      services: services ?? this.services,
-      address1: address1 ?? this.address1,
-      address2: address2 ?? this.address2,
-      city: city ?? this.city,
-      state: state ?? this.state,
-      zipCode: zipCode ?? this.zipCode,
-      country: country ?? this.country,
-      pricing: pricing ?? this.pricing,
-      specialitiesServices: specialitiesServices ?? this.specialitiesServices,
-      specialities: specialities ?? this.specialities,
-      educations: educations ?? this.educations,
-      experinces: experinces ?? this.experinces,
-      awards: awards ?? this.awards,
-      memberships: memberships ?? this.memberships,
-      socialMedia: socialMedia ?? this.socialMedia,
-      registrations: registrations ?? this.registrations,
-      accessToken: accessToken ?? this.accessToken,
-      isActive: isActive ?? this.isActive,
-      invoiceIds: invoiceIds ?? this.invoiceIds,
-      reviewsArray: reviewsArray ?? this.reviewsArray,
-      rateArray: rateArray ?? this.rateArray,
-      timeSlotId: timeSlotId ?? this.timeSlotId,
-      patientsId: patientsId ?? this.patientsId,
-      favsId: favsId ?? this.favsId,
-      reservationsId: reservationsId ?? this.reservationsId,
-      prescriptionsId: prescriptionsId ?? this.prescriptionsId,
-      lastUpdate: lastUpdate ?? this.lastUpdate,
-      id: id ?? this.id,
-      lastLogin: lastLogin ?? this.lastLogin,
-      online: online ?? this.online,
-      idle: idle ?? this.idle,
+      aboutMe: json['aboutMe'] ?? '',
+      accessToken: json['accessToken'] ?? '',
+      address1: json['address1'] ?? '',
+      address2: json['address2'] ?? '',
+      awards: (json['awards'] as List)
+          .map((e) => Award.fromMap(e as Map<String, dynamic>)) // Use fromMap here
+          .toList(),
+      bankId: json['bankId'] ?? '',
+      billingsIds: List<String>.from(json['billingsIds']),
+      bookingsFee: json['bookingsFee'] ?? 0,
+      city: json['city'] ?? '',
+      clinicAddress: json['clinicAddress'] ?? '',
+      clinicImages: (json['clinicImages'] as List)
+          .map((e) => ClinicImages.fromMap(e as Map<String, dynamic>)) // Use fromMap here
+          .toList(),
+      clinicName: json['clinicName'] ?? '',
+      country: json['country'] ?? '',
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+      currency: (json['currency'] as List).map((e) => Currency.fromJson(e)).toList(),
+      dob: json['dob'] ?? '',
+      educations: (json['educations'] as List).map((e) => Education.fromMap(e as Map<String, dynamic>)).toList(),
+      experinces: (json['experinces'] as List).map((e) => Experinces.fromMap(e as Map<String, dynamic>)).toList(),
+      favsId: List<String>.from(json['favs_id']),
+      firstName: json['firstName'] ?? '',
+      fullName: json['fullName'] ?? '',
+      gender: json['gender'] ?? '',
+      idle: json['idle'],
+      invoiceIds: List<String>.from(json['invoice_ids']),
+      isActive: json['isActive'] ?? false,
+      isVerified: json['isVerified'],
+      lastLogin: LastLogin.fromJson(json['lastLogin']),
+      lastName: json['lastName'] ?? '',
+      lastUpdate: DateTime.parse(json['lastUpdate']),
+      memberships: (json['memberships'] as List).map((e) => Memberships.fromMap(e as Map<String, dynamic>)).toList(),
+      mobileNumber: json['mobileNumber'] ?? '',
+      online: json['online'] ?? false,
+      patientsId: List<String>.from(json['patients_id']),
+      prescriptionsId: List<String>.from(json['prescriptions_id']),
+      profileImage: json['profileImage'] ?? '',
+      rateArray: List<double>.from(json['rate_array']),
+      recommendArray: List<int>.from(json['recommendArray']),
+      registrations: (json['registrations'] as List).map((e) => Registrations.fromMap(e as Map<String, dynamic>)).toList(),
+      reviewsArray: List<String>.from(json['reviews_array']),
+      reservationsId: List<String>.from(json['reservations_id']),
+      roleName: json['roleName'] ?? "",
+      services: json['services'] ?? "",
+      // roleName: DoctorRoleName.values.firstWhere((e) => e.toString() == 'DoctorRoleName.${json['roleName']}'),
+      // services: Services.values.firstWhere((e) => e.toString() == 'Services.${json['services']}'),
+      socialMedia: (json['socialMedia'] as List).map((e) => SocialMedia.fromJson(e)).toList(),
+      specialities: (json['specialities'] as List).map((e) => Specialities.fromMap(e as Map<String, dynamic>)).toList(),
+      specialitiesServices: List<String>.from(json['specialitiesServices']),
+      state: json['state'] ?? '',
+      timeSlotId: json['timeSlotId'] is List
+          ? List<String>.from(json['timeSlotId']) // If it's a List, convert to List<String>
+          : (json['timeSlotId'] != null ? [json['timeSlotId'].toString()] : []), // If it's a string, wrap it in a list
+      timeslots: json['timeslots'] != null ? (json['timeslots'] as List).map((e) => DoctorsTimeSlot.fromJson(e)).toList() : null,
+      userName: json['userName'] ?? '',
+      zipCode: json['zipCode'] ?? '',
+      id: json['_id'],
+      doctorsId: json['id'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'aboutMe': aboutMe,
+      'accessToken': accessToken,
+      'address1': address1,
+      'address2': address2,
+      'awards': awards.map((e) => e.toJson()).toList(),
+      'bankId': bankId,
+      'billingsIds': billingsIds,
+      'bookingsFee': bookingsFee,
+      'city': city,
+      'clinicAddress': clinicAddress,
+      'clinicImages': clinicImages.map((e) => e.toJson()).toList(),
+      'clinicName': clinicName,
+      'country': country,
+      'createdAt': createdAt,
+      'currency': currency.map((e) => e.toJson()).toList(),
+      'dob': dob,
+      'educations': educations.map((e) => e.toJson()).toList(),
+      'experinces': experinces.map((e) => e.toJson()).toList(),
+      'favs_id': favsId,
+      'firstName': firstName,
+      'fullName': fullName,
+      'gender': gender,
+      'idle': idle,
+      'invoice_ids': invoiceIds,
+      'isActive': isActive,
+      'isVerified': isVerified,
+      'lastLogin': lastLogin.toJson(),
+      'lastName': lastName,
+      'lastUpdate': lastUpdate.toIso8601String(),
+      'memberships': memberships.map((e) => e.toJson()).toList(),
+      'mobileNumber': mobileNumber,
+      'online': online,
+      'patients_id': patientsId,
+      'prescriptions_id': prescriptionsId,
+      'profileImage': profileImage,
+      'rate_array': rateArray,
+      'recommendArray': recommendArray,
+      'registrations': registrations.map((e) => e.toJson()).toList(),
+      'reviews_array': reviewsArray,
+      'reservations_id': reservationsId,
+      'roleName': roleName.toString().split('.').last,
+      'services': services.toString().split('.').last,
+      'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
+      'specialities': specialities.map((e) => e.toJson()).toList(),
+      'specialitiesServices': specialitiesServices,
+      'state': state,
+      'timeSlotId': timeSlotId,
+      'timeslots': timeslots?.map((e) => e.toJson()).toList(),
+      'userName': userName,
+      'zipCode': zipCode,
+      '_id': id,
+      'id': doctorsId,
+    };
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 
-    result.addAll({'createdAt': createdAt});
-    result.addAll({'userName': userName});
-    result.addAll({'firstName': firstName});
-    result.addAll({'lastName': lastName});
-    result.addAll({'mobileNumber': mobileNumber});
-    result.addAll({'gender': gender});
-    result.addAll({'dob': dob});
-    result.addAll({'clinicName': clinicName});
-    result.addAll({'clinicAddress': clinicAddress});
     result.addAll({'aboutMe': aboutMe});
-    result.addAll({'clinicImages': clinicImages.map((x) => x.toMap()).toList()});
-    result.addAll({'profileImage': profileImage});
-    result.addAll({'roleName': roleName});
-    result.addAll({'services': services});
+    result.addAll({'accessToken': accessToken});
     result.addAll({'address1': address1});
     result.addAll({'address2': address2});
+    result.addAll({'awards': awards.map((x) => x.toMap()).toList()});
+    result.addAll({"bankId": bankId});
+    result.addAll({"billingsIds": billingsIds});
+    result.addAll({"bookingsFee": bookingsFee});
     result.addAll({'city': city});
-    result.addAll({'state': state});
-    result.addAll({'zipCode': zipCode});
+    result.addAll({'clinicAddress': clinicAddress});
+    result.addAll({'clinicImages': clinicImages.map((x) => x.toMap()).toList()});
+    result.addAll({'clinicName': clinicName});
     result.addAll({'country': country});
-    result.addAll({'pricing': pricing});
-    result.addAll({'specialitiesServices': specialitiesServices});
-    result.addAll({'specialities': specialities.map((x) => x.toMap()).toList()});
+    result.addAll({'createdAt': createdAt});
+    result.addAll({'currency': currency.map((x) => x.toMap()).toList()});
+    result.addAll({'dob': dob});
     result.addAll({'educations': educations.map((x) => x.toMap()).toList()});
     result.addAll({'experinces': experinces.map((x) => x.toMap()).toList()});
-    result.addAll({'awards': awards.map((x) => x.toMap()).toList()});
-    result.addAll({'memberships': memberships.map((x) => x.toMap()).toList()});
-    result.addAll({'socialMedia': socialMedia});
-    result.addAll({'registrations': registrations.map((x) => x.toMap()).toList()});
-    result.addAll({'accessToken': accessToken});
-    result.addAll({'isActive': isActive});
-    result.addAll({'invoiceIds': invoiceIds});
-    result.addAll({'reviewsArray': reviewsArray});
-    result.addAll({'rateArray': rateArray});
-    result.addAll({'timeSlotId': timeSlotId});
-    result.addAll({'patientsId': patientsId});
     result.addAll({'favsId': favsId});
-    result.addAll({'reservationsId': reservationsId});
-    result.addAll({'prescriptionsId': prescriptionsId});
-    result.addAll({'lastUpdate': lastUpdate});
-    result.addAll({'id': id});
-    result.addAll({'lastLogin': lastLogin.toMap()});
-    result.addAll({'online': online});
+    result.addAll({'firstName': firstName});
+    result.addAll({'fullName': fullName});
+    result.addAll({'gender': gender});
     result.addAll({'idle': idle});
+    result.addAll({'invoiceIds': invoiceIds});
+    result.addAll({'isActive': isActive});
+    result.addAll({'isVerified': isVerified});
+    result.addAll({'lastLogin': lastLogin.toMap()});
+    result.addAll({'lastName': lastName});
+    result.addAll({'lastUpdate': lastUpdate});
+    result.addAll({'memberships': memberships.map((x) => x.toMap()).toList()});
+    result.addAll({'mobileNumber': mobileNumber});
+    result.addAll({'online': online});
+    result.addAll({'patientsId': patientsId});
+    result.addAll({'prescriptionsId': prescriptionsId});
+    result.addAll({'profileImage': profileImage});
+    result.addAll({'rateArray': rateArray});
+    result.addAll({'recommendArray': recommendArray});
+    result.addAll({'registrations': registrations.map((x) => x.toMap()).toList()});
+    result.addAll({'reviewsArray': reviewsArray});
+    result.addAll({'reservationsId': reservationsId});
+    result.addAll({'roleName': roleName});
+    result.addAll({'services': services});
+    result.addAll({'socialMedia': socialMedia});
+    result.addAll({'specialities': specialities.map((x) => x.toMap()).toList()});
+    result.addAll({'specialitiesServices': specialitiesServices});
+    result.addAll({'state': state});
+    result.addAll({'timeSlotId': timeSlotId});
+    result.addAll({'timeslots': timeslots});
+    result.addAll({'userName': userName});
+    result.addAll({'zipCode': zipCode});
+    result.addAll({'id': id});
+    result.addAll({'doctorsId': doctorsId});
 
     return result;
   }
 
   factory DoctorUserProfile.fromMap(Map<String, dynamic> map) {
     return DoctorUserProfile(
-      createdAt: map['createdAt'] ?? '',
-      userName: map['userName'] ?? '',
-      firstName: map['firstName'] ?? '',
-      lastName: map['lastName'] ?? '',
-      mobileNumber: map['mobileNumber'] ?? '',
-      gender: map['gender'] ?? '',
-      dob: map['dob'] ?? '',
-      clinicName: map['clinicName'] ?? '',
-      clinicAddress: map['clinicAddress'] ?? '',
       aboutMe: map['aboutMe'] ?? '',
-      clinicImages: List<ClinicImages>.from(map['clinicImages']?.map((x) => ClinicImages.fromMap(x))),
-      profileImage: map['profileImage'] ?? '',
-      roleName: map['roleName'] ?? '',
-      services: map['services'] ?? '',
+      accessToken: map['accessToken'] ?? '',
       address1: map['address1'] ?? '',
       address2: map['address2'] ?? '',
+      awards: map['awards'] != null ? List<Award>.from(map['awards']?.map((x) => Award.fromMap(x))) : [],
+      bankId: map['bankId'] ?? '',
+      billingsIds: map['billingsIds'] != null ? List<String>.from(map['billingsIds']) : [],
+      bookingsFee: map['bookingsFee'] ?? '',
       city: map['city'] ?? '',
-      state: map['state'] ?? '',
-      zipCode: map['zipCode'] ?? '',
+      clinicAddress: map['clinicAddress'] ?? '',
+      clinicImages: map['clinicImages'] != null ? List<ClinicImages>.from(map['clinicImages']?.map((x) => ClinicImages.fromMap(x))) : [],
+      clinicName: map['clinicName'] ?? '',
       country: map['country'] ?? '',
-      pricing: List<dynamic>.from(map['pricing']),
-      specialitiesServices: List<String>.from(map['specialitiesServices']),
-      specialities: List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))),
-      educations: List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))),
-      experinces: List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))),
-      awards: List<Award>.from(map['awards']?.map((x) => Award.fromMap(x))),
-      memberships: List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))),
-      socialMedia: List<dynamic>.from(map['socialMedia']),
-      registrations: List<Registrations>.from(map['registrations']?.map((x) => Registrations.fromMap(x))),
-      accessToken: map['accessToken'] ?? '',
-      isActive: map['isActive'] ?? false,
-      invoiceIds: List<dynamic>.from(map['invoice_ids']),
-      reviewsArray: List<dynamic>.from(map['reviews_array']),
-      rateArray: List<dynamic>.from(map['rate_array']),
-      timeSlotId: map['timeSlotId'] == null ? [] : List<dynamic>.from(map['timeSlotId']),
-      patientsId: List<dynamic>.from(map['patients_id']),
-      favsId: List<dynamic>.from(map['favs_id']),
-      reservationsId: List<dynamic>.from(map['reservations_id']),
-      prescriptionsId: List<dynamic>.from(map['prescriptions_id']),
-      lastUpdate: map['lastUpdate'] ?? '',
-      id: map['id'] ?? '',
-      lastLogin: map['lastLogin'] == null ? LastLogin(date: '', ipAddr: '', userAgent: '') : LastLogin.fromMap(map['lastLogin']),
-      online: map['online'] ?? false,
+      currency: map['currency'] != null ? List<Currency>.from(map['currency']?.map((x) => Currency.fromMap(x))) : [],
+      createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(), // Handle DateTime parsing
+      dob: (map['dob'] is String && map['dob'].isNotEmpty) ? DateTime.tryParse(map['dob'].trim()) : null,
+      educations: map['educations'] != null ? List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))) : [],
+      experinces: map['experinces'] != null ? List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))) : [],
+      favsId: map['favs_id'] != null ? List<String>.from(map['favs_id']) : [],
+      firstName: map['firstName'] ?? '',
+      fullName: map['fullName'] ?? '',
+      gender: map['gender'] ?? '',
       idle: map['idle'] ?? false,
+      invoiceIds: map['invoice_ids'] != null ? List<String>.from(map['invoice_ids']) : [],
+      isActive: map['isActive'] ?? false,
+      isVerified: map['isVerified'] ?? false,
+      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: '', ipAddr: '', userAgent: ''),
+      lastName: map['lastName'] ?? '',
+      lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(), // Handle DateTime parsing for lastUpdate
+      memberships: map['memberships'] != null ? List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))) : [],
+      mobileNumber: map['mobileNumber'] ?? '',
+      online: map['online'] ?? false,
+      patientsId: map['patients_id'] != null ? List<String>.from(map['patients_id']) : [],
+      prescriptionsId: map['prescriptions_id'] != null ? List<String>.from(map['prescriptions_id']) : [],
+      profileImage: map['profileImage'] ?? '',
+      rateArray: map['rate_array'] != null ? List<double>.from(map['rate_array']) : [],
+      recommendArray: map['recommendArray'] != null ? List<int>.from(map['recommendArray']) : [],
+      registrations: map['registrations'] != null ? List<Registrations>.from(map['registrations']?.map((x) => Registrations.fromMap(x))) : [],
+      reviewsArray: map['reviews_array'] != null ? List<String>.from(map['reviews_array']) : [],
+      reservationsId: map['reservations_id'] != null ? List<String>.from(map['reservations_id']) : [],
+      roleName: map['roleName'] ?? "",
+      services: map['services'],
+      // roleName: DoctorRoleNameExtension.fromString(map['roleName']),
+      // services: ServicesExtension.fromString(map['services']),
+      socialMedia: map['socialMedia'] != null ? List<SocialMedia>.from(map['socialMedia']) : [],
+      specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
+      specialitiesServices: map['specialitiesServices'] != null ? List<String>.from(map['specialitiesServices']) : [],
+      state: map['state'] ?? '',
+      timeSlotId: map['timeSlotId'] != null ? List<String>.from(map['timeSlotId']) : [],
+      timeslots: map['timeslots'] != null
+          ? List<DoctorsTimeSlot>.from(map['timeslots']?.map((x) => DoctorsTimeSlot.fromMap(x)) ?? [])
+          : null, // Handle null timeslots
+      userName: map['userName'] ?? '',
+      zipCode: map['zipCode'] ?? '',
+      id: map['_id'] ?? '',
+      doctorsId: map['id'] ?? '',
     );
   }
 
-  String toJson() => json.encode(toMap());
-
-  factory DoctorUserProfile.fromJson(String source) => DoctorUserProfile.fromMap(json.decode(source));
-
   @override
   String toString() {
-    return 'DoctorUserProfile(createdAt: $createdAt, userName: $userName, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, gender: $gender, dob: $dob, clinicName: $clinicName, clinicAddress: $clinicAddress, aboutMe: $aboutMe, clinicImages: $clinicImages, profileImage: $profileImage, roleName: $roleName, services: $services, address1: $address1, address2: $address2, city: $city, state: $state, zipCode: $zipCode, country: $country, pricing: $pricing, specialitiesServices: $specialitiesServices, specialities: $specialities, educations: $educations, experinces: $experinces, awards: $awards, memberships: $memberships, socialMedia: $socialMedia, registrations: $registrations, accessToken: $accessToken, isActive: $isActive, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, timeSlotId: $timeSlotId, patientsId: $patientsId, favsId: $favsId, reservationsId: $reservationsId, prescriptionsId: $prescriptionsId, lastUpdate: $lastUpdate, id: $id, lastLogin: $lastLogin, online: $online, idle: $idle)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is DoctorUserProfile &&
-        other.createdAt == createdAt &&
-        other.userName == userName &&
-        other.firstName == firstName &&
-        other.lastName == lastName &&
-        other.mobileNumber == mobileNumber &&
-        other.gender == gender &&
-        other.dob == dob &&
-        other.clinicName == clinicName &&
-        other.clinicAddress == clinicAddress &&
-        other.aboutMe == aboutMe &&
-        listEquals(other.clinicImages, clinicImages) &&
-        other.profileImage == profileImage &&
-        other.roleName == roleName &&
-        other.services == services &&
-        other.address1 == address1 &&
-        other.address2 == address2 &&
-        other.city == city &&
-        other.state == state &&
-        other.zipCode == zipCode &&
-        other.country == country &&
-        listEquals(other.pricing, pricing) &&
-        listEquals(other.specialitiesServices, specialitiesServices) &&
-        listEquals(other.specialities, specialities) &&
-        listEquals(other.educations, educations) &&
-        listEquals(other.experinces, experinces) &&
-        listEquals(other.awards, awards) &&
-        listEquals(other.memberships, memberships) &&
-        listEquals(other.socialMedia, socialMedia) &&
-        listEquals(other.registrations, registrations) &&
-        other.accessToken == accessToken &&
-        other.isActive == isActive &&
-        listEquals(other.invoiceIds, invoiceIds) &&
-        listEquals(other.reviewsArray, reviewsArray) &&
-        listEquals(other.rateArray, rateArray) &&
-        listEquals(other.timeSlotId, timeSlotId) &&
-        listEquals(other.patientsId, patientsId) &&
-        listEquals(other.favsId, favsId) &&
-        listEquals(other.reservationsId, reservationsId) &&
-        listEquals(other.prescriptionsId, prescriptionsId) &&
-        other.lastUpdate == lastUpdate &&
-        other.id == id &&
-        other.lastLogin == lastLogin &&
-        other.online == online &&
-        other.idle == idle;
-  }
-
-  @override
-  int get hashCode {
-    return createdAt.hashCode ^
-        userName.hashCode ^
-        firstName.hashCode ^
-        lastName.hashCode ^
-        mobileNumber.hashCode ^
-        gender.hashCode ^
-        dob.hashCode ^
-        clinicName.hashCode ^
-        clinicAddress.hashCode ^
-        aboutMe.hashCode ^
-        clinicImages.hashCode ^
-        profileImage.hashCode ^
-        roleName.hashCode ^
-        services.hashCode ^
-        address1.hashCode ^
-        address2.hashCode ^
-        city.hashCode ^
-        state.hashCode ^
-        zipCode.hashCode ^
-        country.hashCode ^
-        pricing.hashCode ^
-        specialitiesServices.hashCode ^
-        specialities.hashCode ^
-        educations.hashCode ^
-        experinces.hashCode ^
-        awards.hashCode ^
-        memberships.hashCode ^
-        socialMedia.hashCode ^
-        registrations.hashCode ^
-        accessToken.hashCode ^
-        isActive.hashCode ^
-        invoiceIds.hashCode ^
-        reviewsArray.hashCode ^
-        rateArray.hashCode ^
-        timeSlotId.hashCode ^
-        patientsId.hashCode ^
-        favsId.hashCode ^
-        reservationsId.hashCode ^
-        prescriptionsId.hashCode ^
-        lastUpdate.hashCode ^
-        id.hashCode ^
-        lastLogin.hashCode ^
-        online.hashCode ^
-        idle.hashCode;
+    return 'DoctorUserProfile(aboutMe: $aboutMe, accessToken: $accessToken, address1: $address1, address2: $address2, awards: $awards, bankId: $bankId, billingsIds: $billingsIds, bookingsFee: $bookingsFee, city: $city, clinicAddress: $clinicAddress, clinicImages: $clinicImages, clinicName: $clinicName, country: $country, createdAt: $createdAt, currency: $currency, dob: $dob, educations: $educations, experinces: $experinces, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, memberships: $memberships, mobileNumber: $mobileNumber, userName: $userName, online: $online, patientsId: $patientsId, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, recommendArray: $recommendArray, registrations: $registrations, reviewsArray: $reviewsArray, reservationsId: $reservationsId, roleName: $roleName, services: $services, socialMedia: $socialMedia, specialities: $specialities, specialitiesServices: $specialitiesServices, state: $state, timeSlotId: $timeSlotId, timeslots: $timeslots, zipCode: $zipCode, id: $id, doctorsId: $doctorsId)';
   }
 }

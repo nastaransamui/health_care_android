@@ -18,7 +18,7 @@ class DoctorsProvider extends ChangeNotifier {
   void setDoctors(List<dynamic> doctors) {
     _doctors.clear();
     for (var element in doctors) {
-      final doctorsFromAdmin = Doctors.fromMap(element);
+      final doctorsFromAdmin = Doctors.fromJson(element);
       _doctors.add(doctorsFromAdmin);
     }
     notifyListeners();
@@ -27,7 +27,7 @@ class DoctorsProvider extends ChangeNotifier {
   void setDoctorsSearch(List<dynamic> doctors, int totalDoctors) {
     _searchDoctors.clear();
     for (var element in doctors) {
-      final doctorsFromAdmin = Doctors.fromMap(element);
+      final doctorsFromAdmin = Doctors.fromJson(element);
       _searchDoctors.add(doctorsFromAdmin);
     }
     _totalDoctors = totalDoctors;

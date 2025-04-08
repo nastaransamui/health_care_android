@@ -26,11 +26,13 @@ class VitalService {
         vitalSignsProvider.setVitalSigns(data);
       },
     );
-    socket.emit('getVitalSign', {"userId": userId});
+    socket.emit('getVitalSign', {"userId": userId, "limit": 5, "skip": 0, "sort": { "date": -1 } });
     socket.on(
       'getVitalSignReturn',
       (data) {
-         vitalSignsProvider.setVitalSigns(data);
+          if (data['status'] == 200) {
+          vitalSignsProvider.setVitalSigns(data['vitalSign']);
+        }
       },
     );
   }

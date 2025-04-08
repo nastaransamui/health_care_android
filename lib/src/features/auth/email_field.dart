@@ -40,7 +40,7 @@ class _EmailFieldState extends State<EmailField> {
               borderSide: BorderSide.none),
           fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
           filled: true,
-          prefixIcon: const Icon(Icons.email_sharp),
+           prefixIcon:  Icon(Icons.email_sharp, color: Theme.of(context).primaryColorLight),
           isDense: true,
           alignLabelWithHint: true,
         ),

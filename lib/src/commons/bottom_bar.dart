@@ -79,11 +79,11 @@ class _BottomBarState extends State<BottomBar> {
     if (isLogin) {
       if (roleName == 'patient') {
         if (patientProfile!.userProfile.profileImage.isNotEmpty) {
-          imageUrl = '${patientProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+          imageUrl = patientProfile.userProfile.profileImage;
         }
       } else if (roleName == 'doctors') {
         if (doctorsProfile!.userProfile.profileImage.isNotEmpty) {
-          imageUrl = '${doctorsProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}'; //
+          imageUrl = doctorsProfile.userProfile.profileImage; //
         }
       }
     }

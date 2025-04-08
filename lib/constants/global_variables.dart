@@ -80,22 +80,37 @@ List vitalBoxList = [
 ];
 
 List patinetDataScroll = [
-  {"title": "appointments", "icon": const Icon(Icons.book_online), "routeName": "/patient/dashboard/appointments"},
-  {"title": "prescriptions", "icon": const Icon(Icons.medication), "routeName": "/patient/dashboard/prescriptions"},
+  {"title": "appointments", "icon": const FaIcon(FontAwesomeIcons.calendarCheck), "routeName": "/patient/dashboard/appointments"},
+  {"title": "prescriptions", "icon": const FaIcon(FontAwesomeIcons.clipboard), "routeName": "/patient/dashboard/prescriptions"},
   {"title": "medicalRecords", "icon": const Icon(Icons.medication), "routeName": "/patient/dashboard/medicalRecords"},
   {"title": "billings", "icon": const Icon(Icons.attach_money), "routeName": "/patient/dashboard/billings"}
 ];
 
 List patientsDashboardLink = [
   {
+    'name': 'profileSettings',
+    'routeName': "/patient/dashboard/profile",
+    "icon": const FaIcon(FontAwesomeIcons.userCog),
+  },
+  {
     'name': 'favourites',
     'routeName': "/patient/dashboard/favourites",
-    "icon": const FaIcon(FontAwesomeIcons.columns),
+    "icon": const FaIcon(FontAwesomeIcons.bookmark),
   },
   {
     'name': 'dependent',
     'routeName': "/patient/dashboard/dependent",
     "icon": const FaIcon(FontAwesomeIcons.users),
+  },
+  {
+    'name': 'reviews',
+    'routeName': "/patient/dashboard/reviews",
+    "icon": const FaIcon(FontAwesomeIcons.comments),
+  },
+  {
+    'name': 'rates',
+    'routeName': "/patient/dashboard/rates",
+    "icon": const FaIcon(FontAwesomeIcons.star),
   },
   {
     'name': 'message',
@@ -108,19 +123,14 @@ List patientsDashboardLink = [
     "icon": const FaIcon(FontAwesomeIcons.listAlt),
   },
   {
-    'name': 'addMedicalRecords',
-    'routeName': "/patient/dashboard/addMedicalRecords",
+    'name': 'medicalrecords',
+    'routeName': "/patient/dashboard/medicalrecords",
     "icon": const FaIcon(FontAwesomeIcons.clipboard),
   },
   {
     'name': 'medicalDetails',
     'routeName': "/patient/dashboard/medicalDetails",
     "icon": const FaIcon(FontAwesomeIcons.fileMedicalAlt),
-  },
-  {
-    'name': 'profileSettings',
-    'routeName': "/patient/dashboard/profile",
-    "icon": const FaIcon(FontAwesomeIcons.userCog),
   },
   {
     'name': 'changePassword',
@@ -256,5 +266,65 @@ List<Map<String, dynamic>> cardioHomeSpecialistsList = [
     "starsCount": 5,
     "specialities": 'consultCardioLogist',
     "doctorName": "Dr Julian Collinson"
+  },
+];
+
+List startDrawerTitleList = [
+  {
+    'name': 'home',
+    'routeName': "/",
+    "icon": const FaIcon(FontAwesomeIcons.home),
+  },
+  {
+    'icon': const FaIcon(FontAwesomeIcons.clinicMedical),
+    'name': 'clinics',
+    'injectClinics': true,
+    'children': [],
+  },
+  {
+    'name': 'pharmacy',
+    'routeName': "/pharmacy",
+    "icon": const FaIcon(FontAwesomeIcons.medkit),
+  },
+  {
+    'name': 'blog',
+    'routeName': "/blog",
+    "icon": const FaIcon(FontAwesomeIcons.blog),
+  },
+  {
+    'name': 'doctors',
+    'routeName': '/doctors/search',
+    "icon": const FaIcon(FontAwesomeIcons.userMd),
+  },
+  {
+    'icon': const FaIcon(FontAwesomeIcons.fileAlt),
+    'name': "conditions",
+    'children': [
+      {
+        'name': 'privacyPolicy',
+        'routeName': '/privacy',
+        'icon': const FaIcon(FontAwesomeIcons.userSecret),
+      },
+      {
+        'name': 'termsAndConditions',
+        'routeName': '/terms',
+        'icon': const FaIcon(FontAwesomeIcons.fileContract),
+      },
+      {
+        'name': 'faq',
+        'routeName': '/faq',
+        'icon': const FaIcon(FontAwesomeIcons.questionCircle),
+      },
+    ],
+  },
+  {
+    'name': 'aboutUs',
+    'routeName': "/about",
+    "icon": const FaIcon(FontAwesomeIcons.infoCircle),
+  },
+  {
+    'name': 'contactUs',
+    'routeName': "/contact",
+    "icon": const FaIcon(FontAwesomeIcons.envelopeOpenText),
   },
 ];

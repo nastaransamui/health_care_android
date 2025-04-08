@@ -2,379 +2,275 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/specialities.dart';
-
 class Doctors {
-  final String createdAt;
-  final String updatedAt;
-  final String userName;
-  final String firstName;
-  final String lastName;
-  final String mobileNumber;
-  final String gender;
-  final String dob;
-  final String clinicName;
-  final String clinicAddress;
   final String aboutMe;
-  final List<ClinicImages> clinicImages;
-  final String profileImage;
-  final String roleName;
-  final String services;
+  final String accessToken;
   final String address1;
   final String address2;
+  final List<Award> awards;
+  final String bankId;
+  final List<String> billingsIds;
+  final int bookingsFee;
   final String city;
-  final String state;
-  final String zipCode;
+  final String clinicAddress;
+  final List<ClinicImages> clinicImages;
+  final String clinicName;
   final String country;
-  final List<dynamic> pricing;
-  final List<dynamic> specialitiesServices;
-  final List<Specialities> specialities;
+  final DateTime createdAt;
+  final List<Currency> currency;
+  final dynamic dob;
   final List<Education> educations;
   final List<Experinces> experinces;
-  final List<Award> awards;
-  final List<Memberships> memberships;
-  final List<dynamic> socialMedia;
-  final List<Registrations> registrations;
-  final List<dynamic> invoiceIds;
-  final List<dynamic> reviewsArray;
-  final List<dynamic> rateArray;
-  final List<dynamic> timeslots;
-  final List<dynamic> favIds;
-  final String accessToken;
+  final List<String> favIds;
+  final String firstName;
+  final String fullName;
+  final String gender;
+  final bool? idle;
+  final List<String> invoiceIds;
   final bool isActive;
+  final bool? isVerified;
+  final LastLogin? lastLogin;
+  final String lastName;
+  final DateTime lastUpdate;
+  final List<Memberships> memberships;
+  final String mobileNumber;
   final bool online;
-  final String lastUpdate;
-  // final Map<dynamic, dynamic> status;
-  final String id;
+  final List<String> patientsId;
+  final List<String> prescriptionsId;
+  final String profileImage;
+  final List<double> rateArray;
+  final List<int>recommendArray;
+  final List<Registrations> registrations;
+  final List<String> reviewsArray;
+  final List<String> reservationsId;
+  final String roleName;
+  final String services;
+  final List<SocialMedia> socialMedia;
+  final List<Specialities> specialities;
+  final List<String> specialitiesServices;
+  final String state;
+  final List<String> timeSlotId;
+  final List<DoctorsTimeSlot>? timeslots;
+  final String userName;
+  final String zipCode;
+  final String updatedAt;
+  final String? id;
+  final int doctorsId;
 
-  Doctors({
-    required this.createdAt,
-    required this.updatedAt,
-    required this.userName,
-    required this.firstName,
-    required this.lastName,
-    required this.mobileNumber,
-    required this.gender,
-    required this.dob,
-    required this.clinicName,
-    required this.clinicAddress,
+ Doctors({
     required this.aboutMe,
-    required this.clinicImages,
-    required this.profileImage,
-    required this.roleName,
-    required this.services,
+    required this.accessToken,
     required this.address1,
     required this.address2,
+    required this.awards,
+    required this.bankId,
+    required this.billingsIds,
+    required this.bookingsFee,
     required this.city,
-    required this.state,
-    required this.zipCode,
+    required this.clinicAddress,
+    required this.clinicImages,
+    required this.clinicName,
     required this.country,
-    required this.pricing,
-    required this.specialitiesServices,
-    required this.specialities,
+    required this.createdAt,
+    required this.currency,
+    required this.dob,
     required this.educations,
     required this.experinces,
-    required this.awards,
-    required this.memberships,
-    required this.socialMedia,
-    required this.registrations,
-    required this.invoiceIds,
-    required this.reviewsArray,
-    required this.rateArray,
-    required this.timeslots,
     required this.favIds,
-    required this.accessToken,
+    required this.firstName,
+    required this.fullName,
+    required this.gender,
+    this.idle,
+    required this.invoiceIds,
     required this.isActive,
-    required this.online,
+    this.isVerified,
+    this.lastLogin,
+    required this.lastName,
     required this.lastUpdate,
-    required this.id,
+    required this.memberships,
+    required this.mobileNumber,
+    required this.online,
+    required this.patientsId,
+    required this.prescriptionsId,
+    required this.profileImage,
+    required this.rateArray,
+    required this.recommendArray,
+    required this.registrations,
+    required this.reviewsArray,
+    required this.reservationsId,
+    required this.roleName,
+    required this.services,
+    required this.socialMedia,
+    required this.specialities,
+    required this.specialitiesServices,
+    required this.state,
+    required this.timeSlotId,
+    this.timeslots,
+    required this.userName,
+    required this.zipCode,
+    required this.updatedAt,
+    this.id,
+    required this.doctorsId,
   });
 
-  Doctors copyWith({
-    String? createdAt,
-    String? updatedAt,
-    String? userName,
-    String? firstName,
-    String? lastName,
-    String? mobileNumber,
-    String? gender,
-    String? dob,
-    String? clinicName,
-    String? clinicAddress,
-    String? aboutMe,
-    List<ClinicImages>? clinicImages,
-    String? profileImage,
-    String? roleName,
-    String? services,
-    String? address1,
-    String? address2,
-    String? city,
-    String? state,
-    String? zipCode,
-    String? country,
-    List<dynamic>? pricing,
-    List<dynamic>? specialitiesServices,
-    List<Specialities>? specialities,
-    List<Education>? educations,
-    List<Experinces>? experinces,
-    List<Award>? awards,
-    List<Memberships>? memberships,
-    List<dynamic>? socialMedia,
-    List<Registrations>? registrations,
-    List<dynamic>? invoiceIds,
-    List<dynamic>? reviewsArray,
-    List<dynamic>? rateArray,
-    List<dynamic>? timeslots,
-    List<dynamic>? favIds,
-    String? accessToken,
-    bool? isActive,
-    bool? online,
-    String? lastUpdate,
-    // Map<dynamic, dynamic>? status,
-    String? id,
-  }) {
+   factory Doctors.fromJson(Map<String, dynamic> json) {
+
     return Doctors(
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      userName: userName ?? this.userName,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      mobileNumber: mobileNumber ?? this.mobileNumber,
-      gender: gender ?? this.gender,
-      dob: dob ?? this.dob,
-      clinicName: clinicName ?? this.clinicName,
-      clinicAddress: clinicAddress ?? this.clinicAddress,
-      aboutMe: aboutMe ?? this.aboutMe,
-      clinicImages: clinicImages ?? this.clinicImages,
-      profileImage: profileImage ?? this.profileImage,
-      roleName: roleName ?? this.roleName,
-      services: services ?? this.services,
-      address1: address1 ?? this.address1,
-      address2: address2 ?? this.address2,
-      city: city ?? this.city,
-      state: state ?? this.state,
-      zipCode: zipCode ?? this.zipCode,
-      country: country ?? this.country,
-      pricing: pricing ?? this.pricing,
-      specialitiesServices: specialitiesServices ?? this.specialitiesServices,
-      specialities: specialities ?? this.specialities,
-      educations: educations ?? this.educations,
-      experinces: experinces ?? this.experinces,
-      awards: awards ?? this.awards,
-      memberships: memberships ?? this.memberships,
-      socialMedia: socialMedia ?? this.socialMedia,
-      registrations: registrations ?? this.registrations,
-      invoiceIds: invoiceIds ?? this.invoiceIds,
-      reviewsArray: reviewsArray ?? this.reviewsArray,
-      rateArray: rateArray ?? this.rateArray,
-      timeslots: timeslots ?? this.timeslots,
-      favIds: favIds ?? this.favIds,
-      accessToken: accessToken ?? this.accessToken,
-      isActive: isActive ?? this.isActive,
-      online: online ?? this.online,
-      lastUpdate: lastUpdate ?? this.lastUpdate,
-      // status: status ?? this.status,
-      id: id ?? this.id,
+      aboutMe: json['aboutMe'] ?? '',
+      accessToken: json['accessToken'] ?? '',
+      address1: json['address1'] ?? '',
+      address2: json['address2'] ?? '',
+      awards: (json['awards'] as List)
+        .map((e) => Award.fromMap(e as Map<String, dynamic>)) // Use fromMap here
+        .toList(),
+      bankId: json['bankId'] ?? '',
+      billingsIds: List<String>.from(json['billingsIds']),
+      bookingsFee: json['bookingsFee'] ?? 0,
+      city: json['city'] ?? '',
+      clinicAddress: json['clinicAddress'] ?? '',
+      clinicImages: (json['clinicImages'] as List)
+    .map((e) => ClinicImages.fromMap(e as Map<String, dynamic>)) // Use fromMap here
+    .toList(),
+      clinicName: json['clinicName'] ?? '',
+      country: json['country'] ?? '',
+      createdAt: json['createdAt'] != null
+    ? DateTime.parse(json['createdAt'])
+    : DateTime.now(),
+      currency: (json['currency'] as List)
+          .map((e) => Currency.fromJson(e))
+          .toList(),
+      dob: json['dob'] ?? '',
+      educations: (json['educations'] as List)
+          .map((e) => Education.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      experinces: (json['experinces'] as List)
+          .map((e) => Experinces.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      favIds: List<String>.from(json['favs_id']),
+      firstName: json['firstName'] ?? '',
+      fullName: json['fullName'] ?? '',
+      gender: json['gender'] ?? '',
+      idle: json['idle'],
+      invoiceIds: List<String>.from(json['invoice_ids']),
+      isActive: json['isActive'] ?? false,
+      isVerified: json['isVerified'],
+      lastLogin: json['lastLogin'] != null
+          ? LastLogin.fromMap(json['lastLogin'])
+          : null,
+      lastName: json['lastName'] ?? '',
+      lastUpdate: DateTime.parse(json['lastUpdate']),
+      memberships: (json['memberships'] as List)
+          .map((e) => Memberships.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      mobileNumber: json['mobileNumber'] ?? '',
+      online: json['online'] ?? false,
+      patientsId: List<String>.from(json['patients_id']),
+      prescriptionsId: List<String>.from(json['prescriptions_id']),
+      profileImage: json['profileImage'] ?? '',
+      rateArray: (json['rate_array'] as List<dynamic>?)
+    ?.map((e) => (e as num).toDouble())
+    .toList() ?? [],
+      recommendArray: List<int>.from(json['recommendArray']),
+      registrations: (json['registrations'] as List)
+          .map((e) => Registrations.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      reviewsArray: List<String>.from(json['reviews_array']),
+      reservationsId: List<String>.from(json['reservations_id']),
+      roleName: json['roleName'] ?? "",
+      services: json['services'] ?? "",
+      // roleName: DoctorRoleName.values.firstWhere(
+      //     (e) => e.toString() == 'DoctorRoleName.${json['roleName']}'),
+      // services: Services.values
+      //     .firstWhere((e) => e.toString() == 'Services.${json['services']}'),
+      socialMedia: (json['socialMedia'] as List)
+          .map((e) => SocialMedia.fromJson(e))
+          .toList(),
+      specialities: (json['specialities'] as List)
+          .map((e) => Specialities.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      specialitiesServices: List<String>.from(json['specialitiesServices']),
+      state: json['state'] ?? '',
+      timeSlotId: json['timeSlotId'] is List
+    ? List<String>.from(json['timeSlotId']) // If it's a List, convert to List<String>
+    : (json['timeSlotId'] != null ? [json['timeSlotId'].toString()] : []), // If it's a string, wrap it in a list
+      timeslots: json['timeslots'] != null
+          ? (json['timeslots'] as List)
+              .map((e) => DoctorsTimeSlot.fromJson(e))
+              .toList()
+          : null,
+      userName: json['userName'] ?? '',
+      zipCode: json['zipCode'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
+      id: json['_id'],
+      doctorsId: json['id'] ?? 0,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-  
-    result.addAll({'createdAt': createdAt});
-    result.addAll({'updatedAt': updatedAt});
-    result.addAll({'userName': userName});
-    result.addAll({'firstName': firstName});
-    result.addAll({'lastName': lastName});
-    result.addAll({'mobileNumber': mobileNumber});
-    result.addAll({'gender': gender});
-    result.addAll({'dob': dob});
-    result.addAll({'clinicName': clinicName});
-    result.addAll({'clinicAddress': clinicAddress});
-    result.addAll({'aboutMe': aboutMe});
-    result.addAll({'clinicImages': clinicImages.map((x) => x.toMap()).toList()});
-    result.addAll({'profileImage': profileImage});
-    result.addAll({'roleName': roleName});
-    result.addAll({'services': services});
-    result.addAll({'address1': address1});
-    result.addAll({'address2': address2});
-    result.addAll({'city': city});
-    result.addAll({'state': state});
-    result.addAll({'zipCode': zipCode});
-    result.addAll({'country': country});
-    result.addAll({'pricing': pricing});
-    result.addAll({'specialitiesServices': specialitiesServices});
-    result.addAll({'specialities': specialities.map((x) => x.toMap()).toList()});
-    result.addAll({'educations': educations.map((x) => x.toMap()).toList()});
-    result.addAll({'experinces': experinces.map((x) => x.toMap()).toList()});
-    result.addAll({'awards': awards.map((x) => x.toMap()).toList()});
-    result.addAll({'memberships': memberships.map((x) => x.toMap()).toList()});
-    result.addAll({'socialMedia': socialMedia});
-    result.addAll({'registrations': registrations.map((x) => x.toMap()).toList()});
-    result.addAll({'invoiceIds': invoiceIds});
-    result.addAll({'reviewsArray': reviewsArray});
-    result.addAll({'rateArray': rateArray});
-    result.addAll({'timeslots': timeslots});
-    result.addAll({'favIds': favIds});
-    result.addAll({'accessToken': accessToken});
-    result.addAll({'isActive': isActive});
-    result.addAll({'online': online});
-    result.addAll({'lastUpdate': lastUpdate});
-    // result.addAll({'status': status});
-    result.addAll({'id': id});
-  
-    return result;
+  Map<String, dynamic> toJson() {
+    return {
+      'aboutMe': aboutMe,
+      'accessToken': accessToken,
+      'address1': address1,
+      'address2': address2,
+      'awards': awards.map((e) => e.toJson()).toList(),
+      'bankId': bankId,
+      'billingsIds': billingsIds,
+      'bookingsFee': bookingsFee,
+      'city': city,
+      'clinicAddress': clinicAddress,
+      'clinicImages': clinicImages.map((e) => e.toJson()).toList(),
+      'clinicName': clinicName,
+      'country': country,
+      'createdAt': createdAt,
+      'currency': currency.map((e) => e.toJson()).toList(),
+      'dob': dob,
+      'educations': educations.map((e) => e.toJson()).toList(),
+      'experinces': experinces.map((e) => e.toJson()).toList(),
+      'favs_id': favIds,
+      'firstName': firstName,
+      'fullName': fullName,
+      'gender': gender,
+      'idle': idle,
+      'invoice_ids': invoiceIds,
+      'isActive': isActive,
+      'isVerified': isVerified,
+      'lastLogin': lastLogin?.toJson(),
+      'lastName': lastName,
+      'lastUpdate': lastUpdate.toIso8601String(),
+      'memberships': memberships.map((e) => e.toJson()).toList(),
+      'mobileNumber': mobileNumber,
+      'online': online,
+      'patients_id': patientsId,
+      'prescriptions_id': prescriptionsId,
+      'profileImage': profileImage,
+      'rate_array': rateArray,
+      'recommendArray': recommendArray,
+      'registrations': registrations.map((e) => e.toJson()).toList(),
+      'reviews_array': reviewsArray,
+      'reservations_id': reservationsId,
+      'roleName': roleName.toString().split('.').last,
+      'services': services.toString().split('.').last,
+      'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
+      'specialities': specialities.map((e) => e.toJson()).toList(),
+      'specialitiesServices': specialitiesServices,
+      'state': state,
+      'timeSlotId': timeSlotId,
+      'timeslots': timeslots?.map((e) => e.toJson()).toList(),
+      'userName': userName,
+      'zipCode': zipCode,
+      'updatedAt': updatedAt,
+      '_id': id,
+      'id': doctorsId,
+    };
   }
-
-  factory Doctors.fromMap(Map<String, dynamic> map) {
-    return Doctors(
-      createdAt: map['createdAt'] ?? '',
-      updatedAt: map['updatedAt'] ?? '',
-      userName: map['userName'] ?? '',
-      firstName: map['firstName'] ?? '',
-      lastName: map['lastName'] ?? '',
-      mobileNumber: map['mobileNumber'] ?? '',
-      gender: map['gender'] ?? '',
-      dob: map['dob'] ?? '',
-      clinicName: map['clinicName'] ?? '',
-      clinicAddress: map['clinicAddress'] ?? '',
-      aboutMe: map['aboutMe'] ?? '',
-      clinicImages: List<ClinicImages>.from(map['clinicImages']?.map((x) => ClinicImages.fromMap(x))),
-      profileImage: map['profileImage'] ?? '',
-      roleName: map['roleName'] ?? '',
-      services: map['services'] ?? '',
-      address1: map['address1'] ?? '',
-      address2: map['address2'] ?? '',
-      city: map['city'] ?? '',
-      state: map['state'] ?? '',
-      zipCode: map['zipCode'] ?? '',
-      country: map['country'] ?? '',
-      pricing: List<dynamic>.from(map['pricing']),
-      specialitiesServices: List<dynamic>.from(map['specialitiesServices']),
-      specialities: List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))),
-      educations: List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))),
-      experinces: List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))),
-      awards: List<Award>.from(map['awards']?.map((x) => Award.fromMap(x))),
-      memberships: List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))),
-      socialMedia: List<dynamic>.from(map['socialMedia']),
-      registrations: List<Registrations>.from(map['registrations']?.map((x) => Registrations.fromMap(x))),
-      invoiceIds: List<dynamic>.from(map['invoice_ids']),
-      reviewsArray: List<dynamic>.from(map['reviews_array']),
-      rateArray: List<dynamic>.from(map['rate_array']),
-      timeslots: List<dynamic>.from(map['timeslots']),
-      favIds: List<dynamic>.from(map['favs_id']),
-      accessToken: map['accessToken'] ?? '',
-      isActive: map['isActive'] ?? false,
-      online: map['online'] ?? false,
-      lastUpdate: map['lastUpdate'] ?? '',
-      // status: Map<dynamic, dynamic>.from(map['status']),
-      id: map['_id'] ?? '',
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Doctors.fromJson(String source) => Doctors.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'Doctors(createdAt: $createdAt, updatedAt: $updatedAt, userName: $userName, firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, gender: $gender, dob: $dob, clinicName: $clinicName, clinicAddress: $clinicAddress, aboutMe: $aboutMe, clinicImages: $clinicImages, profileImage: $profileImage, roleName: $roleName, services: $services, address1: $address1, address2: $address2, city: $city, state: $state, zipCode: $zipCode, country: $country, pricing: $pricing, specialitiesServices: $specialitiesServices, specialities: $specialities, educations: $educations, experinces: $experinces, awards: $awards, memberships: $memberships, socialMedia: $socialMedia, registrations: $registrations, invoiceIds: $invoiceIds, reviewsArray: $reviewsArray, rateArray: $rateArray, timeslots: $timeslots, favIds: $favIds accessToken: $accessToken, isActive: $isActive, online: $online, lastUpdate: $lastUpdate,  id: $id)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-  
-    return other is Doctors &&
-      other.createdAt == createdAt &&
-      other.updatedAt == updatedAt &&
-      other.userName == userName &&
-      other.firstName == firstName &&
-      other.lastName == lastName &&
-      other.mobileNumber == mobileNumber &&
-      other.gender == gender &&
-      other.dob == dob &&
-      other.clinicName == clinicName &&
-      other.clinicAddress == clinicAddress &&
-      other.aboutMe == aboutMe && 
-      listEquals(other.clinicImages, clinicImages) &&
-      other.profileImage == profileImage &&
-      other.roleName == roleName &&
-      other.services == services &&
-      other.address1 == address1 &&
-      other.address2 == address2 &&
-      other.city == city &&
-      other.state == state &&
-      other.zipCode == zipCode &&
-      other.country == country &&
-      listEquals(other.pricing, pricing) &&
-      listEquals(other.specialitiesServices, specialitiesServices) &&
-      listEquals(other.specialities, specialities) &&
-      listEquals(other.educations, educations) &&
-      listEquals(other.experinces, experinces) &&
-      listEquals(other.awards, awards) &&
-      listEquals(other.memberships, memberships) &&
-      listEquals(other.socialMedia, socialMedia) &&
-      listEquals(other.registrations, registrations) &&
-      listEquals(other.invoiceIds, invoiceIds) &&
-      listEquals(other.reviewsArray, reviewsArray) &&
-      listEquals(other.rateArray, rateArray) &&
-      listEquals(other.timeslots, timeslots) &&
-      listEquals(other.favIds, favIds) &&
-      other.accessToken == accessToken &&
-      other.isActive == isActive &&
-      other.online == online &&
-      other.lastUpdate == lastUpdate &&
-      // mapEquals(other.status, status) &&
-      other.id == id;
-  }
-
-  @override
-  int get hashCode {
-    return createdAt.hashCode ^
-      updatedAt.hashCode ^
-      userName.hashCode ^
-      firstName.hashCode ^
-      lastName.hashCode ^
-      mobileNumber.hashCode ^
-      gender.hashCode ^
-      dob.hashCode ^
-      clinicName.hashCode ^
-      clinicAddress.hashCode ^
-      aboutMe.hashCode ^
-      clinicImages.hashCode ^
-      profileImage.hashCode ^
-      roleName.hashCode ^
-      services.hashCode ^
-      address1.hashCode ^
-      address2.hashCode ^
-      city.hashCode ^
-      state.hashCode ^
-      zipCode.hashCode ^
-      country.hashCode ^
-      pricing.hashCode ^
-      specialitiesServices.hashCode ^
-      specialities.hashCode ^
-      educations.hashCode ^
-      experinces.hashCode ^
-      awards.hashCode ^
-      memberships.hashCode ^
-      socialMedia.hashCode ^
-      registrations.hashCode ^
-      invoiceIds.hashCode ^
-      reviewsArray.hashCode ^
-      rateArray.hashCode ^
-      favIds.hashCode ^
-      timeslots.hashCode ^
-      accessToken.hashCode ^
-      isActive.hashCode ^
-      online.hashCode ^
-      lastUpdate.hashCode ^
-      // status.hashCode ^
-      id.hashCode;
+    return 'Doctors(aboutMe: $aboutMe, accessToken: $accessToken, address1: $address1, address2: $address2, awards: $awards, bankId: $bankId, billingsIds: $billingsIds, bookingsFee: $bookingsFee, city: $city, clinicAddress: $clinicAddress, clinicImages: $clinicImages, clinicName: $clinicName, country: $country, createdAt: $createdAt, currency: $currency, dob: $dob, educations: $educations, experinces: $experinces, favIds: $favIds, firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, memberships: $memberships, mobileNumber: $mobileNumber, online: $online, patientsId: $patientsId, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, registrations: $registrations, reviewsArray: $reviewsArray, reservationsId: $reservationsId, roleName: $roleName, services: $services, socialMedia: $socialMedia, specialities: $specialities, specialitiesServices: $specialitiesServices, state: $state, timeSlotId: $timeSlotId, timeslots: $timeslots, userName: $userName, zipCode: $zipCode, updatedAt: $updatedAt, id: $id, doctorsId: $doctorsId)';
   }
 }
-
 
 class Tags {
   final String value;
@@ -507,8 +403,7 @@ class ClinicImages {
 
   String toJson() => json.encode(toMap());
 
-  factory ClinicImages.fromJson(String source) =>
-      ClinicImages.fromMap(json.decode(source));
+  factory ClinicImages.fromJson(String source) => ClinicImages.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -582,39 +477,33 @@ class Education {
     return Education(
       collage: map['collage'] ?? '',
       degree: map['degree'] ?? '',
-      yearOfCompletion: map['yearOfCompletion'] ?? '',
+       yearOfCompletion: map['yearOfCompletion'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Education.fromJson(String source) =>
-      Education.fromMap(json.decode(source));
+  factory Education.fromJson(String source) => Education.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'Education(collage: $collage, degree: $degree, yearOfCompletion: $yearOfCompletion)';
+  String toString() => 'Education(collage: $collage, degree: $degree, yearOfCompletion: $yearOfCompletion)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Education &&
-        other.collage == collage &&
-        other.degree == degree &&
-        other.yearOfCompletion == yearOfCompletion;
+    return other is Education && other.collage == collage && other.degree == degree && other.yearOfCompletion == yearOfCompletion;
   }
 
   @override
-  int get hashCode =>
-      collage.hashCode ^ degree.hashCode ^ yearOfCompletion.hashCode;
+  int get hashCode => collage.hashCode ^ degree.hashCode ^ yearOfCompletion.hashCode;
 }
 
 class Experinces {
   final String designation;
-  final String from;
+  final DateTime from;
   final String hospitalName;
-  final String to;
+  final DateTime to;
 
   Experinces({
     required this.designation,
@@ -625,9 +514,9 @@ class Experinces {
 
   Experinces copyWith({
     String? designation,
-    String? from,
+    DateTime? from,
     String? hospitalName,
-    String? to,
+    DateTime? to,
   }) {
     return Experinces(
       designation: designation ?? this.designation,
@@ -641,9 +530,9 @@ class Experinces {
     final result = <String, dynamic>{};
 
     result.addAll({'designation': designation});
-    result.addAll({'from': from});
+    result.addAll({'from': from.toIso8601String()});
     result.addAll({'hospitalName': hospitalName});
-    result.addAll({'to': to});
+    result.addAll({'to': to.toIso8601String()});
 
     return result;
   }
@@ -651,16 +540,15 @@ class Experinces {
   factory Experinces.fromMap(Map<String, dynamic> map) {
     return Experinces(
       designation: map['designation'] ?? '',
-      from: map['from'] ?? '',
+      from: DateTime.parse(map['from'] ?? DateTime.now().toIso8601String()),
       hospitalName: map['hospitalName'] ?? '',
-      to: map['to'] ?? '',
+      to: DateTime.parse(map['to'] ?? DateTime.now().toIso8601String()),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Experinces.fromJson(String source) =>
-      Experinces.fromMap(json.decode(source));
+  factory Experinces.fromJson(String source) => Experinces.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -671,19 +559,12 @@ class Experinces {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Experinces &&
-        other.designation == designation &&
-        other.from == from &&
-        other.hospitalName == hospitalName &&
-        other.to == to;
+    return other is Experinces && other.designation == designation && other.from == from && other.hospitalName == hospitalName && other.to == to;
   }
 
   @override
   int get hashCode {
-    return designation.hashCode ^
-        from.hashCode ^
-        hospitalName.hashCode ^
-        to.hashCode;
+    return designation.hashCode ^ from.hashCode ^ hospitalName.hashCode ^ to.hashCode;
   }
 }
 
@@ -710,7 +591,7 @@ class Award {
     final result = <String, dynamic>{};
 
     result.addAll({'award': award});
-    result.addAll({'year': year});
+    result.addAll({'year': year}); // Convert DateTime to ISO 8601 string
 
     return result;
   }
@@ -718,7 +599,7 @@ class Award {
   factory Award.fromMap(Map<String, dynamic> map) {
     return Award(
       award: map['award'] ?? '',
-      year: map['year'] ?? '',
+      year: map['year'], // Parse the year as DateTime
     );
   }
 
@@ -739,7 +620,6 @@ class Award {
   @override
   int get hashCode => award.hashCode ^ year.hashCode;
 }
-
 class Memberships {
   final String membership;
 
@@ -771,8 +651,7 @@ class Memberships {
 
   String toJson() => json.encode(toMap());
 
-  factory Memberships.fromJson(String source) =>
-      Memberships.fromMap(json.decode(source));
+  factory Memberships.fromJson(String source) => Memberships.fromMap(json.decode(source));
 
   @override
   String toString() => 'Memberships(membership: $membership)';
@@ -819,28 +698,221 @@ class Registrations {
   factory Registrations.fromMap(Map<String, dynamic> map) {
     return Registrations(
       registration: map['registration'] ?? '',
-      year: map['year'] ?? '',
+      year: map['year'], // Parse the year as DateTime
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Registrations.fromJson(String source) =>
-      Registrations.fromMap(json.decode(source));
+  factory Registrations.fromJson(String source) => Registrations.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'Registrations(registration: $registration, year: $year)';
+  String toString() => 'Registrations(registration: $registration, year: $year)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Registrations &&
-        other.registration == registration &&
-        other.year == year;
+    return other is Registrations && other.registration == registration && other.year == year;
   }
 
   @override
   int get hashCode => registration.hashCode ^ year.hashCode;
+}
+
+class Currency {
+  final String? id;
+  final int currencyId;
+  final String name;
+  final bool isActive;
+  final String iso3;
+  final String iso2;
+  final String numericCode;
+  final String currency;
+  final String currencyName;
+  final String currencySymbol;
+  final String emoji;
+  String? searchString;
+  String? subtitle;
+  final List<String> patientsId;
+  final List<String> doctorsId;
+  Currency({
+    this.id,
+    required this.currencyId,
+    required this.name,
+    required this.isActive,
+    required this.iso3,
+    required this.iso2,
+    required this.numericCode,
+    required this.currency,
+    required this.currencyName,
+    required this.currencySymbol,
+    required this.emoji,
+    required this.patientsId,
+    required this.doctorsId,
+    this.searchString,
+    this.subtitle,
+  });
+  factory Currency.fromJson(Map<String, dynamic> json) {
+    return Currency(
+      id: json['_id'],
+      currencyId: json['id'],
+      name: json['name'],
+      isActive: json['isActive'],
+      iso3: json['iso3'],
+      iso2: json['iso2'],
+      numericCode: json['numeric_code'],
+      currency: json['currency'],
+      currencyName: json['currency_name'],
+      currencySymbol: json['currency_symbol'],
+      emoji: json['emoji'],
+      patientsId: List<String>.from(json['patients_id'] ?? []),
+      doctorsId: List<String>.from(json['doctors_id'] ?? []),
+      searchString: json['searchString'],
+      subtitle: json['subtitle'],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'id': currencyId,
+      'name': name,
+      'isActive': isActive,
+      'iso3': iso3,
+      'iso2': iso2,
+      'numeric_code': numericCode,
+      'currency': currency,
+      'currency_name': currencyName,
+      'currency_symbol': currencySymbol,
+      'emoji': emoji,
+      'patients_id': patientsId,
+      'doctors_id': doctorsId,
+      'searchString': searchString,
+      'subtitle': subtitle,
+    };
+  }
+
+    Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+    result.addAll({'_id': id});
+    result.addAll({'id': currencyId});
+    result.addAll({'name': name});
+    result.addAll({'isActive': isActive});
+    result.addAll({'iso3': iso3});
+    result.addAll({'iso2': iso2});
+    result.addAll({'numeric_code': numericCode});
+    result.addAll({'currency_symbol': currencySymbol});
+    result.addAll({'emoji': emoji});
+    result.addAll({'patients_id': patientsId});
+    result.addAll({'doctors_id': doctorsId});
+    result.addAll({'searchString': searchString});
+    result.addAll({'subtitle': subtitle});
+
+    return result;
+  }
+   // fromMap constructor to map data to the Currency model
+  factory Currency.fromMap(Map<String, dynamic> map) {
+    return Currency(
+      id: map['_id'], // id is nullable
+      currencyId: map['id'] ?? 0, // Ensure a default value for currencyId
+      name: map['name'] ?? '',
+      isActive: map['isActive'] ?? false, // Default to false if not present
+      iso3: map['iso3'] ?? '',
+      iso2: map['iso2'] ?? '',
+      numericCode: map['numeric_code'] ?? '',
+      currency: map['currency'] ?? '',
+      currencyName: map['currency_name'] ?? '',
+      currencySymbol: map['currency_symbol'] ?? '',
+      emoji: map['emoji'] ?? '',
+      searchString: map['searchString'], // searchString is nullable
+      subtitle: map['subtitle'], // subtitle is nullable
+      patientsId: map['patients_id'] != null
+          ? List<String>.from(map['patients_id'])
+          : [], // Default to empty list if null
+      doctorsId: map['doctors_id'] != null
+          ? List<String>.from(map['doctors_id'])
+          : [], // Default to empty list if null
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Currency(id: $id, currencyId: $currencyId, name: $name, isActive: $isActive, iso3: $iso3, iso2: $iso2, numericCode: $numericCode, currency: $currency, currencyName: $currencyName, currencySymbol: $currencySymbol, emoji: $emoji, searchString: $searchString, subtitle: $subtitle, patientsId: $patientsId, doctorsId: $doctorsId)';
+  }
+}
+
+class LastLogin {
+  final DateTime date;
+  final String ipAddr;
+  final String userAgent;
+  final bool idle;
+  LastLogin({
+    required this.date,
+    required this.ipAddr,
+    required this.userAgent,
+    required this.idle,
+  });
+
+  LastLogin copyWith({
+    DateTime? date,
+    String? ipAddr,
+    String? userAgent,
+    bool? idle,
+  }) {
+    return LastLogin(
+      date: date ?? this.date,
+      ipAddr: ipAddr ?? this.ipAddr,
+      userAgent: userAgent ?? this.userAgent,
+      idle: idle ?? this.idle,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+  
+    result.addAll({'date': date});
+    result.addAll({'ipAddr': ipAddr});
+    result.addAll({'userAgent': userAgent});
+    result.addAll({'idle': idle});
+  
+    return result;
+  }
+
+  factory LastLogin.fromMap(Map<String, dynamic> map) {
+    return LastLogin(
+      date: map['date'] is DateTime ? map['date'] : DateTime.now(),
+      ipAddr: map['ipAddr'] ?? '',
+      userAgent: map['userAgent'] ?? '',
+      idle: map['idle'] ?? false,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory LastLogin.fromJson(String source) => LastLogin.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'LastLogin(date: $date, ipAddr: $ipAddr, userAgent: $userAgent, idle: $idle)';
+  }
+}
+class SocialMedia {
+  final String platform;
+  final String link;
+
+  SocialMedia({required this.platform, required this.link});
+
+  factory SocialMedia.fromJson(Map<String, dynamic> json) {
+    return SocialMedia(
+      platform: json['platform'],
+      link: json['link'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'platform': platform,
+      'link': link,
+    };
+  }
 }

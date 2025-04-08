@@ -323,13 +323,13 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
                   borderRadius: const BorderRadius.horizontal(left: Radius.circular(18), right: Radius.circular(18)),
                   border: Border.all(color: Theme.of(context).primaryColor),
                 ),
-                child: const Row(
+                child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Icon(Icons.thumb_up_sharp),
-                    Text('98%'),
+                    const Icon(Icons.thumb_up_sharp),
+                    Text(getRecommendationPercentage(singleDoctor)),
                     Text(
-                      '(252 votes)',
+                      "(${singleDoctor.recommendArray.length} ${context.tr('votes')})",
                     )
                   ],
                 ),
@@ -348,7 +348,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
                     backgroundColor: Theme.of(context).primaryColorLight,
                     shadowColor: Theme.of(context).primaryColorLight,
                   ),
-                  onPressed: singleDoctor.timeslots.isEmpty ? null : () {},
+                  onPressed: singleDoctor.timeslots!.isEmpty ? null : () {},
                   child: Text(
                     context.tr('bookAppointment'),
                     style: const TextStyle(color: Colors.black),
@@ -369,7 +369,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
                     backgroundColor: Theme.of(context).primaryColor,
                     shadowColor: Theme.of(context).primaryColor,
                   ),
-                  onPressed: singleDoctor.timeslots.isEmpty ? null : () {},
+                  onPressed: singleDoctor.timeslots!.isEmpty ? null : () {},
                   child: Text(
                     context.tr('onlineConsult'),
                     style: const TextStyle(color: Colors.black),
@@ -387,7 +387,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
         child: badges.Badge(
           stackFit: StackFit.passthrough,
           badgeContent: Text(
-            (index + 1).toString(),
+            (singleDoctor.doctorsId).toString(),
             style: const TextStyle(fontSize: 12),
           ),
           position: badges.BadgePosition.custom(start: 20, bottom: 10),
@@ -411,5 +411,15 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
         ),
       ),
     );
+  }
+}
+// Assuming singleDoctor.recommendArray is a List<int> where 1 means a recommendation
+String getRecommendationPercentage(singleDoctor) {
+  if (singleDoctor.recommendArray != null && singleDoctor.recommendArray.isNotEmpty) {
+    int count = singleDoctor.recommendArray.where((vote) => vote == 1).length;
+    double percentage = (count / singleDoctor.recommendArray.length) * 100;
+    return '${percentage.toStringAsFixed(0)}%';
+  } else {
+    return '0%';
   }
 }

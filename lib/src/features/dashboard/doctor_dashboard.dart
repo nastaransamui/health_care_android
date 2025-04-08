@@ -1,3 +1,5 @@
+
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -38,21 +40,26 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     late String months = '--';
     late String days = '--';
     late String imageUrl = '';
-    if (doctorProfile != null && doctorProfile.userProfile.dob.isNotEmpty) {
-      var dob = Jiffy.parse(doctorProfile.userProfile.dob);
-      DateTime today = DateTime.now();
-      DateTime b = DateTime(dob.year, dob.month, dob.date);
-      int totalDays = today.difference(b).inDays;
-      int y = totalDays ~/ 365;
-      int m = (totalDays - y * 365) ~/ 30;
-      int d = totalDays - y * 365 - m * 30;
-      years = '$y';
-      months = '$m';
-      days = '$d';
-    }
+
+   if (doctorProfile != null && doctorProfile.userProfile.dob != "") {
+  DateTime dob = doctorProfile.userProfile.dob; // Already DateTime
+  DateTime today = DateTime.now();
+
+  DateTime b = DateTime(dob.year, dob.month, dob.day); // use dob.day instead of dob.date
+
+  int totalDays = today.difference(b).inDays;
+  int y = totalDays ~/ 365;
+  int m = (totalDays - y * 365) ~/ 30;
+  int d = totalDays - y * 365 - m * 30;
+
+  years = '$y';
+  months = '$m';
+  days = '$d';
+
+}
     if (doctorProfile != null) {
       if (doctorProfile.userProfile.profileImage.isNotEmpty) {
-        imageUrl = '${doctorProfile.userProfile.profileImage}?random=${DateTime.now().millisecondsSinceEpoch}';
+        imageUrl = doctorProfile.userProfile.profileImage;
       }
     }
     var brightness = Theme.of(context).brightness;
@@ -243,7 +250,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                                   color: Theme.of(context).primaryColorLight,
                                 ),
                                 Text(
-                                  " ${doctorProfile.userProfile.dob.isNotEmpty ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(doctorProfile.userProfile.dob).toLocal()) : '---- -- --'}",
+                                  " ${doctorProfile.userProfile.dob != "" ? DateFormat("dd MMM yyyy").format(doctorProfile.userProfile.dob.toLocal()) : '---- -- --'}",
                                 ),
                               ],
                             ),

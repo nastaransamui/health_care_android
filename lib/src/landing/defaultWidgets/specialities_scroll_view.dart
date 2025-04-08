@@ -33,7 +33,8 @@ class _SpecialitiesScrollViewState extends State<SpecialitiesScrollView> {
           items: specialities.map<Widget>((i) {
             final name = context.tr(i.specialities);
             final imageSrc = i.image;
-            final imageIsSvg = imageSrc.endsWith('.svg');
+            final uri = Uri.parse(imageSrc);
+            final imageIsSvg = uri.path.endsWith('.svg');
             final numberOfDoctors = i.usersId.length;
             return Card(
               shape: RoundedRectangleBorder(
