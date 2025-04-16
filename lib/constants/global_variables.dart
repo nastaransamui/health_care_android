@@ -328,3 +328,19 @@ List startDrawerTitleList = [
     "icon": const FaIcon(FontAwesomeIcons.envelopeOpenText),
   },
 ];
+final DateTime now = DateTime.now();
+
+// Morning: 9 AM to 12 PM
+final DateTime morningStart = DateTime(now.year, now.month, now.day, 9);
+final DateTime morningFinish = DateTime(now.year, now.month, now.day, 12);
+final int morningMinutes = morningFinish.difference(morningStart).inMinutes;
+
+// Afternoon: 1 PM to 4 PM
+final DateTime afterNoonStart = DateTime(now.year, now.month, now.day, 13);
+final DateTime afterNoonFinish = DateTime(now.year, now.month, now.day, 16);
+final int afterNoonMinutes = afterNoonFinish.difference(afterNoonStart).inMinutes;
+
+// Evening: 5 PM to 8 PM
+final DateTime eveningStart = DateTime(now.year, now.month, now.day, 17);
+final DateTime eveningFinish = DateTime(now.year, now.month, now.day, 20);
+final int eveningMinutes = eveningFinish.difference(eveningStart).inMinutes;

@@ -137,7 +137,7 @@ class CustomInfoToast extends StatelessWidget {
                 const Spacer(), // Defaults to flex: 1
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(150, 40),
+                    // minimumSize: const Size(150, 40),
                     elevation: 5.0,
                     foregroundColor: Colors.black,
                     animationDuration: const Duration(milliseconds: 1000),
@@ -160,4 +160,60 @@ class CustomInfoToast extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> showCustomInfoDialog({
+  required BuildContext context,
+  required String title,
+  required String description,
+  required String closeText,
+  required String confirmText,
+  required VoidCallback onConfirm,
+  VoidCallback? onCancel,
+}) {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Row(
+        children: [
+          Expanded(child: Text(title)),
+        ],
+      ),
+      content: Text(description),
+      actions: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColorLight,
+            visualDensity: VisualDensity.compact,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+            if (onCancel != null) onCancel();
+          },
+          child: Text(closeText),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+              ),
+          onPressed: () async {
+            Navigator.of(context).pop();
+            showModalBottomSheet(
+              context: context,
+              isDismissible: false,
+              enableDrag: false,
+              showDragHandle: false,
+              useSafeArea: true,
+              builder: (_) => const LoadingScreen(),
+            );
+            await Future.delayed(const Duration(milliseconds: 1000));
+            onConfirm();
+          },
+          child: Text(confirmText),
+        ),
+      ],
+    ),
+  );
 }

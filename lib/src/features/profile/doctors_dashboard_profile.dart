@@ -1929,6 +1929,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 var index = educationController.indexOf(map);
                                 return Card(
                                   elevation: 12,
+                                  color: Theme.of(context).canvasColor,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -2020,6 +2021,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 var index = experinceController.indexOf(map);
                                 return Card(
                                   elevation: 12,
+                                  color: Theme.of(context).canvasColor,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -2167,6 +2169,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                               ...awardController.map((map) {
                                 var index = awardController.indexOf(map);
                                 return Card(
+                                  color: Theme.of(context).canvasColor,
                                   elevation: 12,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -2258,6 +2261,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                               ...membershipController.map((map) {
                                 var index = membershipController.indexOf(map);
                                 return Card(
+                                  color: Theme.of(context).canvasColor,
                                   elevation: 12,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -2315,6 +2319,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                               ...registrationController.map((map) {
                                 var index = registrationController.indexOf(map);
                                 return Card(
+                                  color: Theme.of(context).canvasColor,
                                   elevation: 12,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,

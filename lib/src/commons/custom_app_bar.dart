@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
-   const CustomAppBar({
+  const CustomAppBar({
     super.key,
     required this.title,
   });
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
-  
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
@@ -19,9 +19,39 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(context.tr(widget.title)),
+      leadingWidth: 96,
+      leading: Builder(
+        builder: (context) {
+          final canPop = ModalRoute.of(context)?.canPop ?? false;
+
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (canPop)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              Transform.translate(
+                offset: const Offset(-12.0, 0), // Move the back button 4 pixels to the left
+                child: IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      title: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          context.tr(widget.title),
+          maxLines: 1,
+        ),
+      ),
+      titleSpacing: 0,
       actions: [
-        
         Builder(
           builder: (context) {
             return IconButton(
@@ -77,5 +107,4 @@ class _CustomAppBarState extends State<CustomAppBar> {
       ],
     );
   }
-
 }

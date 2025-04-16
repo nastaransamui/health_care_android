@@ -908,7 +908,12 @@ class SocialMedia {
       link: json['link'],
     );
   }
-
+  factory SocialMedia.fromMap(Map<String, dynamic> map) {
+    return SocialMedia(
+      platform: map['platform'] ?? '',
+      link: map['link'] ?? '',
+    );
+  }
   Map<String, dynamic> toJson() {
     return {
       'platform': platform,

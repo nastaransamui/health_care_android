@@ -35,12 +35,22 @@ class _EmailFieldState extends State<EmailField> {
         decoration: InputDecoration(
           errorStyle: TextStyle(color: Colors.redAccent.shade400),
           labelText: context.tr('email'),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none),
-          fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          hintText: context.tr('email'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withOpacity(0.1),
           filled: true,
-           prefixIcon:  Icon(Icons.email_sharp, color: Theme.of(context).primaryColorLight),
+          prefixIcon: Icon(Icons.email_sharp, color: Theme.of(context).primaryColorLight),
           isDense: true,
           alignLabelWithHint: true,
         ),

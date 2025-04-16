@@ -52,10 +52,19 @@ class _PasswordFieldState extends State<PasswordField> {
             color: Colors.redAccent.shade400,
           ),
           labelText: context.tr(widget.fieldName),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none),
-          fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withOpacity(0.1),
           filled: true,
           prefixIcon: const Icon(Icons.password),
           suffixIcon: IconButton(

@@ -308,28 +308,40 @@ class _AuthListState extends State<AuthList> {
                   const SizedBox(
                     width: 10.0,
                   ),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 150),
+                      child: RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                        softWrap: true,
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 14.0,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
                               style: TextStyle(
                                 color: brightness == Brightness.dark ? Colors.white : Colors.black,
                               ),
-                              text:
-                                  '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ${roleName == 'patient' ? patientProfile?.userProfile.firstName : doctorsProfile?.userProfile.firstName} \n ${roleName == 'patient' ? patientProfile?.userProfile.lastName : doctorsProfile?.userProfile.lastName} \n \n'),
-                          TextSpan(
-                            text: context.tr(roleName),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                              text: '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ',
                             ),
-                          ),
-                        ],
+                            TextSpan(
+                              style: TextStyle(
+                                color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                              ),
+                              text: roleName == 'patient' ? '${patientProfile?.userProfile.fullName}' : 'Dr. ${doctorsProfile?.userProfile.fullName}',
+                            ),
+                            const TextSpan(text: '\n\n'),
+                            TextSpan(
+                              text: context.tr(roleName),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: brightness == Brightness.dark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

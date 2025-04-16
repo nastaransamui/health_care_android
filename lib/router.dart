@@ -2,7 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/constants/navigator_key.dart';
-import 'package:health_care/models/users.dart';
+// import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
 // import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
@@ -17,6 +17,7 @@ import 'package:health_care/src/features/blog/blog_screen.dart';
 import 'package:health_care/src/features/dashboard/doctor_dashboard.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
+import 'package:health_care/src/features/doctors/schedule/doctors_dashboard_schedule_timing.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
@@ -90,6 +91,7 @@ final router = GoRouter(
         }
       },
     ),
+    //Doctors Dashboard
     GoRoute(
       path: '/doctors/dashboard',
       name: 'doctorsDashboard',
@@ -114,66 +116,87 @@ final router = GoRouter(
       path: '/doctors/dashboard/profile',
       name: 'doctorsDashboardProfile',
       builder: (context, state) {
-        DoctorsProfile? doctorProfile;
-        doctorProfile = Provider.of<AuthProvider>(context).doctorsProfile;
-        // var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
-        // Check if doctorProfile is null, if it is, provide a fallback or show an error
-        if (doctorProfile == null) {
-          // You could display a loading spinner or an error message here
-          return const LoadingScreen(); // Or any other widget like an error message
-        }
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
 
-        // Pass non-null doctorProfile to DoctorsDashboardProfile
-        return DoctorsDashboardProfile(doctorProfile: doctorProfile);
+        if (doctorProfile != null) {
+          return DoctorsDashboardProfile(doctorProfile: doctorProfile);
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
         var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
 
-        if (isLogin) {
-          if (roleName == 'doctors') {
-            return '/doctors/dashboard/profile';
-          } else if (roleName == 'patient') {
-            return '/patient/dashboard/profile';
-          } else {
-            return '/';
-          }
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/schedule-timing',
+      name: 'doctorsDashboardScheduleTiming',
+      builder: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return DoctorsDashboardScheduleTiming( key: ValueKey(doctorProfile.userId), doctorProfile: doctorProfile);
         } else {
-          return '/';
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+             context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
         }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
       },
     ),
     GoRoute(
       path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',
       builder: (context, state) {
-        PatientsProfile? patientProfile;
-        patientProfile = Provider.of<AuthProvider>(context).patientProfile;
-        // var homeActivePage = Provider.of<ThemeProvider>(context).homeActivePage;
-        // Check if patientProfile is null, if it is, provide a fallback or show an error
-        if (patientProfile == null) {
-          // You could display a loading spinner or an error message here
-          return const LoadingScreen(); // Or any other widget like an error message
-        }
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final patientProfile = authProvider.patientProfile;
 
-        // Pass non-null patientProfile to PatientsDashboardProfile
-        return PatientsDashboardProfile(patientProfile: patientProfile);
+        if (patientProfile != null) {
+          return PatientsDashboardProfile(patientProfile: patientProfile);
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
         var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (patientProfile == null) return '/';
 
-        if (isLogin) {
-          if (roleName == 'doctors') {
-            return '/doctors/dashboard/profile';
-          } else if (roleName == 'patient') {
-            return '/patient/dashboard/profile';
-          } else {
-            return '/';
-          }
-        } else {
-          return '/';
-        }
+        return null;
       },
     ),
     //Clinics

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/src/utils/verify_home_access_token.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +37,6 @@ class AuthService {
 
   Future<void> updateLiveAuth(BuildContext context) async {
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     socket.on('getUserProfileFromAdmin', (token) async {
       var payloadData = verifyHomeAccessToken(token);
@@ -151,6 +151,7 @@ class AuthService {
     await prefs.remove('profile');
     await prefs.remove('roleName');
     authProvider.removeAuth();
+
     socket.io.options?['extraHeaders'] = {
       'userData': "${prefs.getString('userData')}",
       'token': 'Bearer ',
@@ -161,6 +162,9 @@ class AuthService {
       ..connect();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
+        var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
+        timeScheduleProvider.setDoctorsTimeSlot(null);
+        timeScheduleProvider.setLoading(true);
         context.go('/');
       }
     });

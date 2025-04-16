@@ -631,8 +631,6 @@ class DoctorUserProfile {
       reservationsId: List<String>.from(json['reservations_id']),
       roleName: json['roleName'] ?? "",
       services: json['services'] ?? "",
-      // roleName: DoctorRoleName.values.firstWhere((e) => e.toString() == 'DoctorRoleName.${json['roleName']}'),
-      // services: Services.values.firstWhere((e) => e.toString() == 'Services.${json['services']}'),
       socialMedia: (json['socialMedia'] as List).map((e) => SocialMedia.fromJson(e)).toList(),
       specialities: (json['specialities'] as List).map((e) => Specialities.fromMap(e as Map<String, dynamic>)).toList(),
       specialitiesServices: List<String>.from(json['specialitiesServices']),
@@ -810,7 +808,9 @@ class DoctorUserProfile {
       services: map['services'],
       // roleName: DoctorRoleNameExtension.fromString(map['roleName']),
       // services: ServicesExtension.fromString(map['services']),
-      socialMedia: map['socialMedia'] != null ? List<SocialMedia>.from(map['socialMedia']) : [],
+      socialMedia: (map['socialMedia'] as List?)
+    ?.map((e) => SocialMedia.fromMap(e))
+    .toList() ?? [],
       specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
       specialitiesServices: map['specialitiesServices'] != null ? List<String>.from(map['specialitiesServices']) : [],
       state: map['state'] ?? '',

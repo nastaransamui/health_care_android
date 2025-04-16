@@ -3,6 +3,8 @@ import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:health_care/providers/data_grid_provider.dart';
+import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/providers/user_from_token_provider.dart';
 import 'package:health_care/providers/vital_provider.dart';
 import 'package:provider/provider.dart';
@@ -24,12 +26,7 @@ final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',
   defaultLevel: LevelMessages.debug,
   enableBuildModes: [BuildMode.debug, BuildMode.profile, BuildMode.release],
-  enableLevels: [
-    LevelMessages.debug,
-    LevelMessages.info,
-    LevelMessages.error,
-    LevelMessages.warning
-  ],
+  enableLevels: [LevelMessages.debug, LevelMessages.info, LevelMessages.error, LevelMessages.warning],
 );
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +54,7 @@ Future<void> main() async {
   final bool? isLogin = prefs.getBool('isLogin');
   final String? roleName = prefs.getString('roleName');
   final String? userData = prefs.getString('userData');
+
   ///Manual logout by removes all prefs
   // await prefs.remove('isLogin');
   // await prefs.remove('homeAccessToken');
@@ -93,6 +91,12 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) => UserFromTokenProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => DataGridProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => TimeScheduleProvider(),
+        )
       ],
       child: EasyLocalization(
         supportedLocales: const [
