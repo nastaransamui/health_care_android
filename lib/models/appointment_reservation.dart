@@ -1,20 +1,23 @@
+import 'dart:developer';
+
 import 'package:health_care/models/doctors_time_slot.dart';
+import 'package:health_care/models/users.dart';
 
-enum DoctorPaymentStatus {
-  pending("Pending"),
-  paid("Paid"),
-  awaitingRequest("Awaiting Request");
+// enum DoctorPaymentStatus {
+//   pending("Pending"),
+//   paid("Paid"),
+//   awaitingRequest("Awaiting Request");
 
-  final String value;
-  const DoctorPaymentStatus(this.value);
+//   final String value;
+//   const DoctorPaymentStatus(this.value);
 
-  static DoctorPaymentStatus fromString(String value) {
-    return DoctorPaymentStatus.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => DoctorPaymentStatus.pending,
-    );
-  }
-}
+//   static DoctorPaymentStatus fromString(String value) {
+//     return DoctorPaymentStatus.values.firstWhere(
+//       (e) => e.value == value,
+//       orElse: () => DoctorPaymentStatus.pending,
+//     );
+//   }
+// }
 
 class AppointmentReservation {
   final String? id;
@@ -30,9 +33,10 @@ class AppointmentReservation {
   final String paymentToken;
   final String paymentType;
   final String invoiceId;
-  final DoctorPaymentStatus doctorPaymentStatus;
+  final String doctorPaymentStatus;
   final dynamic paymentDate;
   final DateTime createdDate;
+  final PatientUserProfile? patientProfile;
 
   AppointmentReservation({
     this.id,
@@ -51,9 +55,31 @@ class AppointmentReservation {
     required this.doctorPaymentStatus,
     this.paymentDate,
     required this.createdDate,
+    required this.patientProfile,
   });
 
   factory AppointmentReservation.fromJson(Map<String, dynamic> json) {
+    dynamic rawProfile = json['patientProfile'];
+
+    PatientUserProfile? profile;
+
+  if (rawProfile != null) {
+    if (rawProfile is String) {
+      try {
+        profile = PatientUserProfile.fromJson(rawProfile); // it's a JSON string
+      } catch (e) {
+        log('Error parsing patientProfile JSON string: $e');
+      }
+    } else if (rawProfile is Map<String, dynamic>) {
+      try {
+        profile = PatientUserProfile.fromMap(rawProfile);
+      } catch (e) {
+        log('Error parsing patientProfile map: $e');
+      }
+    } else {
+      log('Unexpected patientProfile type: ${rawProfile.runtimeType}');
+    }
+  }
     return AppointmentReservation(
       id: json['_id'],
       appointmentId: json['id'],
@@ -68,9 +94,13 @@ class AppointmentReservation {
       paymentToken: json['paymentToken'],
       paymentType: json['paymentType'],
       invoiceId: json['invoiceId'],
-      doctorPaymentStatus: DoctorPaymentStatus.fromString(json['doctorPaymentStatus']),
+      doctorPaymentStatus: json['doctorPaymentStatus'],
       paymentDate: json['paymentDate'] != "" ? DateTime.parse(json['paymentDate']) : null,
       createdDate: DateTime.parse(json['createdDate']),
+      patientProfile: profile,
+      //   patientProfile: json['patientProfile'] != null
+      // ? PatientUserProfile.fromMap(json['patientProfile'])
+      // : null,
     );
   }
 
@@ -89,9 +119,10 @@ class AppointmentReservation {
       'paymentToken': paymentToken,
       'paymentType': paymentType,
       'invoiceId': invoiceId,
-      'doctorPaymentStatus': doctorPaymentStatus.value,
+      'doctorPaymentStatus': doctorPaymentStatus,
       'paymentDate': paymentDate?.toIso8601String() ?? "",
       'createdDate': createdDate.toIso8601String(),
+      'patientProfile': patientProfile?.toJson(),
     };
   }
 
@@ -110,11 +141,15 @@ class AppointmentReservation {
       paymentToken: map['paymentToken'] ?? '', // Default to empty string if null
       paymentType: map['paymentType'] ?? '', // Default to empty string if null
       invoiceId: map['invoiceId'] ?? '', // Default to empty string if null
-      doctorPaymentStatus: map['doctorPaymentStatus'] != null
-          ? DoctorPaymentStatus.fromString(map['doctorPaymentStatus'])
-          : DoctorPaymentStatus.pending, // Default to pending if null
+      doctorPaymentStatus: map['doctorPaymentStatus'] ?? "Pending", // Default to pending if null
       paymentDate: map['paymentDate'],
       createdDate: map['createdDate'] != null ? DateTime.parse(map['createdDate']) : DateTime.now(),
+      patientProfile: PatientUserProfile.fromMap(map['patientProfile']),
     );
+  }
+
+  @override
+  String toString() {
+    return 'AppointmentReservation(id: $id, appointmentId: $appointmentId, timeSlot: $timeSlot, selectedDate: $selectedDate, dayPeriod: $dayPeriod, doctorId: $doctorId, startDate: $startDate, finishDate: $finishDate, slotId: $slotId, patientId: $patientId, paymentToken: $paymentToken, paymentType: $paymentType, invoiceId: $invoiceId, doctorPaymentStatus: $doctorPaymentStatus, paymentDate: $paymentDate, createdDate: $createdDate, patientProfile: $patientProfile)';
   }
 }

@@ -100,7 +100,7 @@ dependencies:
   percent_indicator: ^4.2.3
   image_picker: ^1.1.2
   file_picker: ^8.0.6
-  syncfusion_flutter_datepicker: ^26.2.14
+  syncfusion_flutter_datepicker: ^29.2.4
   dotted_border: ^2.1.0
   textfield_tags: ^3.0.1
   barcode: ^2.2.8
@@ -114,7 +114,7 @@ dependencies:
   google_fonts: ^6.2.1
   animated_page_reveal: ^1.0.0
   typewritertext: ^3.0.8
-  syncfusion_flutter_datagrid: ^26.2.14
+  syncfusion_flutter_datagrid: ^29.2.4
   flutter_date_range_picker: ^0.1.1
   flutter_multi_formatter: ^2.13.7
 

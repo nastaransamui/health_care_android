@@ -7,19 +7,26 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:health_care/providers/theme_provider.dart';
-import 'package:health_care/src/commons/fadein_widget.dart';
+import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/providers/data_grid_provider.dart';
+import 'package:health_care/shared/custom_pagination_widget.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+// ignore: depend_on_referenced_packages
+import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:health_care/constants/error_handling.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/users.dart';
+import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
+import 'package:health_care/shared/appointment_data_source.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/src/utils/gradient_text.dart';
@@ -73,6 +80,10 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
   bool _isProgrammaticUpdate = false;
   bool _showButtons = false;
 
+  void getDoctorTimeSlots() async {
+    await timeScheduleService.getDoctorTimeSlots(context, widget.doctorProfile);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -82,7 +93,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
     _initialRanges.clear();
     var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
     timeScheduleProvider.setLoading(true);
-    timeScheduleService.getDoctorTimeSlots(context, widget.doctorProfile);
+    getDoctorTimeSlots();
     doctorTimeSlot = Provider.of<TimeScheduleProvider>(context, listen: false).doctorsTimeSlot;
     if (doctorTimeSlot != null) {
       _copyDoctorTimeSlot = doctorTimeSlot!.copyWith();
@@ -278,7 +289,8 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
   }
 
   void deleteDb() async {
-    bool success = await timeScheduleService.deleteDoctorsTimeslots(context, _copyDoctorTimeSlot!);
+    bool success = await timeScheduleService.deleteDoctorsTimeslots(
+        context, DoctorsTimeSlot.createJsonForUpdate(widget.doctorProfile.userId, _copyDoctorTimeSlot!));
     if (success) {
       setState(() {
         _copyDoctorTimeSlot = null;
@@ -299,7 +311,6 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
 
   void updateDb() {
     timeScheduleService.updateDoctorsTimeslots(context, DoctorsTimeSlot.createJsonForUpdate(widget.doctorProfile.userId, _copyDoctorTimeSlot!));
-
   }
 
   @override
@@ -1092,7 +1103,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
                                       foregroundColor: Colors.black,
                                       animationDuration: const Duration(milliseconds: 1000),
                                       backgroundColor: homeThemeName == "joker" ? Theme.of(context).primaryColorLight : Colors.pinkAccent.shade400,
-                                      shadowColor: homeThemeName == "joker" ? Theme.of(context).primaryColorLight :Colors.pinkAccent.shade400,
+                                      shadowColor: homeThemeName == "joker" ? Theme.of(context).primaryColorLight : Colors.pinkAccent.shade400,
                                     ),
                                     // style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
                                     child: Text(
@@ -1103,6 +1114,53 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
                                 ],
                               ),
                             ),
+                          ]
+                        ],
+                        if (_copyDoctorTimeSlot != null) ...[
+                          if (_copyDoctorTimeSlot?.totalReservation != null) ...[
+                            if (_copyDoctorTimeSlot?.totalReservation != 0) ...[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 26),
+                                // child: Text(_copyDoctorTimeSlot!.reservations.toString()),
+                                child: ReservationsWidget(doctorTimeSlot: _copyDoctorTimeSlot),
+                              )
+                            ] else ...[
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                height: 200,
+                                child: Card(
+                                  elevation: 12,
+                                  color: Theme.of(context).canvasColor,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: Theme.of(context).primaryColor),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(context.tr('noHaveBookingYet')),
+                                  ),
+                                ),
+                              )
+                            ]
+                          ] else ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              height: 200,
+                              child: Card(
+                                elevation: 12,
+                                color: Theme.of(context).canvasColor,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Theme.of(context).primaryColor),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(context.tr('noHaveBookingYet')),
+                                ),
+                              ),
+                            )
                           ]
                         ]
                       ] else ...[
@@ -1899,4 +1957,119 @@ class _ViewTimeSlotsState extends State<ViewTimeSlots> {
           )
         : const SizedBox();
   }
+}
+
+class ReservationsWidget extends StatefulWidget {
+  final DoctorsTimeSlot? doctorTimeSlot;
+  const ReservationsWidget({
+    super.key,
+    required this.doctorTimeSlot,
+  });
+
+  @override
+  State<ReservationsWidget> createState() => _ReservationsWidgetState();
+}
+
+class _ReservationsWidgetState extends State<ReservationsWidget> {
+  Future<void> getDataOnUpdate() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final doctorProfile = authProvider.doctorsProfile;
+    await TimeScheduleService().getDoctorTimeSlots(context, doctorProfile!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final dataSource = AppointmentDataSource(appointments: widget.doctorTimeSlot?.reservations ?? [], context: context);
+    final provider = Provider.of<DataGridProvider>(context);
+    final int rowsPerPage = provider.paginationModel['pageSize']!;
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Total reservations card
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Card(
+              elevation: 12,
+              color: Theme.of(context).canvasColor,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).primaryColorLight),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text(
+                    context.tr("totalReservations", args: ["${widget.doctorTimeSlot?.totalReservation}"]),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // DataGrid
+          SfDataGridTheme(
+            data: SfDataGridThemeData(
+              gridLineColor: theme.primaryColorLight,
+              gridLineStrokeWidth: 1.0,
+              headerColor: theme.primaryColor,
+              sortIconColor: theme.primaryColorLight,
+              filterIconColor: theme.primaryColorLight,
+            ),
+            child: SizedBox(
+              height: (rowsPerPage + 1) * 70,
+              child: SfDataGrid(
+                source: dataSource,
+                gridLinesVisibility: GridLinesVisibility.both,
+                headerGridLinesVisibility: GridLinesVisibility.both,
+                allowSorting: true,
+                allowFiltering: true,
+                rowHeight: 70,
+                
+                columns: [
+                  _buildColumn(context.tr('id'), 'appointmentId', textColor),
+                  _buildColumn(context.tr('reserveDate'), 'createdDate', textColor),
+                  _buildColumn(context.tr('dayTime'), 'dayPeriod', textColor),
+                  _buildColumn(context.tr('invoiceNo'), 'invoiceId', textColor),
+                  _buildColumn(context.tr('selectedDate'), 'selectedDate', textColor),
+                  GridColumn(
+                    columnName: 'patientProfile',
+                    allowSorting: true,
+                    allowFiltering: true,
+                    width: 250,
+                    label: Center(child: Text(context.tr('patientName'), style: TextStyle(color: textColor))),
+                  ),
+                  _buildColumn(context.tr('paymentStatus'), 'doctorPaymentStatus', textColor),
+                ],
+              ),
+            ),
+          ),
+
+          // Pagination widget
+          const SizedBox(height: 12),
+          CustomPaginationWidget(
+            count: widget.doctorTimeSlot?.totalReservation ?? 0,
+            getDataOnUpdate: getDataOnUpdate,
+          ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+}
+
+GridColumn _buildColumn(String label, String name, Color color) {
+  return GridColumn(
+    columnName: name,
+    allowSorting: true,
+    allowFiltering: true,
+    columnWidthMode: ColumnWidthMode.fitByColumnName,
+    label: Center(child: Text(label, style: TextStyle(color: color))),
+  );
 }

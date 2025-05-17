@@ -330,5 +330,16 @@
   "noHaveSchedule": "You need to add at least one schedule timing to appear in search result.",
   "atLeast1Period": "You need to select one time table at least.",
   "time": "Time",
-  "totalPrice": "Total Price"
+  "totalPrice": "Total Price",
+  "update": "Update",
+  "id": "ID",
+  "reserveDate": "Reserve Date",
+  "dayTime": "Day Time",
+  "invoiceId": "Invoice No",
+  "selectedDate": "Selected Date",
+  "patientName": "Patient Name",
+  "paymentStatus": "Payment status",
+  "noHaveBookingYet": "No Reservation made yet",
+  "totalReservations": "Total: {} Reservations",
+  "rowsPerPage": "Rows Per page"
 }

@@ -209,23 +209,25 @@ class PatientUserProfile {
     return PatientUserProfile(
       address1: map['address1'] ?? '',
       address2: map['address2'] ?? '',
-      billingsIds: List<String>.from(map['billingsIds']),
+      billingsIds: List<String>.from(map['billingsIds'] ?? []),
       bloodG: map['bloodG'] ?? '',
       city: map['city'] ?? '',
       country: map['country'] ?? '',
       createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(),
-      dependentsArray: List<String>.from(map['dependentsArray']),
+      dependentsArray: List<String>.from(map['dependentsArray']?? []),
       dob: map['dob'] ?? '',
-      doctorsId: List<String>.from(map['doctors_id']),
-      favsId: List<String>.from(map['favs_id']),
+      doctorsId: List<String>.from(map['doctors_id']?? []),
+      favsId: List<String>.from(map['favs_id']?? []),
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
       idle: map['idle'] ?? false,
-      invoiceIds: List<String>.from(map['invoice_ids']),
+      invoiceIds: List<String>.from(map['invoice_ids'] ?? []),
       isActive: map['isActive'] ?? false,
       isVerified: map['isVerified'] ?? false,
-      lastLogin: LastLogin.fromMap(map['lastLogin']),
+      lastLogin: map['lastLogin'] != null
+    ? LastLogin.fromMap(map['lastLogin'])
+    : LastLogin.defaultInstance(),
       lastName: map['lastName'] ?? '',
       lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(),
       medicalRecordsArray: List<String>.from(map['medicalRecordsArray']),
@@ -375,6 +377,10 @@ class LastLogin {
       ipAddr: map['ipAddr'] ?? '',
       userAgent: map['userAgent'] ?? '',
     );
+  }
+
+   factory LastLogin.defaultInstance() {
+    return LastLogin(date: DateTime.now().toIso8601String(), ipAddr: 'Unknown', userAgent: 'Unknow');
   }
 
   String toJson() => json.encode(toMap());

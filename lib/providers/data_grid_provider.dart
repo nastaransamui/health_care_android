@@ -1,9 +1,10 @@
+
 import 'package:flutter/material.dart';
 
 class DataGridProvider with ChangeNotifier {
   int page = 0;
   int pageSize = 10;
-  Map<String, int> paginationModel ={
+  Map<String, int> paginationModel = {
     "page": 0,
     "pageSize": 10,
   };
@@ -24,9 +25,10 @@ class DataGridProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setPaginationModel(int newPage, int newSize){
+  void setPaginationModel(int newPage, int newSize, {bool notify = true}) {
+    
     paginationModel = {"page": newPage, "pageSize": newSize};
-    notifyListeners();
+    if (notify) notifyListeners();
   }
 
   void setSortModel(List<Map<String, dynamic>> newSortModel) {

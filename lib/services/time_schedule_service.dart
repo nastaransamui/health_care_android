@@ -13,21 +13,25 @@ class TimeScheduleService {
   Future<void> getDoctorTimeSlots(BuildContext context, DoctorsProfile doctorProfile) async {
     var dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
     final String userId = doctorProfile.userId;
-    final Map<String, int> paginationModel = dataGridProvider.paginationModel;
-    final List<Map<String, dynamic>> sortModel = dataGridProvider.sortModel;
-    Map<String, Map<String, dynamic>> mongoFilterModel = dataGridProvider.mongoFilterModel;
     var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
     timeScheduleProvider.setLoading(true);
 
     void getScheduleWithUpdate() {
-      socket.emit(
-          'getDoctorTimeSlots', {"userId": userId, "paginationModel": paginationModel, "sortModel": sortModel, "mongoFilterModel": mongoFilterModel});
+      final freshPagination = dataGridProvider.paginationModel;
+      final freshSort = dataGridProvider.sortModel;
+      final freshFilter = dataGridProvider.mongoFilterModel;
+          timeScheduleProvider.setLoading(false);
+      socket.emit('getDoctorTimeSlots', {
+        "userId": userId,
+        "paginationModel": freshPagination,
+        "sortModel": freshSort,
+        "mongoFilterModel": freshFilter,
+      });
     }
 
 // 🔐 Attach socket listener ONCE
     socket.off('getDoctorTimeSlotsReturn'); // remove previous to avoid stacking
     socket.on('getDoctorTimeSlotsReturn', (data) {
-
       if (data['status'] != 200 && data['status'] != 400) {
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
@@ -44,11 +48,10 @@ class TimeScheduleService {
       }
     });
 
-    // 🔁 Listen to update and re-fetch if needed
+
     socket.off('updateGetDoctorTimeSlots');
     socket.on('updateGetDoctorTimeSlots', (_) => getScheduleWithUpdate());
-      getScheduleWithUpdate();
-
+    getScheduleWithUpdate();
   }
 
   Future<void> createDoctorsTimeslots(
@@ -66,6 +69,7 @@ class TimeScheduleService {
         }
       }
       if (data['status'] == 200) {
+          timeScheduleProvider.setLoading(false);
         timeScheduleProvider.setDoctorsTimeSlot(
           DoctorsTimeSlot.fromJson(data['doctorAvailableTimeSlot']),
         );
@@ -75,19 +79,16 @@ class TimeScheduleService {
 
   Future<bool> deleteDoctorsTimeslots(
     BuildContext context,
-    DoctorsTimeSlot doctorAvailableTimes,
+    Map<String, dynamic> doctorsTimeSlot,
   ) async {
     var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
     timeScheduleProvider.setLoading(true);
-    Map<String, dynamic> doctorsTimeSlot = DoctorsTimeSlot.cleanDoctorsTimeSlotJson(doctorAvailableTimes);
-
     final completer = Completer<bool>();
 
     socket.emit('deleteDoctorsTimeslots', doctorsTimeSlot);
 
     void socketListener(dynamic data) {
       socket.off('deleteDoctorsTimeslotsReturn', socketListener); // Clean up listener
-
       if (data['status'] != 200) {
         if (context.mounted) {
           timeScheduleProvider.setLoading(false);
@@ -107,7 +108,7 @@ class TimeScheduleService {
     return completer.future;
   }
 
-    Future<void> updateDoctorsTimeslots(
+  Future<void> updateDoctorsTimeslots(
     BuildContext context,
     Map<String, dynamic> doctorsTimeSlot,
   ) async {
@@ -128,7 +129,6 @@ class TimeScheduleService {
       }
     });
   }
-
 }
 
 void showErrorSnackBar(BuildContext context, String message) {

@@ -330,5 +330,16 @@
   "noHaveSchedule": "คุณจำเป็นต้องเพิ่มเวลากำหนดการอย่างน้อยหนึ่งรายการเพื่อที่จะปรากฏในผลการค้นหา.",
   "atLeast1Period": "คุณจำเป็นต้องเลือกตารางเวลาอย่างน้อยหนึ่งรายการ.",
   "time": "เวลา",
-  "totalPrice": "ราคารวม"
+  "totalPrice": "ราคารวม",
+  "update": "อัปเดต",
+  "id": "ID",
+  "reserveDate": "วันที่จอง",
+  "dayTime": "วัน",
+  "invoiceId": "หมายเลขใบแจ้งหนี้",
+  "selectedDate": "วันที่เลือก",
+  "patientName": "ชื่อผู้ป่วย",
+  "paymentStatus": "สถานะการชำระเงิน",
+  "noHaveBookingYet": "ยังไม่มีการจอง",
+  "totalReservations": "ทั้งหมด: {} การจอง",
+  "rowsPerPage": "จำนวนแถวต่อหน้า"
 }
