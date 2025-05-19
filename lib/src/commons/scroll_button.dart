@@ -39,6 +39,7 @@ class _ScrollButtonState extends State<ScrollButton> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Stack(children: [
       Positioned(
         bottom: 10,
@@ -60,6 +61,7 @@ class _ScrollButtonState extends State<ScrollButton> {
                   ),
                 ),
                 SvgPicture.string(
+                  // ignore: deprecated_member_use
                   "<svg width='100%' height='100%' viewBox='-1 -1 102 102' fill-opacity='0'><path d='M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98'  stroke='#${Theme.of(context).primaryColorLight.value.toRadixString(16).substring(2, 8)}' stroke-dasharray='${widget.scrollPercentage}, 307' stroke-width='4'   /></svg>",
                   width: 30,
                   height: 30,
@@ -88,6 +90,7 @@ class _ScrollButtonState extends State<ScrollButton> {
                   ),
                 ),
                 SvgPicture.string(
+                  // ignore: deprecated_member_use
                   "<svg width='100%' height='100%' viewBox='-1 -1 102 102' fill-opacity='0'><path d='M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98'  stroke='#${Theme.of(context).primaryColorLight.value.toRadixString(16).substring(2, 8)}' stroke-dasharray='${widget.scrollPercentage}, 307' stroke-width='4'   /></svg>",
                   width: 30,
                   height: 30,

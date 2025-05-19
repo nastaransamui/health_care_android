@@ -64,7 +64,7 @@ class _PasswordFieldState extends State<PasswordField> {
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
-          fillColor: Theme.of(context).canvasColor.withOpacity(0.1),
+          fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
           filled: true,
           prefixIcon: const Icon(Icons.password),
           suffixIcon: IconButton(

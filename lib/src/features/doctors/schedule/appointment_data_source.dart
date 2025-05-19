@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+// ignore: depend_on_referenced_packages
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
@@ -19,7 +20,7 @@ class AppointmentDataSource extends DataGridSource {
   }) {
     _appointments = appointments
         .map<DataGridRow>((appointment) => DataGridRow(cells: [
-              DataGridCell<int>(columnName: 'appointmentId', value: appointment.appointmentId),
+              DataGridCell<int>(columnName: 'id', value: appointment.appointmentId),
               DataGridCell<DateTime>(columnName: 'createdDate', value: appointment.createdDate),
               DataGridCell<String>(columnName: 'dayPeriod', value: appointment.dayPeriod),
               DataGridCell(columnName: 'invoiceId', value: {'id': appointment.id, 'invoiceId': appointment.invoiceId}),
@@ -30,7 +31,7 @@ class AppointmentDataSource extends DataGridSource {
                   'period': appointment.timeSlot.period,
                 },
               ),
-              DataGridCell<PatientUserProfile>(columnName: 'patientProfile', value: appointment.patientProfile),
+              DataGridCell<PatientUserProfile>(columnName: 'patientProfile.fullName', value: appointment.patientProfile),
               DataGridCell<String>(columnName: 'doctorPaymentStatus', value: appointment.doctorPaymentStatus),
             ]))
         .toList();
@@ -105,7 +106,7 @@ class AppointmentDataSource extends DataGridSource {
               ),
             ),
           );
-        } else if (columnName == 'patientProfile' && value is PatientUserProfile) {
+        } else if (columnName == 'patientProfile.fullName' && value is PatientUserProfile) {
           final String patientName = "${value.gender.isEmpty ? '' : '${value.gender}.'}${value.fullName}";
           late String profileImage = "";
           final encodedId = base64.encode(utf8.encode(value.patientsId.toString()));
@@ -154,7 +155,11 @@ class AppointmentDataSource extends DataGridSource {
               value,
               style: TextStyle(color: textColor),
             ),
-            backgroundColor: value == "Paid" ? Colors.green : value == "Awaiting Request" ? hexToColor('#f44336') : theme.primaryColor, // Chip background
+            backgroundColor: value == "Paid"
+                ? Colors.green
+                : value == "Awaiting Request"
+                    ? hexToColor('#f44336')
+                    : theme.primaryColor, // Chip background
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20), // Rounded corners
               side: BorderSide.none, // optional: border color/width
@@ -176,5 +181,55 @@ class AppointmentDataSource extends DataGridSource {
         );
       }).toList(),
     );
+  }
+
+  @override
+  int compare(DataGridRow? a, DataGridRow? b, SortColumnDetails sortColumn) {
+    if (sortColumn.name == 'invoiceId') {
+      final String? valueA = a?.getCells().firstWhereOrNull((dataCell) => dataCell.columnName == 'invoiceId')?.value['invoiceId'];
+      final String? valueB = b?.getCells().firstWhereOrNull((dataCell) => dataCell.columnName == 'invoiceId')?.value['invoiceId'];
+      if (valueA == null || valueB == null) {
+        return 0;
+      }
+
+      if (sortColumn.sortDirection == DataGridSortDirection.ascending) {
+        return valueA.toLowerCase().compareTo(valueB.toLowerCase());
+      } else {
+        return valueB.toLowerCase().compareTo(valueA.toLowerCase());
+      }
+    }
+
+    if (sortColumn.name == 'selectedDate') {
+      final DateTime? valueA = a?.getCells().firstWhereOrNull((dataCell) => dataCell.columnName == 'selectedDate')?.value['date'];
+      final DateTime? valueB = b?.getCells().firstWhereOrNull((dataCell) => dataCell.columnName == 'selectedDate')?.value['date'];
+      if (valueA == null || valueB == null) {
+        return 0;
+      }
+
+      if (sortColumn.sortDirection == DataGridSortDirection.ascending) {
+        return valueA.compareTo(valueB);
+      } else {
+        return valueB.compareTo(valueA);
+      }
+    }
+
+    if (sortColumn.name == 'patientProfile.fullName') {
+      final DataGridCell<PatientUserProfile>? cellA =
+          a!.getCells().firstWhereOrNull((dataCell) => dataCell.columnName == 'patientProfile.fullName') as DataGridCell<PatientUserProfile>?;
+
+      final String valueA = "${cellA?.value?.fullName}";
+
+        final DataGridCell<PatientUserProfile>? cellB =
+          b!.getCells().firstWhereOrNull((dataCell) => dataCell.columnName == 'patientProfile.fullName') as DataGridCell<PatientUserProfile>?;
+
+      final String valueB = "${cellB?.value?.fullName}";
+
+      if (sortColumn.sortDirection == DataGridSortDirection.ascending) {
+        return valueA.toLowerCase().compareTo(valueB.toLowerCase());
+      } else {
+        return valueB.toLowerCase().compareTo(valueA.toLowerCase());
+      }
+    }
+    return super.compare(a, b, sortColumn);
   }
 }

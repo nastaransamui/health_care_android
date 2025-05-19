@@ -40,7 +40,7 @@ class _LastNameFieldState extends State<LastNameField> {
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide.none),
-          fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          fillColor: Theme.of(context).primaryColor.withAlpha((0.1 * 255).round()),
           filled: true,
            prefixIcon:  Icon(Icons.account_circle, color: Theme.of(context).primaryColorLight),
           isDense: true,

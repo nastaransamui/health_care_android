@@ -228,7 +228,7 @@ class SwipeableButtonViewState extends State<SwipeableButtonView>
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: widget.activeColor.withOpacity(0.4),
+                                  color: widget.activeColor.withAlpha((0.4 * 255).round()),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),

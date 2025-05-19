@@ -724,7 +724,7 @@ class _InputFieldState extends State<InputField> {
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide.none,
             ),
-            fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            fillColor: Theme.of(context).primaryColor.withAlpha((0.1 * 255).round()),
             filled: true,
             isDense: true,
             // alignLabelWithHint: true,

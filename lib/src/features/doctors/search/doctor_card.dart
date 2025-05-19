@@ -36,7 +36,7 @@ class DoctorCard extends StatelessWidget {
 // a common breakpoint for a typical 7-inch tablet.
     final bool useMobileLayout = shortestSide < 600;
     return Card(
-      color: Theme.of(context).dialogBackgroundColor,
+      color: Theme.of(context).dialogTheme.backgroundColor,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
         borderRadius: BorderRadius.circular(8.0),
@@ -868,7 +868,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
       isDismissible: true,
       showDragHandle: false,
       backgroundColor: Theme.of(context).canvasColor,
-      barrierColor: Theme.of(context).cardColor.withOpacity(0.8),
+      barrierColor: Theme.of(context).cardColor.withAlpha((0.8 * 255).round()),
       constraints: BoxConstraints(
         maxHeight: double.infinity,
         minWidth: MediaQuery.of(context).size.width,

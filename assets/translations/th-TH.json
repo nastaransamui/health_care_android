@@ -341,5 +341,21 @@
   "paymentStatus": "สถานะการชำระเงิน",
   "noHaveBookingYet": "ยังไม่มีการจอง",
   "totalReservations": "ทั้งหมด: {} การจอง",
-  "rowsPerPage": "จำนวนแถวต่อหน้า"
+  "rowsPerPage": "จำนวนแถวต่อหน้า",
+  "greaterThan": "มากกว่า",
+  "lessThan": "น้อยกว่า",
+  "equal": "เท่ากัน",
+  "between": "ระหว่าง",
+  "contains": "บรรจุ",
+  "before": "ก่อน",
+  "after": "หลัง",
+  "on": "เปิด",
+  "selectColumn": "เลือกคอลัมน์สำหรับตัวกรอง",
+  "selectColumForFilter": "คอลัมน์",
+  "applyFilter": "ใช้ตัวกรอง",
+  "selectOperator": "เลือกตัวดำเนินการ",
+  "valueFrom": "ค่าจาก",
+  "invoiceNo": "หมายเลขใบแจ้งหนี้",
+  "valueTo": "ค่าถึง",
+  "clearFilters": "ล้างตัวกรอง"
 }

@@ -1,6 +1,4 @@
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -24,8 +22,7 @@ class StatusBadgeAvatar extends StatefulWidget {
   State<StatusBadgeAvatar> createState() => _StatusBadgeAvatarState();
 }
 
-class _StatusBadgeAvatarState extends State<StatusBadgeAvatar>
-    with SingleTickerProviderStateMixin {
+class _StatusBadgeAvatarState extends State<StatusBadgeAvatar> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -71,7 +68,8 @@ class _StatusBadgeAvatarState extends State<StatusBadgeAvatar>
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
-                errorWidget: (_, __, ___) => widget.userType == 'doctors' ? Image.asset('assets/images/doctors_profile.jpg') : Image.asset('assets/images/default-avatar.png'),
+                errorWidget: (_, __, ___) =>
+                    widget.userType == 'doctors' ? Image.asset('assets/images/doctors_profile.jpg') : Image.asset('assets/images/default-avatar.png'),
               ),
             ),
           ),
@@ -90,13 +88,15 @@ class _StatusBadgeAvatarState extends State<StatusBadgeAvatar>
                   AnimatedBuilder(
                     animation: _animation,
                     builder: (_, __) {
+                      final double opacity = (1 - _animation.value).clamp(0.0, 1.0);
+                      final int alpha = (opacity * 255).round();
                       return Container(
                         width: 14 * _animation.value,
                         height: 14 * _animation.value,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: statusColor, width: 1),
-                          color: statusColor.withOpacity(max(0, 1 - _animation.value)),
+                          color: statusColor.withAlpha(alpha),
                         ),
                       );
                     },

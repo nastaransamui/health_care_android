@@ -31,13 +31,13 @@ class DataGridProvider with ChangeNotifier {
     if (notify) notifyListeners();
   }
 
-  void setSortModel(List<Map<String, dynamic>> newSortModel) {
+  void setSortModel(List<Map<String, dynamic>> newSortModel, {bool notify = true}) {
     sortModel = newSortModel;
-    notifyListeners();
+     if (notify) notifyListeners();
   }
 
-  void setMongoFilterModel(Map<String, Map<String, dynamic>> newFilter) {
+  void setMongoFilterModel(Map<String, Map<String, dynamic>> newFilter, {bool notify = true}) {
     mongoFilterModel = newFilter;
-    notifyListeners();
+ if (notify) notifyListeners();
   }
 }

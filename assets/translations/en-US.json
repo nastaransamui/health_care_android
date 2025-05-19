@@ -341,5 +341,21 @@
   "paymentStatus": "Payment status",
   "noHaveBookingYet": "No Reservation made yet",
   "totalReservations": "Total: {} Reservations",
-  "rowsPerPage": "Rows Per page"
+  "rowsPerPage": "Rows Per page",
+  "greaterThan": "Greater Than",
+  "lessThan": "Less Than",
+  "equal": "Equal",
+  "between": "Between",
+  "contains": "Contain",
+  "before": "Before",
+  "after": "After",
+  "on": "On",
+  "selectColumn": "Select Column for Filter",
+  "selectColumForFilter": "Columns",
+  "applyFilter": "Apply Filters",
+  "selectOperator": "Select Operator",
+  "valueFrom": "Value From",
+  "invoiceNo": "Invoice No",
+  "valueTo": "Value To",
+  "clearFilters": "Clear Filters"
 }

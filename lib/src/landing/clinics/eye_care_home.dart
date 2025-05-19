@@ -497,7 +497,7 @@ class _EyeCareWhoWeAreState extends State<EyeCareWhoWeAre> {
           decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.contain,
-              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+              colorFilter: ColorFilter.mode(Colors.black.withAlpha((0.2 * 255).round()), BlendMode.dstATop),
               image: const NetworkImage('https://health-care.duckdns.org/assets/images/hospital.webp'),
             ),
           ),

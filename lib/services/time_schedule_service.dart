@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:health_care/models/doctors_time_slot.dart';
@@ -20,7 +19,7 @@ class TimeScheduleService {
       final freshPagination = dataGridProvider.paginationModel;
       final freshSort = dataGridProvider.sortModel;
       final freshFilter = dataGridProvider.mongoFilterModel;
-          timeScheduleProvider.setLoading(false);
+      timeScheduleProvider.setLoading(false);
       socket.emit('getDoctorTimeSlots', {
         "userId": userId,
         "paginationModel": freshPagination,
@@ -48,7 +47,6 @@ class TimeScheduleService {
       }
     });
 
-
     socket.off('updateGetDoctorTimeSlots');
     socket.on('updateGetDoctorTimeSlots', (_) => getScheduleWithUpdate());
     getScheduleWithUpdate();
@@ -69,7 +67,7 @@ class TimeScheduleService {
         }
       }
       if (data['status'] == 200) {
-          timeScheduleProvider.setLoading(false);
+        timeScheduleProvider.setLoading(false);
         timeScheduleProvider.setDoctorsTimeSlot(
           DoctorsTimeSlot.fromJson(data['doctorAvailableTimeSlot']),
         );

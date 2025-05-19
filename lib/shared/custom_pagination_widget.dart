@@ -1,5 +1,3 @@
-
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -52,6 +50,7 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final filter = Provider.of<DataGridProvider>(context, listen: false).mongoFilterModel;
 
     final int rowsPerPage = _dataGridProvider.paginationModel['pageSize']!;
     final int totalPages = (widget.count / rowsPerPage).ceil();
@@ -72,6 +71,31 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min, // Prevents vertical overflow
         children: [
+          // Page Controls
+
+          SfDataPagerTheme(
+            data: SfDataPagerThemeData(
+              backgroundColor: theme.canvasColor,
+              itemColor: theme.primaryColorLight,
+              selectedItemColor: theme.primaryColor,
+              itemTextStyle: const TextStyle(color: Colors.black),
+              selectedItemTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              itemBorderColor: theme.primaryColorLight,
+              itemBorderWidth: 1.0,
+            ),
+            child: SfDataPager(
+              controller: _pagerController,
+              pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
+              delegate: delegate,
+              visibleItemsCount: 2, // Number of pages shown at once
+              direction: Axis.horizontal,
+              initialPageIndex: 0,
+              availableRowsPerPage: const [5, 10],
+            ),
+          ),
           // Rows per page
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,32 +126,27 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          // Page Controls
-
-          SfDataPagerTheme(
-            data: SfDataPagerThemeData(
-              backgroundColor: theme.canvasColor,
-              itemColor: theme.primaryColorLight,
-              selectedItemColor: theme.primaryColor,
-              itemTextStyle: const TextStyle(color: Colors.black),
-              selectedItemTextStyle: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+          if (filter.isNotEmpty) ...[
+            ElevatedButton(
+              onPressed: () async {
+                _dataGridProvider.setMongoFilterModel({});
+                await widget.getDataOnUpdate();
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width, 40),
+                elevation: 5.0,
+                foregroundColor: Colors.black,
+                animationDuration: const Duration(milliseconds: 1000),
+                backgroundColor: Theme.of(context).primaryColor,
+                shadowColor: Theme.of(context).primaryColor,
               ),
-              itemBorderColor: theme.primaryColorLight,
-              itemBorderWidth: 1.0,
+              // style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+              child: Text(
+                context.tr("clearFilters"),
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
-            child: SfDataPager(
-              controller: _pagerController,
-              pageCount: totalPages.toDouble(),
-              delegate: delegate,
-              visibleItemsCount: 2, // Number of pages shown at once
-              direction: Axis.horizontal,
-              initialPageIndex: 0,
-              availableRowsPerPage: const [5, 10],
-            ),
-          )
+          ]
         ],
       ),
     );

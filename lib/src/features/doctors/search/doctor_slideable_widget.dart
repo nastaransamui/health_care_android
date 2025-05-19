@@ -70,7 +70,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
           useSafeArea: true,
           isDismissible: true,
           showDragHandle: true,
-          barrierColor: Theme.of(context).cardColor.withOpacity(0.8),
+          barrierColor: Theme.of(context).cardColor.withAlpha((0.8 * 255).round()),
           constraints: BoxConstraints(
             maxHeight: double.infinity,
             minWidth: MediaQuery.of(context).size.width,
@@ -124,7 +124,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
           useSafeArea: true,
           isDismissible: true,
           showDragHandle: true,
-          barrierColor: Theme.of(context).cardColor.withOpacity(0.8),
+          barrierColor: Theme.of(context).cardColor.withAlpha((0.8 * 255).round()),
           constraints: BoxConstraints(
             maxHeight: double.infinity,
             minWidth: MediaQuery.of(context).size.width,
@@ -225,7 +225,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
                   useSafeArea: true,
                   isDismissible: true,
                   showDragHandle: true,
-                  barrierColor: Theme.of(context).cardColor.withOpacity(0.8),
+                  barrierColor: Theme.of(context).cardColor.withAlpha((0.8 * 255).round()),
                   constraints: BoxConstraints(
                     maxHeight: double.infinity,
                     minWidth: MediaQuery.of(context).size.width,

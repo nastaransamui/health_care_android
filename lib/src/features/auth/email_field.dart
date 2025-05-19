@@ -48,7 +48,7 @@ class _EmailFieldState extends State<EmailField> {
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
-          fillColor: Theme.of(context).canvasColor.withOpacity(0.1),
+         fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
           filled: true,
           prefixIcon: Icon(Icons.email_sharp, color: Theme.of(context).primaryColorLight),
           isDense: true,

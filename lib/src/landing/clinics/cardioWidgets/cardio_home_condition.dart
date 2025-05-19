@@ -109,7 +109,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                                   'https://health-care.duckdns.org/assets/images/features/feature-13.webp',
                                 ),
                                 child: InkWell(
-                                  splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                                  splashColor: Theme.of(context).primaryColor.withAlpha((0.5 * 255).round()),
                                   onTap: () {
                                     showModalBottomSheet(
                                       useSafeArea: true,
@@ -145,7 +145,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                                   'https://health-care.duckdns.org/assets/images/features/feature-15.webp',
                                 ),
                                 child: InkWell(
-                                  splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                                  splashColor: Theme.of(context).primaryColor.withAlpha((0.5 * 255).round()),
                                   onTap: () {
                                     showModalBottomSheet(
                                       useSafeArea: true,
@@ -186,7 +186,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                                   'https://health-care.duckdns.org/assets/images/features/feature-14.webp',
                                 ),
                                 child: InkWell(
-                                  splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                                  splashColor: Theme.of(context).primaryColor.withAlpha((0.5 * 255).round()),
                                   onTap: () {
                                     showModalBottomSheet(
                                       useSafeArea: true,
@@ -222,7 +222,7 @@ class _CardioHomeConditionState extends State<CardioHomeCondition> with TickerPr
                                   'https://health-care.duckdns.org/assets/images/features/feature-16.webp',
                                 ),
                                 child: InkWell(
-                                  splashColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                                  splashColor: Theme.of(context).primaryColor.withAlpha((0.5 * 255).round()),
                                   onTap: () {
                                     showModalBottomSheet(
                                       useSafeArea: true,
