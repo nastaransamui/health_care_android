@@ -132,7 +132,7 @@
   "days": "Days",
   "patientsData": "Patients Data: ",
   "thisWeekPatients": "This Week Patients: ",
-  "reservations": "Reservations: ",
+  "reservations": "Reservations: {}",
   "todayPatients": "Today patients: ",
   "links": "Links",
   "favourites": "Favourites",
@@ -357,5 +357,16 @@
   "valueFrom": "Value From",
   "invoiceNo": "Invoice No",
   "valueTo": "Value To",
-  "clearFilters": "Clear Filters"
+  "clearFilters": "Clear Filters",
+  "total": "Total",
+  "noAppointment": "No Appointment for {}",
+  "forToday": "Today",
+  "forThisWeek": "This week",
+  "view": "View",
+  "confirmed": "Confirmed",
+  "start": "Start: ",
+  "finish": "Finish: ",
+  "confirmDate": "Confirm Date: ",
+  "status": "Status: ",
+  "invoice": "Invoice: "
 }

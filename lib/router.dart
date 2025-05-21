@@ -16,6 +16,8 @@ import 'package:health_care/src/features/auth/verify_email.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
 import 'package:health_care/src/features/dashboard/doctor_dashboard.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
+import 'package:health_care/src/features/doctors/appointments/appointments.dart';
+import 'package:health_care/src/features/doctors/dashboard_appointment/dash_appointment.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
 import 'package:health_care/src/features/doctors/schedule/doctors_dashboard_schedule_timing.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
@@ -125,6 +127,93 @@ final router = GoRouter(
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
               context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/appointments/this_week',
+      name: 'dashboardAppointmentsThisWeek',
+      builder: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return DashboardAppointments( key: ValueKey(doctorProfile.userId), isToday: false,);
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+             context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/appointments/today',
+      name: 'dashboardAppointmentsToday',
+      builder: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return DashboardAppointments( key: ValueKey(doctorProfile.userId), isToday: true,);
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+             context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/appointments',
+      name: 'doctorAppointments',
+      builder: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return DoctorAppointments( key: ValueKey(doctorProfile.userId));
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+             context.go('/');
             }
           });
           return const SizedBox.shrink();

@@ -132,8 +132,8 @@
   "days": "วัน",
   "patientsData": "ข้อมูลผู้ป่วย: ",
   "thisWeekPatients": "ผู้ป่วยในสัปดาห์นี้: ",
-  "reservations": "การจอง: ",
-  "todayPatients": "ผู้ป่วยในวันนี้: ",
+  "reservations": "การจอง: {} ",
+  "todayPatients": "ผู้ป่วยในวันนี้:  ",
   "links": "ลิงค์",
   "favourites": "รายการโปรด",
   "dependent": "ผู้ติดตาม",
@@ -357,5 +357,16 @@
   "valueFrom": "ค่าจาก",
   "invoiceNo": "หมายเลขใบแจ้งหนี้",
   "valueTo": "ค่าถึง",
-  "clearFilters": "ล้างตัวกรอง"
+  "clearFilters": "ล้างตัวกรอง",
+  "total": "รวมทั้งหมด",
+  "noAppointment": "ไม่มีการนัดหมายสำหรับ {}",
+  "forToday": "วันนี้",
+  "forThisWeek": "สัปดาห์นี้",
+  "view": "ดู",
+  "confirmed": "ได้รับการยืนยันแล้ว",
+  "start": "เริ่ม: ",
+  "finish": "เสร็จ: ",
+  "confirmDate": "ยืนยันวันที่: ",
+  "status": "สถานะ: ",
+  "invoice": "ใบแจ้งหนี้: "
 }

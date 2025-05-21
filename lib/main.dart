@@ -3,6 +3,7 @@ import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/providers/user_from_token_provider.dart';
@@ -96,6 +97,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => TimeScheduleProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AppointmentProvider(),
         )
       ],
       child: EasyLocalization(

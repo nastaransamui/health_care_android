@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/users.dart';
+import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/services/appointment_service.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
@@ -24,11 +26,30 @@ class DoctorDashboard extends StatefulWidget {
 
 class _DoctorDashboardState extends State<DoctorDashboard> {
   final AuthService authService = AuthService();
+  final AppointmentService appointmentService = AppointmentService();
+
+  late bool isLoading;
+  int total = 0;
+  void getDocDashAppointments() async {
+    await appointmentService.getDocDashAppointments(context, false);
+  }
 
   @override
   void initState() {
     super.initState();
     authService.updateLiveAuth(context);
+    AppointmentProvider appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
+    isLoading = appointmentProvider.isLoading;
+    total = appointmentProvider.total;
+    getDocDashAppointments();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    AppointmentProvider appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
+    total = appointmentProvider.total;
+    isLoading = appointmentProvider.isLoading;
   }
 
   @override
@@ -39,7 +60,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     late String days = '--';
     late String imageUrl = '';
 
-    if (doctorProfile != null &&  doctorProfile.userProfile.dob != '') {
+    if (doctorProfile != null && doctorProfile.userProfile.dob != '') {
       DateTime dob = doctorProfile.userProfile.dob; // Already DateTime
       DateTime today = DateTime.now();
 
@@ -54,7 +75,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       months = '$m';
       days = '$d';
     }
-    if (doctorProfile != null &&  doctorProfile.userProfile.profileImage.isNotEmpty) {
+    if (doctorProfile != null && doctorProfile.userProfile.profileImage.isNotEmpty) {
       imageUrl = doctorProfile.userProfile.profileImage;
     }
     var brightness = Theme.of(context).brightness;
@@ -67,6 +88,11 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       items: dcotorsDashboarPatientHeader.map((i) {
         return Builder(
           builder: (BuildContext context) {
+            final int? args = i['title'] == "totalPatient"
+                ? doctorProfile?.userProfile.patientsId.length
+                : i['title'] == "reservations"
+                    ? doctorProfile?.userProfile.reservationsId.length
+                    : total;
             return Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -79,7 +105,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                 clipBehavior: Clip.hardEdge,
                 margin: const EdgeInsets.all(0),
                 child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 6.0),
@@ -87,7 +113,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         height: 40,
                         child: Center(
                           child: Text(
-                            context.tr(i['title']!, args: ['${doctorProfile?.userProfile.patientsId.length}']),
+                            context.tr(i['title']!, args: ['$args']),
                             style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor),
                           ),
                         ),
@@ -133,45 +159,51 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
         );
       }).toList(),
     );
-    CarouselSlider datasScrollView = CarouselSlider(
-      options: CarouselOptions(
-        aspectRatio: 2.0,
-        height: 110,
-        enlargeCenterPage: true,
-        scrollDirection: Axis.vertical,
-        autoPlay: true,
-      ),
-      items: doctorDataScroll.map((i) {
-        final name = context.tr(i['title']);
-        return InkWell(
-          splashColor: Theme.of(context).primaryColor,
-          onTap: () {
-            context.push(i['routeName']);
-          },
-          child: Card(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            elevation: 8.0,
-            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-            child: InkWell(
+    Consumer<AppointmentProvider> datasScrollView = Consumer<AppointmentProvider>(
+      builder: (context, appointmentProvider, _) {
+        // final total = appointmentProvider.total;
+
+        return CarouselSlider(
+          options: CarouselOptions(
+            aspectRatio: 2.0,
+            height: 110,
+            enlargeCenterPage: true,
+            scrollDirection: Axis.vertical,
+            autoPlay: true,
+          ),
+          items: doctorDataScroll.map((i) {
+            final name = context.tr(i['title']);
+            return InkWell(
               splashColor: Theme.of(context).primaryColor,
               onTap: () {
                 context.push(i['routeName']);
               },
-              child: SizedBox(
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  leading: i['icon'],
-                  title: Text(name),
-                  trailing: const Icon(Icons.arrow_forward),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                elevation: 8.0,
+                margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                child: InkWell(
+                  splashColor: Theme.of(context).primaryColor,
+                  onTap: () {
+                    context.push(i['routeName']);
+                  },
+                  child: SizedBox(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                      leading: i['icon'],
+                      title: Text(name),
+                      trailing: const Icon(Icons.arrow_forward),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
 
     return ScaffoldWrapper(

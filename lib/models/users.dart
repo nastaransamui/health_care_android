@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:health_care/models/doctors.dart';
 import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/specialities.dart';
@@ -214,10 +213,10 @@ class PatientUserProfile {
       city: map['city'] ?? '',
       country: map['country'] ?? '',
       createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(),
-      dependentsArray: List<String>.from(map['dependentsArray']?? []),
+      dependentsArray: List<String>.from(map['dependentsArray'] ?? []),
       dob: map['dob'] ?? '',
-      doctorsId: List<String>.from(map['doctors_id']?? []),
-      favsId: List<String>.from(map['favs_id']?? []),
+      doctorsId: List<String>.from(map['doctors_id'] ?? []),
+      favsId: List<String>.from(map['favs_id'] ?? []),
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
@@ -225,9 +224,7 @@ class PatientUserProfile {
       invoiceIds: List<String>.from(map['invoice_ids'] ?? []),
       isActive: map['isActive'] ?? false,
       isVerified: map['isVerified'] ?? false,
-      lastLogin: map['lastLogin'] != null
-    ? LastLogin.fromMap(map['lastLogin'])
-    : LastLogin.defaultInstance(),
+      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin.defaultInstance(),
       lastName: map['lastName'] ?? '',
       lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(),
       medicalRecordsArray: List<String>.from(map['medicalRecordsArray']),
@@ -252,7 +249,45 @@ class PatientUserProfile {
 
   factory PatientUserProfile.fromJson(String source) => PatientUserProfile.fromMap(json.decode(source));
 
-
+  factory PatientUserProfile.empty() {
+    return PatientUserProfile(
+        address1: '',
+        address2: '',
+        billingsIds: [],
+        bloodG: '',
+        city: '',
+        country: '',
+        createdAt: DateTime.now(),
+        dependentsArray: [],
+        dob: '',
+        doctorsId: [],
+        favsId: [],
+        firstName: '',
+        fullName: '',
+        gender: '',
+        idle: false,
+        invoiceIds: [],
+        isActive: true,
+        isVerified: false,
+        lastLogin: LastLogin(date: '', ipAddr: '', userAgent: ''),
+        lastName: '',
+        lastUpdate: DateTime.now(),
+        medicalRecordsArray: [],
+        mobileNumber: '',
+        online: false,
+        prescriptionsId: [],
+        profileImage: '',
+        rateArray: [],
+        reservationsId: [],
+        reviewsArray: [],
+        roleName: 'patient',
+        services: '',
+        state: '',
+        userName: '',
+        zipCode: '',
+        id: '',
+        patientsId: 0);
+  }
 
   PatientUserProfile copyWith({
     String? address1,
@@ -379,7 +414,7 @@ class LastLogin {
     );
   }
 
-   factory LastLogin.defaultInstance() {
+  factory LastLogin.defaultInstance() {
     return LastLogin(date: DateTime.now().toIso8601String(), ipAddr: 'Unknown', userAgent: 'Unknow');
   }
 
@@ -814,9 +849,7 @@ class DoctorUserProfile {
       services: map['services'],
       // roleName: DoctorRoleNameExtension.fromString(map['roleName']),
       // services: ServicesExtension.fromString(map['services']),
-      socialMedia: (map['socialMedia'] as List?)
-    ?.map((e) => SocialMedia.fromMap(e))
-    .toList() ?? [],
+      socialMedia: (map['socialMedia'] as List?)?.map((e) => SocialMedia.fromMap(e)).toList() ?? [],
       specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
       specialitiesServices: map['specialitiesServices'] != null ? List<String>.from(map['specialitiesServices']) : [],
       state: map['state'] ?? '',
