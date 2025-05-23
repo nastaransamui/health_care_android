@@ -5,7 +5,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 String ipApiUrl = 'http://ip-api.com/json';
 const double expandedHeight = 250;
-
+  final List<Map<String, dynamic>> bloodGValues = [
+    {"title": 'A+', 'icon': '🅰️'},
+    {"title": 'A-', 'icon': '🅰️'},
+    {"title": 'B+', 'icon': '🅱️'},
+    {"title": 'B-', 'icon': '🅱️'},
+    {"title": 'AB+', 'icon': '🆎'},
+    {"title": 'AB-', 'icon': '🆎'},
+    {"title": 'O+', 'icon': '🅾️'},
+    {"title": 'O-', 'icon': '🅾️'},
+  ];
 List dcotorsDashboarPatientHeader = [
   {"title": "totalPatient", "icon": "", "image": "assets/icon/doctor-dashboard-01.png", "percent": 0.8},
   {"title": "thisWeekPatients", "icon": "", "image": "assets/icon/doctor-dashboard-02.png", "percent": 0.5},
@@ -16,6 +25,16 @@ List doctorDataScroll = [
   {"title": "todayPatients", "icon": const Icon(Icons.medication), "routeName": "/doctors/dashboard/appointments/today"},
 ];
 List doctorsDashboardLink = [
+  {
+    'name': 'profileSettings',
+    'routeName': "/doctors/dashboard/profile",
+    "icon": const FaIcon(FontAwesomeIcons.userCog),
+  },
+  {
+    'name': 'favourites',
+    'routeName': "/doctors/dashboard/favourites",
+    "icon": const FaIcon(FontAwesomeIcons.bookmark),
+  },
   {
     'name': 'appointments',
     'routeName': "/doctors/dashboard/appointments",
@@ -38,28 +57,33 @@ List doctorsDashboardLink = [
   },
   {
     'name': 'invoices',
-    'routeName': "/doctors/dashboard/invoices",
+    'routeName': "/doctors/dashboard/invoice",
+    "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
+  },
+  {
+    'name': 'billings',
+    'routeName': "/doctors/dashboard/billings",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
   },
   {
     'name': 'accounts',
-    'routeName': "/doctors/dashboard/accounts",
+    'routeName': "/doctors/dashboard/account",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoiceDollar),
   },
   {
     'name': 'reviews',
     'routeName': "/doctors/dashboard/reviews",
+    "icon": const FaIcon(FontAwesomeIcons.comment),
+  },
+  {
+    'name': 'rates',
+    'routeName': "/doctors/dashboard/rates",
     "icon": const FaIcon(FontAwesomeIcons.star),
   },
   {
     'name': 'message',
-    'routeName': "/doctors/dashboard/message",
-    "icon": const FaIcon(FontAwesomeIcons.comments),
-  },
-  {
-    'name': 'profileSettings',
-    'routeName': "/doctors/dashboard/profile",
-    "icon": const FaIcon(FontAwesomeIcons.userCog),
+    'routeName': "/doctors/dashboard/chat-doctor",
+    "icon": const FaIcon(FontAwesomeIcons.commentAlt),
   },
   {
     'name': 'socialMedia',

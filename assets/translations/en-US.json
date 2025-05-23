@@ -127,9 +127,9 @@
   "verification": "Verification",
   "totalPatient": "Total Patient: {}",
   "doctorDashboard": "Doctor Dashboard",
-  "years": "Years",
-  "month": "Month",
-  "days": "Days",
+  "years": "Y",
+  "month": "M",
+  "days": "D",
   "patientsData": "Patients Data: ",
   "thisWeekPatients": "This Week Patients: ",
   "reservations": "Reservations: {}",
@@ -368,5 +368,12 @@
   "finish": "Finish: ",
   "confirmDate": "Confirm Date: ",
   "status": "Status: ",
-  "invoice": "Invoice: "
+  "invoice": "Invoice: ",
+  "totalFavourites": {
+    "zero": "No any favourite found.",
+    "one": "You have {} favourite",
+    "many": "You have {} favourites",
+    "other": "You have {} favourites"
+  },
+  "lastLogin": "Last login: "
 }

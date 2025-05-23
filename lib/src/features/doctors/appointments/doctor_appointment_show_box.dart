@@ -34,7 +34,7 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
     final String period = timeSlot.period;
     final String gender = patientProfile.gender;
     final String profileImage = patientProfile.profileImage;
-    final String patientName = "$gender ${gender != '' ? '.' : ''} ${patientProfile.fullName}";
+    final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile.fullName}";
     final encodedId = base64.encode(utf8.encode(patientId.toString()));
     final encodedinvoice = base64.encode(utf8.encode(reservation.id.toString()));
     Color statusColor = patientProfile.idle ?? false

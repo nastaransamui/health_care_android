@@ -36,7 +36,6 @@ class AppointmentService {
       });
     }
 
-    // 🔐 Attach socket listener ONCE
     socket.off('getDocDashAppointmentsReturn'); // remove previous to avoid stacking
     socket.on('getDocDashAppointmentsReturn', (data) {
       appointmentProvider.setLoading(false);

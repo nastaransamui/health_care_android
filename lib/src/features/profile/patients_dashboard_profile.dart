@@ -9,6 +9,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:health_care/constants/error_handling.dart';
+import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/cities.dart';
 import 'package:health_care/models/countries.dart';
 import 'package:health_care/models/states.dart';
@@ -69,16 +70,7 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
   final patientAddress1Controller = TextEditingController();
   final patientAddress2Controller = TextEditingController();
   final patientzipCodeController = TextEditingController();
-  final List<Map<String, dynamic>> bloodGValues = [
-    {"title": 'A+', 'icon': '🅰️'},
-    {"title": 'A-', 'icon': '🅰️'},
-    {"title": 'B+', 'icon': '🅱️'},
-    {"title": 'B-', 'icon': '🅱️'},
-    {"title": 'AB+', 'icon': '🆎'},
-    {"title": 'AB-', 'icon': '🆎'},
-    {"title": 'O+', 'icon': '🅾️'},
-    {"title": 'O-', 'icon': '🅾️'},
-  ];
+
   final bloodGController = TextEditingController();
   String? countryValue;
   String? stateValue;

@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:health_care/providers/auth_provider.dart';
+// import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
-import 'package:health_care/services/time_schedule_service.dart';
+// import 'package:health_care/services/time_schedule_service.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 // ignore: depend_on_referenced_packages
@@ -27,7 +27,7 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
   void initState() {
     super.initState();
     _pagerController = DataPagerController();
-    _pagerController.selectedPageIndex = 0;
+    // _pagerController.selectedPageIndex = 0;
   }
 
   @override
@@ -54,20 +54,29 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
 
     final int rowsPerPage = _dataGridProvider.paginationModel['pageSize']!;
     final int totalPages = (widget.count / rowsPerPage).ceil();
+    //  change current page if totalFavourites is less that current page
+    int currentPage = _dataGridProvider.paginationModel.values.first;
+    int currentPerPage = _dataGridProvider.paginationModel.values.last;
+    if (currentPage != 0) {
+      if ((currentPage + currentPerPage) > widget.count) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _dataGridProvider.setPaginationModel(currentPage - 1, currentPerPage);
+          _pagerController.selectedPageIndex = currentPage - 1;
+        });
+      }
+    }
     final delegate = CustomDataPagerDelegate(
       itemCount: widget.count,
       rowsPerPage: rowsPerPage,
       onPageChanged: (pageIndex) async {
         _dataGridProvider.setPaginationModel(pageIndex, rowsPerPage);
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
-        await TimeScheduleService().getDoctorTimeSlots(context, doctorProfile!);
+        widget.getDataOnUpdate();
 
         return true;
       },
     );
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min, // Prevents vertical overflow
         children: [
@@ -92,7 +101,6 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
               delegate: delegate,
               visibleItemsCount: 2, // Number of pages shown at once
               direction: Axis.horizontal,
-              initialPageIndex: 0,
               availableRowsPerPage: const [5, 10],
             ),
           ),
@@ -115,10 +123,11 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
                     // If current page is now out of range, reset to last valid page (or 0)
                     if (currentPage >= totalPagesAfterChange) {
                       final int newPage = totalPagesAfterChange > 0 ? totalPagesAfterChange - 1 : 0;
+                      _pagerController.selectedPageIndex = newPage;
                       _dataGridProvider.setPaginationModel(newPage, value);
                     } else {
-                      _pagerController.firstPage();
-                      _dataGridProvider.setPaginationModel(currentPage, value);
+                      _pagerController.selectedPageIndex = 0; // ✅ Add this
+                      _dataGridProvider.setPaginationModel(0, value); // ✅ reset to page 0
                     }
                     await widget.getDataOnUpdate();
                   }

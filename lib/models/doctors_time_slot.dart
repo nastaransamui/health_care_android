@@ -265,7 +265,7 @@ Map<String, dynamic> jsonForUpdateDb() {
 
 class TimeType {
   final bool active;
-  final int bookingsFee;
+  final double bookingsFee;
   final double bookingsFeePrice;
   final String currencySymbol;
   final String? id;
@@ -290,7 +290,7 @@ class TimeType {
   factory TimeType.fromJson(Map<String, dynamic> json) {
     return TimeType(
       active: json['active'],
-      bookingsFee: json['bookingsFee'].toInt(),
+      bookingsFee: json['bookingsFee'].toDouble(),
       bookingsFeePrice: json['bookingsFeePrice'].toDouble(),
       currencySymbol: json['currencySymbol'],
       id: json['id'],
@@ -373,7 +373,7 @@ class TimeType {
 
   TimeType copyWith({
     bool? active,
-    int? bookingsFee,
+    double? bookingsFee,
     double? bookingsFeePrice,
     String? currencySymbol,
     String? id,

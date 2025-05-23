@@ -214,7 +214,7 @@ class PatientUserProfile {
       country: map['country'] ?? '',
       createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(),
       dependentsArray: List<String>.from(map['dependentsArray'] ?? []),
-      dob: map['dob'] ?? '',
+      dob: map['dob'] =='' ? '' : DateTime.parse(map['dob']),
       doctorsId: List<String>.from(map['doctors_id'] ?? []),
       favsId: List<String>.from(map['favs_id'] ?? []),
       firstName: map['firstName'] ?? '',
@@ -269,7 +269,7 @@ class PatientUserProfile {
         invoiceIds: [],
         isActive: true,
         isVerified: false,
-        lastLogin: LastLogin(date: '', ipAddr: '', userAgent: ''),
+        lastLogin: LastLogin(date: DateTime.now(), ipAddr: '', userAgent: ''),
         lastName: '',
         lastUpdate: DateTime.now(),
         medicalRecordsArray: [],
@@ -374,7 +374,7 @@ class PatientUserProfile {
 }
 
 class LastLogin {
-  final String date;
+  final DateTime date;
   final String ipAddr;
   final String userAgent;
 
@@ -385,7 +385,7 @@ class LastLogin {
   });
 
   LastLogin copyWith({
-    String? date,
+    DateTime? date,
     String? ipAddr,
     String? userAgent,
   }) {
@@ -408,14 +408,16 @@ class LastLogin {
 
   factory LastLogin.fromMap(Map<String, dynamic> map) {
     return LastLogin(
-      date: map['date'] ?? '',
+      date: map['date'] is String
+        ? DateTime.tryParse(map['date']) ?? DateTime.now()
+        : (map['date'] ?? DateTime.now()),
       ipAddr: map['ipAddr'] ?? '',
       userAgent: map['userAgent'] ?? '',
     );
   }
 
   factory LastLogin.defaultInstance() {
-    return LastLogin(date: DateTime.now().toIso8601String(), ipAddr: 'Unknown', userAgent: 'Unknow');
+    return LastLogin(date: DateTime.now(), ipAddr: 'Unknown', userAgent: 'Unknow');
   }
 
   String toJson() => json.encode(toMap());
@@ -524,7 +526,7 @@ class DoctorUserProfile {
   final List<Award> awards;
   final String bankId;
   final List<String> billingsIds;
-  final int bookingsFee;
+  final double bookingsFee;
   final String city;
   final String clinicAddress;
   final List<ClinicImages> clinicImages;
@@ -535,7 +537,7 @@ class DoctorUserProfile {
   final dynamic dob;
   final List<Education> educations;
   final List<Experinces> experinces;
-  final List<dynamic> favsId;
+  final List<String> favsId;
   final String firstName;
   final String fullName;
   final String gender;
@@ -635,7 +637,7 @@ class DoctorUserProfile {
           .toList(),
       bankId: json['bankId'] ?? '',
       billingsIds: List<String>.from(json['billingsIds']),
-      bookingsFee: json['bookingsFee'] ?? 0,
+      bookingsFee: json['bookingsFee'] ?? 0.0,
       city: json['city'] ?? '',
       clinicAddress: json['clinicAddress'] ?? '',
       clinicImages: (json['clinicImages'] as List)
@@ -696,7 +698,7 @@ class DoctorUserProfile {
       'awards': awards.map((e) => e.toJson()).toList(),
       'bankId': bankId,
       'billingsIds': billingsIds,
-      'bookingsFee': bookingsFee,
+      'bookingsFee': bookingsFee.toDouble(),
       'city': city,
       'clinicAddress': clinicAddress,
       'clinicImages': clinicImages.map((e) => e.toJson()).toList(),
@@ -812,7 +814,8 @@ class DoctorUserProfile {
       awards: map['awards'] != null ? List<Award>.from(map['awards']?.map((x) => Award.fromMap(x))) : [],
       bankId: map['bankId'] ?? '',
       billingsIds: map['billingsIds'] != null ? List<String>.from(map['billingsIds']) : [],
-      bookingsFee: map['bookingsFee'] ?? '',
+      // bookingsFee: map['bookingsFee'] ?? 0.0,
+      bookingsFee: (map['bookingsFee'] is num) ? (map['bookingsFee'] as num).toDouble() : 0.0,
       city: map['city'] ?? '',
       clinicAddress: map['clinicAddress'] ?? '',
       clinicImages: map['clinicImages'] != null ? List<ClinicImages>.from(map['clinicImages']?.map((x) => ClinicImages.fromMap(x))) : [],
@@ -831,7 +834,7 @@ class DoctorUserProfile {
       invoiceIds: map['invoice_ids'] != null ? List<String>.from(map['invoice_ids']) : [],
       isActive: map['isActive'] ?? false,
       isVerified: map['isVerified'] ?? false,
-      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: '', ipAddr: '', userAgent: ''),
+      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: DateTime.now(), ipAddr: '', userAgent: ''),
       lastName: map['lastName'] ?? '',
       lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(), // Handle DateTime parsing for lastUpdate
       memberships: map['memberships'] != null ? List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))) : [],
