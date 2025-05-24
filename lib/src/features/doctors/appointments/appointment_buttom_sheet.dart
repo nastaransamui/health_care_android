@@ -12,9 +12,11 @@ import 'package:timezone/timezone.dart' as tz;
 
 class AppointmentButtomSheet extends StatefulWidget {
   final AppointmentReservation reservation;
+  final ScrollController scrollController;
   const AppointmentButtomSheet({
     super.key,
     required this.reservation,
+    required this.scrollController,
   });
 
   @override
@@ -49,6 +51,7 @@ class _AppointmentButtomSheetState extends State<AppointmentButtomSheet> {
     final encodedinvoice = base64.encode(utf8.encode(reservation.id.toString()));
     return Scaffold(
       body: SingleChildScrollView(
+        controller: widget.scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

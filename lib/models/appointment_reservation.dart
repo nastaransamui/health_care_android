@@ -3,21 +3,6 @@ import 'dart:developer';
 import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/users.dart';
 
-// enum DoctorPaymentStatus {
-//   pending("Pending"),
-//   paid("Paid"),
-//   awaitingRequest("Awaiting Request");
-
-//   final String value;
-//   const DoctorPaymentStatus(this.value);
-
-//   static DoctorPaymentStatus fromString(String value) {
-//     return DoctorPaymentStatus.values.firstWhere(
-//       (e) => e.value == value,
-//       orElse: () => DoctorPaymentStatus.pending,
-//     );
-//   }
-// }
 
 class AppointmentReservation {
   final String id;

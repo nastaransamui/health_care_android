@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
-import 'package:health_care/providers/favourites_provider.dart';
+import 'package:health_care/providers/my_patients_provider.dart';
 import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/services/favourite_service.dart';
+import 'package:health_care/services/my_patients_service.dart';
 import 'package:health_care/shared/custom_pagination_widget.dart';
 import 'package:health_care/shared/doctors_patients_show_box.dart';
 import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
@@ -15,28 +15,28 @@ import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class DoctorsFavourites extends StatefulWidget {
-  static const String routeName = "/doctors/dashboard/favourites";
-  const DoctorsFavourites({super.key});
+class DoctorsMyPatients extends StatefulWidget {
+  static const String routeName = "/doctors/dashboard/my-patients";
+  const DoctorsMyPatients({super.key});
 
   @override
-  State<DoctorsFavourites> createState() => _DoctorsFavouritesState();
+  State<DoctorsMyPatients> createState() => _DoctorsMyPatientsState();
 }
 
-class _DoctorsFavouritesState extends State<DoctorsFavourites> {
-  final ScrollController favouritesScrollController = ScrollController();
+class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
+  final ScrollController myPatientScrollController = ScrollController();
   late final DataGridProvider dataGridProvider;
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
-  final FavouriteService favouriteService = FavouriteService();
-  late final FavouritesProvider favouritesProvider = FavouritesProvider();
+  final MyPatientsService myPatientsService = MyPatientsService();
+  late final MyPatientsProvider myPatientsProvider = MyPatientsProvider();
   bool _isProvidersInitialized = false;
   double scrollPercentage = 0;
 
   Future<void> getDataOnUpdate() async {
     final doctorProfile = authProvider.doctorsProfile;
-    final favIds = doctorProfile?.userProfile.favsId;
-    await favouriteService.getFavPatientsForDoctorProfile(context, favIds!);
+    final patientsIdArray = doctorProfile?.userProfile.patientsId;
+    await myPatientsService.getMyPatientsProfile(context, patientsIdArray!);
   }
 
   @override
@@ -44,7 +44,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
     super.initState();
     authService.updateLiveAuth(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      favouritesProvider.setLoading(true);
+      myPatientsProvider.setLoading(true);
       getDataOnUpdate();
     });
   }
@@ -64,23 +64,21 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
 
   @override
   void dispose() {
-    // favouritesProvider.setLoading(false);
-    favouritesProvider.setUserFavProfile([]);
-    favouritesProvider.setTotal(0);
-    favouritesScrollController.dispose();
+    myPatientsProvider.setMyPatientsProfile([]);
+    myPatientsProvider.setTotal(0);
+    myPatientScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FavouritesProvider>(
-      builder: (context, favouritesProvider, _) {
-        final userFavProfile = favouritesProvider.userFavProfile;
-        bool isLoading = favouritesProvider.isLoading;
+    return Consumer<MyPatientsProvider>(
+      builder: (context, myPatientProvider, _) {
+        final myPatientsProfile = myPatientProvider.myPatientsProfile;
+        bool isLoading = myPatientProvider.isLoading;
         final doctorProfile = authProvider.doctorsProfile;
-        final int totalFavourites = doctorProfile?.userProfile.favsId.length ?? 0;
+        final int totalMyPatients = doctorProfile?.userProfile.patientsId.length ?? 0;
         final theme = Theme.of(context);
-
         bool isActive = dataGridProvider.mongoFilterModel.isNotEmpty;
         final List<FilterableGridColumn> filterableColumns = [
           FilterableGridColumn(column: GridColumn(columnName: 'profile.id', label: Text(context.tr('id'))), dataType: 'number'),
@@ -92,15 +90,16 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
           FilterableGridColumn(column: GridColumn(columnName: 'profile.state', label: Text(context.tr('state'))), dataType: 'string'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.country', label: Text(context.tr('country'))), dataType: 'string'),
         ];
+
         return ScaffoldWrapper(
-          title: context.tr('favourites'),
+          title: context.tr('myPatients'),
           children: Stack(
             children: [
               NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   double per = 0;
-                  if (favouritesScrollController.hasClients) {
-                    per = ((favouritesScrollController.offset / favouritesScrollController.position.maxScrollExtent));
+                  if (myPatientScrollController.hasClients) {
+                    per = ((myPatientScrollController.offset / myPatientScrollController.position.maxScrollExtent));
                   }
                   if (per >= 0) {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -130,14 +129,14 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                             padding: const EdgeInsets.all(16.0),
                             child: Center(
                               child: Text(
-                                "totalFavourites",
+                                "totalMyPatient",
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Theme.of(context).primaryColor,
                                 ),
                               ).plural(
-                                isActive ? userFavProfile.length : totalFavourites,
+                                isActive ? myPatientsProfile.length : totalMyPatients,
                                 format: NumberFormat.compact(
                                   locale: context.locale.toString(),
                                 ),
@@ -149,21 +148,21 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                     ),
                     const SizedBox(height: 10),
                     CustomPaginationWidget(
-                      count: isActive ? userFavProfile.length : totalFavourites,
+                      count: isActive ? myPatientsProfile.length : totalMyPatients,
                       getDataOnUpdate: getDataOnUpdate,
                     ),
                     Expanded(
                       child: Stack(
                         children: [
                           ListView.builder(
-                            controller: favouritesScrollController,
+                            controller: myPatientScrollController,
                             shrinkWrap: true,
-                            restorationId: 'doctorFavorite',
-                            key: const ValueKey('doctorFavorite'),
+                            restorationId: 'doctorMyPatients',
+                            key: const ValueKey('doctorMyPatients'),
                             physics: const BouncingScrollPhysics(),
-                            itemCount: userFavProfile.length,
+                            itemCount: myPatientsProfile.length,
                             itemBuilder: (context, index) {
-                              final patientFavProfile = userFavProfile[index];
+                              final patientFavProfile = myPatientsProfile[index];
                               return DoctorsPatientsShowBox(
                                 patientFavProfile: patientFavProfile,
                                 getDataOnUpdate: getDataOnUpdate,
@@ -178,7 +177,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                               ),
                             )
                           ],
-                          ScrollButton(scrollController: favouritesScrollController, scrollPercentage: scrollPercentage)
+                          ScrollButton(scrollController: myPatientScrollController, scrollPercentage: scrollPercentage)
                         ],
                       ),
                     )

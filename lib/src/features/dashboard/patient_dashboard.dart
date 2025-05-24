@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:math';
-import 'dart:developer' as dev;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -371,7 +370,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                     var name = i['title'];
                                     var value = vitalSignsController[i['title']]?.text;
                                     var userId = patientProfile!.userId;
-                                    dev.log("$name, $value, $userId");
                                     if (value!.isNotEmpty) {
                                       socket.emit(
                                         'vitalSignsUpdate',

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/appointment_reservation.dart';
@@ -53,10 +52,8 @@ class AppointmentService {
           try {
             final reservationList = (reservations as List).map((json) => AppointmentReservation.fromJson(json)).toList();
             appointmentProvider.setAppointmentReservations(reservationList);
-          } catch (e, stack) {
-            log('Failed to parse reservations: $e');
-            log(stack.toString());
-          }
+          // ignore: empty_catches
+          } catch (e) {}
           if (totalCount is List && totalCount.isNotEmpty) {
             final int finalTotal = totalCount.first["count"];
             appointmentProvider.setTotal(finalTotal);
@@ -86,7 +83,6 @@ class AppointmentService {
     appointmentProvider.setLoading(true);
     void getDoctorAppointmentsWithUpdate() {
       const  skip = 0;
-      log('limit: $limit loading: ${appointmentProvider.isLoading}');
       appointmentProvider.setLoading(false);
       socket.emit("getDoctorAppointments", {
         "userId": userId,
@@ -111,10 +107,8 @@ class AppointmentService {
            try {
             final reservationList = (appointments).map((json) => AppointmentReservation.fromJson(json)).toList();
             appointmentProvider.setAppointmentReservations(reservationList);
-          } catch (e, stack) {
-            log('Failed to parse reservations: $e');
-            log(stack.toString());
-          }
+          // ignore: empty_catches
+          } catch (e) {}
         }
       }
     });

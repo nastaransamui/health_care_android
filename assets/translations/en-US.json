@@ -375,5 +375,11 @@
     "many": "You have {} favourites",
     "other": "You have {} favourites"
   },
+  "totalMyPatient": {
+    "zero": "No any patient found.",
+    "one": "You have {} patient",
+    "many": "You have {} patients",
+    "other": "You have {} patients"
+  },
   "lastLogin": "Last login: "
 }

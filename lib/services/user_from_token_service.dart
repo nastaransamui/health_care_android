@@ -1,6 +1,4 @@
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -131,7 +129,6 @@ class UserFromTokenService {
       }
     } catch (e) {
       String errorMessage = e.toString();
-      log(errorMessage);
       if (context.mounted) {
         var snackBar = SnackBar(content: Text(errorMessage));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);

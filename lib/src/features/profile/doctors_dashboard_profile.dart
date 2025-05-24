@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -136,9 +136,8 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       try {
         String formattedDob = DateFormat("dd MMM yyyy").format(doctorProfile.userProfile.dob.toLocal());
         dobController.text = formattedDob;
-      } catch (e) {
-        log("DOB parsing error: $e");
-      }
+      // ignore: empty_catches
+      } catch (e) {}
     }
     aboutMeController.text = doctorProfile.userProfile.aboutMe;
     clinicNameController.text = doctorProfile.userProfile.clinicAddress;

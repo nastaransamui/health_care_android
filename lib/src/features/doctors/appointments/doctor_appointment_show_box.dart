@@ -207,10 +207,20 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
                           isDismissible: true,
                           enableDrag: true,
                           context: context,
-                          builder: (context) => FractionallySizedBox(
-                            heightFactor: 0.9,
-                            child: AppointmentButtomSheet(reservation: reservation),
-                          ),
+                          builder: (context) {
+                            return DraggableScrollableSheet(
+                              expand: false,
+                              initialChildSize: 0.9,
+                              minChildSize: 0.5,
+                              maxChildSize: 0.95,
+                              builder: (context, scrollController) {
+                                return AppointmentButtomSheet(
+                                  reservation: reservation,
+                                  scrollController: scrollController,
+                                );
+                              },
+                            );
+                          },
                         );
                       },
                       colors: [

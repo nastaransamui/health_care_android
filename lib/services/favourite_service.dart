@@ -1,6 +1,6 @@
-import 'dart:async';
-import 'dart:developer';
+// ignore_for_file: empty_catches
 
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -57,10 +57,7 @@ class FavouriteService {
             final patientsList = (patients as List).map((json) => PatientUserProfile.fromMap(json)).toList();
             favouritesProvider.setUserFavProfile(patientsList);
             favouritesProvider.setLoading(false);
-          } catch (e, stack) {
-            log('Failed to parse userFavProfile: $e');
-            log(stack.toString());
-          }
+          } catch (e) {}
         }
       }
     });

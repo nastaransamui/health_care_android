@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:health_care/models/appointment_reservation.dart';
+import 'package:health_care/models/users.dart';
 
-class AppointmentProvider extends ChangeNotifier {
-  List<AppointmentReservation> _appointmentReservations = [];
+class MyPatientsProvider extends ChangeNotifier {
+  List<PatientUserProfile> _myPatientsProfile = [];
   bool _isLoading = true;
   int _total = 0;
-  List<AppointmentReservation> get appointmentReservations => _appointmentReservations;
+
+  List<PatientUserProfile> get myPatientsProfile => _myPatientsProfile;
   bool get isLoading => _isLoading;
   int get total => _total;
-  void setAppointmentReservations(List<AppointmentReservation> reservations) {
+
+  void setMyPatientsProfile(List<PatientUserProfile> myPatientsProfiles) {
     if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Delay setting the actual value to next frame
         WidgetsBinding.instance.addPostFrameCallback((__) {
-          _appointmentReservations = reservations;
+          _myPatientsProfile = myPatientsProfiles;
           // _isLoading = false;
           notifyListeners();
         });
         notifyListeners();
       });
     } else {
-      // We're not in a build phase, so safe to update immediately
-      _isLoading = true;
-      notifyListeners();
-
-      _appointmentReservations = reservations;
-      // _isLoading = false;
+      _myPatientsProfile = myPatientsProfiles;
       notifyListeners();
     }
   }
