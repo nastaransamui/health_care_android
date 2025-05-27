@@ -21,13 +21,13 @@ class GradientButton extends StatelessWidget {
           colors: colors,
         ),
         borderRadius: BorderRadius.circular(60),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(123, 140, 210, 0.3),
-            offset: Offset(0, 12),
-            blurRadius: 20,
-          ),
-        ],
+        // boxShadow: const [
+        //   BoxShadow(
+        //     color: Color.fromRGBO(123, 140, 210, 0.3),
+        //     offset: Offset(0, 12),
+        //     blurRadius: 20,
+        //   ),
+        // ],
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(

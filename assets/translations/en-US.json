@@ -335,7 +335,7 @@
   "id": "ID",
   "reserveDate": "Reserve Date",
   "dayTime": "Day Time",
-  "invoiceId": "Invoice No",
+  "invoiceId": "Invoice Id",
   "selectedDate": "Selected Date",
   "patientName": "Patient Name",
   "paymentStatus": "Payment status",
@@ -381,5 +381,42 @@
     "many": "You have {} patients",
     "other": "You have {} patients"
   },
-  "lastLogin": "Last login: "
+  "lastLogin": "Last login: ",
+  "totalMyInvoice": {
+    "zero": "No any invoice found.",
+    "one": "You have {} invoice",
+    "many": "You have {} invoices",
+    "other": "You have {} invoices"
+  },
+  "actions": "Actions",
+  "paymentDate": "Payment Date",
+  "paymentToken": "Payment Token",
+  "paymentType": "Payment Type",
+  "bookingsFeePrice": "Booking Fee Price",
+  "paymentRequest": {
+    "zero": "No any request select.",
+    "one": "You have selected {} invoice",
+    "many": "You have selected {} invoices",
+    "other": "You have selected {} invoices"
+  },
+  "sendAppointmentForPayment": {
+    "one": "Send {} appointment for Payment request.",
+    "many": "Send {} appointments for Payment request.",
+    "other": "Send {} appointments for Payment request."
+  },
+  "issued": "Issued",
+  "drInformation": "Doctor Informations",
+  "name": "Name",
+  "address": "Address",
+  "patientInformation": "Patient Informations",
+  "paymentMethod": "Payment Method",
+  "description": "Description",
+  "quantity": "Quantity",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "totalAmount": "Total Amount",
+  "otherInformation": "Other Informations",
+  "invoiceFooter": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed dictum ligula, cursus blandit risus. Maecenas eget metus non tellus dignissim aliquam ut a ex. Maecenas sed vehicula dui, ac suscipit lacus. Sed finibus leo vitae lorem interdum, eu scelerisque tellus fermentum. Curabitur sit amet lacinia lorem. Nullam finibus pellentesque libero.",
+  "savedToDownload": "Saved to Downloads",
+  "storagePermissionForPDF": "Storage permission is required to save the PDF."
 }

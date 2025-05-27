@@ -82,26 +82,31 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
         children: [
           // Page Controls
 
-          SfDataPagerTheme(
-            data: SfDataPagerThemeData(
-              backgroundColor: theme.canvasColor,
-              itemColor: theme.primaryColorLight,
-              selectedItemColor: theme.primaryColor,
-              itemTextStyle: const TextStyle(color: Colors.black),
-              selectedItemTextStyle: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+          Container(
+            width: double.infinity,
+            color: theme.canvasColor, // Set the full background color here
+            padding: const EdgeInsets.symmetric(horizontal: 8), // Optional: add side padding
+            child: SfDataPagerTheme(
+              data: SfDataPagerThemeData(
+                backgroundColor: Colors.transparent, // Let container background show
+                itemColor: theme.primaryColorLight,
+                selectedItemColor: theme.primaryColor,
+                itemTextStyle: const TextStyle(color: Colors.black),
+                selectedItemTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                itemBorderColor: theme.primaryColorLight,
+                itemBorderWidth: 1.0,
               ),
-              itemBorderColor: theme.primaryColorLight,
-              itemBorderWidth: 1.0,
-            ),
-            child: SfDataPager(
-              controller: _pagerController,
-              pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
-              delegate: delegate,
-              visibleItemsCount: 2, // Number of pages shown at once
-              direction: Axis.horizontal,
-              availableRowsPerPage: const [5, 10],
+              child: SfDataPager(
+                controller: _pagerController,
+                pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
+                delegate: delegate,
+                visibleItemsCount: 3,
+                direction: Axis.horizontal,
+                availableRowsPerPage: const [5, 10],
+              ),
             ),
           ),
           // Rows per page

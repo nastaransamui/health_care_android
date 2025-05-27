@@ -1,7 +1,7 @@
-import 'dart:developer';
 
 import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/users.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 
 class AppointmentReservation {
@@ -52,18 +52,14 @@ class AppointmentReservation {
       if (rawProfile is String) {
         try {
           profile = PatientUserProfile.fromJson(rawProfile); // it's a JSON string
-        } catch (e) {
-          log('Error parsing patientProfile JSON string: $e');
-        }
+        // ignore: empty_catches
+        } catch (e) {}
       } else if (rawProfile is Map<String, dynamic>) {
         try {
           profile = PatientUserProfile.fromMap(rawProfile);
-        } catch (e) {
-          log('Error parsing patientProfile map: $e');
-        }
-      } else {
-        log('Unexpected patientProfile type: ${rawProfile.runtimeType}');
-      }
+        // ignore: empty_catches
+        } catch (e) {}
+      } 
     }
     return AppointmentReservation(
       id: json['_id'],
@@ -164,4 +160,48 @@ class AppointmentReservation {
   String toString() {
     return 'AppointmentReservation(id: $id, appointmentId: $appointmentId, timeSlot: $timeSlot, selectedDate: $selectedDate, dayPeriod: $dayPeriod, doctorId: $doctorId, startDate: $startDate, finishDate: $finishDate, slotId: $slotId, patientId: $patientId, paymentToken: $paymentToken, paymentType: $paymentType, invoiceId: $invoiceId, doctorPaymentStatus: $doctorPaymentStatus, paymentDate: $paymentDate, createdDate: $createdDate, patientProfile: $patientProfile)';
   }
+}
+
+
+AppointmentReservation convertRowToAppointment(DataGridRow row) {
+  T getValue<T>(String name) => row.getCells().firstWhere((e) => e.columnName == name).value as T;
+
+  final selectedDateMap = getValue<Map<String, dynamic>>('selectedDate');
+  final priceMap = getValue<Map<String, dynamic>>('timeSlot.price');
+  final bookingsFeePriceMap = getValue<Map<String, dynamic>>('timeSlot.bookingsFeePrice');
+  final totalMap = getValue<Map<String, dynamic>>('timeSlot.total');
+  final invoiceMap = getValue<Map<String, dynamic>>('invoiceId');
+
+  return AppointmentReservation(
+    id: getValue<String>('select'),
+    appointmentId: getValue<int>('id'),
+    createdDate: getValue<DateTime>('createdDate'),
+    dayPeriod: getValue<String>('dayPeriod'),
+    selectedDate: selectedDateMap['date'] as DateTime,
+    timeSlot: TimeType(
+      active: true, // Use real value if available
+      bookingsFee: getValue<double>('timeSlot.bookingsFee'),
+      bookingsFeePrice: bookingsFeePriceMap['bookingsFeePrice'],
+      currencySymbol: priceMap['currencySymbol'],
+      id: null,
+      isReserved: false, // Use real value if available
+      period: selectedDateMap['period'],
+      price: priceMap['price'],
+      reservations: const [],
+      total: totalMap['total'],
+    ),
+    invoiceId: invoiceMap['invoiceId'],
+    paymentType: getValue<String>('paymentType'),
+    paymentToken: getValue<String>('paymentToken'),
+    paymentDate: getValue<dynamic>('paymentDate'),
+    patientProfile: getValue<PatientUserProfile>('patientProfile.fullName'),
+
+    // Below fields are not available in the grid row but required in the model
+    doctorId: '', // You may need to extend the grid to include this
+    slotId: '',
+    patientId: '',
+    doctorPaymentStatus: getValue<String>('doctorPaymentStatus'),
+    startDate: DateTime.now(), // Dummy, override if needed
+    finishDate: DateTime.now(), // Dummy, override if needed
+  );
 }

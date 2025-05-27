@@ -52,12 +52,15 @@ class AppointmentService {
           try {
             final reservationList = (reservations as List).map((json) => AppointmentReservation.fromJson(json)).toList();
             appointmentProvider.setAppointmentReservations(reservationList);
-          // ignore: empty_catches
+            // ignore: empty_catches
           } catch (e) {}
           if (totalCount is List && totalCount.isNotEmpty) {
             final int finalTotal = totalCount.first["count"];
             appointmentProvider.setTotal(finalTotal);
           }
+        } else {
+          appointmentProvider.setAppointmentReservations([]);
+          appointmentProvider.setTotal(0);
         }
       }
     });
@@ -82,7 +85,7 @@ class AppointmentService {
     }
     appointmentProvider.setLoading(true);
     void getDoctorAppointmentsWithUpdate() {
-      const  skip = 0;
+      const skip = 0;
       appointmentProvider.setLoading(false);
       socket.emit("getDoctorAppointments", {
         "userId": userId,
@@ -104,10 +107,10 @@ class AppointmentService {
       if (data['status'] == 200) {
         final appointments = data['myAppointment'];
         if (appointments is List && appointments.isNotEmpty) {
-           try {
+          try {
             final reservationList = (appointments).map((json) => AppointmentReservation.fromJson(json)).toList();
             appointmentProvider.setAppointmentReservations(reservationList);
-          // ignore: empty_catches
+            // ignore: empty_catches
           } catch (e) {}
         }
       }

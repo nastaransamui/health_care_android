@@ -163,10 +163,10 @@ class DashAppointmentSource extends DataGridSource {
               style: TextStyle(color: textColor),
             ),
             backgroundColor: value == "Paid"
-                ? Colors.green
+                ? hexToColor('#5BC236')
                 : value == "Awaiting Request"
                     ? hexToColor('#f44336')
-                    : theme.primaryColor, // Chip background
+                    : hexToColor('#ffa500'), // Chip background
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20), // Rounded corners
               side: BorderSide.none, // optional: border color/width

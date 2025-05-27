@@ -15,7 +15,6 @@ import 'package:health_care/shared/custom_pagination_widget.dart';
 import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 class DashboardAppointments extends StatefulWidget {
@@ -34,7 +33,7 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
   final AppointmentService appointmentService = AppointmentService();
   late final DataGridProvider _dataGridProvider;
   bool _isDataGridProviderInitialized = false;
-  late bool isLoading;
+  // late bool isLoading;
   double scrollPercentage = 0;
   int total = 0;
   late AppointmentProvider appointmentProvider;
@@ -78,7 +77,6 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
       builder: (context, appointmentProvider, _) {
         final reservations = appointmentProvider.appointmentReservations;
         final total = appointmentProvider.total;
-        final isLoading = appointmentProvider.isLoading;
 
         final theme = Theme.of(context);
         final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
@@ -86,23 +84,26 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
         final provider = Provider.of<DataGridProvider>(context);
         final int rowsPerPage = provider.paginationModel['pageSize']!;
         final List<GridColumn> gridColumns = [
-          buildColumn(context.tr('id'), 'id', textColor),
+          buildColumn(context.tr('id'), 'id', textColor, width: 100),
           GridColumn(
             columnName: 'patientProfile.fullName',
             allowSorting: true,
             allowFiltering: true,
             filterPopupMenuOptions: const FilterPopupMenuOptions(filterMode: FilterMode.advancedFilter),
             width: 250,
-            label: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(context.tr('patientName'), style: TextStyle(color: textColor)),
+            label: Container(
+              alignment: Alignment.center,
+              child: Text(
+                context.tr('patientName'),
+                style: TextStyle(color: textColor),
+              ),
             ),
           ),
-          buildColumn(context.tr('dayTime'), 'dayPeriod', textColor),
-          buildColumn(context.tr('selectedDate'), 'selectedDate', textColor),
-          buildColumn(context.tr('total'), 'timeSlot.total', textColor),
-          buildColumn(context.tr('reserveDate'), 'createdDate', textColor),
-          buildColumn(context.tr('paymentStatus'), 'doctorPaymentStatus', textColor),
+          buildColumn(context.tr('dayTime'), 'dayPeriod', textColor, width: 150),
+          buildColumn(context.tr('selectedDate'), 'selectedDate', textColor, width: 180),
+          buildColumn(context.tr('total'), 'timeSlot.total', textColor, width: context.locale.toString() == 'th_TH' ? 150:120),
+          buildColumn(context.tr('reserveDate'), 'createdDate', textColor, width: 180),
+          buildColumn(context.tr('paymentStatus'), 'doctorPaymentStatus', textColor, width: 180),
         ];
         final List<FilterableGridColumn> filterableColumns = [
           FilterableGridColumn(column: gridColumns[0], dataType: 'number'),
@@ -135,42 +136,6 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
               },
               child: Stack(
                 children: [
-                  if (isLoading) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 140.0),
-                      child: SizedBox(
-                        height: 150,
-                        width: 150,
-                        child: LoadingIndicator(
-                            indicatorType: Indicator.ballRotateChase,
-                            colors: [Theme.of(context).primaryColorLight, Theme.of(context).primaryColor],
-                            strokeWidth: 2.0,
-                            pathBackgroundColor: null),
-                      ),
-                    ),
-                  ],
-                  // if (reservations.isEmpty) ...[
-                  //   Container(
-                  //     padding: const EdgeInsets.all(12),
-                  //     height: 200,
-                  //     child: Card(
-                  //       elevation: 12,
-                  //       color: Theme.of(context).canvasColor,
-                  //       shape: RoundedRectangleBorder(
-                  //         side: BorderSide(color: Theme.of(context).primaryColorLight),
-                  //         borderRadius: const BorderRadius.all(
-                  //           Radius.circular(15),
-                  //         ),
-                  //       ),
-                  //       child: Center(
-                  //         child: Text(context.tr(
-                  //           'noAppointment',
-                  //           args: [widget.isToday ? context.tr('forToday') : context.tr("forThisWeek")]
-                  //         )),
-                  //       ),
-                  //     ),
-                  //   )
-                  // ] else ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 26),
                       // child: Text('Total: $total\nFirst reservation: $reservations'),

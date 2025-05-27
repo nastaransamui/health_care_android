@@ -13,8 +13,6 @@ import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/src/features/doctors/schedule/appointment_data_source.dart';
 
-
-
 class ReservationsWidget extends StatefulWidget {
   final DoctorsTimeSlot? doctorTimeSlot;
   const ReservationsWidget({
@@ -61,23 +59,26 @@ class _ReservationsWidgetState extends State<ReservationsWidget> {
     final provider = Provider.of<DataGridProvider>(context);
     final int rowsPerPage = provider.paginationModel['pageSize']!;
     final List<GridColumn> gridColumns = [
-      buildColumn(context.tr('id'), 'id', textColor),
-      buildColumn(context.tr('reserveDate'), 'createdDate', textColor),
-      buildColumn(context.tr('dayTime'), 'dayPeriod', textColor),
-      buildColumn(context.tr('invoiceNo'), 'invoiceId', textColor),
-      buildColumn(context.tr('selectedDate'), 'selectedDate', textColor),
+      buildColumn(context.tr('id'), 'id', textColor, width: 100),
+      buildColumn(context.tr('reserveDate'), 'createdDate', textColor, width: 180),
+      buildColumn(context.tr('dayTime'), 'dayPeriod', textColor, width: 150),
+      buildColumn(context.tr('invoiceNo'), 'invoiceId', textColor, width: 150),
+      buildColumn(context.tr('selectedDate'), 'selectedDate', textColor, width: 180),
       GridColumn(
         columnName: 'patientProfile.fullName',
         allowSorting: true,
         allowFiltering: true,
         filterPopupMenuOptions: const FilterPopupMenuOptions(filterMode: FilterMode.advancedFilter),
         width: 250,
-        label: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(context.tr('patientName'), style: TextStyle(color: textColor)),
+        label: Container(
+          alignment: Alignment.center,
+          child: Text(
+            context.tr('patientName'),
+            style: TextStyle(color: textColor),
+          ),
         ),
       ),
-      buildColumn(context.tr('paymentStatus'), 'doctorPaymentStatus', textColor),
+      buildColumn(context.tr('paymentStatus'), 'doctorPaymentStatus', textColor, width: 180),
     ];
     final List<FilterableGridColumn> filterableColumns = [
       FilterableGridColumn(column: gridColumns[0], dataType: 'number'),
@@ -88,7 +89,6 @@ class _ReservationsWidgetState extends State<ReservationsWidget> {
       FilterableGridColumn(column: gridColumns[5], dataType: 'string'),
       FilterableGridColumn(column: gridColumns[6], dataType: 'string'),
     ];
-
 
     return SingleChildScrollView(
       child: Column(
@@ -225,4 +225,3 @@ class _ReservationsWidgetState extends State<ReservationsWidget> {
     );
   }
 }
-

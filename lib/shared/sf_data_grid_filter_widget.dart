@@ -256,7 +256,24 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
               items: widget.columns.map((col) {
                 return DropdownMenuItem<String>(
                   value: col.column.columnName,
-                  child: col.column.label,
+                  child: Container(
+                    alignment: Alignment.centerLeft, // force left
+                    width: double.infinity, // make sure it uses full width
+                    child: Builder(
+                      builder: (context) {
+                        final label = col.column.label;
+                        // Try to extract the text directly if it's a known structure
+                        if (label is Container && label.child is Text) {
+                          return Text(
+                            (label.child as Text).data ?? '',
+                            style: (label.child as Text).style,
+                            textAlign: TextAlign.left,
+                          );
+                        }
+                        return label; // fallback
+                      },
+                    ),
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -444,18 +461,21 @@ bool isColumnFiltered(String columnName, Map<String, dynamic> mongoFilter) {
 
   return false;
 }
-GridColumn buildColumn(String label, String name, Color color) {
+
+GridColumn buildColumn(String label, String name, Color color, {double width = 200}) {
   return GridColumn(
     columnName: name,
     allowSorting: true,
     allowFiltering: true,
-    columnWidthMode: ColumnWidthMode.fitByColumnName,
-    label: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Text(label,
-          style: TextStyle(
-            color: color,
-          )),
+    columnWidthMode: ColumnWidthMode.none, // Must use `none` to allow fixed width
+    width: width,
+    autoFitPadding: const EdgeInsets.all(8),
+    label: Container(
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(color: color),
+      ),
     ),
   );
 }

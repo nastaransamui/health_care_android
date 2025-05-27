@@ -18,6 +18,7 @@ import 'package:health_care/src/features/doctors/appointments/appointments.dart'
 import 'package:health_care/src/features/doctors/available_timing/doctors_available_timing.dart';
 import 'package:health_care/src/features/doctors/dashboard_appointment/dash_appointment.dart';
 import 'package:health_care/src/features/doctors/favourites/doctors_favourites.dart';
+import 'package:health_care/src/features/doctors/invoice/doctors_invoice.dart';
 import 'package:health_care/src/features/doctors/my_patients/doctors_my_patients.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
 import 'package:health_care/src/features/doctors/schedule/doctors_dashboard_schedule_timing.dart';
@@ -327,6 +328,35 @@ final router = GoRouter(
 
         if (doctorProfile != null) {
           return DoctorsDashboardScheduleTiming( key: ValueKey(doctorProfile.userId), doctorProfile: doctorProfile);
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+             context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/invoice',
+      name: 'doctorsInvoices',
+      builder: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return DoctorsInvoice( key: ValueKey(doctorProfile.userId));
         } else {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (context.mounted) {
