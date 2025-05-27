@@ -1,40 +1,35 @@
-
 // ignore: depend_on_referenced_packages
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:health_care/services/time_schedule_service.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
-
+import 'package:path_provider/path_provider.dart';
 
 class DoctorInvoicePreviewScreen extends StatelessWidget {
   final Uint8List pdfBytes;
 
   const DoctorInvoicePreviewScreen({super.key, required this.pdfBytes});
   Future<void> savePDFToDownloads(Uint8List pdfBytes, BuildContext context) async {
-    final storageStatus = await Permission.storage.request();
-    final manageStatus = await Permission.manageExternalStorage.request();
-
-    if (storageStatus.isGranted || manageStatus.isGranted) {
-      final downloadsDir = Directory('/storage/emulated/0/Download');
-      final file = File('${downloadsDir.path}/invoice_${DateTime.now().millisecondsSinceEpoch}.pdf');
+    try {
+      // Get app-specific external directory
+      final directory = await getExternalStorageDirectory(); // path: Android/data/<package>/files/
+      if (directory == null)  throw Exception("Cannot get external directory");
+      final path = directory.path;
+      log("$path $directory");
+      final file = File('$path/invoice_${DateTime.now().millisecondsSinceEpoch}.pdf');
       await file.writeAsBytes(pdfBytes);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.tr('savedToDownload'))),
-        );
+        showErrorSnackBar(context, context.tr('savedToDownload', args: [path]));
       }
-    } else {
+    } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.tr("storagePermissionForPDF"))),
-        );
+        showErrorSnackBar(context, 'Failed to save PDF: $e');
       }
-
-      // Optional: Open app settings to let user grant MANAGE_EXTERNAL_STORAGE manually
-      await openAppSettings();
     }
   }
 
