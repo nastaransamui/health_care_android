@@ -823,7 +823,7 @@ class DoctorUserProfile {
       country: map['country'] ?? '',
       currency: map['currency'] != null ? List<Currency>.from(map['currency']?.map((x) => Currency.fromMap(x))) : [],
       createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(), // Handle DateTime parsing
-      dob: (map['dob'] is String && map['dob'].isNotEmpty) ? DateTime.tryParse(map['dob'].trim()) : null,
+      dob: (map['dob'] is String && map['dob'].isNotEmpty) ? DateTime.tryParse(map['dob'].trim()) : '',
       educations: map['educations'] != null ? List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))) : [],
       experinces: map['experinces'] != null ? List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))) : [],
       favsId: map['favs_id'] != null ? List<String>.from(map['favs_id']) : [],
