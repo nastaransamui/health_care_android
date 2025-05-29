@@ -66,7 +66,7 @@ class _PasswordFieldState extends State<PasswordField> {
           ),
           fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
           filled: true,
-          prefixIcon: const Icon(Icons.password),
+          prefixIcon: Icon(Icons.password, color: Theme.of(context).primaryColorLight),
           suffixIcon: IconButton(
             onPressed: showPassword,
             icon: Icon(
