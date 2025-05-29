@@ -9,25 +9,25 @@ class InvoiceProvider extends ChangeNotifier {
   List<AppointmentReservation> get appointmentReservations => _appointmentReservations;
   bool get isLoading => _isLoading;
   int get total => _total;
-  void setAppointmentReservations(List<AppointmentReservation> reservations) {
+  void setAppointmentReservations(List<AppointmentReservation> reservations, {bool notify = true}) {
     if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Delay setting the actual value to next frame
         WidgetsBinding.instance.addPostFrameCallback((__) {
           _appointmentReservations = reservations;
           // _isLoading = false;
-          notifyListeners();
+          if (notify) notifyListeners();
         });
-        notifyListeners();
+        if (notify) notifyListeners();
       });
     } else {
       // We're not in a build phase, so safe to update immediately
       _isLoading = true;
-      notifyListeners();
+       if (notify) notifyListeners();
 
       _appointmentReservations = reservations;
       // _isLoading = false;
-      notifyListeners();
+       if (notify) notifyListeners();
     }
   }
 
@@ -38,10 +38,10 @@ class InvoiceProvider extends ChangeNotifier {
     });
   }
 
-  void setTotal(int value) {
+  void setTotal(int value, {bool notify = true}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _total = value;
-      notifyListeners();
+       if (notify) notifyListeners();
     });
   }
 }

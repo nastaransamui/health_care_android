@@ -1929,63 +1929,66 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 return Card(
                                   elevation: 12,
                                   color: Theme.of(context).canvasColor,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      for (var entry in map.entries) ...[
-                                        entry.key != 'yearOfCompletion'
-                                            ? ProfileInputWidget(
-                                                controller: entry.value,
-                                                readOnly: false,
-                                                lable: context.tr(entry.key),
-                                                validator: ((value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return context.tr('${entry.key}Required');
-                                                  }
-                                                  return null;
-                                                }),
-                                              )
-                                            : ProfileInputWidget(
-                                                controller: entry.value,
-                                                readOnly: false,
-                                                lable: context.tr(entry.key),
-                                                validator: ((value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return context.tr('${entry.key}Required');
-                                                  }
-                                                  return null;
-                                                }),
-                                                suffixIcon: entry.value.text.isEmpty
-                                                    ? null
-                                                    : IconButton(
-                                                        splashColor: Colors.transparent,
-                                                        highlightColor: Colors.transparent,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            entry.value.text = '';
-                                                          });
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.close,
-                                                          color: Theme.of(context).primaryColorLight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        for (var entry in map.entries) ...[
+                                          entry.key != 'yearOfCompletion'
+                                              ? ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                )
+                                              : ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                  suffixIcon: entry.value.text.isEmpty
+                                                      ? null
+                                                      : IconButton(
+                                                          splashColor: Colors.transparent,
+                                                          highlightColor: Colors.transparent,
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              entry.value.text = '';
+                                                            });
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                            color: Theme.of(context).primaryColorLight,
+                                                          ),
                                                         ),
-                                                      ),
-                                                keyboardType: TextInputType.none,
-                                                onTap: () async {
-                                                  await _selectYear(context, entry.value);
-                                                },
-                                              ),
+                                                  keyboardType: TextInputType.none,
+                                                  onTap: () async {
+                                                    await _selectYear(context, entry.value);
+                                                  },
+                                                ),
+                                        ],
+                                        IconButton(
+                                          color: Colors.pinkAccent.shade400,
+                                          onPressed: () {
+                                            setState(() {
+                                              educationController.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                        ),
                                       ],
-                                      IconButton(
-                                        color: Colors.pinkAccent.shade400,
-                                        onPressed: () {
-                                          setState(() {
-                                            educationController.removeAt(index);
-                                          });
-                                        },
-                                        icon: const Icon(Icons.delete),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               }),
@@ -2021,118 +2024,121 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 return Card(
                                   elevation: 12,
                                   color: Theme.of(context).canvasColor,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      ...map.entries.map(
-                                        (entry) {
-                                          return entry.key != 'from' && entry.key != 'to'
-                                              ? ProfileInputWidget(
-                                                  controller: entry.value,
-                                                  readOnly: false,
-                                                  lable: context.tr(entry.key),
-                                                  validator: ((value) {
-                                                    if (value == null || value.isEmpty) {
-                                                      return context.tr('${entry.key}Required');
-                                                    }
-                                                    return null;
-                                                  }),
-                                                )
-                                              : ProfileInputWidget(
-                                                  controller: entry.value,
-                                                  readOnly: false,
-                                                  lable: context.tr(entry.key),
-                                                  validator: ((value) {
-                                                    if (value == null || value.isEmpty) {
-                                                      return context.tr('${entry.key}Required');
-                                                    }
-                                                    return null;
-                                                  }),
-                                                  suffixIcon: entry.value.text.isEmpty
-                                                      ? null
-                                                      : IconButton(
-                                                          splashColor: Colors.transparent,
-                                                          highlightColor: Colors.transparent,
-                                                          onPressed: () {
-                                                            if (entry.key == 'to') {
-                                                              setState(() {
-                                                                entry.value.text = '';
-                                                              });
-                                                            }
-                                                            if (entry.key == 'from') {
-                                                              experienceToDate[index][0] = 1934;
-                                                              experienceToDate[index][1] = 1;
-                                                              experienceToDate[index][2] = 1;
-                                                              setState(() {
-                                                                entry.value.text = '';
-                                                              });
-                                                            }
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.close,
-                                                            color: Theme.of(context).primaryColorLight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        ...map.entries.map(
+                                          (entry) {
+                                            return entry.key != 'from' && entry.key != 'to'
+                                                ? ProfileInputWidget(
+                                                    controller: entry.value,
+                                                    readOnly: false,
+                                                    lable: context.tr(entry.key),
+                                                    validator: ((value) {
+                                                      if (value == null || value.isEmpty) {
+                                                        return context.tr('${entry.key}Required');
+                                                      }
+                                                      return null;
+                                                    }),
+                                                  )
+                                                : ProfileInputWidget(
+                                                    controller: entry.value,
+                                                    readOnly: false,
+                                                    lable: context.tr(entry.key),
+                                                    validator: ((value) {
+                                                      if (value == null || value.isEmpty) {
+                                                        return context.tr('${entry.key}Required');
+                                                      }
+                                                      return null;
+                                                    }),
+                                                    suffixIcon: entry.value.text.isEmpty
+                                                        ? null
+                                                        : IconButton(
+                                                            splashColor: Colors.transparent,
+                                                            highlightColor: Colors.transparent,
+                                                            onPressed: () {
+                                                              if (entry.key == 'to') {
+                                                                setState(() {
+                                                                  entry.value.text = '';
+                                                                });
+                                                              }
+                                                              if (entry.key == 'from') {
+                                                                experienceToDate[index][0] = 1934;
+                                                                experienceToDate[index][1] = 1;
+                                                                experienceToDate[index][2] = 1;
+                                                                setState(() {
+                                                                  entry.value.text = '';
+                                                                });
+                                                              }
+                                                            },
+                                                            icon: Icon(
+                                                              Icons.close,
+                                                              color: Theme.of(context).primaryColorLight,
+                                                            ),
                                                           ),
-                                                        ),
-                                                  keyboardType: TextInputType.none,
-                                                  onTap: () async {
-                                                    if (entry.key == 'from') {
-                                                      int endFromYear = DateTime.now().year;
-                                                      int endFromMonth = DateTime.now().month;
-                                                      int endFromDay = DateTime.now().day;
-                                                      if (experinceController[index]['to']!.text.isNotEmpty) {
-                                                        DateFormat inputFormat = DateFormat("dd MMM yyyy");
-                                                        DateTime dateTime = inputFormat.parse(experinceController[index]['to']!.text);
-                                                        endFromYear = dateTime.year;
-                                                        endFromMonth = dateTime.month;
-                                                        endFromDay = dateTime.day;
+                                                    keyboardType: TextInputType.none,
+                                                    onTap: () async {
+                                                      if (entry.key == 'from') {
+                                                        int endFromYear = DateTime.now().year;
+                                                        int endFromMonth = DateTime.now().month;
+                                                        int endFromDay = DateTime.now().day;
+                                                        if (experinceController[index]['to']!.text.isNotEmpty) {
+                                                          DateFormat inputFormat = DateFormat("dd MMM yyyy");
+                                                          DateTime dateTime = inputFormat.parse(experinceController[index]['to']!.text);
+                                                          endFromYear = dateTime.year;
+                                                          endFromMonth = dateTime.month;
+                                                          endFromDay = dateTime.day;
+                                                        }
+                                                        DateTime? fromDate = await showDatePicker(
+                                                            initialDatePickerMode: DatePickerMode.year,
+                                                            context: context,
+                                                            firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
+                                                                experienceFromDate[index][2]),
+                                                            lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
+                                                        if (fromDate != null) {
+                                                          String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
+                                                          experienceToDate[index][0] = fromDate.year;
+                                                          experienceToDate[index][1] = fromDate.month;
+                                                          experienceToDate[index][2] = fromDate.day;
+                                                          setState(() {
+                                                            entry.value.text = formattedDate;
+                                                          });
+                                                        }
+                                                      } else {
+                                                        DateTime? toDate = await showDatePicker(
+                                                            initialDatePickerMode: DatePickerMode.year,
+                                                            context: context,
+                                                            firstDate: DateTime(
+                                                                experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
+                                                            lastDate: DateTime.now());
+                                                        if (toDate != null) {
+                                                          String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
+                                                          setState(() {
+                                                            entry.value.text = formattedDate;
+                                                          });
+                                                        }
                                                       }
-                                                      DateTime? fromDate = await showDatePicker(
-                                                          initialDatePickerMode: DatePickerMode.year,
-                                                          context: context,
-                                                          firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
-                                                              experienceFromDate[index][2]),
-                                                          lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
-                                                      if (fromDate != null) {
-                                                        String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
-                                                        experienceToDate[index][0] = fromDate.year;
-                                                        experienceToDate[index][1] = fromDate.month;
-                                                        experienceToDate[index][2] = fromDate.day;
-                                                        setState(() {
-                                                          entry.value.text = formattedDate;
-                                                        });
-                                                      }
-                                                    } else {
-                                                      DateTime? toDate = await showDatePicker(
-                                                          initialDatePickerMode: DatePickerMode.year,
-                                                          context: context,
-                                                          firstDate: DateTime(
-                                                              experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
-                                                          lastDate: DateTime.now());
-                                                      if (toDate != null) {
-                                                        String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
-                                                        setState(() {
-                                                          entry.value.text = formattedDate;
-                                                        });
-                                                      }
-                                                    }
-                                                  },
-                                                );
-                                        },
-                                      ),
-                                      // for (var entry in map.entries) ...[
-                                      //  ],
-                                      IconButton(
-                                        color: Colors.pinkAccent.shade400,
-                                        onPressed: () {
-                                          setState(() {
-                                            experinceController.removeAt(index);
-                                            experienceToDate.removeAt(index);
-                                            experienceFromDate.removeAt(index);
-                                          });
-                                        },
-                                        icon: const Icon(Icons.delete),
-                                      ),
-                                    ],
+                                                    },
+                                                  );
+                                          },
+                                        ),
+                                        // for (var entry in map.entries) ...[
+                                        //  ],
+                                        IconButton(
+                                          color: Colors.pinkAccent.shade400,
+                                          onPressed: () {
+                                            setState(() {
+                                              experinceController.removeAt(index);
+                                              experienceToDate.removeAt(index);
+                                              experienceFromDate.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               }),
@@ -2170,63 +2176,66 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 return Card(
                                   color: Theme.of(context).canvasColor,
                                   elevation: 12,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      for (var entry in map.entries) ...[
-                                        entry.key != 'year'
-                                            ? ProfileInputWidget(
-                                                controller: entry.value,
-                                                readOnly: false,
-                                                lable: context.tr(entry.key),
-                                                validator: ((value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return context.tr('${entry.key}Required');
-                                                  }
-                                                  return null;
-                                                }),
-                                              )
-                                            : ProfileInputWidget(
-                                                controller: entry.value,
-                                                readOnly: false,
-                                                lable: context.tr(entry.key),
-                                                validator: ((value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return context.tr('${entry.key}Required');
-                                                  }
-                                                  return null;
-                                                }),
-                                                suffixIcon: entry.value.text.isEmpty
-                                                    ? null
-                                                    : IconButton(
-                                                        splashColor: Colors.transparent,
-                                                        highlightColor: Colors.transparent,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            entry.value.text = '';
-                                                          });
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.close,
-                                                          color: Theme.of(context).primaryColorLight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        for (var entry in map.entries) ...[
+                                          entry.key != 'year'
+                                              ? ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                )
+                                              : ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                  suffixIcon: entry.value.text.isEmpty
+                                                      ? null
+                                                      : IconButton(
+                                                          splashColor: Colors.transparent,
+                                                          highlightColor: Colors.transparent,
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              entry.value.text = '';
+                                                            });
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                            color: Theme.of(context).primaryColorLight,
+                                                          ),
                                                         ),
-                                                      ),
-                                                keyboardType: TextInputType.none,
-                                                onTap: () async {
-                                                  await _selectYear(context, entry.value);
-                                                },
-                                              ),
+                                                  keyboardType: TextInputType.none,
+                                                  onTap: () async {
+                                                    await _selectYear(context, entry.value);
+                                                  },
+                                                ),
+                                        ],
+                                        IconButton(
+                                          color: Colors.pinkAccent.shade400,
+                                          onPressed: () {
+                                            setState(() {
+                                              awardController.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                        ),
                                       ],
-                                      IconButton(
-                                        color: Colors.pinkAccent.shade400,
-                                        onPressed: () {
-                                          setState(() {
-                                            awardController.removeAt(index);
-                                          });
-                                        },
-                                        icon: const Icon(Icons.delete),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               }),
@@ -2262,32 +2271,35 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 return Card(
                                   color: Theme.of(context).canvasColor,
                                   elevation: 12,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      for (var entry in map.entries) ...[
-                                        ProfileInputWidget(
-                                          controller: entry.value,
-                                          readOnly: false,
-                                          lable: context.tr(entry.key),
-                                          validator: ((value) {
-                                            if (value == null || value.isEmpty) {
-                                              return context.tr('${entry.key}Required');
-                                            }
-                                            return null;
-                                          }),
-                                        )
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        for (var entry in map.entries) ...[
+                                          ProfileInputWidget(
+                                            controller: entry.value,
+                                            readOnly: false,
+                                            lable: context.tr(entry.key),
+                                            validator: ((value) {
+                                              if (value == null || value.isEmpty) {
+                                                return context.tr('${entry.key}Required');
+                                              }
+                                              return null;
+                                            }),
+                                          )
+                                        ],
+                                        IconButton(
+                                          color: Colors.pinkAccent.shade400,
+                                          onPressed: () {
+                                            setState(() {
+                                              membershipController.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                        ),
                                       ],
-                                      IconButton(
-                                        color: Colors.pinkAccent.shade400,
-                                        onPressed: () {
-                                          setState(() {
-                                            membershipController.removeAt(index);
-                                          });
-                                        },
-                                        icon: const Icon(Icons.delete),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               }),
@@ -2320,63 +2332,66 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 return Card(
                                   color: Theme.of(context).canvasColor,
                                   elevation: 12,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      for (var entry in map.entries) ...[
-                                        entry.key != 'year'
-                                            ? ProfileInputWidget(
-                                                controller: entry.value,
-                                                readOnly: false,
-                                                lable: context.tr(entry.key),
-                                                validator: ((value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return context.tr('${entry.key}Required');
-                                                  }
-                                                  return null;
-                                                }),
-                                              )
-                                            : ProfileInputWidget(
-                                                controller: entry.value,
-                                                readOnly: false,
-                                                lable: context.tr(entry.key),
-                                                validator: ((value) {
-                                                  if (value == null || value.isEmpty) {
-                                                    return context.tr('${entry.key}Required');
-                                                  }
-                                                  return null;
-                                                }),
-                                                suffixIcon: entry.value.text.isEmpty
-                                                    ? null
-                                                    : IconButton(
-                                                        splashColor: Colors.transparent,
-                                                        highlightColor: Colors.transparent,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            entry.value.text = '';
-                                                          });
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.close,
-                                                          color: Theme.of(context).primaryColorLight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        for (var entry in map.entries) ...[
+                                          entry.key != 'year'
+                                              ? ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                )
+                                              : ProfileInputWidget(
+                                                  controller: entry.value,
+                                                  readOnly: false,
+                                                  lable: context.tr(entry.key),
+                                                  validator: ((value) {
+                                                    if (value == null || value.isEmpty) {
+                                                      return context.tr('${entry.key}Required');
+                                                    }
+                                                    return null;
+                                                  }),
+                                                  suffixIcon: entry.value.text.isEmpty
+                                                      ? null
+                                                      : IconButton(
+                                                          splashColor: Colors.transparent,
+                                                          highlightColor: Colors.transparent,
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              entry.value.text = '';
+                                                            });
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                            color: Theme.of(context).primaryColorLight,
+                                                          ),
                                                         ),
-                                                      ),
-                                                keyboardType: TextInputType.none,
-                                                onTap: () async {
-                                                  await _selectYear(context, entry.value);
-                                                },
-                                              ),
+                                                  keyboardType: TextInputType.none,
+                                                  onTap: () async {
+                                                    await _selectYear(context, entry.value);
+                                                  },
+                                                ),
+                                        ],
+                                        IconButton(
+                                          color: Colors.pinkAccent.shade400,
+                                          onPressed: () {
+                                            setState(() {
+                                              registrationController.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                        ),
                                       ],
-                                      IconButton(
-                                        color: Colors.pinkAccent.shade400,
-                                        onPressed: () {
-                                          setState(() {
-                                            registrationController.removeAt(index);
-                                          });
-                                        },
-                                        icon: const Icon(Icons.delete),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               }),

@@ -82,7 +82,6 @@ class _DoctorsAvailableTimingState extends State<DoctorsAvailableTiming> {
                   padding: const EdgeInsets.all(8),
                   child: Card(
                     elevation: 6,
-                    color: Theme.of(context).canvasColor,
                     shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColorLight),
                       borderRadius: const BorderRadius.all(Radius.circular(15)),

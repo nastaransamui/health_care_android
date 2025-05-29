@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -73,9 +72,9 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
 
   @override
   void dispose() {
-    appointmentProvider.setTotal(0);
-    appointmentProvider.setLoading(false);
-    appointmentProvider.setAppointmentReservations([]);
+    appointmentProvider.setTotal(0, notify: false);
+    appointmentProvider.setLoading(false, notify: false);
+    appointmentProvider.setAppointmentReservations([], notify: false);
     appointmentScrollController.dispose();
     super.dispose();
   }
@@ -88,8 +87,15 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
       final doctorProfile = authProvider.doctorsProfile;
       final theme = Theme.of(context);
 
-      final int totalReservations = doctorProfile?.userProfile.reservationsId.length ?? 0;
+      // This is the total number of reservations that *should* be available eventually.
+      final int totalReservationsExpected = doctorProfile?.userProfile.reservationsId.length ?? 0;
 
+      // Determine the actual itemCount for the ListView.
+      // It's the number of currently loaded reservations plus 1 if loading and more data is expected.
+      int actualItemCount = reservations.length;
+      if (isLoading && reservations.length < totalReservationsExpected) {
+        actualItemCount++; // Add a slot for the loading indicator
+      }
       return ScaffoldWrapper(
         title: context.tr('appointments'),
         children: NotificationListener<ScrollNotification>(
@@ -117,7 +123,6 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
                   padding: const EdgeInsets.all(8),
                   child: Card(
                     elevation: 6,
-                    color: Theme.of(context).canvasColor,
                     shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColorLight),
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -126,7 +131,7 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
                       padding: const EdgeInsets.all(16.0),
                       child: Center(
                         child: Text(
-                          context.tr("totalReservations", args: ["$totalReservations"]),
+                          context.tr("totalReservations", args: ["$totalReservationsExpected"]),
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -139,7 +144,20 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
                 ),
               ),
               const SizedBox(height: 12),
-              if (totalReservations == 0 && !isLoading) ...[
+              if (reservations.isEmpty && isLoading)
+                Center(
+                  child: SizedBox(
+                    height: 100, // Adjust size as needed
+                    width: 100,
+                    child: LoadingIndicator(
+                      indicatorType: Indicator.ballRotateChase,
+                      colors: [theme.primaryColorLight, theme.primaryColor],
+                      strokeWidth: 2.0,
+                      pathBackgroundColor: null,
+                    ),
+                  ),
+                )
+              else if (reservations.isEmpty && !isLoading) ...[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
@@ -162,49 +180,55 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
                     ),
                   ),
                 )
-              ],
-              Expanded(
-                child: Stack(
-                  children: [
-                    ListView.builder(
-                        controller: appointmentScrollController,
-                        shrinkWrap: true,
-                        restorationId: 'doctorAppointment',
-                        key: const ValueKey('doctorAppointment'),
-                        physics: const BouncingScrollPhysics(),
-                        // Item count is total reservations + 1 loader if loading and not at end
-                        itemCount: reservations.length + (isLoading ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index + 1 == reservations.length && reservations.length < doctorProfile!.userProfile.reservationsId.length) {
-                            return Center(
-                              child: SizedBox(
-                                height: 50,
-                                width: 50,
-                                child: LoadingIndicator(
-                                    indicatorType: Indicator.ballRotateChase,
-                                    colors: [theme.primaryColorLight, theme.primaryColor],
-                                    strokeWidth: 2.0,
-                                    pathBackgroundColor: null),
-                              ),
-                            );
-                          } else {
-                            if (index < totalReservations) {
-                              final reservation = reservations[index];
-
-                              return DoctorAppointmentShowBox(
-                                reservation: reservation,
-                              );
+              ] else
+                Expanded(
+                  child: Stack(
+                    children: [
+                      ListView.builder(
+                          controller: appointmentScrollController,
+                          shrinkWrap: true,
+                          restorationId: 'doctorAppointment',
+                          key: const ValueKey('doctorAppointment'),
+                          physics: const BouncingScrollPhysics(),
+                          // Item count is total reservations + 1 loader if loading and not at end
+                          itemCount: actualItemCount,
+                          itemBuilder: (context, index) {
+                            // If it's the last item and we're loading AND expecting more, show loader
+                            if (index == reservations.length) {
+                              // This will be the extra slot for the loader
+                              if (isLoading && reservations.length < totalReservationsExpected) {
+                                return Center(
+                                  child: Padding(
+                                    // Add padding to separate from last item
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: SizedBox(
+                                      height: 50,
+                                      width: 50,
+                                      child: LoadingIndicator(
+                                          indicatorType: Indicator.ballRotateChase,
+                                          colors: [theme.primaryColorLight, theme.primaryColor],
+                                          strokeWidth: 2.0,
+                                          pathBackgroundColor: null),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink(); // Should not happen if logic is correct
                             }
-                            return const SizedBox();
-                          }
-                        }),
-                    ScrollButton(
-                      scrollController: appointmentScrollController,
-                      scrollPercentage: scrollPercentage,
-                    ),
-                  ],
-                ),
-              )
+
+                            // Otherwise, display a reservation
+                            final reservation = reservations[index];
+                            return DoctorAppointmentShowBox(
+                              reservation: reservation,
+                            );
+                          }),
+                      ScrollButton(
+                        scrollController: appointmentScrollController,
+                        scrollPercentage: scrollPercentage,
+                      ),
+                    ],
+                  ),
+                )
             ],
           ),
         ),

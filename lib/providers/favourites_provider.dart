@@ -10,39 +10,40 @@ class FavouritesProvider extends ChangeNotifier {
   List<PatientUserProfile> get userFavProfile => _userFavProfile;
   bool get isLoading => _isLoading;
   int get total => _total;
-  void setUserFavProfile(List<PatientUserProfile> usersFavProfile) {
+  void setUserFavProfile(List<PatientUserProfile> usersFavProfile, {bool notify = true}) {
     if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Delay setting the actual value to next frame
         WidgetsBinding.instance.addPostFrameCallback((__) {
           _userFavProfile = usersFavProfile;
           // _isLoading = false;
-          notifyListeners();
+          if (notify) notifyListeners();
         });
-        notifyListeners();
+        if (notify) notifyListeners();
       });
     } else {
       // We're not in a build phase, so safe to update immediately
       _isLoading = true;
-      notifyListeners();
+      if (notify) notifyListeners();
 
       _userFavProfile = usersFavProfile;
       // _isLoading = false;
-      notifyListeners();
+      if (notify) notifyListeners();
     }
   }
 
-  void setLoading(bool value) {
+  void setLoading(bool value, {bool notify = true}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isLoading = value;
-      notifyListeners();
+      if (notify) notifyListeners();
     });
   }
 
-  void setTotal(int value) {
+  void setTotal(int value, {bool notify = true}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _total = value;
-      notifyListeners();
+       if (notify) notifyListeners();
     });
   }
+
 }

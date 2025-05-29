@@ -98,7 +98,6 @@ class _ReservationsWidgetState extends State<ReservationsWidget> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Card(
               elevation: 12,
-              color: Theme.of(context).canvasColor,
               shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColorLight),
                 borderRadius: const BorderRadius.all(Radius.circular(15)),

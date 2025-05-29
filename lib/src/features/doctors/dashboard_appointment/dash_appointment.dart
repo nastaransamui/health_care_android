@@ -65,9 +65,9 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
       {"field": "id", "sort": 'asc'}
     ], notify: false);
     _dataGridProvider.setMongoFilterModel({}, notify: false);
-     appointmentProvider.setTotal(0);
-     appointmentProvider.setLoading(false);
-     appointmentProvider.setAppointmentReservations([]);
+     appointmentProvider.setTotal(0, notify: false);
+     appointmentProvider.setLoading(false, notify: false);
+     appointmentProvider.setAppointmentReservations([], notify: false);
     scheduleScrollController.dispose();
   }
 
@@ -147,7 +147,6 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Card(
                                 elevation: 12,
-                                color: Theme.of(context).canvasColor,
                                 shape: RoundedRectangleBorder(
                                   side: BorderSide(color: Theme.of(context).primaryColorLight),
                                   borderRadius: const BorderRadius.all(Radius.circular(15)),

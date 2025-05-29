@@ -64,8 +64,8 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
 
   @override
   void dispose() {
-    myPatientsProvider.setMyPatientsProfile([]);
-    myPatientsProvider.setTotal(0);
+    myPatientsProvider.setMyPatientsProfile([],notify: false);
+    myPatientsProvider.setTotal(0,notify: false);
     myPatientScrollController.dispose();
     super.dispose();
   }

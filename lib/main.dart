@@ -3,12 +3,7 @@ import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
-import 'package:health_care/providers/favourites_provider.dart';
-import 'package:health_care/providers/invoice_provider.dart';
-import 'package:health_care/providers/my_patients_provider.dart';
-import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/providers/user_from_token_provider.dart';
 import 'package:health_care/providers/vital_provider.dart';
 import 'package:provider/provider.dart';
@@ -98,21 +93,8 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) => DataGridProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => TimeScheduleProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AppointmentProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => FavouritesProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => MyPatientsProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => InvoiceProvider(),
-        ),
+
+      
       ],
       child: EasyLocalization(
         supportedLocales: const [

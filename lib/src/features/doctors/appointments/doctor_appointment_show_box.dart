@@ -47,7 +47,6 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
       padding: const EdgeInsetsGeometry.all(8.0),
       child: Card(
         elevation: 12,
-        color: theme.canvasColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(

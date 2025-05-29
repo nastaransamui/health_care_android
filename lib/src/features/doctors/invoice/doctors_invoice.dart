@@ -69,8 +69,8 @@ class _DoctorsInvoiceState extends State<DoctorsInvoice> {
 
   @override
   void dispose() {
-    invoiceProvider.setAppointmentReservations([]);
-    invoiceProvider.setTotal(0);
+    invoiceProvider.setAppointmentReservations([], notify: false);
+    invoiceProvider.setTotal(0, notify: false);
     invoiceScrollController.dispose();
     dataGridProvider.setSortModel([
       {"field": "id", "sort": 'asc'}
@@ -255,7 +255,6 @@ class _DoctorsInvoiceState extends State<DoctorsInvoice> {
                               padding: const EdgeInsets.all(8),
                               child: Card(
                                 elevation: 6,
-                                color: Theme.of(context).canvasColor,
                                 shape: RoundedRectangleBorder(
                                   side: BorderSide(color: Theme.of(context).primaryColorLight),
                                   borderRadius: const BorderRadius.all(Radius.circular(15)),

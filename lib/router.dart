@@ -2,8 +2,13 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/constants/navigator_key.dart';
+import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/providers/favourites_provider.dart';
+import 'package:health_care/providers/invoice_provider.dart';
+import 'package:health_care/providers/my_patients_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
+import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
@@ -99,7 +104,31 @@ final router = GoRouter(
     GoRoute(
       path: '/doctors/dashboard',
       name: 'doctorsDashboard',
-      builder: (context, state) => const DoctorDashboard(),
+      builder: (context, state) {
+        return ChangeNotifierProvider(
+          create: (context) => AppointmentProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
+
+              if (doctorProfile != null) {
+                return DoctorDashboard(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
         var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
@@ -149,19 +178,29 @@ final router = GoRouter(
       path: '/doctors/dashboard/appointments/this_week',
       name: 'dashboardAppointmentsThisWeek',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => AppointmentProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DashboardAppointments( key: ValueKey(doctorProfile.userId), isToday: false,);
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DashboardAppointments(key: ValueKey(doctorProfile.userId),isToday: false,);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -178,19 +217,29 @@ final router = GoRouter(
       path: '/doctors/dashboard/appointments/today',
       name: 'dashboardAppointmentsToday',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => AppointmentProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DashboardAppointments( key: ValueKey(doctorProfile.userId), isToday: true,);
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DashboardAppointments(key: ValueKey(doctorProfile.userId),isToday: true,);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -207,19 +256,29 @@ final router = GoRouter(
       path: '/doctors/dashboard/appointments',
       name: 'doctorAppointments',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => AppointmentProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DoctorAppointments( key: ValueKey(doctorProfile.userId));
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DoctorAppointments(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -236,19 +295,29 @@ final router = GoRouter(
       path: '/doctors/dashboard/favourites',
       name: 'doctorFavourites',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => FavouritesProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DoctorsFavourites( key: ValueKey(doctorProfile.userId));
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DoctorsFavourites(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -265,19 +334,29 @@ final router = GoRouter(
       path: '/doctors/dashboard/my-patients',
       name: 'doctorMyPatients',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => MyPatientsProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DoctorsMyPatients( key: ValueKey(doctorProfile.userId));
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DoctorsMyPatients(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -294,19 +373,27 @@ final router = GoRouter(
       path: '/doctors/dashboard/available-timing',
       name: 'doctorAvailableTiming',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => AppointmentProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DoctorsAvailableTiming( key: ValueKey(doctorProfile.userId));
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DoctorsAvailableTiming(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (context.mounted) {
+                    context.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -323,19 +410,29 @@ final router = GoRouter(
       path: '/doctors/dashboard/schedule-timing',
       name: 'doctorsDashboardScheduleTiming',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        return ChangeNotifierProvider(
+          create: (context) => TimeScheduleProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DoctorsDashboardScheduleTiming( key: ValueKey(doctorProfile.userId), doctorProfile: doctorProfile);
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DoctorsDashboardScheduleTiming(key: ValueKey(doctorProfile.userId), doctorProfile: doctorProfile);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -352,21 +449,33 @@ final router = GoRouter(
       path: '/doctors/dashboard/invoice',
       name: 'doctorsInvoices',
       builder: (context, state) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final doctorProfile = authProvider.doctorsProfile;
+        // Wrap the DoctorsInvoice widget with ChangeNotifierProvider
+        return ChangeNotifierProvider(
+          create: (context) => InvoiceProvider(), // InvoiceProvider is created ONLY when this route is built
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-        if (doctorProfile != null) {
-          return DoctorsInvoice( key: ValueKey(doctorProfile.userId));
-        } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-             context.go('/');
-            }
-          });
-          return const SizedBox.shrink();
-        }
+              if (doctorProfile != null) {
+                return DoctorsInvoice(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
+        // Redirect logic remains the same, as AuthProvider is likely a global provider
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
         var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
         final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;

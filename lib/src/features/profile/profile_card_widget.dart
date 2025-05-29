@@ -12,7 +12,6 @@ class ProfileCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).canvasColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
           borderRadius: BorderRadius.circular(8.0),

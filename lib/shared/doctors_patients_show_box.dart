@@ -63,7 +63,6 @@ class _DoctorsPatientsShowBoxState extends State<DoctorsPatientsShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
-        color: theme.canvasColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(

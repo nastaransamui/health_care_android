@@ -65,8 +65,8 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
   @override
   void dispose() {
     // favouritesProvider.setLoading(false);
-    favouritesProvider.setUserFavProfile([]);
-    favouritesProvider.setTotal(0);
+    favouritesProvider.setUserFavProfile([], notify: false);
+    favouritesProvider.setTotal(0, notify: false);
     favouritesScrollController.dispose();
     super.dispose();
   }
