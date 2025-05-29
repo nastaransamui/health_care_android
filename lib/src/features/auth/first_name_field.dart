@@ -37,12 +37,22 @@ class _FirstNameFieldState extends State<FirstNameField> {
         decoration: InputDecoration(
           errorStyle: TextStyle(color: Colors.redAccent.shade400),
           labelText: context.tr('firstName'),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none),
-          fillColor: Theme.of(context).primaryColor.withAlpha((0.1 * 255).round()),
+          hintText: context.tr('firstName'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+         fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
           filled: true,
-          prefixIcon:  Icon(Icons.account_circle, color: Theme.of(context).primaryColorLight),
+          prefixIcon:  Icon(Icons.account_circle_sharp, color: Theme.of(context).primaryColorLight),
           isDense: true,
           alignLabelWithHint: true,
         ),

@@ -141,8 +141,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         primaryColorLight: hexToColor(secondaryColor),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor:
-                WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+            backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
               if (states.contains(WidgetState.pressed)) {
                 return hexToColor(primaryColor);
               } else if (states.contains(WidgetState.disabled)) {
@@ -175,10 +174,8 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: TextStyle(color: hexToColor(secondaryColor)),
           errorStyle: TextStyle(color: Colors.redAccent.shade400),
-          
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                style: BorderStyle.solid, color: hexToColor(secondaryColor)),
+            borderSide: BorderSide(style: BorderStyle.solid, color: hexToColor(secondaryColor)),
           ),
         ),
         listTileTheme: ListTileThemeData(
@@ -186,8 +183,11 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           selectedTileColor: hexToColor(primaryColor),
           selectedColor: hexToColor(secondaryColor),
           textColor: hexToColor(primaryColor),
-          titleTextStyle:
-              const TextStyle(fontFamily: 'Roboto_Condensed', fontSize: 18.0),
+          titleTextStyle: const TextStyle(fontFamily: 'Roboto_Condensed', fontSize: 18.0),
+        ),
+        cardTheme: const CardThemeData(
+          color: Colors.black87, // or secondaryColor or any custom color
+          elevation: 2,
         ),
       );
     default:
@@ -223,24 +223,26 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           primary: hexToColor(primaryColor),
           brightness: Brightness.light,
         ),
-
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: hexToColor(secondaryColor),
         ),
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: TextStyle(color: hexToColor(secondaryColor)),
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-                style: BorderStyle.solid, color: hexToColor(secondaryColor)),
+            borderSide: BorderSide(style: BorderStyle.solid, color: hexToColor(secondaryColor)),
           ),
         ),
         listTileTheme: ListTileThemeData(
-            iconColor: hexToColor(secondaryColor),
-            selectedTileColor: hexToColor(primaryColor),
-            selectedColor: hexToColor(secondaryColor),
-            textColor: hexToColor(primaryColor),
-            titleTextStyle: const TextStyle(
-                fontFamily: 'Roboto_Condensed', fontSize: 18.0)),
+          iconColor: hexToColor(secondaryColor),
+          selectedTileColor: hexToColor(primaryColor),
+          selectedColor: hexToColor(secondaryColor),
+          textColor: hexToColor(primaryColor),
+          titleTextStyle: const TextStyle(fontFamily: 'Roboto_Condensed', fontSize: 18.0),
+        ),
+        cardTheme: const CardThemeData(
+          color: Colors.white70,
+          elevation: 2,
+        ),
       );
   }
 }

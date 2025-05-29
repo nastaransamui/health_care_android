@@ -203,18 +203,39 @@ class _PatientDashboardState extends State<PatientDashboard> {
     late String months = '--';
     late String days = '--';
     late String imageUrl = '';
-    if (patientProfile != null && patientProfile.userProfile.dob.isNotEmpty) {
-      var dob = Jiffy.parse(patientProfile.userProfile.dob);
-      DateTime today = DateTime.now();
-      DateTime b = DateTime(dob.year, dob.month, dob.date);
-      int totalDays = today.difference(b).inDays;
-      int y = totalDays ~/ 365;
-      int m = (totalDays - y * 365) ~/ 30;
-      int d = totalDays - y * 365 - m * 30;
-      years = '$y';
-      months = '$m';
-      days = '$d';
-    }
+   if (patientProfile != null) {
+  DateTime? birthDate;
+
+  if (patientProfile.userProfile.dob is DateTime) {
+    // If dob is already a DateTime object
+    birthDate = patientProfile.userProfile.dob as DateTime;
+  } else if (patientProfile.userProfile.dob is String && patientProfile.userProfile.dob.isNotEmpty) {
+    // If dob is a non-empty string, try to parse it
+    try {
+      // Assuming the string format is parsable by Jiffy, like "yyyy-MM-ddTHH:mm:ssZ"
+      birthDate = Jiffy.parse(patientProfile.userProfile.dob as String).dateTime;
+    // ignore: empty_catches
+    } catch (e) {}
+  }
+
+  if (birthDate != null) {
+    DateTime today = DateTime.now();
+    // Use the actual birthDate directly for calculation
+    int totalDays = today.difference(birthDate).inDays;
+
+    // Basic calculation for years, months, days.
+    // Note: This is an approximation as months have different lengths.
+    // For precise age, consider using a date utility package or more complex logic.
+    int y = totalDays ~/ 365;
+    int remainingDaysAfterYears = totalDays - (y * 365);
+    int m = remainingDaysAfterYears ~/ 30; // Approx months
+    int d = remainingDaysAfterYears - (m * 30); // Remaining days
+
+    years = '$y';
+    months = '$m';
+    days = '$d';
+  }
+}
     if (patientProfile != null) {
       if (patientProfile.userProfile.profileImage.isNotEmpty) {
         imageUrl = patientProfile.userProfile.profileImage;
@@ -528,7 +549,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                   color: Theme.of(context).primaryColorLight,
                                 ),
                                 Text(
-                                    " ${patientProfile.userProfile.dob.isNotEmpty ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob).toLocal()) : '---- -- --'}"),
+                                  patientProfile.userProfile.dob is DateTime ? DateFormat("yyyy MMM dd ").format(patientProfile.userProfile.dob as DateTime) : (patientProfile.userProfile.dob is String && (patientProfile.userProfile.dob as String).isNotEmpty) ? DateFormat("yyyy MMM dd ").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob as String).toLocal()) : '---- -- --'
+                                ),
                               ],
                             ),
                             const SizedBox(

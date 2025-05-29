@@ -1,83 +1,72 @@
 import 'dart:convert';
-
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:health_care/constants/error_handling.dart';
-import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/services/device_service.dart';
-import 'package:health_care/src/commons/fadein_widget.dart';
-import 'package:health_care/stream_socket.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:health_care/constants/error_handling.dart';
+import 'package:health_care/models/user_data.dart';
 import 'package:health_care/providers/device_provider.dart';
 import 'package:health_care/providers/user_data_provider.dart';
+import 'package:health_care/services/auth_service.dart';
+import 'package:health_care/services/device_service.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
-import 'package:health_care/src/features/auth/auth_container.dart';
+import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/features/auth/auth_header.dart';
-import 'package:health_care/src/features/auth/email_field.dart';
-import 'package:health_care/src/features/auth/first_name_field.dart';
-import 'package:health_care/src/features/auth/last_name_field.dart';
-import 'package:health_care/src/features/auth/password_field.dart';
 import 'package:health_care/src/features/loading_screen.dart';
+import 'package:health_care/src/utils/validate_email.dart';
+import 'package:health_care/src/utils/validate_password.dart';
+import 'package:health_care/stream_socket.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:toastify/toastify.dart';
 
-Future<void> func() async {}
-
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({
-    super.key,
-  });
+  const SignupScreen({super.key});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final _signupFormKey = GlobalKey<FormState>();
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final mobileNumberController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final repeatPasswordController = TextEditingController();
-  final userTypeController = TextEditingController();
+  var _signupFormKey = GlobalKey<FormBuilderState>();
   bool passwordNotSame = false;
-
-  void passwordListener() {
-    if (passwordController.text != repeatPasswordController.text) {
+  late UserData userData;
+    bool _initialized = false;
+  late Map<String, dynamic> deviceData;
+  //For google
+  final DeviceService deviceService = DeviceService();
+  final AuthService authService = AuthService();
+    var roleName = '';
+  final formKey = GlobalKey<FormBuilderState>();
+    void onChanged(dynamic val) {
       setState(() {
-        passwordNotSame = true;
-      });
-    } else {
-      setState(() {
-        passwordNotSame = false;
+        roleName = val.toString();
       });
     }
-  }
 
-  void resetForm() {
-    _signupFormKey.currentState?.reset();
-    firstNameController.text = "";
-    lastNameController.text = "";
-    mobileNumberController.text = "";
-    emailController.text = "";
-    passwordController.text = "";
-    repeatPasswordController.text = "";
-    userTypeController.text = "";
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_initialized) {
+      userData = Provider.of<UserDataProvider>(context, listen: false).userData!;
+      deviceData = Provider.of<DeviceProvider>(context, listen: false).deviceData;
+      _initialized = true;
+    }
   }
 
   double lifeTime = 10000;
   double duration = 200;
+  String dialCode = "";
 
-  void onRegisterSubmit(Map<String, String> map) {
+    void onRegisterSubmit(Map<String, String> map) {
     socket.emit('registerFormSubmit', map);
     socket.once('registerFormReturn', (data) {
       if (data['status'] != 200) {
@@ -98,8 +87,15 @@ class _SignupScreenState extends State<SignupScreen> {
         });
       } else {
         SchedulerBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).unfocus();
+          // --- Crucial part to clear errors and reset form ---
+          // Assign a new GlobalKey to the FormBuilder to completely reset its state
+          setState(() {
+            _signupFormKey = GlobalKey<FormBuilderState>(); 
+            dialCode = ''; 
+            passwordNotSame = false; 
+          });
           Navigator.of(context).maybePop();
-          resetForm();
           showToast(
             context,
             Toast(
@@ -116,226 +112,38 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     });
   }
-
-  @override
-  void initState() {
-    super.initState();
-    passwordController.addListener(passwordListener);
-    repeatPasswordController.addListener(passwordListener);
-  }
-
-  @override
-  void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    mobileNumberController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    repeatPasswordController.dispose();
-    userTypeController.dispose();
-    super.dispose();
-  }
-
-  bool loading = false;
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.tr('signup')),
-        ),
-        body: NotificationListener<SubmitNotification>(
-          onNotification: (notification) {
-            final firstNameValue = notification.firstNameValue;
-            final lastNameValue = notification.lastNameValue;
-            final mobileNumberValue = notification.mobileNumberValue;
-            final emailValue = notification.emailValue;
-            final passwordValue = notification.passwordValue;
-            final repeatPasswordValue = notification.repeatPasswordValue;
-            final userTypeValue = notification.userTypeValue;
-            final dialCodeValue = notification.dialCodeValue;
-            if (passwordValue != repeatPasswordValue) {
-              setState(() {
-                passwordNotSame = true;
-              });
-            } else {
-              setState(() {
-                passwordNotSame = false;
-              });
-              if (_signupFormKey.currentState!.validate()) {
-                showModalBottomSheet(
-                  isDismissible: false,
-                  enableDrag: false,
-                  showDragHandle: false,
-                  useSafeArea: true,
-                  context: context,
-                  builder: (context) => const LoadingScreen(),
-                );
-                onRegisterSubmit({
-                  "firstName": firstNameValue,
-                  'lastName': lastNameValue,
-                  "mobileNumber": "$dialCodeValue$mobileNumberValue",
-                  "email": emailValue,
-                  "password": passwordValue,
-                  "userType": userTypeValue
-                });
-              }
-            }
-
-            return true;
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const AuthHeader(),
-                FadeinWidget(
-                  isCenter: true,
-                  child: AuthContainer(
-                    formKey: _signupFormKey,
-                    children: [
-                      InputField(
-                        firstNameController: firstNameController,
-                        lastNameController: lastNameController,
-                        mobileNumberController: mobileNumberController,
-                        emailController: emailController,
-                        passwordController: passwordController,
-                        repeatPasswordController: repeatPasswordController,
-                        userTypeController: userTypeController,
-                        passwordNotSame: passwordNotSame,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          context.push('/forgot');
-                        },
-                        child: Text(
-                          context.tr('forgotPasswordLink'),
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(context.tr('haveAccount')),
-                          TextButton(
-                            onPressed: () {
-                              context.go('/login');
-                            },
-                            child: Text(
-                              context.tr('login'),
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor),
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        bottomNavigationBar: const BottomBar(showLogin: false),
-      ),
-    );
-  }
-}
-
-class SubmitNotification extends Notification {
-  final String firstNameValue;
-  final String lastNameValue;
-  final String mobileNumberValue;
-  final String emailValue;
-  final String passwordValue;
-  final String repeatPasswordValue;
-  final String userTypeValue;
-  final String dialCodeValue;
-
-  SubmitNotification(
-    this.firstNameValue,
-    this.lastNameValue,
-    this.mobileNumberValue,
-    this.emailValue,
-    this.passwordValue,
-    this.repeatPasswordValue,
-    this.userTypeValue,
-    this.dialCodeValue,
-  );
-}
-
-class InputField extends StatefulWidget {
-  final TextEditingController firstNameController;
-  final TextEditingController lastNameController;
-  final TextEditingController mobileNumberController;
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-  final TextEditingController repeatPasswordController;
-  final TextEditingController userTypeController;
-  final bool passwordNotSame;
-
-  const InputField({
-    super.key,
-    required this.firstNameController,
-    required this.lastNameController,
-    required this.mobileNumberController,
-    required this.emailController,
-    required this.passwordController,
-    required this.repeatPasswordController,
-    required this.userTypeController,
-    required this.passwordNotSame,
-  });
-
-  @override
-  State<InputField> createState() => _InputFieldState();
-}
-
-class _InputFieldState extends State<InputField> {
-  //For google
-  final DeviceService deviceService = DeviceService();
-  final AuthService authService = AuthService();
-  var roleName = '';
-  final formKey = GlobalKey<FormBuilderState>();
-
-  double lifeTime = 2500;
-  double duration = 200;
-
-  bool _isObscureText = true;
-  String dialCode = "";
-  showPassword() {
-    setState(() {
-      _isObscureText = !_isObscureText;
-    });
-  }
-
   _formSubmit() {
-    SubmitNotification(
-      widget.firstNameController.text,
-      widget.lastNameController.text,
-      widget.mobileNumberController.text,
-      widget.emailController.text,
-      widget.passwordController.text,
-      widget.repeatPasswordController.text,
-      widget.userTypeController.text,
-      dialCode,
-    ).dispatch(context);
-  }
+    final isValid = _signupFormKey.currentState?.saveAndValidate() ?? false;
 
-  @override
-  Widget build(BuildContext context) {
-    var brightness = Theme.of(context).brightness;
-    final userData = Provider.of<UserDataProvider>(context).userData;
-    final deviceData = Provider.of<DeviceProvider>(context).deviceData;
-    void onChanged(dynamic val) {
-      setState(() {
-        roleName = val.toString();
-      });
+    if (!isValid) {
+      // Errors will automatically be shown next to each field including RadioGroup
+      return;
     }
 
-    const List<String> scopes = <String>[
+    final formData = _signupFormKey.currentState!.value;
+    
+    if (_signupFormKey.currentState!.validate()) {
+      showModalBottomSheet(
+        isDismissible: false,
+        enableDrag: false,
+        showDragHandle: false,
+        useSafeArea: true,
+        context: context,
+        builder: (context) => const LoadingScreen(),
+      );
+      onRegisterSubmit({
+        "firstName": formData['firstName'],
+        'lastName': formData['lastName'],
+        "mobileNumber": formData['mobileNumber'],
+        "email": formData['email'],
+        "password": formData['password'],
+        "userType": formData['roleName']
+      });
+    }
+  }
+
+
+    static const List<String> scopes = <String>[
       'email',
       'profile',
     ];
@@ -344,7 +152,7 @@ class _InputFieldState extends State<InputField> {
       scopes: scopes,
     );
     Future<void> googleLogin(String roleName) async {
-      var formData = {"ipAddr": userData?.query, "userAgent": deviceData};
+      var formData = {"ipAddr": userData.query, "userAgent": deviceData};
       googleSignIn.signIn().then((result) {
         result?.authentication.then((googleKey) async {
           final http.Response response = await http.get(
@@ -363,7 +171,7 @@ class _InputFieldState extends State<InputField> {
             formData['lastName'] = info['family_name'];
             formData['profileImage'] = info['picture'];
             formData['userType'] = roleName.toLowerCase();
-            formData['access_token'] = googleKey.accessToken;
+            formData['access_token'] = googleKey.accessToken!;
             formData['token_type'] = 'Bearer';
             formData['authuser'] = "0";
             formData['expires_in'] = 3599;
@@ -487,6 +295,7 @@ class _InputFieldState extends State<InputField> {
     }
 
     void onGoogleButtonClicked() {
+      var brightness = Theme.of(context).brightness;
       Alert(
           closeFunction: () {
             setState(
@@ -604,175 +413,516 @@ class _InputFieldState extends State<InputField> {
             ),
           )).show();
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          fit: FlexFit.loose,
-          child: FormBuilderRadioGroup<String>(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            activeColor: Theme.of(context).primaryColorLight,
-            focusColor: Theme.of(context).primaryColor,
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.only(
-                bottom: -10.0,
-              ),
-              labelText: "${context.tr('userType')} *",
-              border: InputBorder.none,
-              errorStyle: TextStyle(
-                color: Colors.redAccent.shade400,
-              ),
-              errorMaxLines: 1,
-            ),
-            initialValue: null,
-            name: 'roleName',
-            restorationId: 'roleName',
-            onChanged: (String? val) {
-              widget.userTypeController.text = val.toString();
-            },
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return context.tr('required');
-              }
-              return null;
-            },
-            // validator: FormBuilderValidators.compose([
-            //   FormBuilderValidators.required(errorText: context.tr('required'))
-            // ]),
-            options: [
-              'doctors',
-              'patient',
-              // context.tr('pharmacist')
-            ]
-                .map((role) => FormBuilderFieldOption(
-                      value: role,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  @override
+  Widget build(BuildContext context) {
+    var brightness = Theme.of(context).brightness;
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.tr('signup')),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Center(child: AuthHeader()),
+              FadeinWidget(
+                isCenter: true,
+                child: FormBuilder(
+                  key: _signupFormKey,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width,
+                    ),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                    child: Card(
+                      child: Stack(
+                        fit: StackFit.loose,
                         children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2,
-                            child: Text(context.tr(role)),
-                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 8.0,
+                              right: 8.0,
+                              top: 20.0,
+                            ),
+                            child: SizedBox(
+                                child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  fit: FlexFit.loose,
+                                  child: FormBuilderRadioGroup<String>(
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    activeColor: Theme.of(context).primaryColorLight,
+                                    focusColor: Theme.of(context).primaryColor,
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.only(
+                                        bottom: -10.0,
+                                      ),
+                                      labelText: "${context.tr('userType')} *",
+                                      border: InputBorder.none,
+                                      errorStyle: TextStyle(
+                                        color: Colors.redAccent.shade400,
+                                      ),
+                                      errorMaxLines: 1,
+                                    ),
+                                    initialValue: null,
+                                    name: 'roleName',
+                                    restorationId: 'roleName',
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return context.tr('required');
+                                      }
+                                      return null;
+                                    },
+                                    options: [
+                                      'doctors',
+                                      'patient',
+                                      // context.tr('pharmacist')
+                                    ]
+                                        .map((role) => FormBuilderFieldOption(
+                                              value: role,
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  SizedBox(
+                                                    width: MediaQuery.of(context).size.width / 2,
+                                                    child: Text(context.tr(role)),
+                                                  ),
+                                                ],
+                                              ),
+                                            ))
+                                        .toList(growable: true),
+                                    controlAffinity: ControlAffinity.leading,
+                                    orientation: OptionsOrientation.horizontal,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                const FirstNameInput(),
+                                const SizedBox(height: 10),
+                                const LastNameInput(),
+                                const SizedBox(height: 10),
+                                const EmailInput(),
+                                const SizedBox(height: 10),
+                                FormBuilderPhoneNumber(
+                                  name: 'mobileNumber',
+                                  onDialCodeChanged: (code) {
+                                    dialCode = code; // or setState
+                                  },
+                                ),
+                                const SizedBox(height: 10),
+                                const PasswordInput(),
+                                const SizedBox(height: 10),
+                                RepeatPasswordInput(formKey: _signupFormKey),
+                                const SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: _formSubmit,
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: const Size(double.maxFinite, 30),
+                                    backgroundColor: Theme.of(context).primaryColorLight,
+                                    elevation: 5.0,
+                                  ),
+                                  child: Text(
+                                    context.tr('signup'),
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                SignInButton(
+                                  brightness == Brightness.dark ? Buttons.GoogleDark : Buttons.Google,
+                                  text: context.tr('googleLogin'),
+                                  onPressed: () {
+                                    onGoogleButtonClicked();
+                                  },
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context.push('/forgot');
+                                  },
+                                  child: Text(
+                                    context.tr('forgotPasswordLink'),
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(context.tr('haveAccount')),
+                                    TextButton(
+                                      onPressed: () {
+                                        context.go('/login');
+                                      },
+                                      child: Text(
+                                        context.tr('login'),
+                                        style: TextStyle(color: Theme.of(context).primaryColor),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            )),
+                          )
                         ],
                       ),
-                    ))
-                .toList(growable: true),
-            controlAffinity: ControlAffinity.leading,
-            orientation: OptionsOrientation.horizontal,
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
-        const SizedBox(height: 10),
-        FirstNameField(firstNameController: widget.firstNameController),
-        const SizedBox(height: 10),
-        LastNameField(lastNameController: widget.lastNameController),
-        const SizedBox(height: 10),
-        EmailField(emailController: widget.emailController),
-        const SizedBox(height: 10),
-        InternationalPhoneNumberInput(
-          // initialValue: PhoneNumber(isoCode: userData !=null ? userData.countryCode : "TH" ),
-          errorMessage: context.tr('required'),
-          validator: (userInput) {
-            if (userInput!.isEmpty) {
-              return context.tr('required');
-            }
-            if (!RegExp(r'^(\+|00)?[0-9]+$').hasMatch(userInput)) {
-              return context
-                  .tr('phoneValidate'); //'Please enter a valid phone number';
-            }
+        bottomNavigationBar: const BottomBar(showLogin: false),
+      ),
+    );
+  }
+}
 
-            if (userInput.length < 7 || userInput.length > 12) {
-              return context.tr('required');
-            }
+class FirstNameInput extends StatelessWidget {
+  const FirstNameInput({super.key});
 
-            return null; // Return null when the input is valid
-          },
-          onInputChanged: (PhoneNumber number) async {
-            setState(() {
-              dialCode = number.dialCode!;
-            });
-          },
-          selectorConfig: const SelectorConfig(
-            setSelectorButtonAsPrefixIcon: true,
-            selectorType: PhoneInputSelectorType.DIALOG,
-            useBottomSheetSafeArea: true,
-            leadingPadding: 10,
-            trailingSpace: false,
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: context.tr('firstName'),
+      child: FormBuilderTextField(
+        name: 'firstName',
+        keyboardType: TextInputType.name,
+        enableSuggestions: true,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return context.tr('firstNameEnter');
+          }
+          if (value.length < 2) {
+            return context.tr('minFirstName');
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent.shade400),
+          labelText: context.tr('firstName'),
+          hintText: context.tr('firstName'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
+          filled: true,
+          prefixIcon: Icon(Icons.account_circle_sharp, color: Theme.of(context).primaryColorLight),
+          isDense: true,
+          alignLabelWithHint: true,
+        ),
+      ),
+    );
+  }
+}
 
-          ignoreBlank: false,
-          autoValidateMode: AutovalidateMode.onUserInteraction,
-          selectorTextStyle: TextStyle(
-            color: brightness == Brightness.dark ? Colors.white : Colors.black,
+class LastNameInput extends StatelessWidget {
+  const LastNameInput({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: context.tr('lastName'),
+      child: FormBuilderTextField(
+        name: 'lastName',
+        keyboardType: TextInputType.name,
+        enableSuggestions: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return context.tr('lastNameEnter');
+          }
+          if (value.length < 2) {
+            return context.tr('minLastName');
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent.shade400),
+          labelText: context.tr('lastName'),
+          hintText: context.tr('lastName'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
-          // initialValue: number,
-          textFieldController: widget.mobileNumberController,
-          formatInput: false,
-          keyboardType: const TextInputType.numberWithOptions(
-            signed: true,
-            decimal: true,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
           ),
-          inputDecoration: InputDecoration(
-            focusedBorder:
-                const OutlineInputBorder(borderSide: BorderSide.none),
-            errorStyle: TextStyle(color: Colors.redAccent.shade400),
-            floatingLabelAlignment: FloatingLabelAlignment.start,
-            labelText: context.tr('mobileNumber'),
-            isCollapsed: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
+          filled: true,
+          prefixIcon: Icon(Icons.account_circle_sharp, color: Theme.of(context).primaryColorLight),
+          isDense: true,
+          alignLabelWithHint: true,
+        ),
+      ),
+    );
+  }
+}
+
+class EmailInput extends StatelessWidget {
+  const EmailInput({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: context.tr('email'),
+      child: FormBuilderTextField(
+        name: 'email',
+        keyboardType: TextInputType.emailAddress,
+        enableSuggestions: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return context.tr('emailEnter');
+          } else {
+            return validateEmail(value);
+          }
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent.shade400),
+          labelText: context.tr('email'),
+          hintText: context.tr('email'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
+          filled: true,
+          prefixIcon: Icon(Icons.account_circle_sharp, color: Theme.of(context).primaryColorLight),
+          isDense: true,
+          alignLabelWithHint: true,
+        ),
+      ),
+    );
+  }
+}
+
+class FormBuilderPhoneNumber extends StatelessWidget {
+  final String name;
+  final String? initialValue;
+  final Function(String)? onDialCodeChanged;
+
+  const FormBuilderPhoneNumber({
+    super.key,
+    required this.name,
+    this.initialValue,
+    this.onDialCodeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+
+    return FormBuilderField<String>(
+      name: name,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return context.tr('required');
+        }
+        if (!RegExp(r'^(\+|00)?[0-9]+$').hasMatch(value)) {
+          return context.tr('phoneValidate');
+        }
+        if (value.length < 7 || value.length > 12) {
+          return context.tr('required');
+        }
+        return null;
+      },
+      builder: (field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InternationalPhoneNumberInput(
+              errorMessage: context.tr('required'),
+              initialValue: PhoneNumber(isoCode: 'TH'),
+              
+              onInputChanged: (PhoneNumber number) {
+                field.didChange(number.phoneNumber); // this updates form state
+                if (onDialCodeChanged != null) {
+                  onDialCodeChanged!(number.dialCode ?? '');
+                }
+              },
+              selectorConfig: const SelectorConfig(
+                setSelectorButtonAsPrefixIcon: true,
+                selectorType: PhoneInputSelectorType.DIALOG,
+                useBottomSheetSafeArea: true,
+                leadingPadding: 10,
+                trailingSpace: false,
+              ),
+              ignoreBlank: false,
+              autoValidateMode: AutovalidateMode.onUserInteraction,
+              selectorTextStyle: TextStyle(
+                color: brightness == Brightness.dark ? Colors.white : Colors.black,
+              ),
+              formatInput: false,
+              keyboardType: const TextInputType.numberWithOptions(
+                signed: true,
+                decimal: true,
+              ),
+              inputDecoration: InputDecoration(
+                labelText: context.tr('mobileNumber'),
+                hintText: context.tr('mobileNumber'),
+                errorText: field.errorText,
+                errorStyle: TextStyle(color: Colors.redAccent.shade400),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                ),
+                fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
+                filled: true,
+                prefixIcon: Icon(Icons.account_circle_sharp, color: Theme.of(context).primaryColorLight),
+                isDense: true,
+                alignLabelWithHint: true,
+                floatingLabelAlignment: FloatingLabelAlignment.start,
+                isCollapsed: true,
+              ),
             ),
-            fillColor: Theme.of(context).primaryColor.withAlpha((0.1 * 255).round()),
-            filled: true,
-            isDense: true,
-            // alignLabelWithHint: true,
+          ],
+        );
+      },
+    );
+  }
+}
+
+class PasswordInput extends StatelessWidget {
+  const PasswordInput({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: context.tr('password'),
+      child: FormBuilderTextField(
+        name: 'password',
+         onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        obscureText: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return context.tr('passwordEnter', args: [context.tr('password')]);
+          }
+          return validatePassword(context, value, context.tr('password'));
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent.shade400),
+          labelText: context.tr('password'),
+          hintText: context.tr('password'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
-          onSaved: (PhoneNumber number) {
-            // print('On Saved: $number');
-          },
-        ),
-        const SizedBox(height: 10),
-        PasswordField(
-          passwordController: widget.passwordController,
-          fieldName: 'password',
-        ),
-        const SizedBox(height: 10),
-        PasswordField(
-          passwordController: widget.repeatPasswordController,
-          fieldName: 'repeatPassword',
-        ),
-        const SizedBox(height: 10),
-        if (widget.passwordNotSame) ...[
-          Text(
-            context.tr('passwordNotSame'),
-            style: TextStyle(
-              color: Colors.redAccent.shade400,
-            ),
-          )
-        ],
-        ElevatedButton(
-          onPressed: _formSubmit,
-          style: ElevatedButton.styleFrom(
-            fixedSize: const Size(double.maxFinite, 30),
-            backgroundColor: Theme.of(context).primaryColorLight,
-            elevation: 5.0,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
           ),
-          child: Text(
-            context.tr('signup'),
-            style: const TextStyle(fontSize: 20),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
           ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
+          filled: true,
+          prefixIcon: Icon(Icons.lock, color: Theme.of(context).primaryColorLight),
+          isDense: true,
+          alignLabelWithHint: true,
         ),
-        const SizedBox(height: 10),
-        SignInButton(
-          brightness == Brightness.dark ? Buttons.GoogleDark : Buttons.Google,
-          text: context.tr('googleLogin'),
-          onPressed: () {
-            onGoogleButtonClicked();
-          },
+      ),
+    );
+  }
+}
+
+class RepeatPasswordInput extends StatelessWidget {
+  final GlobalKey<FormBuilderState> formKey;
+
+  const RepeatPasswordInput({
+    super.key,
+    required this.formKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: context.tr('repeatPassword'),
+      child: FormBuilderTextField(
+        name: 'repeatPassword',
+         onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        obscureText: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          final password = formKey.currentState?.fields['password']?.value;
+          if (value == null || value.isEmpty) {
+            return context.tr('repeatPassword');
+          }
+          if (value != password) {
+            return context.tr('passwordNotSame');
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          errorStyle: TextStyle(color: Colors.redAccent.shade400),
+          labelText: context.tr('repeatPassword'),
+          hintText: context.tr('repeatPassword'),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+          ),
+          fillColor: Theme.of(context).canvasColor.withAlpha((0.1 * 255).round()),
+          filled: true,
+          prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).primaryColorLight),
+          isDense: true,
+          alignLabelWithHint: true,
         ),
-      ],
+      ),
     );
   }
 }
