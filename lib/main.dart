@@ -1,11 +1,17 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/providers/user_from_token_provider.dart';
 import 'package:health_care/providers/vital_provider.dart';
+import 'package:health_care/src/utils/is_app_updated.dart';
+import 'package:health_care/src/utils/show_update_notification.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +26,7 @@ import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:url_launcher/url_launcher.dart';
 
 final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',
@@ -27,8 +34,41 @@ final EasyLogger logger = EasyLogger(
   enableBuildModes: [BuildMode.debug, BuildMode.profile, BuildMode.release],
   enableLevels: [LevelMessages.debug, LevelMessages.info, LevelMessages.error, LevelMessages.warning],
 );
+
+
+Future<void> requestNotificationPermission() async {
+  final status = await Permission.notification.request();
+  if (status.isDenied || status.isPermanentlyDenied) {
+    log('Notification permission denied');
+  }
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await requestNotificationPermission();
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+  initializationSettings,
+  onDidReceiveNotificationResponse: (NotificationResponse response) async {
+    final payload = response.payload;
+
+    if (payload == 'open_play_store') {
+      const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.healthCareApp';
+      final uri = Uri.parse(playStoreUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    }
+  },
+);
+  final updated = await isAppUpdated();
+  if (updated) {
+    await showUpdateNotification();
+  }
 
   ///Prevent orientation
   SystemChrome.setPreferredOrientations([
@@ -93,8 +133,6 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) => DataGridProvider(),
         ),
-
-      
       ],
       child: EasyLocalization(
         supportedLocales: const [

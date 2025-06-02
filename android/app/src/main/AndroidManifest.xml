@@ -4,6 +4,7 @@ xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
         android:maxSdkVersion="28" />
+        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:label="healthCareApp"
         android:name="${applicationName}"
@@ -25,6 +26,9 @@ xmlns:tools="http://schemas.android.com/tools">
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data
+    android:name="flutter_local_notifications.default_icon"
+    android:resource="@drawable/ic_stat_notify" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
