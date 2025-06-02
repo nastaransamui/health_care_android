@@ -1,3 +1,4 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -28,10 +29,24 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   final AuthService authService = AuthService();
   String typeClicked = '';
+    late bool isLogin;
+  late dynamic patientProfile;
+  late dynamic doctorsProfile;
+  late String roleName;
   @override
   void initState() {
     super.initState();
     authService.updateLiveAuth(context);
+  }
+
+   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final authProvider = Provider.of<AuthProvider>(context);
+    isLogin = authProvider.isLogin;
+    patientProfile = authProvider.patientProfile;
+    doctorsProfile = authProvider.doctorsProfile;
+    roleName = authProvider.roleName;
   }
 
   @override
@@ -71,18 +86,14 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    var isLogin = Provider.of<AuthProvider>(context).isLogin;
-    var patientProfile = Provider.of<AuthProvider>(context).patientProfile;
-    var doctorsProfile = Provider.of<AuthProvider>(context).doctorsProfile;
-    var roleName = Provider.of<AuthProvider>(context).roleName;
     late String imageUrl = '';
     if (isLogin) {
       if (roleName == 'patient') {
-        if (patientProfile!.userProfile.profileImage.isNotEmpty) {
+        if (patientProfile.userProfile.profileImage.isNotEmpty) {
           imageUrl = patientProfile.userProfile.profileImage;
         }
       } else if (roleName == 'doctors') {
-        if (doctorsProfile!.userProfile.profileImage.isNotEmpty) {
+        if (doctorsProfile.userProfile.profileImage.isNotEmpty) {
           imageUrl = doctorsProfile.userProfile.profileImage; //
         }
       }

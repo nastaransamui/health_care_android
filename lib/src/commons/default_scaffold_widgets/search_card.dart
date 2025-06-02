@@ -30,19 +30,40 @@ class SearchCard extends StatefulWidget {
 
 class _SearchCardState extends State<SearchCard> {
   static late String _chosenModel;
-  late List<Map<String, dynamic>> availabilityValues;
+
   String? availabilityValue;
   final keyWordController = TextEditingController();
   String keyWordValue = '';
   bool selected = false;
   bool _isFinished = false;
   double paddingTop = 15;
+late List<Map<String, dynamic>> availabilityValues;
 
-  @override
-  void didChangeDependencies() {
-    context.locale.toString(); // OK
-    super.didChangeDependencies();
-  }
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+
+  // Update values when locale changes
+  availabilityValues = [
+    {"value": context.tr('availability'), "search": null},
+    {"value": context.tr('available'), "search": "Available"},
+    {"value": context.tr('today'), "search": "AvailableToday"},
+    {"value": context.tr('tomorrow'), "search": "AvailableTomorrow"},
+    {"value": context.tr('thisWeek'), "search": "AvailableThisWeek"},
+    {"value": context.tr('thisMonth'), "search": "AvailableThisMonth"},
+  ];
+
+  final match = availabilityValues.firstWhere(
+    (element) => element['search'] == availabilityValue,
+    orElse: () => availabilityValues[0],
+  );
+  _chosenModel = match['value'];
+}
+  // @override
+  // void didChangeDependencies() {
+  //   context.locale.toString(); // OK
+  //   super.didChangeDependencies();
+  // }
 
   void updatePadding(double value) {
     if (mounted) {
@@ -61,19 +82,7 @@ class _SearchCardState extends State<SearchCard> {
   @override
   Widget build(BuildContext context) {
     var brightness = Theme.of(context).brightness;
-    List<Map<String, dynamic>> availabilityValues = [
-      {"value": context.tr('availability'), "search": null},
-      {"value": context.tr('available'), "search": "Available"},
-      {"value": context.tr('today'), "search": "AvailableToday"},
-      {"value": context.tr('tomorrow'), "search": "AvailableTomorrow"},
-      {"value": context.tr('thisWeek'), "search": "AvailableThisWeek"},
-      {"value": context.tr('thisMonth'), "search": "AvailableThisMonth"},
-    ];
-    for (var element in availabilityValues) {
-      if (element['search'] == availabilityValue) {
-        _chosenModel = element['value'];
-      }
-    }
+
 
     bool isFiltersHaveValue = keyWordValue != '' ||
         widget.genderValue != null ||

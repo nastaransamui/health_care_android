@@ -15,9 +15,6 @@ import 'package:timezone/timezone.dart' as tz;
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 
-
-
-
 class InvoiceDataSort extends DataGridSource {
   List<DataGridRow> _appointments = [];
   final BuildContext context;
@@ -325,7 +322,7 @@ class InvoiceDataSort extends DataGridSource {
                   child: chip,
                 )
               : chip;
-        } else  if (columnName == 'actions') {
+        } else if (columnName == 'actions') {
           cellWidget = Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -336,19 +333,18 @@ class InvoiceDataSort extends DataGridSource {
                 ),
                 tooltip: 'Print',
                 onPressed: () {
-                      // Show loading dialog
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (_) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                  // Show loading dialog
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                   Future.delayed(Duration.zero, () async {
                     if (!context.mounted) return;
 
                     try {
-
                       final appointment = convertRowToAppointment(row);
                       final pdf = await buildDoctorInvoicePdf(context, appointment);
                       final bytes = await pdf.save();
@@ -361,7 +357,10 @@ class InvoiceDataSort extends DataGridSource {
                         useSafeArea: true,
                         builder: (context) => FractionallySizedBox(
                           heightFactor: 1,
-                          child: DoctorInvoicePreviewScreen(pdfBytes: bytes),
+                          child: DoctorInvoicePreviewScreen(
+                            pdfBytes: bytes,
+                            title: Text(context.tr('invoicePreview')),
+                          ),
                         ),
                       );
                       // });
@@ -374,7 +373,7 @@ class InvoiceDataSort extends DataGridSource {
               // You can add more buttons here
             ],
           );
-        } else{
+        } else {
           displayValue = value.toString();
           cellWidget = Text(
             displayValue,

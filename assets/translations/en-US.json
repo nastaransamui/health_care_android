@@ -392,7 +392,7 @@
   "paymentDate": "Payment Date",
   "paymentToken": "Payment Token",
   "paymentType": "Payment Type",
-  "bookingsFeePrice": "Booking Fee Price",
+  "bookingsFeePrice": "Fee Price",
   "paymentRequest": {
     "zero": "No any request select.",
     "one": "You have selected {} invoice",
@@ -403,6 +403,11 @@
     "one": "Send {} appointment for Payment request.",
     "many": "Send {} appointments for Payment request.",
     "other": "Send {} appointments for Payment request."
+  },
+  "invoiceForDelete": {
+    "one": " {} appointment selected.",
+    "many": " {} appointments selected.",
+    "other": " {} appointments selected."
   },
   "issued": "Issued",
   "drInformation": "Doctor Informations",
@@ -418,5 +423,40 @@
   "otherInformation": "Other Informations",
   "invoiceFooter": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed dictum ligula, cursus blandit risus. Maecenas eget metus non tellus dignissim aliquam ut a ex. Maecenas sed vehicula dui, ac suscipit lacus. Sed finibus leo vitae lorem interdum, eu scelerisque tellus fermentum. Curabitur sit amet lacinia lorem. Nullam finibus pellentesque libero.",
   "savedToDownload": "PDF saved to app storage: {}",
-  "storagePermissionForPDF": "Storage permission is required to save the PDF."
+  "storagePermissionForPDF": "Storage permission is required to save the PDF.",
+  "billPreview": "Bill Print Preview",
+  "invoicePreview": "Invoice Print Preview",
+  "dueDate": "Due Date",
+  "Title": "Title",
+  "Price": "Price",
+  "Percent": "Percent",
+  "Fee Price": "Fee Price",
+  "Total": "Total",
+  "totalFeePrice": "Total Fee Price",
+  "totalBillings": {
+    "zero": "No any bill found.",
+    "one": "You have {} bill",
+    "many": "You have {} bills",
+    "other": "You have {} bills"
+  },
+  "createdAt": "Created Day",
+  "updateAt": "Update Day",
+  "items": "Items",
+  "title": "Title",
+  "tuggleBillForDelete": {
+    "zero": "No any bill unpaid that can delete.",
+    "one": "You have {} unpaid bill and can delete",
+    "many": "You have {} unpaid bill and can delete",
+    "other": "You have {} unpaid bill and can delete"
+  },
+  "billForDelete": {
+    "one": "Delete {} Bill.",
+    "many": "Delete {} Bills.",
+    "other": "Delete {} Bills."
+  },
+  "billDeleteConfirm": {
+    "one": "You selecte {} Bill for delete and this action not retrievable.",
+    "many": "You selecte {} Bills for delete and this action not retrievable.",
+    "other": "You selecte {} Bills for delete and this action not retrievable."
+  }
 }

@@ -1,9 +1,11 @@
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/providers/billing_provider.dart';
 import 'package:health_care/providers/favourites_provider.dart';
 import 'package:health_care/providers/invoice_provider.dart';
 import 'package:health_care/providers/my_patients_provider.dart';
@@ -21,6 +23,7 @@ import 'package:health_care/src/features/dashboard/doctor_dashboard.dart';
 import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
 import 'package:health_care/src/features/doctors/appointments/appointments.dart';
 import 'package:health_care/src/features/doctors/available_timing/doctors_available_timing.dart';
+import 'package:health_care/src/features/doctors/billings/doctors_billings.dart';
 import 'package:health_care/src/features/doctors/dashboard_appointment/dash_appointment.dart';
 import 'package:health_care/src/features/doctors/favourites/doctors_favourites.dart';
 import 'package:health_care/src/features/doctors/invoice/doctors_invoice.dart';
@@ -487,6 +490,47 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/doctors/dashboard/billings',
+      name: 'doctorsBillings',
+      builder: (context, state) {
+        // Wrap the DoctorsInvoice widget with ChangeNotifierProvider
+        return ChangeNotifierProvider(
+          create: (context) => BillingProvider(), 
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
+
+              if (doctorProfile != null) {
+                return DoctorsBillings(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        // Redirect logic remains the same, as AuthProvider is likely a global provider
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
       path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',
       builder: (context, state) {
@@ -509,7 +553,7 @@ final router = GoRouter(
         var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
         final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
         if (!isLogin) return '/';
-        if (roleName != 'doctors') return '/';
+        if (roleName != 'patient') return '/';
         if (patientProfile == null) return '/';
 
         return null;

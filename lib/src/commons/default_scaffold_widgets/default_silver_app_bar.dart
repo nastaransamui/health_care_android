@@ -55,8 +55,8 @@ class DefaultSilverAppBar extends SliverPersistentHeaderDelegate {
   double get minExtent => kToolbarHeight;
 
   @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
+  bool shouldRebuild(covariant DefaultSilverAppBar oldDelegate) {
+    return oldDelegate.expandedHeight != expandedHeight || oldDelegate.title != title || oldDelegate.hideTitleWhenExpanded != hideTitleWhenExpanded;
   }
 }
 

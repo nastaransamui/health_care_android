@@ -7,6 +7,7 @@ import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/providers/invoice_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/invoices_service.dart';
+import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/shared/custom_pagination_widget.dart';
 import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
@@ -42,6 +43,7 @@ class _DoctorsInvoiceState extends State<DoctorsInvoice> {
     invoicesService.getDoctorInvoices(context);
     setState(() {
       selectedAppointmentIds.clear();
+      selectedIdsNotifier.value = [];
     });
   }
 
@@ -82,10 +84,18 @@ class _DoctorsInvoiceState extends State<DoctorsInvoice> {
   }
 
   Future<void> updateAppointmentRequestSubmit(BuildContext context, List<String> updateStatusArray) async {
-    try {
-      getDataOnUpdate();
-    // ignore: empty_catches
-    } catch (error) {}
+        bool success = await invoicesService.updateAppointmentRequestSubmit(context, updateStatusArray);
+
+    if (success) {
+      if (context.mounted) {
+        showErrorSnackBar(context, "${updateStatusArray.length} invoice(s) was send for payment request.");
+        getDataOnUpdate();
+      setState(() {
+        selectedAppointmentIds.clear();
+        selectedIdsNotifier.value = [];
+      });
+      }
+    }
   }
 
   @override
@@ -307,7 +317,12 @@ class _DoctorsInvoiceState extends State<DoctorsInvoice> {
                                               child: Scaffold(
                                                 appBar: AppBar(
                                                   backgroundColor: theme.primaryColorLight,
-                                                  title: Text(context.tr("selectColumn")),
+                                                  title: const Text("invoiceForDelete").plural(
+                                                    selectedAppointmentIds.length,
+                                                    format: NumberFormat.compact(
+                                                      locale: context.locale.toString(),
+                                                    ),
+                                                  ),
                                                   automaticallyImplyLeading: false, // Removes the back button
                                                   actions: [
                                                     IconButton(

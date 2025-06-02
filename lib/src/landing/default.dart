@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/providers/clinics_provider.dart';
@@ -17,9 +18,7 @@ import 'package:provider/provider.dart';
 
 class Default extends StatefulWidget {
   static const String routeName = '/';
-  const Default({
-    super.key,
-  });
+  const Default({super.key});
 
   @override
   State<Default> createState() => _DefaultState();
@@ -35,94 +34,144 @@ class _DefaultState extends State<Default> {
   }
 
   @override
-  void dispose() {
-    super.dispose(); // Always call super.dispose() at the end.
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final clinics = Provider.of<ClinicsProvider>(context).clinics;
-    final specialities = Provider.of<SpecialitiesProvider>(context).specialities;
-    final doctors = Provider.of<DoctorsProvider>(context).doctors;
     return SilverScaffoldWrapper(
       title: 'findDoctor',
       children: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (clinics.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('clinics')),
-            ),
-            const FadeinWidget(isCenter: false, child: ClinicsScrollView()),
-          ],
-          if (specialities.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('specialities')),
-            ),
-            SizedBox(width: MediaQuery.of(context).size.width / 1.2, height: 210, child: const SpecialitiesScrollView())
-          ],
-          if (doctors.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('bestDoctors')),
-            ),
-            const BestDoctorsScrollView()
-          ],
-          if (clinics.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('howItsWork')),
-            ),
-            Container(
-              height: 500,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/work-img.png'),
-                  fit: BoxFit.cover,
-                  opacity: 0.3,
-                ),
-              ),
-              child: const HowWorkAccordion(),
-            ),
-          ],
-          if (clinics.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('latestArticles')),
-            ),
-            SizedBox(
-              height: 480,
-              width: MediaQuery.of(context).size.width,
-              child: const LatestArticles(),
-            ),
-          ],
-          if (clinics.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('getYourAnswer')),
-            ),
-            Container(
-              height: 500,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/faq-img.png'),
-                  fit: BoxFit.cover,
-                  opacity: 0.3,
-                ),
-              ),
-              child: const FrequentlyAskedQuestions(),
-            ),
-          ],
-          if (clinics.isNotEmpty) ...[
-            ListTile(
-              title: Text(context.tr('testimonial')),
-            ),
-            SizedBox(
-              height: 450,
-              width: MediaQuery.of(context).size.width,
-              child: const Testimonial(),
-            ),
-          ],
+          Consumer<ClinicsProvider>(
+            builder: (_, provider, __) {
+              final clinics = provider.clinics;
+              final hasActiveClinic = clinics.any((clinic) => clinic.active == true);
+              return clinics.isNotEmpty && hasActiveClinic ? _buildClinicsSection(context) : const SizedBox.shrink();
+            },
+          ),
+          Consumer<SpecialitiesProvider>(
+            builder: (_, provider, __) => provider.specialities.isNotEmpty ? _buildSpecialitiesSection(context) : const SizedBox.shrink(),
+          ),
+          Consumer<DoctorsProvider>(
+            builder: (_, provider, __) => provider.doctors.isNotEmpty ? _buildDoctorsSection(context) : const SizedBox.shrink(),
+          ),
+          // Consumer<ClinicsProvider>(
+          //   builder: (_, provider, __) =>
+          //       provider.clinics.isNotEmpty ? _buildHowItWorksSection(context) : const SizedBox.shrink(),
+          // ),
+          _buildHowItWorksSection(context),
+          // Consumer<ClinicsProvider>(
+          //   builder: (_, provider, __) =>
+          //       provider.clinics.isNotEmpty ? _buildLatestArticlesSection(context) : const SizedBox.shrink(),
+          // ),
+          _buildLatestArticlesSection(context),
+          // Consumer<ClinicsProvider>(
+          //   builder: (_, provider, __) =>
+          //       provider.clinics.isNotEmpty ? _buildFAQSection(context) : const SizedBox.shrink(),
+          // ),
+          _buildFAQSection(context),
+          // Consumer<ClinicsProvider>(
+          //   builder: (_, provider, __) =>
+          //       provider.clinics.isNotEmpty ? _buildTestimonialSection(context) : const SizedBox.shrink(),
+          // ),
+          _buildTestimonialSection(context)
         ],
       ),
+    );
+  }
+
+  Widget _buildClinicsSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('clinics'))),
+        const FadeinWidget(isCenter: false, child: ClinicsScrollView()),
+      ],
+    );
+  }
+
+  Widget _buildSpecialitiesSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('specialities'))),
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 1.2,
+          height: 210,
+          child: const SpecialitiesScrollView(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDoctorsSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('bestDoctors'))),
+        const BestDoctorsScrollView(),
+      ],
+    );
+  }
+
+  Widget _buildHowItWorksSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('howItsWork'))),
+        Container(
+          height: 500,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/work-img.png'),
+              fit: BoxFit.cover,
+              opacity: 0.3,
+            ),
+          ),
+          child: const HowWorkAccordion(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLatestArticlesSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('latestArticles'))),
+        SizedBox(
+          height: 480,
+          width: MediaQuery.of(context).size.width,
+          child: const LatestArticles(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFAQSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('getYourAnswer'))),
+        Container(
+          height: 500,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/faq-img.png'),
+              fit: BoxFit.cover,
+              opacity: 0.3,
+            ),
+          ),
+          child: const FrequentlyAskedQuestions(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTestimonialSection(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(title: Text(context.tr('testimonial'))),
+        SizedBox(
+          height: 450,
+          width: MediaQuery.of(context).size.width,
+          child: const Testimonial(),
+        ),
+      ],
     );
   }
 }

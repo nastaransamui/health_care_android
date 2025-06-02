@@ -76,7 +76,7 @@ class AppointmentReservation {
       paymentType: json['paymentType'],
       invoiceId: json['invoiceId'],
       doctorPaymentStatus: json['doctorPaymentStatus'],
-      paymentDate: json['paymentDate'] != "" ? DateTime.parse(json['paymentDate']) : null,
+      paymentDate: json['paymentDate'] != "" ? DateTime.parse(json['paymentDate']) : '',
       createdDate: DateTime.parse(json['createdDate']),
       patientProfile: profile,
     );

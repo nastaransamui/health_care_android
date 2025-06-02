@@ -36,7 +36,9 @@ class InvoicesService {
 
     socket.off("getDoctorInvoicesReturn");
     socket.on('getDoctorInvoicesReturn', (data) {
-      invoiceProvider.setLoading(false);
+      if(context.mounted){
+        invoiceProvider.setLoading(false);
+      }
       if (data['status'] != 200 && data['status'] != 400) {
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
@@ -65,8 +67,8 @@ class InvoicesService {
     getDoctorInvoicesWithUpdate();
   }
 
-  Future<String> updateAppointmentRequestSubmit(BuildContext context, List<String> updateStatusArray) async {
-  final completer = Completer<String>();
+  Future<bool> updateAppointmentRequestSubmit(BuildContext context, List<String> updateStatusArray) async {
+  final completer = Completer<bool>();
 
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
   final roleName = authProvider.roleName;
@@ -83,10 +85,13 @@ class InvoicesService {
     if (!completer.isCompleted) {
       if (data['status'] == 200) {
         if (context.mounted) showErrorSnackBar(context, data['message']);
-        completer.complete(data['message']);
+         if (!completer.isCompleted) {
+          completer.complete(false);
+        }
       } else {
-        if (context.mounted) showErrorSnackBar(context, data['message']);
-        completer.completeError(data['message']);
+         if (!completer.isCompleted) {
+          completer.complete(true);
+        }
       }
     }
   });

@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
-import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/src/utils/verify_home_access_token.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
@@ -162,9 +161,9 @@ class AuthService {
       ..connect();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
-        var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
-        timeScheduleProvider.setDoctorsTimeSlot(null);
-        timeScheduleProvider.setLoading(true);
+        // var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
+        // timeScheduleProvider.setDoctorsTimeSlot(null);
+        // timeScheduleProvider.setLoading(true);
         context.go('/');
       }
     });

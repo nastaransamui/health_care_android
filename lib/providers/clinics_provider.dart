@@ -7,11 +7,10 @@ class ClinicsProvider extends ChangeNotifier {
   List<Clinics> get clinics => _clinics;
 
   void setClinics(List<dynamic> clinics) {
-    _clinics.clear();
-    for (var element in clinics) {
-      final clinicsFromAdmin = Clinics.fromMap(element);
-      _clinics.add(clinicsFromAdmin);
-    }
-    notifyListeners();
+     _clinics
+    ..clear()
+    ..addAll(clinics.map((e) => Clinics.fromMap(e)));
+
+  notifyListeners();
   }
 }

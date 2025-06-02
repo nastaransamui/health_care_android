@@ -1,6 +1,3 @@
-// ignore: depend_on_referenced_packages
-import 'dart:developer';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +8,19 @@ import 'package:path_provider/path_provider.dart';
 
 class DoctorInvoicePreviewScreen extends StatelessWidget {
   final Uint8List pdfBytes;
+  final Widget title;
 
-  const DoctorInvoicePreviewScreen({super.key, required this.pdfBytes});
+  const DoctorInvoicePreviewScreen({
+    super.key,
+    required this.pdfBytes,
+    required this.title,
+  });
   Future<void> savePDFToDownloads(Uint8List pdfBytes, BuildContext context) async {
     try {
       // Get app-specific external directory
       final directory = await getExternalStorageDirectory(); // path: Android/data/<package>/files/
-      if (directory == null)  throw Exception("Cannot get external directory");
+      if (directory == null) throw Exception("Cannot get external directory");
       final path = directory.path;
-      log("$path $directory");
       final file = File('$path/invoice_${DateTime.now().millisecondsSinceEpoch}.pdf');
       await file.writeAsBytes(pdfBytes);
 
@@ -37,7 +38,7 @@ class DoctorInvoicePreviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.tr('invoicePreview')),
+        title: title,
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
