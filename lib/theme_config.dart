@@ -189,6 +189,9 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           color: Colors.black87, // or secondaryColor or any custom color
           elevation: 2,
         ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Colors.black87,
+        ),
       );
     default:
       return ThemeData.light().copyWith(
@@ -242,6 +245,9 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
         cardTheme: const CardThemeData(
           color: Colors.white70,
           elevation: 2,
+        ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Colors.white70,
         ),
       );
   }

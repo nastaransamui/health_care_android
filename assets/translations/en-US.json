@@ -341,6 +341,7 @@
   "paymentStatus": "Payment status",
   "noHaveBookingYet": "No Reservation made yet",
   "totalReservations": "Total: {} Reservations",
+  "totalBillingsAccount": "Total: {} Bills",
   "rowsPerPage": "Rows Per page",
   "greaterThan": "Greater Than",
   "lessThan": "Less Than",
@@ -458,5 +459,19 @@
     "one": "You selecte {} Bill for delete and this action not retrievable.",
     "many": "You selecte {} Bills for delete and this action not retrievable.",
     "other": "You selecte {} Bills for delete and this action not retrievable."
-  }
+  },
+  "bankAccount": "Bank Account",
+  "weEncrypt": "We Encrypt these sensative data.",
+  "awaitingRequest": "Awaiting Request {}",
+  "account_totalAmount": "Total Sale",
+  "account_totalPrice": "Total Doctor Fee",
+  "account_totalBookingsFeePrice": "Total Bookings Fee Price",
+  "pendingRequest": "Pending Request {}",
+  "paidRequest": "Paid Request {}",
+  "bankName": "Bank Name",
+  "branchName": "Branch Name",
+  "accountNumber": "Account Number",
+  "accountName": "Account Name",
+  "swiftCode": "Swiftcode",
+  "biCcode": "Bank Identifier Codes"
 }
