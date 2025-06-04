@@ -18,7 +18,6 @@ import 'package:health_care/src/utils/is_due_date_passed.dart';
 
 import 'package:timezone/timezone.dart' as tz;
 
-
 class BillsShowBox extends StatefulWidget {
   final Bills singleBill;
   final VoidCallback getDataOnUpdate;
@@ -171,8 +170,9 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                             ),
                             const SizedBox(width: 6),
                             SortIconWidget(
-                                columnName: userType == 'doctors' ? 'patientProfile.fullName' : 'doctorProfile.fullName',
-                                getDataOnUpdate: widget.getDataOnUpdate)
+                              columnName: userType == 'doctors' ? 'patientProfile.fullName' : 'doctorProfile.fullName',
+                              getDataOnUpdate: widget.getDataOnUpdate,
+                            )
                           ],
                         ),
                         Row(

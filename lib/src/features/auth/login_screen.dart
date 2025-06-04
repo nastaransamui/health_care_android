@@ -299,7 +299,7 @@ class _InputFieldState extends State<InputField> {
 
   _formSubmit() {
     SubmitNotification(
-      widget.emailController.text.trim(),
+      widget.emailController.text.trim().toLowerCase(),
       widget.passwordController.text,
     ).dispatch(context);
   }

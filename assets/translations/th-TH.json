@@ -351,6 +351,7 @@
   "before": "ก่อน",
   "after": "หลัง",
   "on": "เปิด",
+  "is": "เท่ากัน",
   "selectColumn": "เลือกคอลัมน์สำหรับตัวกรอง",
   "selectColumForFilter": "คอลัมน์",
   "applyFilter": "ใช้ตัวกรอง",
@@ -388,6 +389,12 @@
     "one": "คุณมีใบแจ้งหนี้ {} ใบ",
     "many": "คุณมีใบแจ้งหนี้ {} ใบ",
     "other": "คุณมีใบแจ้งหนี้ {} ใบ"
+  },
+  "totalReviews": {
+    "zero": "ไม่พบรีวิวใดๆ",
+    "one": "คุณมีรีวิว {} รายการ",
+    "many": "คุณมีรีวิว {} รายการ",
+    "other": "คุณมีรีวิว {} รายการ"
   },
   "actions": "การดำเนินการ",
   "paymentDate": "วันที่ชำระเงิน",
@@ -473,5 +480,11 @@
   "accountNumber": "หมายเลขบัญชี",
   "accountName": "ชื่อบัญชี",
   "swiftCode": "Swiftcode",
-  "biCcode": "รหัสประจำตัวธนาคาร"
+  "biCcode": "รหัสประจำตัวธนาคาร",
+  "recommend": "แนะนำ",
+  "rating": "คะแนน",
+  "iRecommendTheDoctor": "ฉันแนะนำหมอคนนี้.",
+  "iNotRecommendTheDoctor": "ไม่แนะนำ",
+  "recommended": "รีวิวที่แนะนำ",
+  "notRecommended": "รีวิวที่ไม่แนะนำ"
 }

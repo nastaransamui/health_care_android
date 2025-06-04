@@ -10,6 +10,7 @@ import 'package:health_care/providers/billing_provider.dart';
 import 'package:health_care/providers/favourites_provider.dart';
 import 'package:health_care/providers/invoice_provider.dart';
 import 'package:health_care/providers/my_patients_provider.dart';
+import 'package:health_care/providers/review_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/services/doctors_service.dart';
@@ -31,6 +32,7 @@ import 'package:health_care/src/features/doctors/favourites/doctors_favourites.d
 import 'package:health_care/src/features/doctors/invoice/doctors_invoice.dart';
 import 'package:health_care/src/features/doctors/my_patients/doctors_my_patients.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
+import 'package:health_care/src/features/doctors/reviews/doctors_reviews.dart';
 import 'package:health_care/src/features/doctors/schedule/doctors_dashboard_schedule_timing.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/loading_screen.dart';
@@ -548,6 +550,47 @@ final router = GoRouter(
 
               if (doctorProfile != null) {
                 return Account(key: ValueKey(doctorProfile.userId));
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        // Redirect logic remains the same, as AuthProvider is likely a global provider
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/reviews',
+      name: 'doctorsReviews',
+      builder: (context, state) {
+        // Wrap the DoctorsInvoice widget with ChangeNotifierProvider
+        return ChangeNotifierProvider(
+          create: (context) => ReviewProvider(), 
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
+
+              if (doctorProfile != null) {
+                return DoctorsReviews(key: ValueKey(doctorProfile.userId));
               } else {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (innerContext.mounted) {

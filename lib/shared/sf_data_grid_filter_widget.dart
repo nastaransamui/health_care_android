@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,7 +65,7 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
         ];
       case 'boolean':
         return [
-          {"label": context.tr('before'), "value": "is"},
+          {"label": context.tr('is'), "value": "is"},
         ];
       default:
         return [];
@@ -217,6 +218,7 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
     return query;
   }
 
+  bool? _selectedValue = true;
   @override
   Widget build(BuildContext context) {
     final selectedDataType = selectedColumn?.dataType;
@@ -330,6 +332,41 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
                     Expanded(child: buildInputField(isSecond: true)),
                   ],
                 )
+              else if (selectedOperator == 'is')
+                DropdownButtonFormField<bool>(
+                  value: _selectedValue,
+                  decoration: InputDecoration(
+                    labelText: context.tr("selectOperator"),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                    ),
+                  ),
+                  isExpanded: true,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      _selectedValue = newValue;
+                    });
+                  },
+                  items: <DropdownMenuItem<bool>>[
+                    DropdownMenuItem<bool>(
+                      value: true,
+                      child: Text(context.tr('recommended')),
+                    ),
+                    DropdownMenuItem<bool>(
+                      value: false,
+                      child: Text(context.tr('notRecommended')),
+                    ),
+                  ],
+                )
               else
                 buildInputField(isSecond: false),
             const SizedBox(height: 20),
@@ -340,15 +377,19 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
                     {
                       'field': selectedColumnName,
                       'operator': selectedOperator,
-                      'value': selectedOperator == 'between' ? [inputValue, inputValue2] : inputValue,
+                      'value': selectedOperator == 'between'
+                          ? [inputValue, inputValue2]
+                          : selectedOperator == 'is'
+                              ? _selectedValue
+                              : inputValue,
                     }
                   ]
                 };
-
+                log('$filterModel');
                 final mongoQuery = convertFilterToMongoDB(
                     filterModel,
                     widget.columns, // your List<Map<String, dynamic>> column definitions
-                    'Asia/Tehran' // or your custom timezone string
+                    'Asia/Bangkok' // or your custom timezone string
                     );
 
                 Navigator.pop(context, mongoQuery);

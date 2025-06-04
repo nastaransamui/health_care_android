@@ -93,6 +93,12 @@ class _AccountState extends State<Account> {
   }
 
   @override
+  void dispose() {
+    doctorsAccountsScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isProvidersInitialized) {

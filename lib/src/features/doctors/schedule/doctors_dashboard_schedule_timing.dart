@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/src/features/doctors/schedule/reservations_widget.dart';
 import 'package:health_care/src/features/doctors/schedule/time_slot_bottom_sheet.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -317,6 +318,11 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
     isLoading = true;
     _showButtons = false;
     _forceRebuildKey = DateTime.now().millisecondsSinceEpoch;
+    socket.off('getDoctorTimeSlotsReturn'); 
+    socket.off('updateGetDoctorTimeSlots');
+    socket.off('createDoctorsTimeslotsReturn');
+    socket.off('deleteDoctorsTimeslotsReturn');
+    socket.off('updateDoctorsTimeslotsReturn');
   }
 
   @override

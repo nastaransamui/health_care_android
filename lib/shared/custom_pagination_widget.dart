@@ -99,14 +99,16 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
                 itemBorderColor: theme.primaryColorLight,
                 itemBorderWidth: 1.0,
               ),
-              child: SfDataPager(
-                controller: _pagerController,
-                pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
-                delegate: delegate,
-                visibleItemsCount: 3,
-                direction: Axis.horizontal,
-                availableRowsPerPage: const [5, 10],
-              ),
+              child: widget.count == 0
+                  ? const SizedBox.shrink()
+                  : SfDataPager(
+                      controller: _pagerController,
+                      pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
+                      delegate: delegate,
+                      visibleItemsCount: 3,
+                      direction: Axis.horizontal,
+                      availableRowsPerPage: const [5, 10],
+                    ),
             ),
           ),
           // Rows per page

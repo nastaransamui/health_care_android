@@ -351,6 +351,7 @@
   "before": "Before",
   "after": "After",
   "on": "On",
+  "is": "Equal",
   "selectColumn": "Select Column for Filter",
   "selectColumForFilter": "Columns",
   "applyFilter": "Apply Filters",
@@ -388,6 +389,12 @@
     "one": "You have {} invoice",
     "many": "You have {} invoices",
     "other": "You have {} invoices"
+  },
+  "totalReviews": {
+    "zero": "No any review found.",
+    "one": "You have {} review",
+    "many": "You have {} reviews",
+    "other": "You have {} reviews"
   },
   "actions": "Actions",
   "paymentDate": "Payment Date",
@@ -473,5 +480,12 @@
   "accountNumber": "Account Number",
   "accountName": "Account Name",
   "swiftCode": "Swiftcode",
-  "biCcode": "Bank Identifier Codes"
+  "biCcode": "Bank Identifier Codes",
+  "recommend": "Recommend",
+  "rating": "Rating",
+  "iRecommendTheDoctor": "I Recommend The doctor.",
+  "iNotRecommendTheDoctor": "Not Recommend",
+  "recommended": "Recommended Reviews",
+  "notRecommended": "Not Recommended Reviews",
+  "replyTo": "Reply to {}"
 }

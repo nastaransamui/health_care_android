@@ -161,9 +161,6 @@ class AuthService {
       ..connect();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
-        // var timeScheduleProvider = Provider.of<TimeScheduleProvider>(context, listen: false);
-        // timeScheduleProvider.setDoctorsTimeSlot(null);
-        // timeScheduleProvider.setLoading(true);
         context.go('/');
       }
     });
