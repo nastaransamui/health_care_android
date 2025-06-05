@@ -1,3 +1,4 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -340,30 +341,35 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         ListTile(
                           title: Text(context.tr('links')),
                         ),
-                        ...doctorsDashboardLink.map((i) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            elevation: 8.0,
-                            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                            child: InkWell(
-                              splashColor: Theme.of(context).primaryColor,
-                              onTap: () {
-                                context.push(i['routeName']);
-                              },
-                              child: SizedBox(
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                  leading: i['icon'],
-                                  title: Text(context.tr(i['name'])),
-                                  trailing: const Icon(Icons.arrow_forward),
+                        ...doctorsDashboardLink.where((i) {
+                          final bool shouldExclude = doctorProfile.services == 'google' && i['name'] == 'changePassword';
+                          return !shouldExclude;
+                        }).map(
+                          (i) {
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              elevation: 8.0,
+                              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                              child: InkWell(
+                                splashColor: Theme.of(context).primaryColor,
+                                onTap: () {
+                                  context.push(i['routeName']);
+                                },
+                                child: SizedBox(
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                    leading: i['icon'],
+                                    title: Text(context.tr(i['name'])),
+                                    trailing: const Icon(Icons.arrow_forward),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }),
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),

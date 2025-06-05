@@ -26,7 +26,6 @@ import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:timezone/data/latest.dart' as tz;
-// ignore: depend_on_referenced_packages
 import 'package:url_launcher/url_launcher.dart';
 
 final EasyLogger logger = EasyLogger(

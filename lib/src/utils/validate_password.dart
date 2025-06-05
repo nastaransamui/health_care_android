@@ -8,6 +8,6 @@ String? validatePassword(BuildContext context, String value, String name) {
 
   return value.isNotEmpty && !regex.hasMatch(value)
       // ? '$name should be at least 8 characters long and should contain one number,one character and one special characters.'
-      ? context.tr('passwordEnter', args: [context.tr(name)])
+      ? context.tr('passwordValidate', args: [context.tr(name)])
       : null;
 }

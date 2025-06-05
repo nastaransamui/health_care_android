@@ -487,5 +487,16 @@
   "iNotRecommendTheDoctor": "Not Recommend",
   "recommended": "Recommended Reviews",
   "notRecommended": "Not Recommended Reviews",
-  "replyTo": "Reply to {}"
+  "replyTo": "Reply to {}",
+  "socialMediaSetup": "SocialMedia Setup",
+  "facebook_url": "Facebook URL",
+  "x_url": "X URL",
+  "instagram_url": "Instagram URL",
+  "pinterest_url": "Pinterest URL",
+  "linkedin_url": "Linkedin URL",
+  "youtube_url": "Youtube URL",
+  "invalid_url_format": "'Your url not look correct. ",
+  "saveChanges": "Save Changes",
+  "oldPassword": "Old password",
+  "newPassword": "New password"
 }

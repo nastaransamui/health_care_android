@@ -486,5 +486,17 @@
   "iRecommendTheDoctor": "ฉันแนะนำหมอคนนี้.",
   "iNotRecommendTheDoctor": "ไม่แนะนำ",
   "recommended": "รีวิวที่แนะนำ",
-  "notRecommended": "รีวิวที่ไม่แนะนำ"
+  "notRecommended": "รีวิวที่ไม่แนะนำ",
+  "replyTo": "ตอบกลับ {}",
+  "socialMediaSetup": "การตั้งค่าโซเชียลมีเดีย",
+  "facebook_url": "URL ของ Facebook",
+  "x_url": "URL X",
+  "instagram_url": "URL ของ Instagram",
+  "pinterest_url": "URL ของ Pinterest",
+  "linkedin_url": "URL ของ Linkedin",
+  "youtube_url": "URL ของ YouTube",
+  "invalid_url_format": "'URL ของคุณดูไม่ถูกต้อง",
+  "saveChanges": "บันทึกการเปลี่ยนแปลง",
+  "oldPassword": "รหัสผ่านเก่า",
+  "newPassword": "รหัสผ่านใหม่"
 }

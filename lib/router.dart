@@ -1,4 +1,3 @@
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/global_variables.dart';
@@ -15,6 +14,7 @@ import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/time_schedule_provider.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
+import 'package:health_care/src/features/auth/change_password.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
 import 'package:health_care/src/features/auth/login_screen.dart';
 import 'package:health_care/src/features/auth/reset_password.dart';
@@ -35,6 +35,7 @@ import 'package:health_care/src/features/doctors/profile/doctors_search_profile.
 import 'package:health_care/src/features/doctors/reviews/doctors_reviews.dart';
 import 'package:health_care/src/features/doctors/schedule/doctors_dashboard_schedule_timing.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
+import 'package:health_care/src/features/doctors/social_media_widget/social_media_widget.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
@@ -195,7 +196,10 @@ final router = GoRouter(
               final doctorProfile = authProvider.doctorsProfile;
 
               if (doctorProfile != null) {
-                return DashboardAppointments(key: ValueKey(doctorProfile.userId),isToday: false,);
+                return DashboardAppointments(
+                  key: ValueKey(doctorProfile.userId),
+                  isToday: false,
+                );
               } else {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (innerContext.mounted) {
@@ -234,7 +238,10 @@ final router = GoRouter(
               final doctorProfile = authProvider.doctorsProfile;
 
               if (doctorProfile != null) {
-                return DashboardAppointments(key: ValueKey(doctorProfile.userId),isToday: true,);
+                return DashboardAppointments(
+                  key: ValueKey(doctorProfile.userId),
+                  isToday: true,
+                );
               } else {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (innerContext.mounted) {
@@ -499,7 +506,7 @@ final router = GoRouter(
       builder: (context, state) {
         // Wrap the DoctorsInvoice widget with ChangeNotifierProvider
         return ChangeNotifierProvider(
-          create: (context) => BillingProvider(), 
+          create: (context) => BillingProvider(),
           child: Builder(
             // Using Builder to access the newly provided InvoiceProvider within the same build method
             builder: (innerContext) {
@@ -540,7 +547,7 @@ final router = GoRouter(
       builder: (context, state) {
         // Wrap the DoctorsInvoice widget with ChangeNotifierProvider
         return ChangeNotifierProvider(
-          create: (context) => BankProvider(), 
+          create: (context) => BankProvider(),
           child: Builder(
             // Using Builder to access the newly provided InvoiceProvider within the same build method
             builder: (innerContext) {
@@ -581,7 +588,7 @@ final router = GoRouter(
       builder: (context, state) {
         // Wrap the DoctorsInvoice widget with ChangeNotifierProvider
         return ChangeNotifierProvider(
-          create: (context) => ReviewProvider(), 
+          create: (context) => ReviewProvider(),
           child: Builder(
             // Using Builder to access the newly provided InvoiceProvider within the same build method
             builder: (innerContext) {
@@ -616,6 +623,71 @@ final router = GoRouter(
         return null;
       },
     ),
+    GoRoute(
+      path: '/doctors/dashboard/socialMedia',
+      name: 'socialMedia',
+      builder: (context, state) {
+        // return DoctorSearch(queryParameters: state.uri.queryParameters);
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return SocialMediaWidget(key: ValueKey(doctorProfile.userId));
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              // Use innerContext here
+              context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+      },
+      redirect: (context, state) {
+        // Redirect logic remains the same, as AuthProvider is likely a global provider
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/changePassword',
+      name: 'changePassword',
+      builder: (context, state) {
+        // return DoctorSearch(queryParameters: state.uri.queryParameters);
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final doctorProfile = authProvider.doctorsProfile;
+
+        if (doctorProfile != null) {
+          return ChangePassword(key: ValueKey(doctorProfile.userId));
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              // Use innerContext here
+              context.go('/');
+            }
+          });
+          return const SizedBox.shrink();
+        }
+      },
+      redirect: (context, state) {
+        // Redirect logic remains the same, as AuthProvider is likely a global provider
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final doctorProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'doctors') return '/';
+        if (doctorProfile == null) return '/';
+
+        return null;
+      },
+    ),
+
     GoRoute(
       path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',

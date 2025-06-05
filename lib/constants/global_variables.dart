@@ -75,11 +75,11 @@ List doctorsDashboardLink = [
     'routeName': "/doctors/dashboard/reviews",
     "icon": const FaIcon(FontAwesomeIcons.comment),
   },
-  {
-    'name': 'rates',
-    'routeName': "/doctors/dashboard/rates",
-    "icon": const FaIcon(FontAwesomeIcons.star),
-  },
+  // {
+  //   'name': 'rates',
+  //   'routeName': "/doctors/dashboard/rates",
+  //   "icon": const FaIcon(FontAwesomeIcons.star),
+  // },
   {
     'name': 'message',
     'routeName': "/doctors/dashboard/chat-doctor",
@@ -109,6 +109,16 @@ List patinetDataScroll = [
   {"title": "medicalRecords", "icon": const Icon(Icons.medication), "routeName": "/patient/dashboard/medicalRecords"},
   {"title": "billings", "icon": const Icon(Icons.attach_money), "routeName": "/patient/dashboard/billings"}
 ];
+
+List socialPlatforms = ["facebook", "x", "instagram", "pinterest", "linkedin", "youtube"];
+final Map<String, IconData> platformToIconMap = {
+  "facebook": FontAwesomeIcons.facebookF, // Often facebookF for solid icon
+  "x": FontAwesomeIcons.twitter,        // 'x' is typically x-twitter
+  "instagram": FontAwesomeIcons.instagram,
+  "pinterest": FontAwesomeIcons.pinterest,
+  "linkedin": FontAwesomeIcons.linkedinIn, // Often linkedinIn for solid icon
+  "youtube": FontAwesomeIcons.youtube,
+};
 
 List patientsDashboardLink = [
   {

@@ -13,8 +13,7 @@ class TopAnime extends StatelessWidget {
   int seconds;
   int toppadding;
 
-  TopAnime(this.seconds, this.toppadding,
-      {super.key, required this.child, this.curve});
+  TopAnime(this.seconds, this.toppadding, {super.key, required this.child, this.curve});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +40,7 @@ class BottomAnime extends StatelessWidget {
   int seconds;
   int toppadding;
 
-  BottomAnime(this.seconds, this.toppadding,
-      {super.key, required this.child, this.curve});
+  BottomAnime(this.seconds, this.toppadding, {super.key, required this.child, this.curve});
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +73,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
   Widget build(BuildContext context) {
     final currentWidth = MediaQuery.of(context).size.width;
     final currentHeight = MediaQuery.of(context).size.height;
-    return OrientationBuilder(
-        builder: (BuildContext context, Orientation orientation) {
+    return OrientationBuilder(builder: (BuildContext context, Orientation orientation) {
       return SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -100,9 +97,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                   curve: Curves.fastOutSlowIn,
                   child: Container(
                     width: currentWidth,
-                    height: orientation == Orientation.landscape
-                        ? currentHeight / 4
-                        : currentHeight / 3,
+                    height: orientation == Orientation.landscape ? currentHeight / 4 : currentHeight / 3,
                     child: Lottie.asset(
                       "assets/images/health_error.json",
                       animate: true,
@@ -118,8 +113,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                       Text(
                         context.tr('errorPageTitle'),
                         style: TextStyle(
-                          fontSize:
-                              orientation == Orientation.landscape ? 20 : 45,
+                          fontSize: orientation == Orientation.landscape ? 20 : 45,
                         ),
                       ),
                       Container(
@@ -128,8 +122,7 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                           context.tr('errorPageSubtitle'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize:
-                                orientation == Orientation.landscape ? 8 : 16,
+                            fontSize: orientation == Orientation.landscape ? 8 : 16,
                             fontWeight: FontWeight.w300,
                           ),
                         ),
@@ -146,22 +139,21 @@ class _NotFound404ErrorState extends State<NotFound404Error> {
                     margin: EdgeInsets.symmetric(horizontal: 40),
                     child: Center(
                       child: MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        minWidth: orientation == Orientation.landscape
-                            ? currentWidth / 5
-                            : currentWidth / 3,
-                        height: orientation == Orientation.landscape
-                            ? currentHeight / 20
-                            : currentHeight / 16.5,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        minWidth: orientation == Orientation.landscape ? currentWidth / 5 : currentWidth / 3,
+                        height: orientation == Orientation.landscape ? currentHeight / 20 : currentHeight / 16.5,
                         elevation: 3,
                         onPressed: () {
-                           context.go('/');
+                          context.go('/');
                         },
                         color: Theme.of(context).primaryColorLight,
                         child: Text(
                           context.tr('home'),
-                          style: TextStyle(color: Colors.black, fontSize: 15),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
