@@ -1,17 +1,19 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 class DoctorsSearchProfile extends StatefulWidget {
-  final Map<String, String> pathParameters;
+  final String doctorId;
   const DoctorsSearchProfile({
     super.key,
-    required this.pathParameters,
+    required this.doctorId,
   });
 
   @override
@@ -20,12 +22,27 @@ class DoctorsSearchProfile extends StatefulWidget {
 
 class _DoctorsSearchProfileState extends State<DoctorsSearchProfile> {
   final DoctorsService doctorsService = DoctorsService();
+  final ScrollController scrollController = ScrollController();
   String? doctorId;
   DoctorUserProfile? doctor;
 
+    Future<void> getDataOnUpdate() async {
+    await doctorsService.findUserById(context, widget.doctorId);
+    
+  }
+    @override
+  void dispose() {
+    socket.off('findUserByIdReturn');
+    socket.off('updateFindUserById');
+    scrollController.dispose();
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getDataOnUpdate();
+    });
   }
 
   @override

@@ -1,18 +1,24 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/bank_provider.dart';
 import 'package:health_care/providers/billing_provider.dart';
+import 'package:health_care/providers/doctor_patient_profile_provider.dart';
 import 'package:health_care/providers/favourites_provider.dart';
 import 'package:health_care/providers/invoice_provider.dart';
+import 'package:health_care/providers/medical_records_provider.dart';
 import 'package:health_care/providers/my_patients_provider.dart';
+import 'package:health_care/providers/patient_appointment_provider.dart';
+import 'package:health_care/providers/prescription_provider.dart';
 import 'package:health_care/providers/review_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/time_schedule_provider.dart';
-import 'package:health_care/services/doctors_service.dart';
+import 'package:health_care/providers/widget_injection_provider.dart';
 import 'package:health_care/src/commons/not_found_error.dart';
 import 'package:health_care/src/features/auth/change_password.dart';
 import 'package:health_care/src/features/auth/forgot_screen.dart';
@@ -31,12 +37,19 @@ import 'package:health_care/src/features/doctors/dashboard_appointment/dash_appo
 import 'package:health_care/src/features/doctors/favourites/doctors_favourites.dart';
 import 'package:health_care/src/features/doctors/invoice/doctors_invoice.dart';
 import 'package:health_care/src/features/doctors/my_patients/doctors_my_patients.dart';
+import 'package:health_care/src/features/doctors/patient_profile/doctor_patient_profile_widget.dart';
+import 'package:health_care/src/features/doctors/prescriptions/prescription_edit_view_widget.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
 import 'package:health_care/src/features/doctors/reviews/doctors_reviews.dart';
 import 'package:health_care/src/features/doctors/schedule/doctors_dashboard_schedule_timing.dart';
 import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/doctors/social_media_widget/social_media_widget.dart';
 import 'package:health_care/src/features/loading_screen.dart';
+import 'package:health_care/src/features/patients/appointments/patient_appointments.dart';
+import 'package:health_care/src/features/patients/billings/patient_billings.dart';
+import 'package:health_care/src/features/patients/medicalRecords/patient_medical_records.dart';
+import 'package:health_care/src/features/doctors/prescriptions/patient_prescriptions.dart';
+import 'package:health_care/src/features/doctors/prescriptions/prescription_add_widget.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
@@ -687,7 +700,39 @@ final router = GoRouter(
         return null;
       },
     ),
+    GoRoute(
+      path: '/doctors/dashboard/patient-profile/:encodedId',
+      name: 'doctorsPatientProfile',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final mongoPatientUserId = utf8.decode(base64.decode(encodedId));
 
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: DoctorPatientProfileWidget(
+            mongoPatientUserId: mongoPatientUserId,
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (!authProvider.isLogin || authProvider.roleName != 'doctors' || authProvider.doctorsProfile == null) {
+          return '/';
+        }
+
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
+      },
+    ),
     GoRoute(
       path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',
@@ -705,6 +750,269 @@ final router = GoRouter(
           });
           return const SizedBox.shrink();
         }
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/patient/dashboard/appointments',
+      name: 'patientAppointments',
+      builder: (context, state) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => PatientAppointmentProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => WidgetInjectionProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => DoctorPatientProfileProvider(),
+            )
+          ],
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return PatientAppointments(patientId: patientProfile.userId);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/patient/dashboard/prescriptions',
+      name: 'patientPrescriptions',
+      builder: (context, state) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => PrescriptionProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => WidgetInjectionProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => DoctorPatientProfileProvider(),
+            )
+          ],
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return PatientPrescriptions(patientId: patientProfile.userId);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/patient/dashboard/medicalRecords',
+      name: 'patientMedicalRecords',
+      builder: (context, state) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => MedicalRecordsProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => WidgetInjectionProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (_) => DoctorPatientProfileProvider(),
+            )
+          ],
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return PatientMedicalRecords(patientId: patientProfile.userId);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/add-prescription/:encodedId',
+      name: 'addPrescription',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final mongoPatientUserId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: PrescriptionAddWidget(
+            mongoPatientUserId: mongoPatientUserId,
+            viewType: 'add',
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (!authProvider.isLogin || authProvider.roleName != 'doctors' || authProvider.doctorsProfile == null) {
+          return '/';
+        }
+
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
+      },
+    ),
+
+    GoRoute(
+      path: '/doctors/dashboard/editprescription/:encodedId',
+      name: 'editPrescription',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final prescriptionMongoId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: PrescriptionEditViewWidget(
+            prescriptionMongoId: prescriptionMongoId,
+            viewType: 'edit',
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (!authProvider.isLogin || authProvider.roleName != 'doctors' || authProvider.doctorsProfile == null) {
+          return '/';
+        }
+
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
+      },
+    ),
+
+    GoRoute(
+      path: '/patient/dashboard/billings',
+      name: 'patientBillings',
+      builder: (context, state) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => BillingProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => WidgetInjectionProvider(),
+            ),
+          ],
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return PatientBillings(patientId: patientProfile.userId);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -796,25 +1104,27 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/doctors/profile/:id',
+      path: '/doctors/profile/:encodedId',
       name: 'doctorsSearchProfile',
       builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final doctorId = utf8.decode(base64.decode(encodedId));
+
         return DoctorsSearchProfile(
-          pathParameters: state.pathParameters,
+          doctorId: doctorId,
         );
       },
       redirect: (context, state) {
-        final DoctorsService doctorsService = DoctorsService();
-        String? doctorId;
-        // DoctorUserProfile? doctor;
-        var urlDec = Uri.decodeComponent(state.pathParameters['id']!);
-        doctorId = encrypter.decrypt64(urlDec, iv: iv);
-        doctorsService.findUserById(context, doctorId);
-        // doctor = Provider.of<DoctorsProvider>(context, listen: false).singleDoctor;
-        return state.namedLocation(
-          'doctorsSearchProfile',
-          pathParameters: state.pathParameters,
-        );
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
       },
     ),
     GoRoute(

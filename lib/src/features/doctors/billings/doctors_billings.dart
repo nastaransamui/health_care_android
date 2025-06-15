@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -71,9 +70,9 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
     billingProvider.setDoctorsBills([], notify: false);
     billingProvider.setTotal(0, notify: false);
     doctorsBillingsScrollController.dispose();
-     // Remove socket listeners to avoid triggering after dispose
-  socket.off('getBillingRecordReturn');
-  socket.off('updateGetBillingRecord');
+    // Remove socket listeners to avoid triggering after dispose
+    socket.off('getBillingRecordReturn');
+    socket.off('updateGetBillingRecord');
     super.dispose();
   }
 
@@ -127,12 +126,12 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
               column: GridColumn(columnName: 'price', label: Text(context.tr('price'))),
               dataType: 'number',
             ),
-            if (roleName == 'doctors')
+          if (roleName == 'doctors')
             FilterableGridColumn(
               column: GridColumn(columnName: 'bookingsFee', label: Text(context.tr('bookingsFee'))),
               dataType: 'number',
             ),
-             if (roleName == 'doctors')
+          if (roleName == 'doctors')
             FilterableGridColumn(
               column: GridColumn(columnName: 'bookingsFeePrice', label: Text(context.tr('bookingsFeePrice'))),
               dataType: 'number',
@@ -372,11 +371,12 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
                             itemBuilder: (context, index) {
                               final bill = doctorsBills[index];
                               return BillsShowBox(
-                                  singleBill: bill,
-                                  getDataOnUpdate: getDataOnUpdate,
-                                  userType: 'doctors',
-                                  deleteBillsId: deleteBillsId,
-                                  tougleBillIdTodeleteBillsId: tougleBillIdTodeleteBillsId);
+                                singleBill: bill,
+                                getDataOnUpdate: getDataOnUpdate,
+                                userType: 'doctors',
+                                deleteBillsId: deleteBillsId,
+                                tougleBillIdTodeleteBillsId: tougleBillIdTodeleteBillsId,
+                              );
                             },
                           ),
                           if (isLoading) ...[
@@ -452,4 +452,3 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
     );
   }
 }
-

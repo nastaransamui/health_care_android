@@ -96,6 +96,7 @@ void didChangeDependencies() {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
         elevation: 12,
+        color: Theme.of(context).canvasColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: Theme.of(context).primaryColorLight),
           borderRadius: const BorderRadius.all(

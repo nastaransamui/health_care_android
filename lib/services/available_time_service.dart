@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/providers/appointment_provider.dart';
@@ -11,6 +10,8 @@ import 'package:provider/provider.dart';
 
 class AvailableTimeService {
   Future<void> getDoctorAvailableTime(BuildContext context, DateTime startDate, DateTime endDate) async {
+    var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+    if (!isLogin) return;
     final String roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     AppointmentProvider appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
@@ -24,7 +25,7 @@ class AvailableTimeService {
       Map<String, dynamic> mongoFilterModel;
       if (startDate.isAtSameDayAs(endDate)) {
         mongoFilterModel = buildMongoDBFilter(startDate, endDate, 'day');
-      }else{
+      } else {
         mongoFilterModel = buildMongoDBFilter(startDate, endDate, '');
       }
       socket.emit('getDoctorAvailableTime', {
@@ -54,7 +55,7 @@ class AvailableTimeService {
           } catch (e) {}
         } else {
           appointmentProvider.setAppointmentReservations([]);
-          appointmentProvider.setLoading(false);
+          appointmentProvider.setLoading(false, notify: false);
         }
       }
     });

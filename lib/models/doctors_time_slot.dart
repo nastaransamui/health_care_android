@@ -4,15 +4,16 @@ import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/models/users.dart';
 
 class DoctorsTimeSlot {
-  final String? id;
-  final String doctorId;
-  final DateTime createDate;
-  final DateTime updateDate;
   final List<AvailableType> availableSlots;
+  final double? averageHourlyPrice;
+  final DateTime createDate;
+  final String doctorId;
+  final bool? isThisMonthAvailable;
+  final bool? isThisWeekAvailable;
   final bool? isTodayAvailable;
   final bool? isTommorowAvailable;
-  final bool? isThisWeekAvailable;
-  final bool? isThisMonthAvailable;
+  final DateTime updateDate;
+  final String? id;
   final int? totalReservation;
   final List<AppointmentReservation>? reservations;
 
@@ -22,6 +23,7 @@ class DoctorsTimeSlot {
     required this.createDate,
     required this.updateDate,
     required this.availableSlots,
+    this.averageHourlyPrice,
     this.isTodayAvailable,
     this.isTommorowAvailable,
     this.isThisWeekAvailable,
@@ -100,7 +102,7 @@ class DoctorsTimeSlot {
 
   factory DoctorsTimeSlot.fromMap(Map<String, dynamic> map) {
     return DoctorsTimeSlot(
-      id: map['id'], // If `id` is null in the map, it will be assigned as null
+      id: map['_id'], // If `id` is null in the map, it will be assigned as null
       doctorId: map['doctorId'] ?? '',
       createDate: map['createDate'] != null
           ? DateTime.parse(map['createDate']) // Parse DateTime if not null
@@ -116,6 +118,7 @@ class DoctorsTimeSlot {
       isThisWeekAvailable: map['isThisWeekAvailable'],
       isThisMonthAvailable: map['isThisMonthAvailable'],
       totalReservation: map['totalReservation'],
+      averageHourlyPrice: (map['averageHourlyPrice'] as num?)?.toDouble() ?? 0.0,
       reservations: map['reservations'] != null
           ? List<AppointmentReservation>.from(map['reservations']?.map((x) => AppointmentReservation.fromMap(x)) ?? [])
           : [], // If null, default to an empty list

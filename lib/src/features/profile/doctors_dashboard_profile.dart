@@ -1686,7 +1686,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                         ProfileCardWidget(
                           listTitle: context.tr('servicesAndSpecialization'),
                           childrens: [
-                            if (doctorProfile.userProfile.specialitiesServices!.isNotEmpty) ...[
+                            if (doctorProfile.userProfile.specialitiesServices.isNotEmpty) ...[
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: ElevatedButton(

@@ -9,6 +9,7 @@ import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/features/doctors/available_timing/available_time_buttom_sheet.dart';
 import 'package:health_care/src/features/doctors/available_timing/available_time_data_source.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -61,9 +62,15 @@ class _DoctorsAvailableTimingState extends State<DoctorsAvailableTiming> {
       appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
       authProvider = Provider.of<AuthProvider>(context, listen: false);
       _isProvidersInitialized = true;
-      appointmentProvider.setLoading(true);
       getDataOnUpdate(initialStartDate, initialStartDate, CalendarView.day);
     }
+  }
+
+  @override
+  void dispose() {
+   socket.off('getDoctorAvailableTimeReturn');
+   _calendarController.dispose();
+    super.dispose();
   }
 
   @override

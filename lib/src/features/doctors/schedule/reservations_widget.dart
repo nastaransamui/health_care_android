@@ -5,6 +5,7 @@ import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/shared/custom_pagination_widget.dart';
 import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 // ignore: depend_on_referenced_packages
@@ -48,6 +49,8 @@ class _ReservationsWidgetState extends State<ReservationsWidget> {
       {"field": "id", "sort": 'asc'}
     ], notify: false);
     _dataGridProvider.setMongoFilterModel({}, notify: false);
+    socket.off('getDoctorTimeSlotsReturn');
+    socket.off('updateGetDoctorTimeSlots');
     super.dispose();
   }
 

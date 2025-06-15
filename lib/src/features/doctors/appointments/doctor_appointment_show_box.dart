@@ -27,7 +27,7 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final dateFormat = DateFormat('dd MMM yyyy');
     final AppointmentReservation reservation = widget.reservation;
-    final PatientUserProfile patientProfile = reservation.patientProfile;
+    final PatientUserProfile patientProfile = reservation.patientProfile!;
     final DateTime selectedDate = reservation.selectedDate;
     final TimeType timeSlot = reservation.timeSlot;
     final String patientId = reservation.patientId;
@@ -71,9 +71,6 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
                           );
                         },
                         child: Container(
-                          // margin: const EdgeInsets.symmetric(
-                          //   vertical: 8.0,
-                          // ),
                           height: 80,
                           width: 80,
                           decoration: BoxDecoration(

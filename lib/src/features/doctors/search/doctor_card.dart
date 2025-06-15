@@ -1,4 +1,5 @@
-
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:badges/badges.dart' as badges;
@@ -12,7 +13,6 @@ import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/doctors.dart';
 
 class DoctorCard extends StatelessWidget {
@@ -113,10 +113,10 @@ class _PhotoRowWidgetState extends State<PhotoRowWidget> {
     var brightness = Theme.of(context).brightness;
     final name = widget.singleDoctor.fullName;
     final doctorId = widget.singleDoctor.id;
-double doctorStarRate = widget.singleDoctor.rateArray.isEmpty 
-    ? 0 
-    : widget.singleDoctor.rateArray.reduce((acc, number) => acc + number) / widget.singleDoctor.rateArray.length;
-    final doctorIdEncrypted = encrypter.encrypt(doctorId!, iv: iv);
+    double doctorStarRate = widget.singleDoctor.rateArray.isEmpty
+        ? 0
+        : widget.singleDoctor.rateArray.reduce((acc, number) => acc + number) / widget.singleDoctor.rateArray.length;
+    final encodedId = base64.encode(utf8.encode(doctorId.toString()));
     var subheading = context.tr(widget.singleDoctor.specialities[0].specialities);
     final specialitiesImageSrc = widget.singleDoctor.specialities[0].image;
     final uri = Uri.parse(specialitiesImageSrc);
@@ -168,9 +168,9 @@ double doctorStarRate = widget.singleDoctor.rateArray.isEmpty
               ),
               child: GestureDetector(
                 onTap: () {
-                  context.pushNamed(
-                    'doctorsSearchProfile',
-                    pathParameters: {'id': Uri.encodeComponent(doctorIdEncrypted.base64)},
+                  log(encodedId);
+                  context.push(
+                    Uri(path: '/doctors/profile/$encodedId').toString(),
                   );
                 },
                 child: Container(
@@ -217,9 +217,8 @@ double doctorStarRate = widget.singleDoctor.rateArray.isEmpty
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              context.pushNamed(
-                                'doctorsSearchProfile',
-                                pathParameters: {'id': Uri.encodeComponent(doctorIdEncrypted.base64)},
+                              context.push(
+                                Uri(path: '/doctors/profile/$encodedId').toString(),
                               );
                             },
                         ),
@@ -243,7 +242,7 @@ double doctorStarRate = widget.singleDoctor.rateArray.isEmpty
                         ),
                         child: imageIsSvg
                             ? SvgPicture.network(
-                                specialitiesImageSrc, 
+                                specialitiesImageSrc,
                                 width: useMobileLayout ? 20 : 50,
                                 height: useMobileLayout ? 20 : 50,
                                 fit: BoxFit.fitHeight,

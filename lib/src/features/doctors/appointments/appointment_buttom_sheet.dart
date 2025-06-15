@@ -32,7 +32,7 @@ class _AppointmentButtomSheetState extends State<AppointmentButtomSheet> {
     final dateFormat = DateFormat('dd MMM yyyy');
     final dateTimeFormat = DateFormat('dd MMM yyyy HH:mm');
     final bangkok = tz.getLocation('Asia/Bangkok');
-    final PatientUserProfile patientProfile = reservation.patientProfile;
+    final PatientUserProfile patientProfile = reservation.patientProfile!;
     final DateTime selectedDate = reservation.selectedDate;
     final TimeType timeSlot = reservation.timeSlot;
     final String patientId = reservation.patientId;

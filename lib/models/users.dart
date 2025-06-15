@@ -214,7 +214,7 @@ class PatientUserProfile {
       country: map['country'] ?? '',
       createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt']) : DateTime.now(),
       dependentsArray: List<String>.from(map['dependentsArray'] ?? []),
-      dob: map['dob'] =='' ? '' : DateTime.parse(map['dob']),
+      dob: map['dob'] == '' ? '' : DateTime.parse(map['dob']),
       doctorsId: List<String>.from(map['doctors_id'] ?? []),
       favsId: List<String>.from(map['favs_id'] ?? []),
       firstName: map['firstName'] ?? '',
@@ -241,7 +241,7 @@ class PatientUserProfile {
       userName: map['userName'] ?? '',
       zipCode: map['zipCode'] ?? '',
       id: map['_id'] ?? '',
-      patientsId: map['id'] ?? '',
+      patientsId: map['id']?.toInt() ?? 0,
     );
   }
 
@@ -269,7 +269,7 @@ class PatientUserProfile {
         invoiceIds: [],
         isActive: true,
         isVerified: false,
-        lastLogin: LastLogin(date: DateTime.now(), ipAddr: '', userAgent: ''),
+        lastLogin: LastLogin(date: DateTime.now(), ipAddr: '', userAgent: '', idle: false),
         lastName: '',
         lastUpdate: DateTime.now(),
         medicalRecordsArray: [],
@@ -377,22 +377,26 @@ class LastLogin {
   final DateTime date;
   final String ipAddr;
   final String userAgent;
+  final bool? idle;
 
   LastLogin({
     required this.date,
     required this.ipAddr,
     required this.userAgent,
+    required this.idle,
   });
 
   LastLogin copyWith({
     DateTime? date,
     String? ipAddr,
     String? userAgent,
+    bool? idle,
   }) {
     return LastLogin(
       date: date ?? this.date,
       ipAddr: ipAddr ?? this.ipAddr,
       userAgent: userAgent ?? this.userAgent,
+      idle: idle ?? this.idle,
     );
   }
 
@@ -402,22 +406,22 @@ class LastLogin {
     result.addAll({'date': date});
     result.addAll({'ipAddr': ipAddr});
     result.addAll({'userAgent': userAgent});
+    result.addAll({'idle': idle});
 
     return result;
   }
 
   factory LastLogin.fromMap(Map<String, dynamic> map) {
     return LastLogin(
-      date: map['date'] is String
-        ? DateTime.tryParse(map['date']) ?? DateTime.now()
-        : (map['date'] ?? DateTime.now()),
+      date: map['date'] is String ? DateTime.tryParse(map['date']) ?? DateTime.now() : (map['date'] ?? DateTime.now()),
       ipAddr: map['ipAddr'] ?? '',
       userAgent: map['userAgent'] ?? '',
+      idle: map['idle'] ?? false,
     );
   }
 
   factory LastLogin.defaultInstance() {
-    return LastLogin(date: DateTime.now(), ipAddr: 'Unknown', userAgent: 'Unknow');
+    return LastLogin(date: DateTime.now(), ipAddr: 'Unknown', userAgent: 'Unknow', idle: false);
   }
 
   String toJson() => json.encode(toMap());
@@ -425,17 +429,17 @@ class LastLogin {
   factory LastLogin.fromJson(String source) => LastLogin.fromMap(json.decode(source));
 
   @override
-  String toString() => 'LastLogin(date: $date, ipAddr: $ipAddr, userAgent: $userAgent)';
+  String toString() => 'LastLogin(date: $date, ipAddr: $ipAddr, userAgent: $userAgent, idle: $idle)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is LastLogin && other.date == date && other.ipAddr == ipAddr && other.userAgent == userAgent;
+    return other is LastLogin && other.date == date && other.ipAddr == ipAddr && other.userAgent == userAgent && other.idle == idle;
   }
 
   @override
-  int get hashCode => date.hashCode ^ ipAddr.hashCode ^ userAgent.hashCode;
+  int get hashCode => date.hashCode ^ ipAddr.hashCode ^ userAgent.hashCode ^ idle.hashCode;
 }
 
 class DoctorsProfile {
@@ -564,7 +568,7 @@ class DoctorUserProfile {
   final String services;
   final List<SocialMedia> socialMedia;
   final List<Specialities> specialities;
-  final List<String>? specialitiesServices;
+  final List<String> specialitiesServices;
   final String state;
   final List<String> timeSlotId;
   final List<DoctorsTimeSlot>? timeslots;
@@ -626,6 +630,8 @@ class DoctorUserProfile {
     required this.id,
     required this.doctorsId,
   });
+
+  factory DoctorUserProfile.stringToJson(String source) => DoctorUserProfile.fromMap(json.decode(source));
   factory DoctorUserProfile.fromJson(Map<String, dynamic> json) {
     return DoctorUserProfile(
       aboutMe: json['aboutMe'] ?? '',
@@ -834,7 +840,7 @@ class DoctorUserProfile {
       invoiceIds: map['invoice_ids'] != null ? List<String>.from(map['invoice_ids']) : [],
       isActive: map['isActive'] ?? false,
       isVerified: map['isVerified'] ?? false,
-      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: DateTime.now(), ipAddr: '', userAgent: ''),
+      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: DateTime.now(), ipAddr: '', userAgent: '', idle: false),
       lastName: map['lastName'] ?? '',
       lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(), // Handle DateTime parsing for lastUpdate
       memberships: map['memberships'] != null ? List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))) : [],
@@ -849,9 +855,7 @@ class DoctorUserProfile {
       reviewsArray: map['reviews_array'] != null ? List<String>.from(map['reviews_array']) : [],
       reservationsId: map['reservations_id'] != null ? List<String>.from(map['reservations_id']) : [],
       roleName: map['roleName'] ?? "",
-      services: map['services'],
-      // roleName: DoctorRoleNameExtension.fromString(map['roleName']),
-      // services: ServicesExtension.fromString(map['services']),
+      services: map['services'] ?? "",
       socialMedia: (map['socialMedia'] as List?)?.map((e) => SocialMedia.fromMap(e)).toList() ?? [],
       specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
       specialitiesServices: map['specialitiesServices'] != null ? List<String>.from(map['specialitiesServices']) : [],
@@ -864,6 +868,63 @@ class DoctorUserProfile {
       zipCode: map['zipCode'] ?? '',
       id: map['_id'] ?? '',
       doctorsId: map['id'] ?? '',
+    );
+  }
+
+  factory DoctorUserProfile.empty() {
+    return DoctorUserProfile(
+      aboutMe: '',
+      accessToken: '',
+      address1: '',
+      address2: '',
+      awards: [],
+      bankId: '',
+      billingsIds: [],
+      bookingsFee: 10,
+      city: '',
+      clinicAddress: '',
+      clinicImages: [],
+      clinicName: '',
+      country: '',
+      createdAt: DateTime.now(),
+      currency: [],
+      dob: '',
+      educations: [],
+      experinces: [],
+      favsId: [],
+      firstName: '',
+      fullName: '',
+      gender: '',
+      idle: false,
+      invoiceIds: [],
+      isActive: true,
+      isVerified: false,
+      lastLogin: LastLogin(date: DateTime.now(), ipAddr: '', userAgent: '', idle: false),
+      lastName: '',
+      lastUpdate: DateTime.now(),
+      memberships: [],
+      mobileNumber: '',
+      userName: '',
+      online: false,
+      patientsId: [],
+      prescriptionsId: [],
+      profileImage: '',
+      rateArray: [],
+      recommendArray: [],
+      registrations: [],
+      reviewsArray: [],
+      reservationsId: [],
+      roleName: 'doctors',
+      services: '',
+      socialMedia: [],
+      specialities: [],
+      specialitiesServices: [],
+      state: '',
+      timeSlotId: [],
+      timeslots: [],
+      zipCode: '',
+      id: '',
+      doctorsId: 0,
     );
   }
 

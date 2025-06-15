@@ -12,6 +12,7 @@ import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -44,7 +45,6 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
     super.initState();
     authService.updateLiveAuth(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      favouritesProvider.setLoading(true);
       getDataOnUpdate();
     });
   }
@@ -64,7 +64,9 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
 
   @override
   void dispose() {
-    // favouritesProvider.setLoading(false);
+    socket.off('getFavPatientsForDoctorProfileReturn');
+    socket.off('updateGetFavPatientsForDoctorProfile');
+    socket.off('updateGetFavPatientsForDoctorProfilePatient');
     favouritesProvider.setUserFavProfile([], notify: false);
     favouritesProvider.setTotal(0, notify: false);
     favouritesScrollController.dispose();

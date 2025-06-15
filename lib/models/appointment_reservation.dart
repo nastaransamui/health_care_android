@@ -21,7 +21,7 @@ class AppointmentReservation {
   final String doctorPaymentStatus;
   final dynamic paymentDate;
   final DateTime createdDate;
-  final PatientUserProfile patientProfile;
+  final PatientUserProfile? patientProfile;
 
   AppointmentReservation({
     required this.id,
@@ -130,7 +130,7 @@ class AppointmentReservation {
       'doctorPaymentStatus': doctorPaymentStatus,
       'paymentDate': paymentDate?.toIso8601String() ?? "",
       'createdDate': createdDate.toIso8601String(),
-      'patientProfile': patientProfile.toJson(),
+      'patientProfile': patientProfile?.toJson(),
     };
   }
 
@@ -150,9 +150,9 @@ class AppointmentReservation {
       paymentType: map['paymentType'] ?? '', // Default to empty string if null
       invoiceId: map['invoiceId'] ?? '', // Default to empty string if null
       doctorPaymentStatus: map['doctorPaymentStatus'] ?? "Pending", // Default to pending if null
-      paymentDate: map['paymentDate'],
+      paymentDate: (map['paymentDate'] is String && map['paymentDate'].isNotEmpty) ?DateTime.tryParse(map['paymentDate'].trim()) : '' ,
       createdDate: map['createdDate'] != null ? DateTime.parse(map['createdDate']) : DateTime.now(),
-      patientProfile: PatientUserProfile.fromMap(map['patientProfile']),
+      patientProfile:map['patientProfile'] != null ? PatientUserProfile.fromMap(map['patientProfile']) : null,
     );
   }
 

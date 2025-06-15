@@ -51,7 +51,63 @@ class BillsService {
         }
         return;
       }
-      if(context.mounted){
+      if (context.mounted) {
+        billingProvider.setLoading(false);
+      }
+      final billingRecords = data['billingRecords'];
+      final totalBilling = data['totalBilling'];
+      if (billingRecords is List && billingRecords.isNotEmpty) {
+        try {
+          final billingList = (billingRecords).map((json) => Bills.fromMap(json)).toList();
+          billingProvider.setDoctorsBills(billingList);
+
+          // ignore: empty_catches
+        } catch (e) {
+          log('$e');
+          // showErrorSnackBar(context, '$e');
+          // billingProvider.setDoctorsBills([]);
+          // billingProvider.setTotal(0);
+        }
+        final int finalTotal = totalBilling;
+        billingProvider.setTotal(finalTotal);
+      } else {
+        billingProvider.setDoctorsBills([]);
+        billingProvider.setTotal(0);
+      }
+    });
+
+    socket.off('updateGetBillingRecord');
+    socket.on('updateGetBillingRecord', (_) => getBillingRecordWithUpdate());
+    getBillingRecordWithUpdate();
+  }
+
+  Future<void> getPatientBillingRecord(BuildContext context, String patientId) async {
+    final dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
+    final billingProvider = Provider.of<BillingProvider>(context, listen: false);
+
+    billingProvider.setLoading(true);
+    void getBillingRecordWithUpdate() {
+      final paginationModel = dataGridProvider.paginationModel;
+      final sortModel = dataGridProvider.sortModel;
+      final mongoFilterModel = dataGridProvider.mongoFilterModel;
+      final payload = {
+        'patientId': patientId,
+        "paginationModel": paginationModel,
+        "sortModel": sortModel,
+        "mongoFilterModel": mongoFilterModel,
+      };
+      socket.emit('getBillingRecord', payload);
+    }
+
+    socket.off('getBillingRecordReturn');
+    socket.on('getBillingRecordReturn', (data) {
+      if (data['status'] != 200) {
+        if (context.mounted) {
+          showErrorSnackBar(context, data['message']);
+        }
+        return;
+      }
+      if (context.mounted) {
         billingProvider.setLoading(false);
       }
       final billingRecords = data['billingRecords'];

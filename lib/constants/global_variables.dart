@@ -173,6 +173,18 @@ List patientsDashboardLink = [
   },
 ];
 
+// Define your initial limits and skips as a constant Map
+const Map<String, int> doctorPatientInitialLimitsAndSkips = {
+  'appointMentsLimit': 5,
+  'appointMentsSkip': 0,
+  'prescriptionLimit': 5,
+  'prescriptionSkip': 0,
+  'medicalRecordLimit': 5,
+  'medicalRecordSkip': 0,
+  'billingLimit': 5,
+  'billingSkip': 0,
+};
+
 List latestArticlesList = [
   {
     "img": "assets/images/blogs/blog-11.jpg",

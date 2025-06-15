@@ -46,7 +46,7 @@ Future<pw.Document> buildDoctorInvoicePdf(BuildContext context, AppointmentReser
   }
 
   final String issueDay = dateFormat.format(tz.TZDateTime.from(row.createdDate, bangkok));
-  final PatientUserProfile patientUserProfile = row.patientProfile;
+  final PatientUserProfile patientUserProfile = row.patientProfile!;
   final String paName = "${patientUserProfile.gender}${patientUserProfile.gender != '' ? '.' : ''} ${patientUserProfile.fullName}";
   final String paAddress = "${patientUserProfile.address1} ${patientUserProfile.address1 != '' ? ', ' : ''} ${patientUserProfile.address2}";
   final String paCity = patientUserProfile.city;

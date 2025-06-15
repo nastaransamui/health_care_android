@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/providers/appointment_provider.dart';
@@ -10,6 +9,8 @@ import 'package:provider/provider.dart';
 
 class AppointmentService {
   Future<void> getDocDashAppointments(BuildContext context, bool isToday) async {
+    var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+    if (!isLogin) return;
     DataGridProvider dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
     AppointmentProvider appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
     var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
@@ -25,7 +26,6 @@ class AppointmentService {
       final freshPagination = dataGridProvider.paginationModel;
       final freshSort = dataGridProvider.sortModel;
       final freshFilter = dataGridProvider.mongoFilterModel;
-      appointmentProvider.setLoading(false);
       socket.emit('getDocDashAppointments', {
         "userId": userId,
         "paginationModel": freshPagination,
@@ -37,14 +37,15 @@ class AppointmentService {
 
     socket.off('getDocDashAppointmentsReturn'); // remove previous to avoid stacking
     socket.on('getDocDashAppointmentsReturn', (data) {
-      appointmentProvider.setLoading(false);
       if (data['status'] != 200 && data['status'] != 400) {
+        appointmentProvider.setLoading(false);
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
         }
         return;
       }
       if (data['status'] == 200) {
+        appointmentProvider.setLoading(false);
         final appointments = data['docDashAppointments'];
         if (appointments is List && appointments.isNotEmpty) {
           final reservations = appointments[0]['reservations'];
@@ -71,6 +72,8 @@ class AppointmentService {
   }
 
   Future<void> getDoctorAppointments(BuildContext context, int limit) async {
+    var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+    if (!isLogin) return;
     AppointmentProvider appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
     var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -86,7 +89,6 @@ class AppointmentService {
     appointmentProvider.setLoading(true);
     void getDoctorAppointmentsWithUpdate() {
       const skip = 0;
-      appointmentProvider.setLoading(false);
       socket.emit("getDoctorAppointments", {
         "userId": userId,
         "reservationsIdArray": reservationsIdArray,
@@ -97,14 +99,15 @@ class AppointmentService {
 
     socket.off('getDoctorAppointmentsReturn');
     socket.on('getDoctorAppointmentsReturn', (data) {
-      appointmentProvider.setLoading(false);
       if (data['status'] != 200 && data['status'] != 400) {
+        appointmentProvider.setLoading(false);
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
         }
         return;
       }
       if (data['status'] == 200) {
+        appointmentProvider.setLoading(false);
         final appointments = data['myAppointment'];
         if (appointments is List && appointments.isNotEmpty) {
           try {

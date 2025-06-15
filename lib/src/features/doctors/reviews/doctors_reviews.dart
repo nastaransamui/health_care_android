@@ -235,7 +235,6 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
                       const SizedBox(height: 10),
                       // Remove Expanded here, as SingleChildScrollView handles the scrollable area
                       ListView.builder(
-                        // controller: scrollController, // Important: This controller will now also manage the SingleChildScrollView
                         shrinkWrap: true,
                         restorationId: 'doctorsBills',
                         key: const ValueKey('doctorsBills'),

@@ -10,6 +10,7 @@ import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/src/features/doctors/appointments/doctor_appointment_show_box.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +73,8 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
 
   @override
   void dispose() {
+    socket.off('getDoctorAppointmentsReturn');
+    socket.off('updateGetDoctorAppointments');
     appointmentProvider.setTotal(0, notify: false);
     appointmentProvider.setLoading(false, notify: false);
     appointmentProvider.setAppointmentReservations([], notify: false);
