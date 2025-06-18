@@ -60,6 +60,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+     final Color cardColor = roleName == 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
     final dateFormat = DateFormat('dd MMM yyyy');
     final PatientAppointmentReservation reservation = widget.patientAppointmentReservation;
     final DoctorUserProfile doctorUserProfile = reservation.doctorProfile;
@@ -86,6 +87,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
+        color: cardColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(

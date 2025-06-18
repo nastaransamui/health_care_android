@@ -559,5 +559,18 @@
   "view_prescription": "Prescription View",
   "addPrescription": "Add Prescription",
   "editPrescriptionSuccess": "Prescription Edited successfully.",
-  "editPrescriptionFailed": "Prescription Edit has Error Please contact admin."
+  "editPrescriptionFailed": "Prescription Edit has Error Please contact admin.",
+  "billRecordAdded": "Bill Record added successfully.",
+  "minPrescriptionError": "You need at least 1 item to submit the prescription.",
+  "addBillItem": "Add Bill (Maximum 5 items)",
+  "add_bill": "Add bill",
+  "minBillError": "You need at least 1 item to submit the bill.",
+  "addBill": "Add bill",
+  "loading": "Loading",
+  "overDue": "Over Due",
+  "billRecordAddedFailed": "Add Bill record had error.",
+  "billRecordEditFailed": "Bill Edit has error.",
+  "billRecordEditSuccess": "Bill Edited successfully.",
+  "edit_bill": "Edit bill",
+  "view_bill": "View bill"
 }

@@ -55,7 +55,7 @@ class AvailableTimeService {
           } catch (e) {}
         } else {
           appointmentProvider.setAppointmentReservations([]);
-          appointmentProvider.setLoading(false, notify: false);
+          appointmentProvider.setLoading(false);
         }
       }
     });

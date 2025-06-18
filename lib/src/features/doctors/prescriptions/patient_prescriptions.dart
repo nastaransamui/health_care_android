@@ -124,110 +124,125 @@ class _PatientPrescriptionsState extends State<PatientPrescriptions> {
                 },
                 child: SingleChildScrollView(
                   controller: scrollController,
-                  child: Column(
-                    children: [
-                      if (injected != null) ...[
-                        injected,
-                      ],
-                      if (roleName == 'doctors') ...[
-                        SizedBox(
-                          height: 35,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: GradientButton(
-                              onPressed: () {
-                                final encodedpatientId = base64.encode(utf8.encode(widget.patientId.toString()));
-                                context.push(Uri(path: '/doctors/dashboard/add-prescription/$encodedpatientId').toString());
-                              },
-                              colors: [
-                                Theme.of(context).primaryColorLight,
-                                Theme.of(context).primaryColor,
-                              ],
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    context.tr("addPrescription"),
-                                    style: TextStyle(fontSize: 12, color: textColor),
-                                  )
-                                ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Card(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0.0),
+                          topRight: Radius.circular(0.0),
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                        ),
+                      ),
+                      margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                      child: Column(
+                        children: [
+                          if (injected != null) ...[
+                            injected,
+                          ],
+                          if (roleName == 'doctors') ...[
+                            const SizedBox(height: 10),
+                            SizedBox(
+                              height: 35,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: GradientButton(
+                                  onPressed: () {
+                                    final encodedpatientId = base64.encode(utf8.encode(widget.patientId.toString()));
+                                    context.push(Uri(path: '/doctors/dashboard/add-prescription/$encodedpatientId').toString());
+                                  },
+                                  colors: [
+                                    Theme.of(context).primaryColorLight,
+                                    Theme.of(context).primaryColor,
+                                  ],
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        context.tr("addPrescription"),
+                                        style: TextStyle(fontSize: 12, color: textColor),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                      FadeinWidget(
-                        isCenter: true,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Card(
-                            elevation: 6,
-                            color: Theme.of(context).canvasColor,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Theme.of(context).primaryColorLight),
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            ),
+                          ],
+                          FadeinWidget(
+                            isCenter: true,
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Center(
-                                child: Text(
-                                  "totalPrescriptions",
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ).plural(
-                                  isFilterActive ? prescriptions.length : totalPrescriptions,
-                                  format: NumberFormat.compact(
-                                    locale: context.locale.toString(),
+                              padding: const EdgeInsets.all(8),
+                              child: Card(
+                                elevation: 6,
+                                color: theme.canvasColor,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Theme.of(context).primaryColorLight),
+                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Text(
+                                      "totalPrescriptions",
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ).plural(
+                                      isFilterActive ? prescriptions.length : totalPrescriptions,
+                                      format: NumberFormat.compact(
+                                        locale: context.locale.toString(),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      CustomPaginationWidget(
-                        count: isFilterActive ? prescriptions.length : totalPrescriptions,
-                        getDataOnUpdate: getDataOnUpdate,
-                      ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        restorationId: 'prescriptions',
-                        key: const ValueKey('prescriptions'),
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: prescriptions.length,
-                        itemBuilder: (context, index) {
-                          final prescription = prescriptions[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: PrescriptionShowBox(
-                              getDataOnUpdate: getDataOnUpdate,
-                              prescription: prescription,
-                              isExpanded: expandedIndex == index,
-                              index: index,
-                              onToggle: (tappedIndex) {
-                                setState(() {
-                                  expandedIndex = (expandedIndex == tappedIndex) ? null : tappedIndex;
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      if (isLoading) ...[
-                        const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
+                          const SizedBox(height: 10),
+                          CustomPaginationWidget(
+                            count: isFilterActive ? prescriptions.length : totalPrescriptions,
+                            getDataOnUpdate: getDataOnUpdate,
                           ),
-                        )
-                      ]
-                    ],
+                          ListView.builder(
+                            shrinkWrap: true,
+                            restorationId: 'prescriptions',
+                            key: const ValueKey('prescriptions'),
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: prescriptions.length,
+                            itemBuilder: (context, index) {
+                              final prescription = prescriptions[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: PrescriptionShowBox(
+                                  getDataOnUpdate: getDataOnUpdate,
+                                  prescription: prescription,
+                                  isExpanded: expandedIndex == index,
+                                  index: index,
+                                  onToggle: (tappedIndex) {
+                                    setState(() {
+                                      expandedIndex = (expandedIndex == tappedIndex) ? null : tappedIndex;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          if (isLoading) ...[
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          ]
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),

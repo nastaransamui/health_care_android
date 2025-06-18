@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:health_care/models/users.dart';
 
@@ -22,7 +22,7 @@ class Bills {
   final String invoiceId;
   final dynamic paymentDate;
   final DateTime dueDate;
-  final PatientUserProfile patientProfile;
+  final PatientUserProfile? patientProfile;
   final DoctorUserProfile doctorProfile;
 
   Bills({
@@ -45,7 +45,7 @@ class Bills {
     required this.paymentDate,
     required this.dueDate,
     required this.doctorProfile,
-    required this.patientProfile,
+     this.patientProfile,
   });
 
   Bills copyWith({
@@ -144,7 +144,7 @@ class Bills {
       paymentDate: map['paymentDate'] != null && map['paymentDate'] != '' ? DateTime.tryParse(map['paymentDate']) ?? '' : '',
       dueDate: DateTime.tryParse(map['dueDate'] ?? '') ?? DateTime.now(),
       doctorProfile: DoctorUserProfile.fromMap(map['doctorProfile']),
-      patientProfile: PatientUserProfile.fromMap(map['patientProfile']),
+      patientProfile: map['patientProfile'] != null ? PatientUserProfile.fromMap(map['patientProfile']) : null,
     );
   }
 
@@ -179,7 +179,7 @@ class Bills {
         other.status == status &&
         other.invoiceId == invoiceId &&
         other.paymentDate == paymentDate &&
-        other.dueDate == dueDate&&
+        other.dueDate == dueDate &&
         other.doctorProfile == doctorProfile &&
         other.patientProfile == patientProfile;
   }
@@ -203,18 +203,19 @@ class Bills {
         status.hashCode ^
         invoiceId.hashCode ^
         paymentDate.hashCode ^
-        dueDate.hashCode^
-        patientProfile.hashCode^
+        dueDate.hashCode ^
+        patientProfile.hashCode ^
         doctorProfile.hashCode;
   }
 }
 
 class BillingsDetails {
-  final String title;
-  final double price;
-  final double bookingsFee;
-  final double bookingsFeePrice;
-  final double total;
+  String title;
+  double price;
+  double bookingsFee;
+  double bookingsFeePrice;
+  double total;
+  final String uniqueId;
 
   BillingsDetails({
     required this.title,
@@ -222,7 +223,8 @@ class BillingsDetails {
     required this.bookingsFee,
     required this.bookingsFeePrice,
     required this.total,
-  });
+    String? uniqueId,
+  }) : uniqueId = uniqueId ?? const Uuid().v4();
 
   BillingsDetails copyWith({
     String? title,
@@ -262,7 +264,19 @@ class BillingsDetails {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'price': price,
+      'bookingsFee': bookingsFee,
+      'bookingsFeePrice': bookingsFeePrice,
+      'total': total
+    };
+  }
+
+  factory BillingsDetails.empty() {
+    return BillingsDetails(title: '', price: 0, bookingsFee: 0, bookingsFeePrice: 0, total: 0);
+  }
 
   factory BillingsDetails.fromJson(String source) => BillingsDetails.fromMap(json.decode(source));
 

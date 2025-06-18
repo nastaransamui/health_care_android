@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:health_care/models/bills.dart';
 
 import 'package:health_care/models/patient_appointment_reservation.dart';
 import 'package:health_care/models/prescriptions.dart';
@@ -37,6 +38,7 @@ class DoctorPatientProfileModel {
   final String roleName;
   final String services;
   Prescriptions? singlePrescription;
+  Bills? singleBill;
   final String state;
   final String userName;
   final String zipCode;
@@ -74,6 +76,7 @@ class DoctorPatientProfileModel {
     required this.roleName,
     required this.services,
     this.singlePrescription,
+    this.singleBill,
     required this.state,
     required this.userName,
     required this.zipCode,
@@ -112,6 +115,7 @@ class DoctorPatientProfileModel {
     String? roleName,
     String? services,
     Prescriptions? singlePrescription,
+    Bills? singleBill,
     String? state,
     String? userName,
     String? zipCode,
@@ -149,6 +153,7 @@ class DoctorPatientProfileModel {
       roleName: roleName ?? this.roleName,
       services: services ?? this.services,
       singlePrescription: singlePrescription ?? this.singlePrescription,
+      singleBill: singleBill ?? this.singleBill,
       state: state ?? this.state,
       userName: userName ?? this.userName,
       zipCode: zipCode ?? this.zipCode,
@@ -191,8 +196,11 @@ class DoctorPatientProfileModel {
     result.addAll({'reservationsId': reservationsId});
     result.addAll({'roleName': roleName});
     result.addAll({'services': services});
-    if(singlePrescription != null){
+    if (singlePrescription != null) {
       result.addAll({'singlePrescription': singlePrescription});
+    }
+    if (singleBill != null) {
+      result.addAll({'singleBill': singleBill});
     }
     result.addAll({'state': state});
     result.addAll({'userName': userName});
@@ -236,7 +244,8 @@ class DoctorPatientProfileModel {
       reservationsId: List<String>.from(map['reservations_id']),
       roleName: map['roleName'] ?? '',
       services: map['services'] ?? '',
-      singlePrescription: map['singlePrescription'] !=null ? Prescriptions.fromMap(map['singlePrescription']) : null,
+      singlePrescription: map['singlePrescription'] != null ? Prescriptions.fromMap(map['singlePrescription']) : null,
+      singleBill: map['singleBill'] != null ? Bills.fromMap(map['singleBill']) : null,
       state: map['state'] ?? '',
       userName: map['userName'] ?? '',
       zipCode: map['zipCode'] ?? '',
@@ -281,6 +290,7 @@ class DoctorPatientProfileModel {
       roleName: 'patient',
       services: '',
       singlePrescription: Prescriptions.empty(),
+      singleBill: null,
       state: '',
       userName: '',
       zipCode: '',
@@ -290,7 +300,7 @@ class DoctorPatientProfileModel {
   }
   @override
   String toString() {
-    return 'DoctorPatientProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastTwoAppointments $lastTwoAppointments, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online,  prescriptionsId: $prescriptionsId, profileImage: $profileImage,  reservationsId: $reservationsId,  roleName: $roleName, services: $services,singlePrescription: $singlePrescription, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
+    return 'DoctorPatientProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastTwoAppointments $lastTwoAppointments, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online,  prescriptionsId: $prescriptionsId, profileImage: $profileImage,  reservationsId: $reservationsId,  roleName: $roleName, services: $services,singlePrescription: $singlePrescription, singleBill: $singleBill, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
   }
 
   @override
@@ -328,6 +338,7 @@ class DoctorPatientProfileModel {
         other.roleName == roleName &&
         other.services == services &&
         other.singlePrescription == singlePrescription &&
+        other.singleBill == singleBill &&
         other.state == state &&
         other.userName == userName &&
         other.zipCode == zipCode &&
@@ -367,6 +378,7 @@ class DoctorPatientProfileModel {
         roleName.hashCode ^
         services.hashCode ^
         singlePrescription.hashCode ^
+        singleBill.hashCode ^
         state.hashCode ^
         userName.hashCode ^
         zipCode.hashCode ^

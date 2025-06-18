@@ -144,43 +144,43 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                           )
                         : title == 'drPatientmedicalRecord'
                             ? FractionallySizedBox(
-                            heightFactor: 1,
-                            child: MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider(
-                                  create: (context) => MedicalRecordsProvider(),
-                                ),
-                                ChangeNotifierProvider(
-                                  create: (context) => WidgetInjectionProvider(),
-                                ),
-                                ChangeNotifierProvider.value(
-                                  value: context.read<DoctorPatientProfileProvider>(),
-                                ),
-                              ],
-                              child: Builder(
-                                builder: (context) {
-                                  // Now the provider is available!
-                                  WidgetsBinding.instance.addPostFrameCallback(
-                                    (_) {
-                                      context.read<WidgetInjectionProvider>().inject(
-                                        Consumer<DoctorPatientProfileProvider>(
-                                          builder: (context, provider, _) {
-                                            return DcoctorPateintProfileHeader(
-                                              doctorPatientProfile: provider.patientProfile,
-                                            );
-                                          },
-                                        ),
+                                heightFactor: 1,
+                                child: MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider(
+                                      create: (context) => MedicalRecordsProvider(),
+                                    ),
+                                    ChangeNotifierProvider(
+                                      create: (context) => WidgetInjectionProvider(),
+                                    ),
+                                    ChangeNotifierProvider.value(
+                                      value: context.read<DoctorPatientProfileProvider>(),
+                                    ),
+                                  ],
+                                  child: Builder(
+                                    builder: (context) {
+                                      // Now the provider is available!
+                                      WidgetsBinding.instance.addPostFrameCallback(
+                                        (_) {
+                                          context.read<WidgetInjectionProvider>().inject(
+                                            Consumer<DoctorPatientProfileProvider>(
+                                              builder: (context, provider, _) {
+                                                return DcoctorPateintProfileHeader(
+                                                  doctorPatientProfile: provider.patientProfile,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      );
+                                      return PatientMedicalRecords(
+                                        patientId: widget.doctorPatientProfile.id!,
+                                        doctorPatientProfile: widget.doctorPatientProfile,
                                       );
                                     },
-                                  );
-                                  return PatientMedicalRecords(
-                                    patientId: widget.doctorPatientProfile.id!,
-                                    doctorPatientProfile: widget.doctorPatientProfile,
-                                  );
-                                },
-                              ),
-                            ),
-                          )
+                                  ),
+                                ),
+                              )
                             : FractionallySizedBox(
                                 heightFactor: 1,
                                 child: MultiProvider(
@@ -229,12 +229,12 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                   },
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: theme.primaryColor, width: 1),
-                  borderRadius: BorderRadius.circular(8),
+              child: Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Theme.of(context).primaryColorLight),
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),
                 ),
-                alignment: Alignment.center,
                 child: Column(
                   children: [
                     FourCardPateintDoctorLottie(title: title),
@@ -244,7 +244,7 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                       child: Text(
                         context.tr(title, args: ['$length']),
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ],

@@ -117,7 +117,7 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
       final bool isLoading = doctorPatientProfileProvider.isLoading;
       // final ThemeData theme = Theme.of(context);
       if (isLoading) {
-        return ScaffoldWrapper(title: context.tr('ss'), children: const Center(child: CircularProgressIndicator()));
+        return ScaffoldWrapper(title: context.tr('loading'), children: const Center(child: CircularProgressIndicator()));
       }
       //Redirect if id is empty
       if ((doctorPatientProfile.id?.isEmpty ?? true) && !_hasRedirected) {
@@ -151,68 +151,70 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
           children: Stack(
             children: [
               NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    double per = 0;
-                    if (scrollController.hasClients) {
-                      per = ((scrollController.offset / scrollController.position.maxScrollExtent));
-                    }
-                    if (per >= 0) {
-                      SchedulerBinding.instance.addPostFrameCallback((_) {
-                        if (mounted) {
-                          setState(() {
-                            scrollPercentage = 307 * per;
-                          });
-                        }
-                      });
-                    }
-                    return false;
-                  },
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      children: [
-                        DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
-                        Card(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(0.0),
-                              topRight: Radius.circular(0.0),
-                            ),
-                          ),
-                          margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Padding(
-                                padding: const EdgeInsets.only(top: 0.0, right: 16.0, bottom: 16.0, left: 16.0),
-                                child: Column(
-                                  children: [
-                                    OriginalDoctorPrescription(
-                                        theme: theme,
-                                        encodeddoctorId: encodeddoctorId,
-                                        finalImage: finalImage,
-                                        statusColor: statusColor,
-                                        doctorName: doctorName,
-                                        imageIsSvg: imageIsSvg,
-                                        specialityImage: specialityImage,
-                                        speciality: speciality,
-                                        doctorPatientProfile: doctorPatientProfile,
-                                        bangkok: bangkok,
-                                        textColor: textColor,
-                                        formType: formType),
-                                    PrescriptionDetailsForm(
-                                      formType: formType,
-                                      onPrescriptionSubmit: (List<PrescriptionDetails> prescriptionDetailsList) async {
-                                        onPrescriptionEditSubmit(prescriptionDetailsList, doctorPatientProfile.singlePrescription!);
-                                      },
-                                      prescriptionDetailsList: doctorPatientProfile.singlePrescription!.prescriptionsArray,
-                                    )
-                                  ],
-                                )),
+                onNotification: (notification) {
+                  double per = 0;
+                  if (scrollController.hasClients) {
+                    per = ((scrollController.offset / scrollController.position.maxScrollExtent));
+                  }
+                  if (per >= 0) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        setState(() {
+                          scrollPercentage = 307 * per;
+                        });
+                      }
+                    });
+                  }
+                  return false;
+                },
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                      Card(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(0.0),
+                            topRight: Radius.circular(0.0),
                           ),
                         ),
-                      ],
-                    ),
-                  )),
+                        margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                              padding: const EdgeInsets.only(top: 0.0, right: 16.0, bottom: 16.0, left: 16.0),
+                              child: Column(
+                                children: [
+                                  OriginalDoctorPrescription(
+                                    theme: theme,
+                                    encodeddoctorId: encodeddoctorId,
+                                    finalImage: finalImage,
+                                    statusColor: statusColor,
+                                    doctorName: doctorName,
+                                    imageIsSvg: imageIsSvg,
+                                    specialityImage: specialityImage,
+                                    speciality: speciality,
+                                    doctorPatientProfile: doctorPatientProfile,
+                                    bangkok: bangkok,
+                                    textColor: textColor,
+                                    formType: formType,
+                                  ),
+                                  PrescriptionDetailsForm(
+                                    formType: formType,
+                                    onPrescriptionSubmit: (List<PrescriptionDetails> prescriptionDetailsList) async {
+                                      onPrescriptionEditSubmit(prescriptionDetailsList, doctorPatientProfile.singlePrescription!);
+                                    },
+                                    prescriptionDetailsList: doctorPatientProfile.singlePrescription!.prescriptionsArray,
+                                  )
+                                ],
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
             ],
           ));
@@ -381,7 +383,7 @@ class OriginalDoctorPrescription extends StatelessWidget {
                           ),
                         ],
                       ),
-                     ],
+                    ],
                   ),
                 ),
               ],

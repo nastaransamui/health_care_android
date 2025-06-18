@@ -84,11 +84,10 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
 
           Container(
             width: double.infinity,
-            color: theme.canvasColor, // Set the full background color here
             padding: const EdgeInsets.symmetric(horizontal: 8), // Optional: add side padding
             child: SfDataPagerTheme(
               data: SfDataPagerThemeData(
-                backgroundColor: Colors.transparent, // Let container background show
+                backgroundColor: Colors.transparent,
                 itemColor: theme.primaryColorLight,
                 selectedItemColor: theme.primaryColor,
                 itemTextStyle: const TextStyle(color: Colors.black),
@@ -101,14 +100,18 @@ class _CustomPaginationWidgetState extends State<CustomPaginationWidget> {
               ),
               child: widget.count == 0
                   ? const SizedBox.shrink()
-                  : SfDataPager(
-                      controller: _pagerController,
-                      pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
-                      delegate: delegate,
-                      visibleItemsCount: 3,
-                      direction: Axis.horizontal,
-                      availableRowsPerPage: const [5, 10],
+                  : SizedBox(
+                    child: Center(
+                      child: SfDataPager(
+                          controller: _pagerController,
+                          pageCount: totalPages > 0 ? totalPages.toDouble() : 1,
+                          delegate: delegate,
+                          visibleItemsCount: 3,
+                          direction: Axis.horizontal,
+                          availableRowsPerPage: const [5, 10],
+                        ),
                     ),
+                  ),
             ),
           ),
           // Rows per page

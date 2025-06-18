@@ -118,79 +118,93 @@ class _PatientAppointmentsState extends State<PatientAppointments> {
               },
               child: SingleChildScrollView(
                 controller: scrollController,
-                child: Column(
-                  children: [
-                    if (injected != null) ...[
-                      injected,
-                    ],
-                    FadeinWidget(
-                      isCenter: true,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Card(
-                          elevation: 6,
-                          color: Theme.of(context).canvasColor,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Theme.of(context).primaryColorLight),
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                          ),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Card(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(0.0),
+                        topRight: Radius.circular(0.0),
+                        bottomLeft: Radius.circular(20.0),
+                        bottomRight: Radius.circular(20.0),
+                      ),
+                    ),
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                    child: Column(
+                      children: [
+                        if (injected != null) ...[
+                          injected,
+                        ],
+                        FadeinWidget(
+                          isCenter: true,
                           child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                "totalReservations",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ).plural(
-                                isFilterActive ? patientAppointmentReservations.length : totalAppointment,
-                                format: NumberFormat.compact(
-                                  locale: context.locale.toString(),
+                            padding: const EdgeInsets.all(8),
+                            child: Card(
+                              elevation: 6,
+                              color: Theme.of(context).canvasColor,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Theme.of(context).primaryColorLight),
+                                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: Text(
+                                    "totalReservations",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ).plural(
+                                    isFilterActive ? patientAppointmentReservations.length : totalAppointment,
+                                    format: NumberFormat.compact(
+                                      locale: context.locale.toString(),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    CustomPaginationWidget(
-                      count: isFilterActive ? patientAppointmentReservations.length : totalAppointment,
-                      getDataOnUpdate: getDataOnUpdate,
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      restorationId: 'pateintAppointment',
-                      key: const ValueKey('pateintAppointment'),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: patientAppointmentReservations.length,
-                      itemBuilder: (context, index) {
-                        final patientAppointment = patientAppointmentReservations[index];
-                        return PatientAppointmentShowBox(
-                          patientAppointmentReservation: patientAppointment,
-                          isExpanded: expandedIndex == index,
-                          index: index,
-                          onToggle: (tappedIndex) {
-                            setState(() {
-                              expandedIndex = (expandedIndex == tappedIndex) ? null : tappedIndex;
-                            });
-                          },
+                        const SizedBox(height: 10),
+                        CustomPaginationWidget(
+                          count: isFilterActive ? patientAppointmentReservations.length : totalAppointment,
                           getDataOnUpdate: getDataOnUpdate,
-                          doctorPatientProfile: widget.doctorPatientProfile,
-                        );
-                      },
-                    ),
-                    if (isLoading) ...[
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
                         ),
-                      )
-                    ]
-                  ],
+                        ListView.builder(
+                          shrinkWrap: true,
+                          restorationId: 'pateintAppointment',
+                          key: const ValueKey('pateintAppointment'),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: patientAppointmentReservations.length,
+                          itemBuilder: (context, index) {
+                            final patientAppointment = patientAppointmentReservations[index];
+                            return PatientAppointmentShowBox(
+                              patientAppointmentReservation: patientAppointment,
+                              isExpanded: expandedIndex == index,
+                              index: index,
+                              onToggle: (tappedIndex) {
+                                setState(() {
+                                  expandedIndex = (expandedIndex == tappedIndex) ? null : tappedIndex;
+                                });
+                              },
+                              getDataOnUpdate: getDataOnUpdate,
+                              doctorPatientProfile: widget.doctorPatientProfile,
+                            );
+                          },
+                        ),
+                        if (isLoading) ...[
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        ]
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -318,149 +318,163 @@ class _PatientMedicalRecordsState extends State<PatientMedicalRecords> {
                 },
                 child: SingleChildScrollView(
                   controller: scrollController,
-                  child: Column(
-                    children: [
-                      if (injected != null) ...[
-                        injected,
-                      ],
-                      SizedBox(
-                        height: 35,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: GradientButton(
-                            onPressed: () {
-                              final firstName =
-                                  roleName == 'doctors' ? widget.doctorPatientProfile?.firstName : patientUserProfile?.userProfile.firstName;
-                              final lastName =
-                                  roleName == 'doctors' ? widget.doctorPatientProfile?.lastName : patientUserProfile?.userProfile.lastName;
-                              final userId = roleName == 'doctors' ? widget.doctorPatientProfile?.id : patientUserProfile?.userProfile.id;
-                              openViewEditForm(context,
-                                  MedicalRecords.empty(firstName: firstName ?? "", lastName: lastName ?? '', userId: userId ?? ''), 'create');
-                            },
-                            colors: [
-                              Theme.of(context).primaryColorLight,
-                              Theme.of(context).primaryColor,
-                            ],
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
-                                const SizedBox(width: 5),
-                                Text(
-                                  context.tr("addMedicalRecord"),
-                                  style: TextStyle(fontSize: 12, color: textColor),
-                                )
-                              ],
-                            ),
-                          ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Card(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0.0),
+                          topRight: Radius.circular(0.0),
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
                         ),
                       ),
-                      TotalBox(isFilterActive: isFilterActive, medicalRecords: medicalRecords, totalMedicalRecords: totalMedicalRecords),
-                      // confirmed delete
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (Widget child, Animation<double> animation) {
-                          return SizeTransition(
-                            sizeFactor: animation,
-                            axis: Axis.vertical,
-                            child: child,
-                          );
-                        },
-                        child: deleteRecordsId.isNotEmpty
-                            ? Padding(
-                                key: const ValueKey("buttonVisible"),
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 40,
-                                  child: GradientButton(
-                                    onPressed: () async {
-                                      showConfirmDeleteScafold(context);
-                                    },
-                                    colors: [
-                                      Theme.of(context).primaryColorLight,
-                                      Theme.of(context).primaryColor,
-                                    ],
-                                    child: Center(
-                                      child: Text(
-                                        "deleteMedicalButton",
-                                        style: TextStyle(fontSize: 12, color: textColor),
-                                      ).plural(
-                                        deleteRecordsId.length,
-                                        format: NumberFormat.compact(
-                                          locale: context.locale.toString(),
+                      margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                      child: Column(
+                        children: [
+                          if (injected != null) ...[
+                            injected,
+                          ],
+                          SizedBox(
+                            height: 35,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: GradientButton(
+                                onPressed: () {
+                                  final firstName =
+                                      roleName == 'doctors' ? widget.doctorPatientProfile?.firstName : patientUserProfile?.userProfile.firstName;
+                                  final lastName =
+                                      roleName == 'doctors' ? widget.doctorPatientProfile?.lastName : patientUserProfile?.userProfile.lastName;
+                                  final userId = roleName == 'doctors' ? widget.doctorPatientProfile?.id : patientUserProfile?.userProfile.id;
+                                  openViewEditForm(context,
+                                      MedicalRecords.empty(firstName: firstName ?? "", lastName: lastName ?? '', userId: userId ?? ''), 'create');
+                                },
+                                colors: [
+                                  Theme.of(context).primaryColorLight,
+                                  Theme.of(context).primaryColor,
+                                ],
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      context.tr("addMedicalRecord"),
+                                      style: TextStyle(fontSize: 12, color: textColor),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          TotalBox(isFilterActive: isFilterActive, medicalRecords: medicalRecords, totalMedicalRecords: totalMedicalRecords),
+                          // confirmed delete
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (Widget child, Animation<double> animation) {
+                              return SizeTransition(
+                                sizeFactor: animation,
+                                axis: Axis.vertical,
+                                child: child,
+                              );
+                            },
+                            child: deleteRecordsId.isNotEmpty
+                                ? Padding(
+                                    key: const ValueKey("buttonVisible"),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 40,
+                                      child: GradientButton(
+                                        onPressed: () async {
+                                          showConfirmDeleteScafold(context);
+                                        },
+                                        colors: [
+                                          Theme.of(context).primaryColorLight,
+                                          Theme.of(context).primaryColor,
+                                        ],
+                                        child: Center(
+                                          child: Text(
+                                            "deleteMedicalButton",
+                                            style: TextStyle(fontSize: 12, color: textColor),
+                                          ).plural(
+                                            deleteRecordsId.length,
+                                            format: NumberFormat.compact(
+                                              locale: context.locale.toString(),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  )
+                                : const SizedBox.shrink(key: ValueKey("buttonHidden")),
+                          ),
+                          const SizedBox(height: 10),
+                          CustomPaginationWidget(
+                            count: isFilterActive ? medicalRecords.length : totalMedicalRecords,
+                            getDataOnUpdate: getDataOnUpdate,
+                          ),
+                          Row(
+                            children: [
+                              Checkbox(
+                                splashRadius: 0,
+                                checkColor: theme.primaryColorLight,
+                                visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                                value: deleteRecordsId.isNotEmpty,
+                                onChanged: (bool? value) {
+                                  if (value == false) {
+                                    setState(() {
+                                      deleteRecordsId.clear();
+                                    });
+                                  } else {
+                                    setState(() {
+                                      deleteRecordsId = medicalRecords.map((e) => e.id!).toList();
+                                    });
+                                  }
+                                },
+                              ),
+                              Text('tuggleMedicalForDelete',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: theme.primaryColorLight,
+                                  )).plural(
+                                medicalRecords.length,
+                                format: NumberFormat.compact(
+                                  locale: context.locale.toString(),
                                 ),
-                              )
-                            : const SizedBox.shrink(key: ValueKey("buttonHidden")),
-                      ),
-                      const SizedBox(height: 10),
-                      CustomPaginationWidget(
-                        count: isFilterActive ? medicalRecords.length : totalMedicalRecords,
-                        getDataOnUpdate: getDataOnUpdate,
-                      ),
-                      Row(
-                        children: [
-                          Checkbox(
-                            splashRadius: 0,
-                            checkColor: theme.primaryColorLight,
-                            visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                            value: deleteRecordsId.isNotEmpty,
-                            onChanged: (bool? value) {
-                              if (value == false) {
-                                setState(() {
-                                  deleteRecordsId.clear();
-                                });
-                              } else {
-                                setState(() {
-                                  deleteRecordsId = medicalRecords.map((e) => e.id!).toList();
-                                });
-                              }
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            restorationId: 'medicalRecords',
+                            key: const ValueKey('medicalRecords'),
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: medicalRecords.length,
+                            itemBuilder: (context, index) {
+                              final medicalRecord = medicalRecords[index];
+                              return MedicalRecordShowBox(
+                                medicalRecord: medicalRecord,
+                                getDataOnUpdate: getDataOnUpdate,
+                                deleteRecordsId: deleteRecordsId,
+                                tougleRecordIdTodeleteRecordsId: tougleRecordIdTodeleteRecordsId,
+                                doctorPatientProfile: widget.doctorPatientProfile,
+                                openViewEditForm: openViewEditForm,
+                              );
                             },
                           ),
-                          Text('tuggleMedicalForDelete',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: theme.primaryColorLight,
-                              )).plural(
-                            medicalRecords.length,
-                            format: NumberFormat.compact(
-                              locale: context.locale.toString(),
-                            ),
-                          ),
+                          if (isLoading) ...[
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          ]
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        restorationId: 'medicalRecords',
-                        key: const ValueKey('medicalRecords'),
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: medicalRecords.length,
-                        itemBuilder: (context, index) {
-                          final medicalRecord = medicalRecords[index];
-                          return MedicalRecordShowBox(
-                            medicalRecord: medicalRecord,
-                            getDataOnUpdate: getDataOnUpdate,
-                            deleteRecordsId: deleteRecordsId,
-                            tougleRecordIdTodeleteRecordsId: tougleRecordIdTodeleteRecordsId,
-                            doctorPatientProfile: widget.doctorPatientProfile,
-                            openViewEditForm: openViewEditForm,
-                          );
-                        },
-                      ),
-                      if (isLoading) ...[
-                        const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      ]
-                    ],
+                    ),
                   ),
                 ),
               ),

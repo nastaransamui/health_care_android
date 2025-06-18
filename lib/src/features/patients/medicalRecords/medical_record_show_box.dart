@@ -64,7 +64,7 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
     final MedicalRecords medicalRecord = widget.medicalRecord;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-
+    final Color cardColor = roleName == 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
     final bangkok = tz.getLocation('Asia/Bangkok');
     final bool isForDependent = medicalRecord.isForDependent;
     final Dependents? dependentProfile = medicalRecord.dependentProfile;
@@ -84,6 +84,7 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
+        color: cardColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -93,7 +94,14 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
           child: Column(
             children: [
               //profilerow
-              ProfileRow(theme: theme, finalImage: finalImage, isForDependent: isForDependent, widget: widget, medicalRecord: medicalRecord, bangkok: bangkok, textColor: textColor),
+              ProfileRow(
+                  theme: theme,
+                  finalImage: finalImage,
+                  isForDependent: isForDependent,
+                  widget: widget,
+                  medicalRecord: medicalRecord,
+                  bangkok: bangkok,
+                  textColor: textColor),
               MyDivider(theme: theme),
               // createdAt and updateAt
               CreatedUpdateRow(textColor: textColor, medicalRecord: medicalRecord, bangkok: bangkok, theme: theme, widget: widget),
@@ -401,7 +409,7 @@ class DescriptionSymptomsRow extends StatelessWidget {
               ],
             ),
           ),
-    
+
           // Symptom
           Expanded(
             child: Row(
@@ -503,7 +511,7 @@ class CreatedUpdateRow extends StatelessWidget {
               ],
             ),
           ),
-    
+
           // Update
           Expanded(
             child: Row(

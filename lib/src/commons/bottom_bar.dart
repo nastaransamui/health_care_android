@@ -335,7 +335,7 @@ class _AuthListState extends State<AuthList> {
                               style: TextStyle(
                                 color: brightness == Brightness.dark ? Colors.white : Colors.black,
                               ),
-                              text: '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : doctorsProfile?.userProfile.gender} ',
+                              text: '${roleName == 'patient' && isLogin ? patientProfile?.userProfile.gender : ''} ',
                             ),
                             TextSpan(
                               style: TextStyle(

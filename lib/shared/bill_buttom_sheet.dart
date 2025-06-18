@@ -30,9 +30,9 @@ class _BillButtomSheetState extends State<BillButtomSheet> {
     final ScrollController scrollController = widget.scrollController;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    final PatientUserProfile patientProfile = bill.patientProfile;
+    final PatientUserProfile? patientProfile = bill.patientProfile;
     final DoctorUserProfile doctorProfile = bill.doctorProfile;
-    final String gender = patientProfile.gender;
+    final String gender = patientProfile!.gender;
     final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile.fullName}";
     final String patientProfileImage = patientProfile.profileImage;
     final String doctorName = "Dr. ${doctorProfile.fullName}";

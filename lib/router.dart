@@ -32,6 +32,8 @@ import 'package:health_care/src/features/dashboard/patient_dashboard.dart';
 import 'package:health_care/src/features/doctors/account/account.dart';
 import 'package:health_care/src/features/doctors/appointments/appointments.dart';
 import 'package:health_care/src/features/doctors/available_timing/doctors_available_timing.dart';
+import 'package:health_care/src/features/doctors/billings/bill_add_widget.dart';
+import 'package:health_care/src/features/doctors/billings/bill_edit_view_widget.dart';
 import 'package:health_care/src/features/doctors/billings/doctors_billings.dart';
 import 'package:health_care/src/features/doctors/dashboard_appointment/dash_appointment.dart';
 import 'package:health_care/src/features/doctors/favourites/doctors_favourites.dart';
@@ -1023,6 +1025,108 @@ final router = GoRouter(
         if (patientProfile == null) return '/';
 
         return null;
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/add-billing/:encodedId',
+      name: 'addBill',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final mongoPatientUserId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: BillAddWidget(
+            mongoPatientUserId: mongoPatientUserId,
+            viewType: 'add',
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (!authProvider.isLogin || authProvider.roleName != 'doctors' || authProvider.doctorsProfile == null) {
+          return '/';
+        }
+
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
+      },
+    ),
+    GoRoute(
+      path: '/doctors/dashboard/edit-billing/:encodedId',
+      name: 'editBilling',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billMongoId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: BillEditViewWidget(
+            billMongoId: billMongoId,
+            viewType: 'edit',
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (!authProvider.isLogin || authProvider.roleName != 'doctors' || authProvider.doctorsProfile == null) {
+          return '/';
+        }
+
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
+      },
+    ),
+GoRoute(
+      path: '/doctors/dashboard/see-billing/:encodedId',
+      name: 'seeBilling',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billMongoId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: BillEditViewWidget(
+            billMongoId: billMongoId,
+            viewType: 'see',
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (!authProvider.isLogin || authProvider.roleName != 'doctors' || authProvider.doctorsProfile == null) {
+          return '/';
+        }
+
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
       },
     ),
     //Clinics

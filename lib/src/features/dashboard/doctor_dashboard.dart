@@ -10,7 +10,6 @@ import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/services/appointment_service.dart';
 import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:jiffy/jiffy.dart';
@@ -170,7 +169,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
             height: 110,
             enlargeCenterPage: true,
             scrollDirection: Axis.vertical,
-            autoPlay: true,
+            autoPlay: false,
           ),
           items: doctorDataScroll.map((i) {
             final name = context.tr(i['title']);
@@ -214,164 +213,161 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
           doctorProfile == null
               ? const LoadingScreen()
               : SingleChildScrollView(
-                  child: FadeinWidget(
-                    isCenter: true,
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 5,
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          elevation: 5.0,
+                          clipBehavior: Clip.hardEdge,
+                          margin: const EdgeInsets.all(0),
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  top: 8.0,
+                                ),
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(color: Theme.of(context).primaryColorLight),
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.contain,
+                                    image: imageUrl.isEmpty
+                                        ? const AssetImage(
+                                            'assets/images/doctors_profile.jpg',
+                                          ) as ImageProvider
+                                        : CachedNetworkImageProvider(
+                                            imageUrl,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                "Dr. ${doctorProfile.userProfile.gender} ${doctorProfile.userProfile.fullName}",
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(doctorProfile.userProfile.userName),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text("As: ${context.tr(doctorProfile.roleName)}"),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.cake,
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                  Text(
+                                    " ${doctorProfile.userProfile.dob != "" ? DateFormat("dd MMM yyyy").format(doctorProfile.userProfile.dob.toLocal()) : '---- -- --'}",
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text("$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(doctorProfile.userProfile.city),
+                                      Text(doctorProfile.userProfile.state),
+                                      Text(doctorProfile.userProfile.country)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          ),
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Card(
+                      ),
+                      ListTile(
+                        title: Text(context.tr('patientsData')),
+                      ),
+                      patientsScrollView,
+                      ListTile(
+                        title: Text(context.tr('informations')),
+                      ),
+                      Container(
+                        // height: 250,
+                        width: MediaQuery.of(context).size.width / 1.2,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        height: 110,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return datasScrollView;
+                          },
+                          itemCount: 1,
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(context.tr('links')),
+                      ),
+                      ...doctorsDashboardLink.where((i) {
+                        final bool shouldExclude = doctorProfile.services == 'google' && i['name'] == 'changePassword';
+                        return !shouldExclude;
+                      }).map(
+                        (i) {
+                          return Card(
                             shape: RoundedRectangleBorder(
                               side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            elevation: 5.0,
-                            clipBehavior: Clip.hardEdge,
-                            margin: const EdgeInsets.all(0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    top: 8.0,
-                                  ),
-                                  height: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    border: Border.all(color: Theme.of(context).primaryColorLight),
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      fit: BoxFit.contain,
-                                      image: imageUrl.isEmpty
-                                          ? const AssetImage(
-                                              'assets/images/doctors_profile.jpg',
-                                            ) as ImageProvider
-                                          : CachedNetworkImageProvider(
-                                              imageUrl,
-                                            ),
-                                    ),
-                                  ),
+                            elevation: 8.0,
+                            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                            child: InkWell(
+                              splashColor: Theme.of(context).primaryColor,
+                              onTap: () {
+                                context.push(i['routeName']);
+                              },
+                              child: SizedBox(
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                  leading: i['icon'],
+                                  title: Text(context.tr(i['name'])),
+                                  trailing: const Icon(Icons.arrow_forward),
                                 ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "Dr. ${doctorProfile.userProfile.gender} ${doctorProfile.userProfile.fullName}",
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(doctorProfile.userProfile.userName),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text("As: ${context.tr(doctorProfile.roleName)}"),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.cake,
-                                      color: Theme.of(context).primaryColorLight,
-                                    ),
-                                    Text(
-                                      " ${doctorProfile.userProfile.dob != "" ? DateFormat("dd MMM yyyy").format(doctorProfile.userProfile.dob.toLocal()) : '---- -- --'}",
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text("$years ${context.tr('years')} $months ${context.tr('month')} $days ${context.tr('days')}"),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(doctorProfile.userProfile.city),
-                                        Text(doctorProfile.userProfile.state),
-                                        Text(doctorProfile.userProfile.country)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(context.tr('patientsData')),
-                        ),
-                        patientsScrollView,
-                        ListTile(
-                          title: Text(context.tr('informations')),
-                        ),
-                        Container(
-                          // height: 250,
-                          width: MediaQuery.of(context).size.width / 1.2,
-                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                          height: 110,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return datasScrollView;
-                            },
-                            itemCount: 1,
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(context.tr('links')),
-                        ),
-                        ...doctorsDashboardLink.where((i) {
-                          final bool shouldExclude = doctorProfile.services == 'google' && i['name'] == 'changePassword';
-                          return !shouldExclude;
-                        }).map(
-                          (i) {
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              elevation: 8.0,
-                              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                              child: InkWell(
-                                splashColor: Theme.of(context).primaryColor,
-                                onTap: () {
-                                  context.push(i['routeName']);
-                                },
-                                child: SizedBox(
-                                  child: ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                    leading: i['icon'],
-                                    title: Text(context.tr(i['name'])),
-                                    trailing: const Icon(Icons.arrow_forward),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
     );

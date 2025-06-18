@@ -559,5 +559,18 @@
   "view_prescription": "ดูใบสั่งยา",
   "addPrescription": "เพิ่มใบสั่งยา",
   "editPrescriptionSuccess": "แก้ไขใบสั่งยาเรียบร้อยแล้ว",
-  "editPrescriptionFailed": "การแก้ไขใบสั่งยามีข้อผิดพลาด โปรดติดต่อผู้ดูแลระบบ"
+  "editPrescriptionFailed": "การแก้ไขใบสั่งยามีข้อผิดพลาด โปรดติดต่อผู้ดูแลระบบ",
+  "billRecordAdded": "เพิ่มบันทึกบิลเรียบร้อยแล้ว",
+  "minPrescriptionError": "คุณต้องมีอย่างน้อย 1 รายการจึงจะส่งใบสั่งยาได้",
+  "addBillItem": "เพิ่มบิล (สูงสุด 5 รายการ)",
+  "add_bill": "เพิ่มบิล",
+  "minBillError": "คุณต้องมีอย่างน้อย 1 รายการจึงจะส่งบิลได้",
+  "addBill": "เพิ่มบิล",
+  "loading": "กำลังโหลด",
+  "overDue": "เกินกำหนด",
+  "billRecordAddedFailed": "บันทึกการเพิ่มบิลมีข้อผิดพลาด",
+  "billRecordEditFailed": "การแก้ไขบิลมีข้อผิดพลาด",
+  "billRecordEditSuccess": "แก้ไขบิลเรียบร้อยแล้ว",
+  "edit_bill": "แก้ไขบิล",
+  "view_bill": "ดูบิล"
 }

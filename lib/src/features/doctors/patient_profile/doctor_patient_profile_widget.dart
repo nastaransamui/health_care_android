@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -16,7 +15,6 @@ import 'package:health_care/src/features/doctors/patient_profile/four_card_docto
 import 'package:health_care/src/features/doctors/patient_profile/last_two_appointment_patient_profile.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
-
 
 class DoctorPatientProfileWidget extends StatefulWidget {
   static const String routeName = '/doctors/dashboard/patient-profile';
@@ -87,7 +85,7 @@ class _DoctorPatientProfileWidgetState extends State<DoctorPatientProfileWidget>
           _hasRedirected = true;
           Future.microtask(() {
             if (context.mounted) {
-              context.push('/doctors/dashboard'); 
+              context.push('/doctors/dashboard');
             }
           });
         }
@@ -122,23 +120,28 @@ class _DoctorPatientProfileWidgetState extends State<DoctorPatientProfileWidget>
                       ),
                       FadeinWidget(
                         isCenter: true,
-                        child: Card(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(0.0),
-                              topRight: Radius.circular(0.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Card(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0.0),
+                                topRight: Radius.circular(0.0),
+                                bottomLeft: Radius.circular(20.0),
+                                bottomRight: Radius.circular(20.0),
+                              ),
                             ),
-                          ),
-                          margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                LastTwoAppointmentPatientProfile(doctorPatientProfile: doctorPatientProfile, theme: theme),
-                                FourCardDoctorPatientProfile(
-                                  doctorPatientProfile: doctorPatientProfile,
-                                ),
-                              ],
+                            margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Column(
+                                children: [
+                                  LastTwoAppointmentPatientProfile(doctorPatientProfile: doctorPatientProfile, theme: theme),
+                                  FourCardDoctorPatientProfile(
+                                    doctorPatientProfile: doctorPatientProfile,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

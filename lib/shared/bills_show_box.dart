@@ -7,7 +7,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/bills.dart';
 import 'package:health_care/models/users.dart';
+import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/shared/bill_buttom_sheet.dart';
+import 'package:health_care/shared/gradient_button.dart';
 
 import 'package:health_care/shared/sort_icon_widget.dart';
 
@@ -15,6 +17,7 @@ import 'package:health_care/src/features/doctors/invoice/doctor_invoice_preview_
 import 'package:health_care/src/utils/build_bill_pdf.dart';
 import 'package:health_care/src/utils/hex_to_color.dart';
 import 'package:health_care/src/utils/is_due_date_passed.dart';
+import 'package:provider/provider.dart';
 
 import 'package:timezone/timezone.dart' as tz;
 
@@ -38,21 +41,37 @@ class BillsShowBox extends StatefulWidget {
 }
 
 class _BillsShowBoxState extends State<BillsShowBox> {
+  late String roleName;
+  DoctorsProfile? doctorsProfile;
+  bool _isProvidersInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isProvidersInitialized) {
+      roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+      doctorsProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+      _isProvidersInitialized = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Bills bill = widget.singleBill;
     final String userType = widget.userType;
-    final PatientUserProfile patientProfile = bill.patientProfile;
+    final PatientUserProfile? patientProfile = bill.patientProfile;
     final DoctorUserProfile doctorProfile = bill.doctorProfile;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final Color cardColor = userType != 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
     final bangkok = tz.getLocation('Asia/Bangkok');
-    final String gender = patientProfile.gender;
-    final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile.fullName}";
-    final String patientProfileImage = patientProfile.profileImage;
+    final String gender = patientProfile?.gender ?? "";
+    final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile?.fullName}";
+    final String patientProfileImage = patientProfile?.profileImage ?? "";
     final String doctorName = "Dr. ${doctorProfile.fullName}";
     final String doctorProfileImage = doctorProfile.profileImage;
     final String dueDate = DateFormat("dd MMM yyyy").format(bill.dueDate.toLocal());
+    final bool isSameDoctor = roleName == 'doctors' && doctorsProfile?.userId == bill.doctorId;
     final ImageProvider<Object> finalImage = userType == 'doctors'
         ? patientProfileImage.isEmpty
             ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
@@ -71,9 +90,9 @@ class _BillsShowBoxState extends State<BillsShowBox> {
     final encodedInvoiceId = base64.encode(utf8.encode(bill.id.toString()));
     late Color statusColor;
     if (userType == 'doctors') {
-      statusColor = patientProfile.idle ?? false
+      statusColor = patientProfile?.idle ?? false
           ? const Color(0xFFFFA812)
-          : patientProfile.online
+          : patientProfile!.online
               ? const Color(0xFF44B700)
               : const Color.fromARGB(255, 250, 18, 2);
     } else {
@@ -87,6 +106,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
+        color: cardColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -150,15 +170,15 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () {
-                                  if (userType == 'doctors') {
+                                  if (roleName == 'doctors') {
                                     context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedpatientId').toString());
                                   }
-                                  if (userType == 'patient') {
+                                  if (roleName == 'patient') {
                                     context.push(Uri(path: '/doctors/profile/$encodeddoctorId').toString());
                                   }
                                 },
                                 child: Text(
-                                  userType == 'doctors' ? patientName : doctorName,
+                                  roleName == 'doctors' ? patientName : doctorName,
                                   style: TextStyle(
                                     color: theme.primaryColorLight,
                                     decoration: TextDecoration.underline,
@@ -179,7 +199,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                           children: [
                             Expanded(
                               child: Text(
-                                patientProfile.userName,
+                                patientProfile?.userName ?? "",
                                 style: TextStyle(color: textColor),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
@@ -187,7 +207,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                             ),
                             const SizedBox(width: 6),
                             SortIconWidget(
-                              columnName: userType == 'doctors' ? 'patientProfile.userName' : 'doctorProfile.userName',
+                              columnName: roleName == 'doctors' ? 'patientProfile.userName' : 'doctorProfile.userName',
                               getDataOnUpdate: widget.getDataOnUpdate,
                             ),
                           ],
@@ -247,11 +267,11 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        if (userType == 'doctors') {
+                                        if (roleName == 'doctors') {
                                           context.push(
                                             Uri(path: '/doctors/dashboard/bill-view/$encodedInvoiceId').toString(),
                                           );
-                                        } else if (userType == 'patient') {
+                                        } else if (roleName == 'patient') {
                                           context.push(
                                             Uri(path: '/patient/dashboard/bill-view/$encodedInvoiceId').toString(),
                                           );
@@ -326,7 +346,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ),
               ),
               // Price and Fee
-              if (userType == 'doctors') ...[
+              if (roleName == 'doctors') ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
@@ -398,7 +418,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ),
               ],
               // fee price and total
-              if (userType == 'doctors') ...[
+              if (roleName == 'doctors') ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
@@ -483,7 +503,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ),
               ],
               // Patient Total single row total
-              if (userType == 'patient') ...[
+              if (roleName == 'patient') ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
@@ -743,94 +763,173 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                   color: theme.primaryColorLight,
                 ),
               ),
-              // Icon buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      // Show loading dialog
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (_) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                      Future.delayed(Duration.zero, () async {
-                        if (!context.mounted) return;
-
-                        try {
-                          final pdf = await buildBillPdf(context, bill);
-                          final bytes = await pdf.save();
-
-                          if (!context.mounted) return;
-                          Navigator.of(context).pop();
-                          await showModalBottomSheet<Map<String, dynamic>>(
-                            context: context,
-                            isScrollControlled: true,
-                            useSafeArea: true,
-                            builder: (context) => FractionallySizedBox(
-                              heightFactor: 1,
-                              child: DoctorInvoicePreviewScreen(
-                                pdfBytes: bytes,
-                                title: Text(context.tr('billPreview')),
-                              ),
-                            ),
-                          );
-                          // });
-                        } catch (e) {
-                          debugPrint('PDF Error: $e');
-                        }
-                      });
-                    },
-                    icon: FaIcon(
-                      FontAwesomeIcons.print,
-                      size: 20,
-                      color: theme.primaryColorLight,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (userType == 'doctors') {
-                        context.push(
-                          Uri(path: '/doctors/dashboard/edit-billing/$encodedInvoiceId').toString(),
-                        );
-                      } else if (userType == 'patient') {
-                        context.push(
-                          Uri(path: '/patient/dashboard/see-billing/$encodedInvoiceId').toString(),
-                        );
-                      }
-                    },
-                    icon: FaIcon(
-                      userType == 'doctors' ? FontAwesomeIcons.edit : FontAwesomeIcons.eye,
-                      size: 20,
-                      color: theme.primaryColor,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: (userType == 'doctors' && bill.status == 'Paid') || (userType == 'patient' && bill.status == 'Paid')
-                        ? null
-                        : () {
-                            if (userType == 'doctors') {
-                              widget.tougleBillIdTodeleteBillsId(bill.id);
-                            } else if (userType == 'patient') {
+             //View button
+              const SizedBox(height: 10),
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 50,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: GradientButton(
+                          onPressed: () {
+                            if (roleName == 'doctors') {
+                              if (isSameDoctor) {
+                                context.push(
+                                  Uri(path: '/doctors/dashboard/edit-billing/$encodedInvoiceId').toString(),
+                                );
+                              } else {
+                                context.push(
+                                  Uri(path: '/doctors/dashboard/see-billing/$encodedInvoiceId').toString(),
+                                );
+                              }
+                            } else if (roleName == 'patient') {
                               context.push(
-                                Uri(path: '/patient/check-out/$encodedInvoiceId').toString(),
+                                Uri(path: '/patient/dashboard/see-billing/$encodedInvoiceId').toString(),
                               );
                             }
                           },
-                    icon: userType == 'doctors'
-                        ? Icon(
-                            Icons.delete_forever,
-                            color: bill.status == 'Paid' ? theme.disabledColor : Colors.red,
-                          )
-                        : Icon(
-                            Icons.payment,
-                            color: bill.status == 'Paid' ? theme.disabledColor : theme.primaryColorLight,
+                          colors: [
+                            Theme.of(context).primaryColorLight,
+                            Theme.of(context).primaryColor,
+                          ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(isSameDoctor ? FontAwesomeIcons.edit : FontAwesomeIcons.eye, size: 13, color: textColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                context.tr(isSameDoctor ? "edit" : "view"),
+                                style: TextStyle(fontSize: 12, color: textColor),
+                              )
+                            ],
                           ),
-                  )
-                ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: GradientButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                            Future.delayed(Duration.zero, () async {
+                              if (!context.mounted) return;
+
+                              try {
+                                final pdf = await buildBillPdf(context, bill, isSameDoctor);
+                                final bytes = await pdf.save();
+
+                                if (!context.mounted) return;
+                                Navigator.of(context).pop();
+                                await showModalBottomSheet<Map<String, dynamic>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  useSafeArea: true,
+                                  builder: (context) => FractionallySizedBox(
+                                    heightFactor: 1,
+                                    child: DoctorInvoicePreviewScreen(
+                                      pdfBytes: bytes,
+                                      title: Text(context.tr('billPreview')),
+                                    ),
+                                  ),
+                                );
+                                // });
+                              } catch (e) {
+                                debugPrint('PDF Error: $e');
+                              }
+                            });
+                          },
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColorLight,
+                          ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.print, size: 13, color: textColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                context.tr("print"),
+                                style: TextStyle(fontSize: 12, color: textColor),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (roleName == 'doctors') ...[
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: SizedBox(
+                          height: 35,
+                          child: Container(
+                            height: 28,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.pink,
+                                  Colors.red,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(60),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.07,
+                                ),
+                              ),
+                              onPressed: (userType == 'doctors' && bill.status == 'Paid') || (userType == 'patient' && bill.status == 'Paid')
+                                  ? null
+                                  : !isSameDoctor
+                                      ? null
+                                      : () {
+                                          if (roleName == 'doctors') {
+                                            widget.tougleBillIdTodeleteBillsId(bill.id);
+                                          } else if (roleName == 'patient') {
+                                            context.push(
+                                              Uri(path: '/patient/check-out/$encodedInvoiceId').toString(),
+                                            );
+                                          }
+                                        },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.delete, size: 13, color: !isSameDoctor ? Colors.black : textColor),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    context.tr("delete"),
+                                    style: TextStyle(fontSize: 12, color: !isSameDoctor ? Colors.black : textColor),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]
+                  ],
+                ),
               )
             ],
           ),

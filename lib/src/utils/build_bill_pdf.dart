@@ -13,7 +13,7 @@ import 'package:pdf/widgets.dart' as pw;
 // ignore: depend_on_referenced_packages
 import 'package:pdf/pdf.dart';
 
-Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
+Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDoctor) async {
   final theme = Theme.of(context);
 
   var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
@@ -29,7 +29,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
 
   final imageBytes = await rootBundle.load('assets/icon/icon.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
-  final PatientUserProfile patientUserProfile = bill.patientProfile;
+  final PatientUserProfile? patientUserProfile = bill.patientProfile;
   final DoctorUserProfile doctorUserProfile = bill.doctorProfile;
 
   final String issueDay = dateFormat.format(tz.TZDateTime.from(bill.createdAt, bangkok));
@@ -42,9 +42,9 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
   final String drCity = doctorUserProfile.city.trim().isNotEmpty ? doctorUserProfile.city : '---';
   final String drState = doctorUserProfile.state.trim().isNotEmpty ? doctorUserProfile.state : '---';
   final String drCountry = doctorUserProfile.country.trim().isNotEmpty ? doctorUserProfile.country : '---';
-  final String paName = "${patientUserProfile.gender}${patientUserProfile.gender != '' ? '.' : ''} ${patientUserProfile.fullName}";
-  final String paAddress = "${patientUserProfile.address1} ${patientUserProfile.address1 != '' ? ', ' : ''} ${patientUserProfile.address2}";
-  final String paCity = patientUserProfile.city.trim().isNotEmpty ? patientUserProfile.city : '---';
+  final String paName = "${patientUserProfile?.gender}${patientUserProfile?.gender != '' ? '.' : ''} ${patientUserProfile?.fullName}";
+  final String paAddress = "${patientUserProfile?.address1} ${patientUserProfile?.address1 != '' ? ', ' : ''} ${patientUserProfile?.address2}";
+  final String paCity = patientUserProfile!.city.trim().isNotEmpty ? patientUserProfile.city : '---';
   final String paState = patientUserProfile.state.trim().isNotEmpty ? patientUserProfile.state : '---';
   final String paCountry = patientUserProfile.country.trim().isNotEmpty ? patientUserProfile.country : '---';
 
@@ -59,7 +59,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
 
 // Filtered based on role
   final List<String> filteredKeys = allKeys.where((key) {
-    if (roleName == 'patient') {
+    if (roleName == 'patient' || !isSameDoctor) {
       return key == 'title' || key == 'total';
     } else {
       return key != 'amount';
@@ -203,7 +203,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
                               font: fontBold,
                             ),
                           ),
-                          pw.SizedBox(width: context.locale.toString() == 'th_TH' ? 28 : 28),
+                          pw.SizedBox(width: context.locale.toString() == 'th_TH' ? 20 : 20),
                           pw.Text(dueDate, style: pw.TextStyle(font: fontReqular))
                         ],
                       )
@@ -327,7 +327,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
                         (item) {
                           // Filter keys again (in case reused separately)
                           final filteredKeys =
-                              roleName == 'patient' ? ['title', 'total'] : ['title', 'price', 'bookingsFee', 'bookingsFeePrice', 'total'];
+                              roleName == 'patient' || !isSameDoctor ? ['title', 'total'] : ['title', 'price', 'bookingsFee', 'bookingsFeePrice', 'total'];
 
                           return pw.TableRow(children: [
                             ...filteredKeys.asMap().entries.map(
@@ -377,7 +377,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       // Left: Stamp (if doctor)
-                      if (roleName == 'doctors')
+                      if (roleName == 'doctors' && isSameDoctor)
                         pw.Positioned(
                           top: 50,
                           child: buildDoctorPaymentStamp(bill.status != 'Paid' && isDueDatePassed(dueDate) ? 'Over Due' : bill.status),
@@ -395,7 +395,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
                             ),
                             defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
                             children: [
-                              if (roleName == 'doctors') ...[
+                              if (roleName == 'doctors' && isSameDoctor) ...[
                                 pw.TableRow(
                                   children: [
                                     pw.Padding(
@@ -417,7 +417,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
                                   ],
                                 ),
                               ],
-                              if (roleName == 'doctors') ...[
+                              if (roleName == 'doctors' && isSameDoctor) ...[
                                 pw.TableRow(
                                   children: [
                                     pw.Padding(
@@ -450,7 +450,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill) async {
                                     ),
                                   ),
                                   pw.Align(
-                                    alignment: pw.Alignment.centerRight,
+                                    alignment: !isSameDoctor && roleName == 'doctors' ? pw.Alignment.centerLeft : pw.Alignment.centerRight,
                                     child: pw.Padding(
                                       padding: const pw.EdgeInsets.only(right: 4.0, top: 6.0),
                                       child: pw.Text('${NumberFormat("#,##0.0", "en_US").format(bill.total)} ${bill.currencySymbol} ',

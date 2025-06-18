@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -118,6 +117,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
   );
 
   void updateState(DoctorsProfile doctorProfile) async {
+    if (!context.mounted) return;
     emailController.text = doctorProfile.userProfile.userName;
     firstNameController.text = doctorProfile.userProfile.firstName;
     lastNameController.text = doctorProfile.userProfile.lastName;
@@ -136,7 +136,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
       try {
         String formattedDob = DateFormat("dd MMM yyyy").format(doctorProfile.userProfile.dob.toLocal());
         dobController.text = formattedDob;
-      // ignore: empty_catches
+        // ignore: empty_catches
       } catch (e) {}
     }
     aboutMeController.text = doctorProfile.userProfile.aboutMe;
@@ -260,7 +260,9 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
   @override
   void didUpdateWidget(covariant DoctorsDashboardProfile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    updateState(widget.doctorProfile);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      updateState(widget.doctorProfile);
+    });
   }
 
   Future<void> onFormSubmit() async {
@@ -687,7 +689,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
     DoctorsProfile doctorProfile = widget.doctorProfile;
     late String imageUrl = '';
     if (doctorProfile.userProfile.profileImage.isNotEmpty) {
-      imageUrl = doctorProfile.userProfile.profileImage; 
+      imageUrl = doctorProfile.userProfile.profileImage;
     }
 
     return ScaffoldWrapper(
@@ -1884,13 +1886,13 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                             ),
                                             child: imageIsSvg
                                                 ? SvgPicture.network(
-                                                    imageSrc, 
+                                                    imageSrc,
                                                     width: 20,
                                                     height: 20,
                                                     fit: BoxFit.fitHeight,
                                                   )
                                                 : Image.network(
-                                                    imageSrc, 
+                                                    imageSrc,
                                                     width: 20,
                                                     height: 20,
                                                   ),
@@ -2110,8 +2112,8 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                         DateTime? toDate = await showDatePicker(
                                                             initialDatePickerMode: DatePickerMode.year,
                                                             context: context,
-                                                            firstDate: DateTime(
-                                                                experienceToDate[index].first, experienceToDate[index][1], experienceToDate[index][2]),
+                                                            firstDate: DateTime(experienceToDate[index].first, experienceToDate[index][1],
+                                                                experienceToDate[index][2]),
                                                             lastDate: DateTime.now());
                                                         if (toDate != null) {
                                                           String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
