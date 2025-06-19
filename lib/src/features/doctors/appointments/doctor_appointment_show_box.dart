@@ -36,7 +36,6 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
     final String profileImage = patientProfile.profileImage;
     final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile.fullName}";
     final encodedId = base64.encode(utf8.encode(patientId.toString()));
-    final encodedinvoice = base64.encode(utf8.encode(reservation.id.toString()));
     Color statusColor = patientProfile.idle ?? false
         ? const Color(0xFFFFA812)
         : patientProfile.online
@@ -169,18 +168,10 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      GestureDetector(
-                        onTap: () {
-                          context.push(
-                            Uri(path: '/doctors/dashboard/invoice-view/$encodedinvoice').toString(),
-                          );
-                        },
-                        child: Text(
-                          reservation.invoiceId,
-                          style: TextStyle(
-                            color: theme.primaryColor,
-                            decoration: TextDecoration.underline,
-                          ),
+                      Text(
+                        reservation.invoiceId,
+                        style: TextStyle(
+                          color: theme.primaryColor,
                         ),
                       ),
                     ],

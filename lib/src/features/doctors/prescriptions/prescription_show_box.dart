@@ -150,7 +150,7 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
     final DoctorUserProfile doctorProfile = prescription.doctorProfile;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-     final Color cardColor =roleName == 'doctors'? theme.canvasColor : theme.cardTheme.color!;
+    final Color cardColor = roleName == 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
     final bangkok = tz.getLocation('Asia/Bangkok');
     final bool isSameDoctor = roleName == 'doctors' && doctorsProfile?.userId == prescription.doctorId;
     final String speciality = doctorProfile.specialities.first.specialities;

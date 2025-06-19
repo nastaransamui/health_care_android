@@ -4,11 +4,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_care/providers/auth_provider.dart';
+import 'package:health_care/providers/data_grid_provider.dart';
+import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
 import 'package:health_care/src/features/doctors/schedule/reservations_widget.dart';
 import 'package:health_care/src/features/doctors/schedule/time_slot_bottom_sheet.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:health_care/constants/error_handling.dart';
 import 'package:health_care/constants/global_variables.dart';
@@ -21,7 +25,6 @@ import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-
 
 AvailableType calculateFeeAndTotal(AvailableType availableType) {
   List<TimeType> updateList(List<TimeType> list) {
@@ -71,11 +74,17 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
   Timer? _snackBarTimer;
   bool _isProgrammaticUpdate = false;
   bool _showButtons = false;
+  late final DataGridProvider _dataGridProvider;
+  bool _isDataGridProviderInitialized = false;
 
   void getDoctorTimeSlots() async {
     await timeScheduleService.getDoctorTimeSlots(context, widget.doctorProfile);
   }
-
+  Future<void> getDataOnUpdate() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final doctorProfile = authProvider.doctorsProfile;
+    await TimeScheduleService().getDoctorTimeSlots(context, doctorProfile!);
+  }
   @override
   void initState() {
     super.initState();
@@ -95,6 +104,10 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (!_isDataGridProviderInitialized) {
+      _dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
+      _isDataGridProviderInitialized = true;
+    }
     doctorTimeSlot = Provider.of<TimeScheduleProvider>(context).doctorsTimeSlot;
     isLoading = Provider.of<TimeScheduleProvider>(context).isLoading;
     final currentProfileId = widget.doctorProfile.userId;
@@ -318,7 +331,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
     isLoading = true;
     _showButtons = false;
     _forceRebuildKey = DateTime.now().millisecondsSinceEpoch;
-    socket.off('getDoctorTimeSlotsReturn'); 
+    socket.off('getDoctorTimeSlotsReturn');
     socket.off('updateGetDoctorTimeSlots');
     socket.off('createDoctorsTimeslotsReturn');
     socket.off('deleteDoctorsTimeslotsReturn');
@@ -330,7 +343,41 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
     DoctorsProfile doctorProfile = widget.doctorProfile;
     var brightness = Theme.of(context).brightness;
     var homeThemeName = Provider.of<ThemeProvider>(context).homeThemeName;
+    final theme = Theme.of(context);
+    final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
 
+    final List<GridColumn> gridColumns = [
+      buildColumn(context.tr('id'), 'id', textColor, width: 100),
+      buildColumn(context.tr('reserveDate'), 'createdDate', textColor, width: 180),
+      buildColumn(context.tr('dayTime'), 'dayPeriod', textColor, width: 150),
+      buildColumn(context.tr('invoiceNo'), 'invoiceId', textColor, width: 150),
+      buildColumn(context.tr('selectedDate'), 'selectedDate', textColor, width: 180),
+      GridColumn(
+        columnName: 'patientProfile.fullName',
+        allowSorting: true,
+        allowFiltering: true,
+        filterPopupMenuOptions: const FilterPopupMenuOptions(filterMode: FilterMode.advancedFilter),
+        width: 250,
+        label: Container(
+          alignment: Alignment.center,
+          child: Text(
+            context.tr('patientName'),
+            style: TextStyle(color: textColor),
+          ),
+        ),
+      ),
+      buildColumn(context.tr('paymentStatus'), 'doctorPaymentStatus', textColor, width: 180),
+    ];
+    final List<FilterableGridColumn> filterableColumns = [
+      FilterableGridColumn(column: gridColumns[0], dataType: 'number'),
+      FilterableGridColumn(column: gridColumns[1], dataType: 'date'),
+      FilterableGridColumn(column: gridColumns[2], dataType: 'string'),
+      FilterableGridColumn(column: gridColumns[3], dataType: 'string'),
+      FilterableGridColumn(column: gridColumns[4], dataType: 'date'),
+      FilterableGridColumn(column: gridColumns[5], dataType: 'string'),
+      FilterableGridColumn(column: gridColumns[6], dataType: 'string'),
+    ];
+    bool isFilterActive = _dataGridProvider.mongoFilterModel.isNotEmpty;
     return ScaffoldWrapper(
       key: Key(doctorProfile.userId),
       title: context.tr('scheduleTimings'),
@@ -1115,7 +1162,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
                         ],
                         if (_copyDoctorTimeSlot != null) ...[
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 26),
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                             child: ReservationsWidget(doctorTimeSlot: _copyDoctorTimeSlot),
                           )
                         ]
@@ -1140,7 +1187,59 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
               },
               itemCount: 1,
             ),
-            ScrollButton(scrollController: scheduleScrollController, scrollPercentage: scrollPercentage)
+            ScrollButton(scrollController: scheduleScrollController, scrollPercentage: scrollPercentage),
+            Positioned(
+                bottom: 10,
+                left: 10,
+                child: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: FloatingActionButton(
+                    tooltip: context.tr('filter'),
+                    mini: true,
+                    onPressed: () async {
+                      final result = await showModalBottomSheet<Map<String, dynamic>>(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => FractionallySizedBox(
+                          heightFactor: 0.9,
+                          child: SfDataGridFilterWidget(columns: filterableColumns, columnName: 'id'),
+                        ),
+                      );
+
+                      if (result != null) {
+                        _dataGridProvider.setPaginationModel(0, 10);
+                        _dataGridProvider.setMongoFilterModel({...result});
+                        await getDataOnUpdate();
+                      }
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          Icons.filter_alt_outlined,
+                          size: 25,
+                          color: theme.primaryColor,
+                        ),
+                        if (isFilterActive)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: theme.primaryColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          
           ],
         ),
       ),
@@ -1195,5 +1294,3 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
     return false;
   }
 }
-
-

@@ -24,7 +24,7 @@ class DoctorsMyPatients extends StatefulWidget {
 }
 
 class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
-  final ScrollController myPatientScrollController = ScrollController();
+  final ScrollController scrollController = ScrollController();
   late final DataGridProvider dataGridProvider;
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
@@ -64,9 +64,9 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
 
   @override
   void dispose() {
-    myPatientsProvider.setMyPatientsProfile([],notify: false);
-    myPatientsProvider.setTotal(0,notify: false);
-    myPatientScrollController.dispose();
+    myPatientsProvider.setMyPatientsProfile([], notify: false);
+    myPatientsProvider.setTotal(0, notify: false);
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -98,8 +98,8 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
               NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   double per = 0;
-                  if (myPatientScrollController.hasClients) {
-                    per = ((myPatientScrollController.offset / myPatientScrollController.position.maxScrollExtent));
+                  if (scrollController.hasClients) {
+                    per = ((scrollController.offset / scrollController.position.maxScrollExtent));
                   }
                   if (per >= 0) {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -112,77 +112,73 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
                   }
                   return false;
                 },
-                child: Column(
-                  children: [
-                    FadeinWidget(
-                      isCenter: true,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Card(
-                          elevation: 6,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Theme.of(context).primaryColorLight),
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                "totalMyPatient",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ).plural(
-                                isActive ? myPatientsProfile.length : totalMyPatients,
-                                format: NumberFormat.compact(
-                                  locale: context.locale.toString(),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      FadeinWidget(
+                        isCenter: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Theme.of(context).primaryColorLight),
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Center(
+                                child: Text(
+                                  "totalMyPatient",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ).plural(
+                                  isActive ? myPatientsProfile.length : totalMyPatients,
+                                  format: NumberFormat.compact(
+                                    locale: context.locale.toString(),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    CustomPaginationWidget(
-                      count: isActive ? myPatientsProfile.length : totalMyPatients,
-                      getDataOnUpdate: getDataOnUpdate,
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          ListView.builder(
-                            controller: myPatientScrollController,
-                            shrinkWrap: true,
-                            restorationId: 'doctorMyPatients',
-                            key: const ValueKey('doctorMyPatients'),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: myPatientsProfile.length,
-                            itemBuilder: (context, index) {
-                              final patientFavProfile = myPatientsProfile[index];
-                              return DoctorsPatientsShowBox(
-                                patientFavProfile: patientFavProfile,
-                                getDataOnUpdate: getDataOnUpdate,
-                              );
-                            },
-                          ),
-                          if (isLoading) ...[
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          ],
-                          ScrollButton(scrollController: myPatientScrollController, scrollPercentage: scrollPercentage)
-                        ],
+                      const SizedBox(height: 10),
+                      CustomPaginationWidget(
+                        count: isActive ? myPatientsProfile.length : totalMyPatients,
+                        getDataOnUpdate: getDataOnUpdate,
                       ),
-                    )
-                  ],
+                      ListView.builder(
+                        shrinkWrap: true,
+                        restorationId: 'doctorMyPatients',
+                        key: const ValueKey('doctorMyPatients'),
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: myPatientsProfile.length,
+                        itemBuilder: (context, index) {
+                          final patientFavProfile = myPatientsProfile[index];
+                          return DoctorsPatientsShowBox(
+                            patientFavProfile: patientFavProfile,
+                            getDataOnUpdate: getDataOnUpdate,
+                          );
+                        },
+                      ),
+                      if (isLoading) ...[
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      ],
+                    ],
+                  ),
                 ),
               ),
+              ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
               Positioned(
                 bottom: 10,
                 left: 10,

@@ -236,8 +236,8 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
                       // Remove Expanded here, as SingleChildScrollView handles the scrollable area
                       ListView.builder(
                         shrinkWrap: true,
-                        restorationId: 'doctorsBills',
-                        key: const ValueKey('doctorsBills'),
+                        restorationId: 'doctorsReview',
+                        key: const ValueKey('doctorsReview'),
                         physics: const NeverScrollableScrollPhysics(), // Disable ListView's own scrolling
                         itemCount: doctorsReviews.length,
                         itemBuilder: (context, index) {

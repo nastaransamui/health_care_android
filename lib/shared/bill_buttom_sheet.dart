@@ -10,12 +10,14 @@ import 'package:health_care/shared/status_badge_avatar.dart';
 class BillButtomSheet extends StatefulWidget {
   final Bills bill;
   final String userType;
+  final bool isSameDoctor;
   final ScrollController scrollController;
   const BillButtomSheet({
     super.key,
     required this.bill,
     required this.userType,
     required this.scrollController,
+    required this.isSameDoctor,
   });
 
   @override
@@ -28,6 +30,7 @@ class _BillButtomSheetState extends State<BillButtomSheet> {
     final Bills bill = widget.bill;
     final String userType = widget.userType;
     final ScrollController scrollController = widget.scrollController;
+    final bool isSameDoctor = widget.isSameDoctor;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final PatientUserProfile? patientProfile = bill.patientProfile;
@@ -127,7 +130,7 @@ class _BillButtomSheetState extends State<BillButtomSheet> {
                           ],
                         ),
                       ),
-                      Padding(
+                     if(userType == 'doctors' && isSameDoctor) Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           children: [
@@ -154,7 +157,7 @@ class _BillButtomSheetState extends State<BillButtomSheet> {
                           ],
                         ),
                       ),
-                      Padding(
+                       if(userType == 'doctors' && isSameDoctor) Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           children: [
@@ -169,7 +172,7 @@ class _BillButtomSheetState extends State<BillButtomSheet> {
                           ],
                         ),
                       ),
-                      Padding(
+                       if(userType == 'doctors' && isSameDoctor) Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           children: [

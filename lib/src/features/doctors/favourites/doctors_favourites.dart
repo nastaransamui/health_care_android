@@ -25,7 +25,7 @@ class DoctorsFavourites extends StatefulWidget {
 }
 
 class _DoctorsFavouritesState extends State<DoctorsFavourites> {
-  final ScrollController favouritesScrollController = ScrollController();
+  final ScrollController scrollController = ScrollController();
   late final DataGridProvider dataGridProvider;
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
@@ -69,7 +69,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
     socket.off('updateGetFavPatientsForDoctorProfilePatient');
     favouritesProvider.setUserFavProfile([], notify: false);
     favouritesProvider.setTotal(0, notify: false);
-    favouritesScrollController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -101,8 +101,8 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
               NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   double per = 0;
-                  if (favouritesScrollController.hasClients) {
-                    per = ((favouritesScrollController.offset / favouritesScrollController.position.maxScrollExtent));
+                  if (scrollController.hasClients) {
+                    per = ((scrollController.offset / scrollController.position.maxScrollExtent));
                   }
                   if (per >= 0) {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -115,78 +115,73 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                   }
                   return false;
                 },
-                child: Column(
-                  children: [
-                    FadeinWidget(
-                      isCenter: true,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Card(
-                          elevation: 6,
-                          color: Theme.of(context).canvasColor,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Theme.of(context).primaryColorLight),
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                "totalFavourites",
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ).plural(
-                                isActive ? userFavProfile.length : totalFavourites,
-                                format: NumberFormat.compact(
-                                  locale: context.locale.toString(),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      FadeinWidget(
+                        isCenter: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Theme.of(context).primaryColorLight),
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Center(
+                                child: Text(
+                                  "totalFavourites",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ).plural(
+                                  isActive ? userFavProfile.length : totalFavourites,
+                                  format: NumberFormat.compact(
+                                    locale: context.locale.toString(),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    CustomPaginationWidget(
-                      count: isActive ? userFavProfile.length : totalFavourites,
-                      getDataOnUpdate: getDataOnUpdate,
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          ListView.builder(
-                            controller: favouritesScrollController,
-                            shrinkWrap: true,
-                            restorationId: 'doctorFavorite',
-                            key: const ValueKey('doctorFavorite'),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: userFavProfile.length,
-                            itemBuilder: (context, index) {
-                              final patientFavProfile = userFavProfile[index];
-                              return DoctorsPatientsShowBox(
-                                patientFavProfile: patientFavProfile,
-                                getDataOnUpdate: getDataOnUpdate,
-                              );
-                            },
-                          ),
-                          if (isLoading) ...[
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          ],
-                          ScrollButton(scrollController: favouritesScrollController, scrollPercentage: scrollPercentage)
-                        ],
+                      const SizedBox(height: 10),
+                      CustomPaginationWidget(
+                        count: isActive ? userFavProfile.length : totalFavourites,
+                        getDataOnUpdate: getDataOnUpdate,
                       ),
-                    )
-                  ],
+                      ListView.builder(
+                        shrinkWrap: true,
+                        restorationId: 'doctorFavorite',
+                        key: const ValueKey('doctorFavorite'),
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: userFavProfile.length,
+                        itemBuilder: (context, index) {
+                          final patientFavProfile = userFavProfile[index];
+                          return DoctorsPatientsShowBox(
+                            patientFavProfile: patientFavProfile,
+                            getDataOnUpdate: getDataOnUpdate,
+                          );
+                        },
+                      ),
+                      if (isLoading) ...[
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      ],
+                    ],
+                  ),
                 ),
               ),
+              ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
               Positioned(
                 bottom: 10,
                 left: 10,

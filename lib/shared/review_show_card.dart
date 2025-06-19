@@ -145,8 +145,9 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                       final payload = await showModalBottomSheet<Map<String, dynamic>>(
                         context: context,
                         isScrollControlled: true,
+                        useSafeArea: true,
                         builder: (context) => FractionallySizedBox(
-                          heightFactor: 0.5,
+                          heightFactor: 1,
                           child: ReplyButtonSheet(review: review),
                         ),
                       );

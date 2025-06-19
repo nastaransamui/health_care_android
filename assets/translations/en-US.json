@@ -572,5 +572,12 @@
   "billRecordEditFailed": "Bill Edit has error.",
   "billRecordEditSuccess": "Bill Edited successfully.",
   "edit_bill": "Edit bill",
-  "view_bill": "View bill"
+  "view_bill": "View bill",
+  "sendPaymentRequest": "Send payment request",
+  "taggleInvoicesForPayment": {
+    "zero": "No have invoice to request payment.",
+    "one": "You have {} invoice to request payment.",
+    "many": "You have {} invoices to request payment.",
+    "other": "You have {} invoices to request payment."
+  }
 }

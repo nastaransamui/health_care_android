@@ -703,6 +703,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                                             bill: bill,
                                             userType: userType,
                                             scrollController: scrollController,
+                                            isSameDoctor: isSameDoctor
                                           );
                                         },
                                       );

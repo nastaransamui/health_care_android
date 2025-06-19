@@ -218,7 +218,7 @@ class _PatientBillingsState extends State<PatientBillings> {
                             return BillsShowBox(
                               singleBill: bill,
                               getDataOnUpdate: getDataOnUpdate,
-                              userType: 'patient',
+                              userType: 'doctors',
                               deleteBillsId: const [],
                               tougleBillIdTodeleteBillsId: (String deleteId) async {
                                 if (roleName == 'doctors') {

@@ -76,8 +76,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
     final uri = Uri.parse(specialityImage);
     final imageIsSvg = uri.path.endsWith('.svg');
     final encodedId = base64.encode(utf8.encode(doctorId.toString()));
-    final encodedinvoice = base64.encode(utf8.encode(reservation.id.toString()));
-    Color statusColor = doctorUserProfile.idle ?? false
+   Color statusColor = doctorUserProfile.idle ?? false
         ? const Color(0xFFFFA812)
         : doctorUserProfile.online
             ? const Color(0xFF44B700)
@@ -295,18 +294,10 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  context.push(
-                                    Uri(path: '/patient/dashboard/invoice-view/$encodedinvoice').toString(),
-                                  );
-                                },
-                                child: Text(
-                                  reservation.invoiceId,
-                                  style: TextStyle(
-                                    color: theme.primaryColor,
-                                    decoration: TextDecoration.underline,
-                                  ),
+                              child: Text(
+                                reservation.invoiceId,
+                                style: TextStyle(
+                                  color: theme.primaryColor,
                                 ),
                               ),
                             ),
