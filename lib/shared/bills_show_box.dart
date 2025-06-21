@@ -106,7 +106,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
-        color: cardColor,
+        color: userType == 'doctors' ? theme.canvasColor : cardColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -199,7 +199,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                           children: [
                             Expanded(
                               child: Text(
-                                patientProfile?.userName ?? "",
+                                roleName == 'doctors' ? patientProfile?.userName ?? "" : doctorProfile.userName,
                                 style: TextStyle(color: textColor),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
@@ -240,7 +240,67 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                   color: theme.primaryColorLight,
                 ),
               ),
-              //Invoice and due Date
+              if(roleName == 'doctors' && !isSameDoctor) ...[
+                //InvoiceId
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    //  Invoice
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                style: const TextStyle(fontSize: 12), // Common style
+                                children: [
+                                  TextSpan(
+                                    text: '${context.tr("doctorName")}: ',
+                                    style: TextStyle(color: textColor), // Normal colored text
+                                  ),
+                                  TextSpan(
+                                    text: doctorName,
+                                    style: TextStyle(
+                                      color: theme.primaryColorLight, // Clickable text color
+                                      decoration: TextDecoration.underline, // Optional: shows it's clickable
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        if (roleName == 'doctors') {
+                                          context.push(
+                                            Uri(path: '/doctors/profile/$encodeddoctorId').toString(),
+                                          );
+                                        } 
+                                      },
+                                  ),
+                                ],
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 2.0),
+                            child: SortIconWidget(columnName: 'doctorProfile.fullName', getDataOnUpdate: widget.getDataOnUpdate),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              //Divider
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  height: 1,
+                  color: theme.primaryColorLight,
+                ),
+              ),
+              
+              ],
+              //InvoiceId
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -290,6 +350,22 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ),
+              //Divider
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  height: 1,
+                  color: theme.primaryColorLight,
+                ),
+              ),
+              //Due date
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
 
                     // Due Date
                     Expanded(
@@ -345,6 +421,8 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                   color: theme.primaryColorLight,
                 ),
               ),
+              
+              
               // Price and Fee
               if (roleName == 'doctors') ...[
                 Padding(
@@ -700,11 +778,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                                         maxChildSize: 0.95,
                                         builder: (context, scrollController) {
                                           return BillButtomSheet(
-                                            bill: bill,
-                                            userType: userType,
-                                            scrollController: scrollController,
-                                            isSameDoctor: isSameDoctor
-                                          );
+                                              bill: bill, userType: userType, scrollController: scrollController, isSameDoctor: isSameDoctor);
                                         },
                                       );
                                     },
@@ -764,7 +838,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                   color: theme.primaryColorLight,
                 ),
               ),
-             //View button
+              //View button
               const SizedBox(height: 10),
               SizedBox(
                 width: MediaQuery.of(context).size.width - 50,
@@ -928,7 +1002,59 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                           ),
                         ),
                       ),
-                    ]
+                    ],
+                    if (roleName == 'patient' && bill.status != 'Paid') ...[
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: SizedBox(
+                          height: 35,
+                          child: Container(
+                            height: 28,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  theme.primaryColorLight,
+                                  theme.primaryColor,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(60),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.07,
+                                ),
+                              ),
+                              onPressed: () {
+                                Uri(path: '/patient/check-out/$encodedInvoiceId').toString();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.credit_card, size: 13, color: textColor),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    context.tr("pay"),
+                                    style: TextStyle(fontSize: 12, color: textColor),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               )

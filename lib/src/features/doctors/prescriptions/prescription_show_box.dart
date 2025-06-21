@@ -150,7 +150,6 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
     final DoctorUserProfile doctorProfile = prescription.doctorProfile;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    final Color cardColor = roleName == 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
     final bangkok = tz.getLocation('Asia/Bangkok');
     final bool isSameDoctor = roleName == 'doctors' && doctorsProfile?.userId == prescription.doctorId;
     final String speciality = doctorProfile.specialities.first.specialities;
@@ -173,7 +172,7 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
-        color: cardColor,
+        color: theme.canvasColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -608,18 +607,21 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                           Row(
                             children: [
                               Expanded(
-                                flex: 5,
-                                child: Center(child: Text(context.tr('medicine'))),
+                                flex: 4,
+                                child: Text(context.tr('medicine')),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 flex: 5,
-                                child: Center(child: Text(context.tr('description'))),
+                                child: Text(context.tr('description')),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
-                                flex: 2,
-                                child: Center(child: Text(context.tr('quantity'))),
+                                flex: 3,
+                                child: Text(
+                                  context.tr('quantity'),
+                                  textAlign: TextAlign.left,
+                                ),
                               ),
                             ],
                           ),
@@ -639,10 +641,10 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Expanded(
-                                      flex: 5,
+                                      flex: 4,
                                       child: Text(
                                         detail.medicine,
-                                        textAlign: TextAlign.center,
+                                        textAlign: TextAlign.left,
                                         style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
                                         softWrap: true,
                                         overflow: TextOverflow.ellipsis,
@@ -654,7 +656,7 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                                       flex: 5,
                                       child: Text(
                                         detail.description,
-                                        textAlign: TextAlign.center,
+                                        textAlign: TextAlign.left,
                                         style: TextStyle(color: textColor),
                                         softWrap: true,
                                         overflow: TextOverflow.ellipsis,
@@ -663,10 +665,10 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                                     ),
                                     const SizedBox(width: 10),
                                     Expanded(
-                                      flex: 2,
+                                      flex: 3,
                                       child: Text(
                                         'x${detail.quantity}',
-                                        textAlign: TextAlign.center,
+                                        textAlign: TextAlign.left,
                                         style: TextStyle(color: theme.primaryColorLight, fontWeight: FontWeight.bold),
                                       ),
                                     ),

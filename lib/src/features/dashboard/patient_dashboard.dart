@@ -772,11 +772,11 @@ class _BMIScreenState extends State<BMIScreen> {
 
       if (vitalMap['height'].length > 0) {
         var heightFromVital = vitalMap['height'][vitalMap['height'].length - 1]['value'];
-        _height = int.parse(heightFromVital);
+        _height = heightFromVital;
       }
       if (vitalMap['weight'].length > 0) {
         var weightFromVital = vitalMap['weight'][vitalMap['weight'].length - 1]['value'];
-        _weight = int.parse(weightFromVital);
+        _weight = weightFromVital;
       }
     }
     if (_gender == 0) {

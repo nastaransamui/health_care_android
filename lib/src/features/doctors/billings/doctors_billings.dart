@@ -27,7 +27,7 @@ class DoctorsBillings extends StatefulWidget {
 }
 
 class _DoctorsBillingsState extends State<DoctorsBillings> {
-  final ScrollController doctorsBillingsScrollController = ScrollController();
+  final ScrollController scrollController = ScrollController();
   late final DataGridProvider dataGridProvider;
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
@@ -69,8 +69,8 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
   void dispose() {
     billingProvider.setDoctorsBills([], notify: false);
     billingProvider.setTotal(0, notify: false);
-    doctorsBillingsScrollController.dispose();
-    // Remove socket listeners to avoid triggering after dispose
+    scrollController.dispose();
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     socket.off('getBillingRecordReturn');
     socket.off('updateGetBillingRecord');
     super.dispose();
@@ -149,8 +149,8 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
               NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   double per = 0;
-                  if (doctorsBillingsScrollController.hasClients) {
-                    per = ((doctorsBillingsScrollController.offset / doctorsBillingsScrollController.position.maxScrollExtent));
+                  if (scrollController.hasClients) {
+                    per = ((scrollController.offset / scrollController.position.maxScrollExtent));
                   }
                   if (per >= 0) {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -163,237 +163,230 @@ class _DoctorsBillingsState extends State<DoctorsBillings> {
                   }
                   return false;
                 },
-                child: Column(
-                  children: [
-                    FadeinWidget(
-                      isCenter: true,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 6,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: theme.primaryColorLight),
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                'totalBillings',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.primaryColor,
-                                ),
-                              ).plural(
-                                totalBills,
-                                format: NumberFormat.compact(
-                                  locale: context.locale.toString(),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      FadeinWidget(
+                        isCenter: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: theme.primaryColorLight),
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Center(
+                                child: Text(
+                                  'totalBillings',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.primaryColor,
+                                  ),
+                                ).plural(
+                                  totalBills,
+                                  format: NumberFormat.compact(
+                                    locale: context.locale.toString(),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    // confirmed delete
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (Widget child, Animation<double> animation) {
-                        return SizeTransition(
-                          sizeFactor: animation,
-                          axis: Axis.vertical,
-                          child: child,
-                        );
-                      },
-                      child: deleteBillsId.isNotEmpty
-                          ? Padding(
-                              key: const ValueKey("buttonVisible"),
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                height: 40,
-                                child: GradientButton(
-                                  onPressed: () async {
-                                    final result = await showModalBottomSheet<List<String>>(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      builder: (context) => FractionallySizedBox(
-                                        heightFactor: 0.4,
-                                        child: Scaffold(
-                                          appBar: AppBar(
-                                            backgroundColor: theme.primaryColorLight,
-                                            title: const Text("billForDelete").plural(
-                                              deleteBillsId.length,
-                                              format: NumberFormat.compact(
-                                                locale: context.locale.toString(),
-                                              ),
-                                            ),
-                                            automaticallyImplyLeading: false, // Removes the back button
-                                            actions: [
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.close,
-                                                  color: theme.primaryColor,
+                      // confirmed delete
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (Widget child, Animation<double> animation) {
+                          return SizeTransition(
+                            sizeFactor: animation,
+                            axis: Axis.vertical,
+                            child: child,
+                          );
+                        },
+                        child: deleteBillsId.isNotEmpty
+                            ? Padding(
+                                key: const ValueKey("buttonVisible"),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 40,
+                                  child: GradientButton(
+                                    onPressed: () async {
+                                      final result = await showModalBottomSheet<List<String>>(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (context) => FractionallySizedBox(
+                                          heightFactor: 0.4,
+                                          child: Scaffold(
+                                            appBar: AppBar(
+                                              backgroundColor: theme.primaryColorLight,
+                                              title: const Text("billForDelete").plural(
+                                                deleteBillsId.length,
+                                                format: NumberFormat.compact(
+                                                  locale: context.locale.toString(),
                                                 ),
-                                                onPressed: () => Navigator.pop(context),
                                               ),
-                                            ],
-                                          ),
-                                          body: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Column(
-                                              children: [
-                                                FadeinWidget(
-                                                  isCenter: true,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8),
-                                                    child: Card(
-                                                      elevation: 6,
-                                                      color: Theme.of(context).canvasColor,
-                                                      shape: RoundedRectangleBorder(
-                                                        side: BorderSide(color: Theme.of(context).primaryColorLight),
-                                                        borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                                      ),
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.all(16.0),
-                                                        child: Center(
-                                                          child: Text(
-                                                            "billDeleteConfirm",
-                                                            style: TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight: FontWeight.normal,
-                                                              color: Theme.of(context).primaryColor,
-                                                            ),
-                                                          ).plural(
-                                                            deleteBillsId.length,
-                                                            format: NumberFormat.compact(
-                                                              locale: context.locale.toString(),
+                                              automaticallyImplyLeading: false, // Removes the back button
+                                              actions: [
+                                                IconButton(
+                                                  icon: Icon(
+                                                    Icons.close,
+                                                    color: theme.primaryColor,
+                                                  ),
+                                                  onPressed: () => Navigator.pop(context),
+                                                ),
+                                              ],
+                                            ),
+                                            body: Padding(
+                                              padding: const EdgeInsets.all(16.0),
+                                              child: Column(
+                                                children: [
+                                                  FadeinWidget(
+                                                    isCenter: true,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8),
+                                                      child: Card(
+                                                        elevation: 6,
+                                                        color: Theme.of(context).canvasColor,
+                                                        shape: RoundedRectangleBorder(
+                                                          side: BorderSide(color: Theme.of(context).primaryColorLight),
+                                                          borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(16.0),
+                                                          child: Center(
+                                                            child: Text(
+                                                              "billDeleteConfirm",
+                                                              style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight: FontWeight.normal,
+                                                                color: Theme.of(context).primaryColor,
+                                                              ),
+                                                            ).plural(
+                                                              deleteBillsId.length,
+                                                              format: NumberFormat.compact(
+                                                                locale: context.locale.toString(),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 20),
-                                                SizedBox(
-                                                  width: double.infinity,
-                                                  child: ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context, deleteBillsId);
-                                                    },
-                                                    child: Text(context.tr("submit")),
-                                                  ),
-                                                )
-                                              ],
+                                                  const SizedBox(height: 20),
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context, deleteBillsId);
+                                                      },
+                                                      child: Text(context.tr("submit")),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                    if (!context.mounted) return;
+                                      );
+                                      if (!context.mounted) return;
 
-                                    if (result != null) {
-                                      deleteBillRequestSubmit(context, result);
-                                    }
-                                  },
-                                  colors: [
-                                    Theme.of(context).primaryColorLight,
-                                    Theme.of(context).primaryColor,
-                                  ],
-                                  child: Center(
-                                    child: Text(
-                                      "paymentRequest",
-                                      style: TextStyle(fontSize: 12, color: textColor),
-                                    ).plural(
-                                      deleteBillsId.length,
-                                      format: NumberFormat.compact(
-                                        locale: context.locale.toString(),
+                                      if (result != null) {
+                                        deleteBillRequestSubmit(context, result);
+                                      }
+                                    },
+                                    colors: [
+                                      Theme.of(context).primaryColorLight,
+                                      Theme.of(context).primaryColor,
+                                    ],
+                                    child: Center(
+                                      child: Text(
+                                        "paymentRequest",
+                                        style: TextStyle(fontSize: 12, color: textColor),
+                                      ).plural(
+                                        deleteBillsId.length,
+                                        format: NumberFormat.compact(
+                                          locale: context.locale.toString(),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )
-                          : const SizedBox.shrink(key: ValueKey("buttonHidden")),
-                    ),
-
-                    //Sized box
-                    const SizedBox(height: 10),
-                    CustomPaginationWidget(
-                      count: totalBills,
-                      getDataOnUpdate: getDataOnUpdate,
-                    ),
-                    // const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Checkbox(
-                          splashRadius: 0,
-                          checkColor: theme.primaryColorLight,
-                          visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                          value: deleteBillsId.isNotEmpty,
-                          onChanged: (bool? value) {
-                            if (value == false) {
-                              setState(() {
-                                deleteBillsId.clear();
-                              });
-                            } else {
-                              setState(() {
-                                deleteBillsId = unpaidIds;
-                              });
-                            }
-                          },
-                        ),
-                        Text('tuggleBillForDelete',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: theme.primaryColorLight,
-                            )).plural(
-                          unpaidIds.length,
-                          format: NumberFormat.compact(
-                            locale: context.locale.toString(),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: Stack(
+                              )
+                            : const SizedBox.shrink(key: ValueKey("buttonHidden")),
+                      ),
+                      const SizedBox(height: 10),
+                      CustomPaginationWidget(
+                        count: totalBills,
+                        getDataOnUpdate: getDataOnUpdate,
+                      ),
+                      Row(
                         children: [
-                          ListView.builder(
-                            controller: doctorsBillingsScrollController,
-                            shrinkWrap: true,
-                            restorationId: 'doctorsBills',
-                            key: const ValueKey('doctorsBills'),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: doctorsBills.length,
-                            itemBuilder: (context, index) {
-                              final bill = doctorsBills[index];
-                              return BillsShowBox(
-                                singleBill: bill,
-                                getDataOnUpdate: getDataOnUpdate,
-                                userType: 'doctors',
-                                deleteBillsId: deleteBillsId,
-                                tougleBillIdTodeleteBillsId: tougleBillIdTodeleteBillsId,
-                              );
+                          Checkbox(
+                            splashRadius: 0,
+                            checkColor: theme.primaryColorLight,
+                            visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                            value: deleteBillsId.isNotEmpty,
+                            onChanged: (bool? value) {
+                              if (value == false) {
+                                setState(() {
+                                  deleteBillsId.clear();
+                                });
+                              } else {
+                                setState(() {
+                                  deleteBillsId = unpaidIds;
+                                });
+                              }
                             },
                           ),
-                          if (isLoading) ...[
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          ],
-                          ScrollButton(scrollController: doctorsBillingsScrollController, scrollPercentage: scrollPercentage),
+                          Text('tuggleBillForDelete',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: theme.primaryColorLight,
+                              )).plural(
+                            unpaidIds.length,
+                            format: NumberFormat.compact(
+                              locale: context.locale.toString(),
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 10),
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        restorationId: 'doctorsBills',
+                        key: const ValueKey('doctorsBills'),
+                        itemCount: doctorsBills.length,
+                        itemBuilder: (context, index) {
+                          final bill = doctorsBills[index];
+                          return BillsShowBox(
+                            singleBill: bill,
+                            getDataOnUpdate: getDataOnUpdate,
+                            userType: 'doctors',
+                            deleteBillsId: deleteBillsId,
+                            tougleBillIdTodeleteBillsId: tougleBillIdTodeleteBillsId,
+                          );
+                        },
+                      ),
+                      if (isLoading) ...[
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      ],
+                    ],
+                  ),
                 ),
               ),
+              ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
               Positioned(
                 bottom: 10,
                 left: 10,

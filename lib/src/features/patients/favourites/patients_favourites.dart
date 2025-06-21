@@ -1,42 +1,46 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
-import 'package:health_care/providers/my_patients_provider.dart';
+import 'package:health_care/providers/favourites_provider.dart';
 import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/services/my_patients_service.dart';
+import 'package:health_care/services/favourite_service.dart';
 import 'package:health_care/shared/custom_pagination_widget.dart';
-import 'package:health_care/shared/doctors_patients_show_box.dart';
 import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
+import 'package:health_care/src/features/patients/favourites/patients_favourite_show_box.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class DoctorsMyPatients extends StatefulWidget {
-  static const String routeName = "/doctors/dashboard/my-patients";
-  const DoctorsMyPatients({super.key});
+class PatientsFavourites extends StatefulWidget {
+  static const String routeName = "/patients/dashboard/favourites";
+  const PatientsFavourites({super.key});
 
   @override
-  State<DoctorsMyPatients> createState() => _DoctorsMyPatientsState();
+  State<PatientsFavourites> createState() => _PatientsFavouritesState();
 }
 
-class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
+class _PatientsFavouritesState extends State<PatientsFavourites> {
   final ScrollController scrollController = ScrollController();
   late final DataGridProvider dataGridProvider;
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
-  final MyPatientsService myPatientsService = MyPatientsService();
-  late final MyPatientsProvider myPatientsProvider = MyPatientsProvider();
+  final FavouriteService favouriteService = FavouriteService();
+  late final FavouritesProvider favouritesProvider;
   bool _isProvidersInitialized = false;
   double scrollPercentage = 0;
 
   Future<void> getDataOnUpdate() async {
-    final doctorProfile = authProvider.doctorsProfile;
-    final patientsIdArray = doctorProfile?.userProfile.patientsId;
-    await myPatientsService.getMyPatientsProfile(context, patientsIdArray!);
+    final patientProfile = authProvider.patientProfile;
+    final favIds = patientProfile?.userProfile.favsId;
+    log('message: $favIds');
+    await favouriteService.getFavDoctorsForPatientProfile(context, favIds!);
   }
 
   @override
@@ -44,7 +48,6 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
     super.initState();
     authService.updateLiveAuth(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      myPatientsProvider.setLoading(true);
       getDataOnUpdate();
     });
   }
@@ -55,6 +58,7 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
     if (!_isProvidersInitialized) {
       dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
       authProvider = Provider.of<AuthProvider>(context, listen: false);
+      favouritesProvider = Provider.of<FavouritesProvider>(context, listen: false);
       dataGridProvider.setSortModel([
         {"field": "profile.id", "sort": 'asc'}
       ], notify: false);
@@ -64,36 +68,39 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
 
   @override
   void dispose() {
-    myPatientsProvider.setMyPatientsProfile([], notify: false);
+    socket.off('getFavDoctorsForPatientProfileReturn');
+    socket.off('updateGetFavDoctorsForPatientProfile');
+    socket.off('updateGetFavPatientsForDoctorProfilePatient');
+    favouritesProvider.setDoctorFavProfileForPatient([], notify: false);
+    favouritesProvider.setTotal(0, notify: false);
     dataGridProvider.setMongoFilterModel({}, notify: false);
-    myPatientsProvider.setTotal(0, notify: false);
     scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MyPatientsProvider>(
-      builder: (context, myPatientProvider, _) {
-        final myPatientsProfile = myPatientProvider.myPatientsProfile;
-        bool isLoading = myPatientProvider.isLoading;
-        final doctorProfile = authProvider.doctorsProfile;
-        final int totalMyPatients = doctorProfile?.userProfile.patientsId.length ?? 0;
+    return Consumer<FavouritesProvider>(
+      builder: (context, favouritesProvider, _) {
+        final doctorFavProfileForPatient = favouritesProvider.doctorFavProfileForPatient;
+        bool isLoading = favouritesProvider.isLoading;
+        final patientProfile = authProvider.patientProfile;
+        final int totalFavourites = patientProfile?.userProfile.favsId.length ?? 0;
         final theme = Theme.of(context);
-        bool isActive = dataGridProvider.mongoFilterModel.isNotEmpty;
+        bool isFilterActive = dataGridProvider.mongoFilterModel.isNotEmpty;
         final List<FilterableGridColumn> filterableColumns = [
           FilterableGridColumn(column: GridColumn(columnName: 'profile.id', label: Text(context.tr('id'))), dataType: 'number'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.fullName', label: Text(context.tr('patientName'))), dataType: 'string'),
           FilterableGridColumn(column: GridColumn(columnName: 'status.lastLogin.date', label: Text(context.tr('lastLogin'))), dataType: 'date'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.dob', label: Text(context.tr('dob'))), dataType: 'date'),
-          FilterableGridColumn(column: GridColumn(columnName: 'profile.bloodG', label: Text(context.tr('bloodG'))), dataType: 'string'),
+          FilterableGridColumn(
+              column: GridColumn(columnName: 'profile.specialities.0.specialities', label: Text(context.tr('speciality'))), dataType: 'string'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.city', label: Text(context.tr('city'))), dataType: 'string'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.state', label: Text(context.tr('state'))), dataType: 'string'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.country', label: Text(context.tr('country'))), dataType: 'string'),
         ];
-
         return ScaffoldWrapper(
-          title: context.tr('myPatients'),
+          title: context.tr('favourites'),
           children: Stack(
             children: [
               NotificationListener<ScrollNotification>(
@@ -131,14 +138,14 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
                               padding: const EdgeInsets.all(16.0),
                               child: Center(
                                 child: Text(
-                                  "totalMyPatient",
+                                  "totalFavourites",
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ).plural(
-                                  isActive ? myPatientsProfile.length : totalMyPatients,
+                                  isFilterActive ? doctorFavProfileForPatient.length : totalFavourites,
                                   format: NumberFormat.compact(
                                     locale: context.locale.toString(),
                                   ),
@@ -150,20 +157,22 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
                       ),
                       const SizedBox(height: 10),
                       CustomPaginationWidget(
-                        count: isActive ? myPatientsProfile.length : totalMyPatients,
+                        count: isFilterActive ? doctorFavProfileForPatient.length : totalFavourites,
                         getDataOnUpdate: getDataOnUpdate,
                       ),
                       ListView.builder(
                         shrinkWrap: true,
-                        restorationId: 'doctorMyPatients',
-                        key: const ValueKey('doctorMyPatients'),
+                        restorationId: 'doctorFavorite',
+                        key: ValueKey(doctorFavProfileForPatient.length),
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: myPatientsProfile.length,
+                        itemCount: doctorFavProfileForPatient.length,
                         itemBuilder: (context, index) {
-                          final patientFavProfile = myPatientsProfile[index];
-                          return DoctorsPatientsShowBox(
-                            patientFavProfile: patientFavProfile,
+                          final doctorFavProfile = doctorFavProfileForPatient[index];
+                          return PatientsFavouriteShowBox(
+                            doctorFavProfile: doctorFavProfile,
                             getDataOnUpdate: getDataOnUpdate,
+                            patientProfile: patientProfile!,
+                            favouritesProvider: favouritesProvider,
                           );
                         },
                       ),
@@ -213,7 +222,7 @@ class _DoctorsMyPatientsState extends State<DoctorsMyPatients> {
                           size: 25,
                           color: theme.primaryColor,
                         ),
-                        if (isActive)
+                        if (isFilterActive)
                           Positioned(
                             right: 0,
                             top: 0,

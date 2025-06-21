@@ -69,6 +69,7 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
   @override
   void dispose() {
     scrollController.dispose();
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     socket.off('updateGetDoctorReviews');
     socket.off('getDoctorReviewsReturn');
     super.dispose();

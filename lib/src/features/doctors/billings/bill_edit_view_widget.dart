@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -9,6 +10,7 @@ import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/doctor_patient_profile_provider.dart';
 import 'package:health_care/services/bills_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
+import 'package:health_care/shared/patient_doctor_profile_header.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/src/features/doctors/billings/bill_details_form.dart';
@@ -21,10 +23,12 @@ class BillEditViewWidget extends StatefulWidget {
   static const String routeName = '/doctors/dashboard/edit-billing';
   final String billMongoId;
   final String viewType;
+  final String userType;
   const BillEditViewWidget({
     super.key,
     required this.billMongoId,
     required this.viewType,
+    required this.userType,
   });
 
   @override
@@ -98,10 +102,9 @@ class _BillEditViewWidgetState extends State<BillEditViewWidget> {
   Widget build(BuildContext context) {
     return Consumer<DoctorPatientProfileProvider>(
       builder: (context, doctorPatientProfileProvider, child) {
-        
         final DoctorPatientProfileModel doctorPatientProfile = doctorPatientProfileProvider.patientProfile;
         final bool isLoading = doctorPatientProfileProvider.isLoading;
-         if (isLoading) {
+        if (isLoading) {
           return ScaffoldWrapper(title: context.tr('loading'), children: const Center(child: CircularProgressIndicator()));
         }
         //Redirect if id is empty
@@ -115,7 +118,6 @@ class _BillEditViewWidgetState extends State<BillEditViewWidget> {
         }
         final Bills? singleBill = doctorPatientProfile.singleBill;
         final String formType = doctorsProfile?.userId == singleBill?.doctorId ? 'edit' : 'view';
-
         return ScaffoldWrapper(
           title: context.tr('${formType}_bill'),
           children: Stack(
@@ -141,7 +143,12 @@ class _BillEditViewWidgetState extends State<BillEditViewWidget> {
                   controller: scrollController,
                   child: Column(
                     children: [
-                      DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                      if (widget.userType == 'doctors') ...[
+                        DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                      ] else
+                        ...[
+                          PatientDoctorProfileHeader(doctorUserProfile: singleBill!.doctorProfile),
+                        ],
                       Card(
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(

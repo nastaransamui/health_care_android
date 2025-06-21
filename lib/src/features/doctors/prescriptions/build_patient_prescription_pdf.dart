@@ -251,7 +251,7 @@ Future<pw.Document> buildPatientPrescriptionPdf(
                                   pw.Padding(
                                     padding: const pw.EdgeInsets.symmetric(vertical: 6.0),
                                     child: pw.Text(
-                                      item.medicineId,
+                                      item.medicineId.isEmpty ? "##" : item.medicineId,
                                       textAlign: pw.TextAlign.center,
                                       style: pw.TextStyle(
                                         font: fontReqular,

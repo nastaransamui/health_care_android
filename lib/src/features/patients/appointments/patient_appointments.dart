@@ -70,6 +70,7 @@ class _PatientAppointmentsState extends State<PatientAppointments> {
     socket.off('updateGetAppointmentRecord');
     patientAppointmentProvider.setTotal(0, notify: false);
     patientAppointmentProvider.setLoading(false, notify: false);
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     patientAppointmentProvider.setPatientAppointmentReservations([], notify: false);
     scrollController.dispose();
     super.dispose();

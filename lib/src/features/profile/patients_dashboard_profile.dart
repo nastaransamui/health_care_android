@@ -88,9 +88,12 @@ class _PatientsDashboardProfileState extends State<PatientsDashboardProfile> {
     patientLastNameController.text = patientProfile.userProfile.lastName;
     patientGenderController.text = patientProfile.userProfile.gender;
     bloodGController.text = patientProfile.userProfile.bloodG;
-    if (patientProfile.userProfile.dob.isNotEmpty) {
-      patientDobController.text =
-          DateFormat("dd MMM yyyy").format(DateFormat("yyyy-MM-ddTHH:mm:ssZ").parseUTC(patientProfile.userProfile.dob).toLocal());
+    if (patientProfile.userProfile.dob != "") {
+      try {
+        String formattedDob = DateFormat("dd MMM yyyy").format(patientProfile.userProfile.dob.toLocal());
+        patientDobController.text = formattedDob;
+        // ignore: empty_catches
+      } catch (e) {}
     }
     if (patientProfile.userProfile.mobileNumber.isNotEmpty) {
       PhoneNumber mobileNumber = await PhoneNumber.getRegionInfoFromPhoneNumber(

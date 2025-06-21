@@ -485,8 +485,8 @@
   "rating": "Rating",
   "iRecommendTheDoctor": "I Recommend The doctor.",
   "iNotRecommendTheDoctor": "Not Recommend",
-  "recommended": "Recommended Reviews",
-  "notRecommended": "Not Recommended Reviews",
+  "recommended_filterTrue": "Recommended Reviews",
+  "recommended_filterFalse": "Not Recommended Reviews",
   "replyTo": "Reply to {}",
   "socialMediaSetup": "SocialMedia Setup",
   "facebook_url": "Facebook URL",
@@ -579,5 +579,24 @@
     "one": "You have {} invoice to request payment.",
     "many": "You have {} invoices to request payment.",
     "other": "You have {} invoices to request payment."
-  }
+  },
+  "totalDependents": {
+    "zero": "No any dependent found.",
+    "one": "You have {} dependent",
+    "many": "You have {} dependents",
+    "other": "You have {} dependents"
+  },
+  "relationShip": "Relationship",
+  "cantDeleteDepenent": "Dependent with medical record can't delete.",
+  "isActive": "Active",
+  "isActive_filterTrue": "Active",
+  "notActive": "Not Active",
+  "isActive_filterFalse": "Not Active",
+  "dependentsForDelete": {
+    "zero": "Select Dependent to delete.",
+    "one": "You have selected {} dependent to delete.",
+    "many": "You have selected {} dependents to delete.",
+    "other": "You have selected {} dependents to delete."
+  },
+  "confirmDeleteDependents": "Delete dependents permanently."
 }

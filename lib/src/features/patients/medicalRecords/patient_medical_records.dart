@@ -94,6 +94,7 @@ class _PatientMedicalRecordsState extends State<PatientMedicalRecords> {
     medicalRecordsProvider.setTotal(0, notify: false);
     medicalRecordsProvider.setLoading(false, notify: false);
     medicalRecordsProvider.setMedicalRecords([], notify: false);
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     scrollController.dispose();
     super.dispose();
   }
@@ -335,6 +336,7 @@ class _PatientMedicalRecordsState extends State<PatientMedicalRecords> {
                           if (injected != null) ...[
                             injected,
                           ],
+                          if(injected == null) const SizedBox(height: 10),
                           SizedBox(
                             height: 35,
                             child: Padding(

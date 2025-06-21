@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 
 class Dependents {
@@ -76,9 +77,12 @@ class Dependents {
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 
+    final formattedCreatedAt = DateFormat('dd MMM yyyy HH:mm').format(createdAt.toUtc().add(const Duration(hours: 7)));
+    final formattedUpdateAt = DateFormat('dd MMM yyyy HH:mm').format(updateAt.toUtc().add(const Duration(hours: 7)));
+    final formattedDob = dob == '' ? '' : DateFormat('dd MMM yyyy').format(dob.toUtc().add(const Duration(hours: 7)));
     result.addAll({'bloodG': bloodG});
-    result.addAll({'createdAt': createdAt.millisecondsSinceEpoch});
-    result.addAll({'dob': dob});
+    result.addAll({'createdAt': formattedCreatedAt});
+    result.addAll({'dob': formattedDob});
     result.addAll({'firstName': firstName});
     result.addAll({'fullName': fullName});
     result.addAll({'gender': gender});
@@ -88,7 +92,7 @@ class Dependents {
     result.addAll({'medicalRecordsArray': medicalRecordsArray});
     result.addAll({'profileImage': profileImage});
     result.addAll({'relationShip': relationShip});
-    result.addAll({'updateAt': updateAt.millisecondsSinceEpoch});
+    result.addAll({'updateAt': formattedUpdateAt});
     result.addAll({'userId': userId});
     if (id != null) {
       result.addAll({'id': id});
@@ -121,7 +125,7 @@ class Dependents {
 
   factory Dependents.fromJson(String source) => Dependents.fromMap(json.decode(source));
 
-  factory Dependents.empty() {
+  factory Dependents.empty({String userId = ''}) {
     return Dependents(
       bloodG: '',
       createdAt: DateTime.now(),
@@ -130,13 +134,13 @@ class Dependents {
       fullName: '',
       gender: '',
       dependentId: 0,
-      isActive: false,
+      isActive: true,
       lastName: '',
       medicalRecordsArray: [],
       profileImage: '',
       relationShip: '',
       updateAt: DateTime.now(),
-      userId: '',
+      userId: userId,
       id: '',
     );
   }

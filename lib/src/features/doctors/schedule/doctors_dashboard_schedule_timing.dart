@@ -331,6 +331,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
     isLoading = true;
     _showButtons = false;
     _forceRebuildKey = DateTime.now().millisecondsSinceEpoch;
+    _dataGridProvider.setMongoFilterModel({}, notify: false);
     socket.off('getDoctorTimeSlotsReturn');
     socket.off('updateGetDoctorTimeSlots');
     socket.off('createDoctorsTimeslotsReturn');

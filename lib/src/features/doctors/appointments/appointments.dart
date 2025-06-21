@@ -78,6 +78,7 @@ class _DoctorAppointmentsState extends State<DoctorAppointments> {
     appointmentProvider.setTotal(0, notify: false);
     appointmentProvider.setLoading(false, notify: false);
     appointmentProvider.setAppointmentReservations([], notify: false);
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     appointmentScrollController.dispose();
     super.dispose();
   }

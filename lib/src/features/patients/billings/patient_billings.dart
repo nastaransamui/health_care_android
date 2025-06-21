@@ -76,6 +76,7 @@ class _PatientBillingsState extends State<PatientBillings> {
     billingProvider.setDoctorsBills([], notify: false);
     billingProvider.setTotal(0, notify: false);
     scrollController.dispose();
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     // Remove socket listeners to avoid triggering after dispose
     socket.off('getBillingRecordReturn');
     socket.off('updateGetBillingRecord');
@@ -90,16 +91,20 @@ class _PatientBillingsState extends State<PatientBillings> {
       final int totalBills = billingProvider.total;
       final theme = Theme.of(context);
       final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+      final cardColor = theme.brightness == Brightness.dark ? Colors.black87 : Colors.white70;
       bool isFilterActive = dataGridProvider.mongoFilterModel.isNotEmpty;
       final injected = context.watch<WidgetInjectionProvider>().injectedWidget;
+
       final List<FilterableGridColumn> filterableColumns = [
         FilterableGridColumn(column: GridColumn(columnName: 'id', label: Text(context.tr('id'))), dataType: 'number'),
-        // FilterableGridColumn(column: GridColumn(columnName: 'doctorProfile.fullName', label: Text(context.tr('doctorName'))), dataType: 'string'),
-        // FilterableGridColumn(column: GridColumn(columnName: 'selectedDate', label: Text(context.tr('selectedDate'))), dataType: 'date'),
-        // FilterableGridColumn(column: GridColumn(columnName: 'doctorProfile.address1', label: Text(context.tr('address'))), dataType: 'string'),
-        // FilterableGridColumn(column: GridColumn(columnName: 'invoiceId', label: Text(context.tr('invoiceNo'))), dataType: 'string'),
-        // FilterableGridColumn(
-        //     column: GridColumn(columnName: 'doctorProfile.specialities.0.specialities', label: Text(context.tr('speciality'))), dataType: 'string'),
+        FilterableGridColumn(column: GridColumn(columnName: 'doctorProfile.fullName', label: Text(context.tr('doctorName'))), dataType: 'string'),
+        FilterableGridColumn(column: GridColumn(columnName: 'doctorProfile.userName', label: Text(context.tr('userName'))), dataType: 'string'),
+        FilterableGridColumn(column: GridColumn(columnName: 'invoiceId', label: Text(context.tr('invoiceNo'))), dataType: 'string'),
+        FilterableGridColumn(column: GridColumn(columnName: 'dueDate', label: Text(context.tr('dueDate'))), dataType: 'date'),
+        FilterableGridColumn(column: GridColumn(columnName: 'total', label: Text(context.tr('total'))), dataType: 'number'),
+        FilterableGridColumn(column: GridColumn(columnName: 'createdAt', label: Text(context.tr('createdAt'))), dataType: 'date'),
+        FilterableGridColumn(column: GridColumn(columnName: 'updateAt', label: Text(context.tr('updateAt'))), dataType: 'date'),
+        FilterableGridColumn(column: GridColumn(columnName: 'status', label: Text(context.tr('status'))), dataType: 'string'),
       ];
       return ScaffoldWrapper(
         title: context.tr('billings'),
@@ -127,6 +132,7 @@ class _PatientBillingsState extends State<PatientBillings> {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Card(
+                    color: roleName == 'doctors' ? theme.canvasColor: cardColor,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(0.0),
@@ -135,35 +141,39 @@ class _PatientBillingsState extends State<PatientBillings> {
                         bottomRight: Radius.circular(20.0),
                       ),
                     ),
-                    margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                    margin: EdgeInsets.symmetric(horizontal: roleName == 'doctors' ?4.0 : 0.0, vertical: 0.0),
                     child: Column(
                       children: [
                         if (injected != null) ...[
                           injected,
                           if (roleName == 'doctors') ...[
-                            SizedBox(
-                              height: 35,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                child: GradientButton(
-                                  onPressed: () {
-                                    final encodedpatientId = base64.encode(utf8.encode(widget.patientId.toString()));
-                                    context.push(Uri(path: '/doctors/dashboard/add-billing/$encodedpatientId').toString());
-                                  },
-                                  colors: [
-                                    Theme.of(context).primaryColorLight,
-                                    Theme.of(context).primaryColor,
-                                  ],
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        context.tr("addBill"),
-                                        style: TextStyle(fontSize: 12, color: textColor),
-                                      )
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Container(
+                                color: cardColor,
+                                height: 35,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: GradientButton(
+                                    onPressed: () {
+                                      final encodedpatientId = base64.encode(utf8.encode(widget.patientId.toString()));
+                                      context.push(Uri(path: '/doctors/dashboard/add-billing/$encodedpatientId').toString());
+                                    },
+                                    colors: [
+                                      Theme.of(context).primaryColorLight,
+                                      Theme.of(context).primaryColor,
                                     ],
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          context.tr("addBill"),
+                                          style: TextStyle(fontSize: 12, color: textColor),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -173,28 +183,34 @@ class _PatientBillingsState extends State<PatientBillings> {
                         FadeinWidget(
                           isCenter: true,
                           child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Card(
-                              elevation: 6,
-                              color: theme.canvasColor,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Theme.of(context).primaryColorLight),
-                                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                              ),
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Container(
+                              color: cardColor,
                               child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    "totalBillings",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ).plural(
-                                    isFilterActive ? patiensBills.length : totalBills,
-                                    format: NumberFormat.compact(
-                                      locale: context.locale.toString(),
+                                padding: const EdgeInsets.all(8),
+                                child: Card(
+                                  elevation: 6,
+                                  color: theme.canvasColor,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: Theme.of(context).primaryColorLight),
+                                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: Text(
+                                        "totalBillings",
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ).plural(
+                                        isFilterActive ? patiensBills.length : totalBills,
+                                        format: NumberFormat.compact(
+                                          locale: context.locale.toString(),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -202,37 +218,48 @@ class _PatientBillingsState extends State<PatientBillings> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        CustomPaginationWidget(
-                          count: isFilterActive ? patiensBills.length : totalBills,
-                          getDataOnUpdate: getDataOnUpdate,
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          restorationId: 'pateintAppointment',
-                          key: const ValueKey('pateintAppointment'),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: patiensBills.length,
-                          itemBuilder: (context, index) {
-                            final bill = patiensBills[index];
-                            return BillsShowBox(
-                              singleBill: bill,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Container(
+                            color: cardColor,
+                            child: CustomPaginationWidget(
+                              count: isFilterActive ? patiensBills.length : totalBills,
                               getDataOnUpdate: getDataOnUpdate,
-                              userType: 'doctors',
-                              deleteBillsId: const [],
-                              tougleBillIdTodeleteBillsId: (String deleteId) async {
-                                if (roleName == 'doctors') {
-                                  bool success = await billsService.deleteBillingRecord(context, [deleteId]);
-                  
-                                  if (success) {
-                                    if (context.mounted) {
-                                      showErrorSnackBar(context, "${[deleteId].length} Bill(s) was deleted.");
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Container(
+                            color: cardColor,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              restorationId: 'pateintAppointment',
+                              key: const ValueKey('pateintAppointment'),
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: patiensBills.length,
+                              itemBuilder: (context, index) {
+                                final bill = patiensBills[index];
+                                return BillsShowBox(
+                                  singleBill: bill,
+                                  getDataOnUpdate: getDataOnUpdate,
+                                  userType: 'patient',
+                                  deleteBillsId: const [],
+                                  tougleBillIdTodeleteBillsId: (String deleteId) async {
+                                    if (roleName == 'doctors') {
+                                      bool success = await billsService.deleteBillingRecord(context, [deleteId]);
+                                              
+                                      if (success) {
+                                        if (context.mounted) {
+                                          showErrorSnackBar(context, "${[deleteId].length} Bill(s) was deleted.");
+                                        }
+                                      }
                                     }
-                                  }
-                                }
+                                  },
+                                );
                               },
-                            );
-                          },
+                            ),
+                          ),
                         ),
                         if (isLoading) ...[
                           const Center(

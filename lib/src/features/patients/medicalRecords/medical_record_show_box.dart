@@ -64,7 +64,6 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
     final MedicalRecords medicalRecord = widget.medicalRecord;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    final Color cardColor = roleName == 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
     final bangkok = tz.getLocation('Asia/Bangkok');
     final bool isForDependent = medicalRecord.isForDependent;
     final Dependents? dependentProfile = medicalRecord.dependentProfile;
@@ -84,7 +83,7 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         elevation: 12,
-        color: cardColor,
+        color: theme.canvasColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),
           borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -108,7 +107,11 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
               //Divider
               MyDivider(theme: theme),
               //Description and Symptoms
-              DescriptionSymptomsRow(textColor: textColor, medicalRecord: medicalRecord, theme: theme, widget: widget),
+              DescriptionRow(textColor: textColor, medicalRecord: medicalRecord, theme: theme, widget: widget),
+              //Divider
+              MyDivider(theme: theme),
+              SymptomRow(textColor: textColor, medicalRecord: medicalRecord, theme: theme, widget: widget),
+
               //Divider
               MyDivider(theme: theme),
               //hospital and attachment
@@ -118,7 +121,16 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
                   children: [
                     //  hospital view
                     Hospital(textColor: textColor, medicalRecord: medicalRecord, theme: theme, widget: widget),
+                  ],
+                ),
+              ),
 
+              //Divider
+              MyDivider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
                     // attachment
                     Expanded(
                       child: Row(
@@ -129,7 +141,7 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
                               children: [
                                 Text(
                                   context.tr('${context.tr("attachment")}: '),
-                                  style: TextStyle(color: textColor),
+                                  style: TextStyle(color: theme.primaryColorLight),
                                 ),
                                 medicalRecord.documentLink.isEmpty
                                     ? Text(
@@ -197,14 +209,71 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
                   ],
                 ),
               ),
-
-              //Divider
+               //Divider
               MyDivider(theme: theme),
               // buttons
               ButtonsRow(widget: widget, medicalRecord: medicalRecord, textColor: textColor)
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SymptomRow extends StatelessWidget {
+  const SymptomRow({
+    super.key,
+    required this.textColor,
+    required this.medicalRecord,
+    required this.theme,
+    required this.widget,
+  });
+
+  final Color textColor;
+  final MedicalRecords medicalRecord;
+  final ThemeData theme;
+  final MedicalRecordShowBox widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          // Symptom
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(fontSize: 12), // Common style
+                      children: [
+                        TextSpan(
+                          text: '${context.tr("symptoms")}: ',
+                          style: TextStyle(color: theme.primaryColorLight),
+                        ),
+                        TextSpan(
+                          text: medicalRecord.symptoms,
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SortIconWidget(
+                  columnName: 'symptoms',
+                  getDataOnUpdate: widget.getDataOnUpdate,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -334,12 +403,12 @@ class Hospital extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '${context.tr("hospitalName")}: ',
-                    style: TextStyle(color: textColor), // Normal colored text
+                    style: TextStyle(color: theme.primaryColorLight),
                   ),
                   TextSpan(
                     text: medicalRecord.hospitalName,
                     style: TextStyle(
-                      color: theme.primaryColorLight,
+                      color: textColor,
                     ),
                   ),
                 ],
@@ -357,8 +426,8 @@ class Hospital extends StatelessWidget {
   }
 }
 
-class DescriptionSymptomsRow extends StatelessWidget {
-  const DescriptionSymptomsRow({
+class DescriptionRow extends StatelessWidget {
+  const DescriptionRow({
     super.key,
     required this.textColor,
     required this.medicalRecord,
@@ -389,12 +458,12 @@ class DescriptionSymptomsRow extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: '${context.tr("description")}: ',
-                          style: TextStyle(color: textColor), // Normal colored text
+                          style: TextStyle(color: theme.primaryColorLight),
                         ),
                         TextSpan(
                           text: medicalRecord.description,
                           style: TextStyle(
-                            color: theme.primaryColorLight,
+                            color: textColor,
                           ),
                         ),
                       ],
@@ -404,39 +473,6 @@ class DescriptionSymptomsRow extends StatelessWidget {
                 ),
                 SortIconWidget(
                   columnName: 'description',
-                  getDataOnUpdate: widget.getDataOnUpdate,
-                ),
-              ],
-            ),
-          ),
-
-          // Symptom
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(fontSize: 12), // Common style
-                      children: [
-                        TextSpan(
-                          text: '${context.tr("symptoms")}: ',
-                          style: TextStyle(color: textColor), // Normal colored text
-                        ),
-                        TextSpan(
-                          text: medicalRecord.symptoms,
-                          style: TextStyle(
-                            color: theme.primaryColorLight,
-                          ),
-                        ),
-                      ],
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                SortIconWidget(
-                  columnName: 'symptoms',
                   getDataOnUpdate: widget.getDataOnUpdate,
                 ),
               ],
@@ -481,7 +517,7 @@ class CreatedUpdateRow extends StatelessWidget {
                     children: [
                       Text(
                         '${context.tr("createdAt")}: ',
-                        style: TextStyle(color: textColor, fontSize: 12),
+                        style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
                       ),
                       const SizedBox(width: 5),
                       Column(
@@ -523,7 +559,7 @@ class CreatedUpdateRow extends StatelessWidget {
                     children: [
                       Text(
                         '${context.tr("updateAt")}: ',
-                        style: TextStyle(color: textColor, fontSize: 12),
+                        style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
                       ),
                       const SizedBox(width: 5),
                       Column(

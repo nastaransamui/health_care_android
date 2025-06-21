@@ -69,6 +69,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
     socket.off('updateGetFavPatientsForDoctorProfilePatient');
     favouritesProvider.setUserFavProfile([], notify: false);
     favouritesProvider.setTotal(0, notify: false);
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     scrollController.dispose();
     super.dispose();
   }
@@ -83,7 +84,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
         final int totalFavourites = doctorProfile?.userProfile.favsId.length ?? 0;
         final theme = Theme.of(context);
 
-        bool isActive = dataGridProvider.mongoFilterModel.isNotEmpty;
+        bool isFilterActive = dataGridProvider.mongoFilterModel.isNotEmpty;
         final List<FilterableGridColumn> filterableColumns = [
           FilterableGridColumn(column: GridColumn(columnName: 'profile.id', label: Text(context.tr('id'))), dataType: 'number'),
           FilterableGridColumn(column: GridColumn(columnName: 'profile.fullName', label: Text(context.tr('patientName'))), dataType: 'string'),
@@ -140,7 +141,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                 ).plural(
-                                  isActive ? userFavProfile.length : totalFavourites,
+                                  isFilterActive ? userFavProfile.length : totalFavourites,
                                   format: NumberFormat.compact(
                                     locale: context.locale.toString(),
                                   ),
@@ -152,7 +153,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                       ),
                       const SizedBox(height: 10),
                       CustomPaginationWidget(
-                        count: isActive ? userFavProfile.length : totalFavourites,
+                        count: isFilterActive ? userFavProfile.length : totalFavourites,
                         getDataOnUpdate: getDataOnUpdate,
                       ),
                       ListView.builder(
@@ -215,7 +216,7 @@ class _DoctorsFavouritesState extends State<DoctorsFavourites> {
                           size: 25,
                           color: theme.primaryColor,
                         ),
-                        if (isActive)
+                        if (isFilterActive)
                           Positioned(
                             right: 0,
                             top: 0,

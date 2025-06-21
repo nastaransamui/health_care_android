@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -326,8 +325,9 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
                       ...bill.billDetailsArray.map(
                         (item) {
                           // Filter keys again (in case reused separately)
-                          final filteredKeys =
-                              roleName == 'patient' || !isSameDoctor ? ['title', 'total'] : ['title', 'price', 'bookingsFee', 'bookingsFeePrice', 'total'];
+                          final filteredKeys = roleName == 'patient' || !isSameDoctor
+                              ? ['title', 'total']
+                              : ['title', 'price', 'bookingsFee', 'bookingsFeePrice', 'total'];
 
                           return pw.TableRow(children: [
                             ...filteredKeys.asMap().entries.map(
@@ -452,7 +452,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
                                   pw.Align(
                                     alignment: !isSameDoctor && roleName == 'doctors' ? pw.Alignment.centerLeft : pw.Alignment.centerRight,
                                     child: pw.Padding(
-                                      padding: const pw.EdgeInsets.only(right: 4.0, top: 6.0),
+                                      padding:  pw.EdgeInsets.only(right: !isSameDoctor && roleName == 'doctors'  ? 4.0 : 55.0, top: 6.0),
                                       child: pw.Text('${NumberFormat("#,##0.0", "en_US").format(bill.total)} ${bill.currencySymbol} ',
                                           style: pw.TextStyle(font: fontReqular)),
                                     ),

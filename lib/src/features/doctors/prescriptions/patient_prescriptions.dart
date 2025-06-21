@@ -76,6 +76,7 @@ class _PatientPrescriptionsState extends State<PatientPrescriptions> {
     prescriptionProvider.setTotal(0, notify: false);
     prescriptionProvider.setLoading(false, notify: false);
     prescriptionProvider.setPrescriptions([], notify: false);
+    dataGridProvider.setMongoFilterModel({}, notify: false);
     scrollController.dispose();
     super.dispose();
   }

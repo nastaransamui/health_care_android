@@ -54,6 +54,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
   void dispose() {
     _slideController.dispose();
     _heartController.dispose();
+    socket.off('addDocToFavReturn');
     super.dispose();
   }
 
@@ -92,6 +93,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
         ).whenComplete(
           () {
             _slideController.toggleAction(0);
+            if (!context.mounted) return;
             setState(
               () {
                 isFavIconLoading = false;
@@ -101,6 +103,7 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> with Tick
         );
       } else {
         doctor.favIds.add(patientId);
+         if (!context.mounted) return;
         setState(
           () {
             isFavIconLoading = false;

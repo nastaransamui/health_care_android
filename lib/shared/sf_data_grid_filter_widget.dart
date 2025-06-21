@@ -335,7 +335,7 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
                 DropdownButtonFormField<bool>(
                   value: _selectedValue,
                   decoration: InputDecoration(
-                    labelText: context.tr("selectOperator"),
+                    labelText: context.tr("selectValue"),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -358,11 +358,11 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
                   items: <DropdownMenuItem<bool>>[
                     DropdownMenuItem<bool>(
                       value: true,
-                      child: Text(context.tr('recommended')),
+                      child: Text(context.tr('${selectedColumnName}_filterTrue')),
                     ),
                     DropdownMenuItem<bool>(
                       value: false,
-                      child: Text(context.tr('notRecommended')),
+                      child: Text(context.tr('${selectedColumnName}_filterFalse')),
                     ),
                   ],
                 )

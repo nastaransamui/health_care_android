@@ -485,8 +485,8 @@
   "rating": "คะแนน",
   "iRecommendTheDoctor": "ฉันแนะนำหมอคนนี้.",
   "iNotRecommendTheDoctor": "ไม่แนะนำ",
-  "recommended": "รีวิวที่แนะนำ",
-  "notRecommended": "รีวิวที่ไม่แนะนำ",
+  "recommended_filterTrue": "รีวิวที่แนะนำ",
+  "recommended_filterFalse": "รีวิวที่ไม่แนะนำ",
   "replyTo": "ตอบกลับ {}",
   "socialMediaSetup": "การตั้งค่าโซเชียลมีเดีย",
   "facebook_url": "URL ของ Facebook",
@@ -572,5 +572,29 @@
   "billRecordEditFailed": "การแก้ไขบิลมีข้อผิดพลาด",
   "billRecordEditSuccess": "แก้ไขบิลเรียบร้อยแล้ว",
   "edit_bill": "แก้ไขบิล",
-  "view_bill": "ดูบิล"
+  "view_bill": "ดูบิล",
+  "sendPaymentRequest": "ส่งคำขอการชำระเงิน",
+  "taggleInvoicesForPayment": {
+    "zero": "ไม่มีใบแจ้งหนี้เพื่อขอชำระเงิน.",
+    "one": "คุณมีใบแจ้งหนี้ {} เพื่อขอการชำระเงิน.",
+    "many": "คุณมีใบแจ้งหนี้ {} เพื่อขอการชำระเงิน.",
+    "other": "คุณมีใบแจ้งหนี้ {} เพื่อขอการชำระเงิน."
+  },
+  "totalDependents": {
+    "zero": "ไม่พบสิ่งใดที่ต้องพึ่งพา.",
+    "one": "คุณมี {} ขึ้นอยู่กับ",
+    "many": "คุณมีผู้ติดตาม {}",
+    "other": "คุณมีผู้ติดตาม {}"
+  },
+  "relationShip": "ความสัมพันธ์",
+  "cantDeleteDepenent": "ขึ้นอยู่กับเวชระเบียนไม่สามารถลบได้.",
+  "isactive": "ใช้งาน",
+  "notactive": "ไม่ใช้งาน",
+  "dependentsForDelete": {
+    "zero": "เลือกขึ้นอยู่กับการลบ.",
+    "one": "คุณได้เลือก {} ขึ้นอยู่กับการลบ.",
+    "many": "คุณได้เลือกผู้ติดตาม {} เพื่อลบ.",
+    "other": "คุณได้เลือกผู้ติดตาม {} เพื่อลบ."
+  },
+  "confirmDeleteDependents": "ลบผู้ติดตามอย่างถาวร."
 }
