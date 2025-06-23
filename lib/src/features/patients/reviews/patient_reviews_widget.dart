@@ -1,13 +1,13 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:health_care/models/dependents.dart';
+import 'package:health_care/models/reviews.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
-import 'package:health_care/providers/dependents_provider.dart';
+import 'package:health_care/providers/review_provider.dart';
 import 'package:health_care/services/auth_service.dart';
-import 'package:health_care/services/dependents_service.dart';
+import 'package:health_care/services/review_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/shared/custom_pagination_widget.dart';
 import 'package:health_care/shared/gradient_button.dart';
@@ -15,33 +15,32 @@ import 'package:health_care/shared/sf_data_grid_filter_widget.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:health_care/src/features/patients/dependents/dependent_form.dart';
-import 'package:health_care/src/features/patients/dependents/patients_dependants_show_box.dart';
+import 'package:health_care/src/features/patients/reviews/patient_review_show_card.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class PatientsDependents extends StatefulWidget {
-  static const String routeName = "/patient/dashboard/dependent";
-  const PatientsDependents({super.key});
+class PatientReviewsWidget extends StatefulWidget {
+  static const String routeName = '/patient/dashboard/review';
+  const PatientReviewsWidget({super.key});
 
   @override
-  State<PatientsDependents> createState() => _PatientsDependentsState();
+  State<PatientReviewsWidget> createState() => _PatientReviewsWidgetState();
 }
 
-class _PatientsDependentsState extends State<PatientsDependents> {
+class _PatientReviewsWidgetState extends State<PatientReviewsWidget> {
   final ScrollController scrollController = ScrollController();
-  late final DataGridProvider dataGridProvider;
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
-  late final DependentsProvider dependentsProvider;
-  final DependentsService dependentsService = DependentsService();
+  final ReviewService reviewService = ReviewService();
+  late final ReviewProvider reviewProvider;
+  late final DataGridProvider dataGridProvider;
+  late List<String> deleteIds;
   bool _isProvidersInitialized = false;
   double scrollPercentage = 0;
-  late List<String> deleteIds;
 
   Future<void> getDataOnUpdate() async {
-    await dependentsService.getPatientDependent(context);
+    reviewService.getAuthorReviews(context);
     setState(() {
       deleteIds.clear();
     });
@@ -51,40 +50,13 @@ class _PatientsDependentsState extends State<PatientsDependents> {
   void initState() {
     super.initState();
     authService.updateLiveAuth(context);
-    deleteIds = [];
+    deleteIds= [];
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getDataOnUpdate();
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isProvidersInitialized) {
-      dependentsProvider = Provider.of<DependentsProvider>(context, listen: false);
-      dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
-      authProvider = Provider.of<AuthProvider>(context, listen: false);
-      dataGridProvider.setSortModel([
-        {"field": "id", "sort": 'asc'}
-      ], notify: false);
-      _isProvidersInitialized = true;
-    }
-  }
-
-  @override
-  void dispose() {
-    socket.off("getPatientDependentReturn");
-    socket.off("updateGetPatientDependent");
-    socket.off('deleteDependentReturn');
-    socket.off('updateDependentReturn');
-    dependentsProvider.setDependents([], notify: false);
-    dependentsProvider.setTotal(0, notify: false);
-    dataGridProvider.setMongoFilterModel({}, notify: false);
-    scrollController.dispose();
-    super.dispose();
-  }
-
-  Future<void> getConfirmationForDeleteDependent(
+  Future<void> getConfirmationForDeleteReview(
     BuildContext context,
     List<String> deleteIds,
   ) async {
@@ -96,7 +68,7 @@ class _PatientsDependentsState extends State<PatientsDependents> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColorLight,
-            title: const Text("dependentsForDelete").plural(
+            title: const Text("deleteReviewRequest").plural(
               deleteIds.length,
               format: NumberFormat.compact(
                 locale: context.locale.toString(),
@@ -130,7 +102,7 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                       padding: const EdgeInsets.all(16.0),
                       child: Center(
                           child: Text(
-                        context.tr("confirmDeleteDependents"),
+                        context.tr("confirmDeleteReview"),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
@@ -164,11 +136,11 @@ class _PatientsDependentsState extends State<PatientsDependents> {
   }
 
   Future<void> deleteDependentRequestSubmit(BuildContext context, List<String> deleteIds) async {
-    bool success = await dependentsService.deleteDependent(context, deleteIds);
+    bool success = await reviewService.deleteReview(context, deleteIds);
 
     if (success) {
       if (context.mounted) {
-        showErrorSnackBar(context, "${deleteIds.length} Dependent(s) was deleted.");
+        showErrorSnackBar(context, "${deleteIds.length} Reviews(s) was deleted.");
       }
       setState(() {
         deleteIds.clear();
@@ -176,61 +148,49 @@ class _PatientsDependentsState extends State<PatientsDependents> {
     }
   }
 
-  Future<void> openAddEditDependentForm(BuildContext context, Dependents dependent) async {
-    if (context.mounted) {
-      final payload = await showModalBottomSheet(
-        useSafeArea: true,
-        showDragHandle: false,
-        isScrollControlled: true,
-        isDismissible: false,
-        enableDrag: false,
-        context: context,
-        builder: (context) => FractionallySizedBox(
-          heightFactor: 1,
-          child: DependentForm(
-            dependent: dependent,
-          ),
-        ),
-      );
-
-      if (payload != null) {
-        if (context.mounted) {
-          bool success = await dependentsService.updateDependent(context, payload);
-
-          if (success) {
-            if (context.mounted) {
-              showErrorSnackBar(context, context.tr('dependentAdded'));
-            }
-          }
-        }
-      }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isProvidersInitialized) {
+      authProvider = Provider.of<AuthProvider>(context, listen: false);
+      reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+      dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
+      _isProvidersInitialized = true;
     }
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    dataGridProvider.setMongoFilterModel({}, notify: false);
+    socket.off('deleteReviewReturn');
+    socket.off('getAuthorReviewsReturn');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<DependentsProvider>(
-      builder: (context, dependentsProvider, _) {
-        final dependents = dependentsProvider.dependents;
-        bool isLoading = dependentsProvider.isLoading;
-        final int totalDepends = dependentsProvider.total;
-        final ThemeData theme = Theme.of(context);
-        final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    return Consumer<ReviewProvider>(
+      builder: (context, reviewProvider, child) {
+        final List<PatientReviews> patientReviews = reviewProvider.patientReviews;
+        bool isLoading = reviewProvider.isLoading;
+        final int totalReviews = reviewProvider.total;
         bool isFilterActive = dataGridProvider.mongoFilterModel.isNotEmpty;
-        List<String> deleteableDependentList =
-            dependents.where((dependent) => dependent.medicalRecordsArray.isEmpty).map((dep) => dep.id.toString()).toList();
+        final ThemeData theme = Theme.of(context);
+        final Color textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+
         final List<FilterableGridColumn> filterableColumns = [
-          FilterableGridColumn(column: GridColumn(columnName: 'isActive', label: Text(context.tr('isActive'))), dataType: 'boolean'),
           FilterableGridColumn(column: GridColumn(columnName: 'id', label: Text(context.tr('id'))), dataType: 'number'),
-          FilterableGridColumn(column: GridColumn(columnName: 'fullName', label: Text(context.tr('name'))), dataType: 'string'),
-          FilterableGridColumn(column: GridColumn(columnName: 'relationShip', label: Text(context.tr('relationShip'))), dataType: 'string'),
-          FilterableGridColumn(column: GridColumn(columnName: 'dob', label: Text(context.tr('dob'))), dataType: 'date'),
-          FilterableGridColumn(column: GridColumn(columnName: 'bloodG', label: Text(context.tr('bloodG'))), dataType: 'string'),
-          FilterableGridColumn(column: GridColumn(columnName: 'updateAt', label: Text(context.tr('updateAt'))), dataType: 'date'),
-          FilterableGridColumn(column: GridColumn(columnName: 'createdAt', label: Text(context.tr('createdAt'))), dataType: 'date'),
+          FilterableGridColumn(column: GridColumn(columnName: 'doctorProfile.fullName', label: Text(context.tr('doctorName'))), dataType: 'string'),
+          FilterableGridColumn(column: GridColumn(columnName: 'recommend', label: Text(context.tr('recommend'))), dataType: 'boolean'),
+          FilterableGridColumn(column: GridColumn(columnName: 'rating', label: Text(context.tr('rating'))), dataType: 'number'),
+          FilterableGridColumn(column: GridColumn(columnName: 'updatedAt', label: Text(context.tr('updateAt'))), dataType: 'date'),
+          FilterableGridColumn(column: GridColumn(columnName: 'title', label: Text(context.tr('title'))), dataType: 'string'),
+          FilterableGridColumn(column: GridColumn(columnName: 'body', label: Text(context.tr('message'))), dataType: 'string'),
         ];
+
         return ScaffoldWrapper(
-          title: context.tr('dependent'),
+          title: context.tr('reviews'),
           children: Stack(
             children: [
               NotificationListener<ScrollNotification>(
@@ -241,7 +201,7 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                   }
                   if (per >= 0) {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
-                      if (mounted) {
+                      if (context.mounted) {
                         setState(() {
                           scrollPercentage = 307 * per;
                         });
@@ -254,56 +214,30 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                   controller: scrollController,
                   child: Column(
                     children: [
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 35,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: GradientButton(
-                            onPressed: () {
-                              String userId = authProvider.patientProfile!.userId;
-                              openAddEditDependentForm(context, Dependents.empty(userId: userId));
-                            },
-                            colors: [
-                              Theme.of(context).primaryColorLight,
-                              Theme.of(context).primaryColor,
-                            ],
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
-                                const SizedBox(width: 5),
-                                Text(
-                                  context.tr("addDependent"),
-                                  style: TextStyle(fontSize: 12, color: textColor),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
                       FadeinWidget(
                         isCenter: true,
                         child: Padding(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8.0),
                           child: Card(
                             elevation: 6,
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Theme.of(context).primaryColorLight),
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              side: BorderSide(color: theme.primaryColorLight),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(15),
+                              ),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Center(
                                 child: Text(
-                                  "totalDependents",
+                                  'totalReviews',
                                   style: TextStyle(
-                                    fontSize: 24,
+                                    fontSize: 24.0,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
+                                    color: theme.primaryColor,
                                   ),
                                 ).plural(
-                                  isFilterActive ? dependents.length : totalDepends,
+                                  totalReviews,
                                   format: NumberFormat.compact(
                                     locale: context.locale.toString(),
                                   ),
@@ -332,7 +266,7 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                                   height: 40,
                                   child: GradientButton(
                                     onPressed: () async {
-                                      getConfirmationForDeleteDependent(context, deleteIds);
+                                      getConfirmationForDeleteReview(context, deleteIds);
                                     },
                                     colors: const [
                                       Colors.pink,
@@ -340,7 +274,7 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                                     ],
                                     child: Center(
                                       child: Text(
-                                        "deleteDependentRequest",
+                                        "deleteReviewRequest",
                                         style: TextStyle(fontSize: 12, color: textColor),
                                       ).plural(
                                         deleteIds.length,
@@ -356,11 +290,11 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                       ),
                       const SizedBox(height: 10),
                       CustomPaginationWidget(
-                        count: isFilterActive ? dependents.length : totalDepends,
+                        count: totalReviews,
                         getDataOnUpdate: getDataOnUpdate,
                       ),
-                      const SizedBox(height: 12),
-                      Row(
+                      const SizedBox(height: 10),
+                     Row(
                         children: [
                           Checkbox(
                             splashRadius: 0,
@@ -374,17 +308,17 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                                 });
                               } else {
                                 setState(() {
-                                  deleteIds = deleteableDependentList;
+                                  deleteIds = patientReviews.map((rev) => rev.id.toString()).toList();
                                 });
                               }
                             },
                           ),
-                          Text('taggleDependentForDelete',
+                          Text('taggleReviewsForDelete',
                               style: TextStyle(
                                 fontSize: 18,
                                 color: theme.primaryColorLight,
                               )).plural(
-                            deleteableDependentList.length,
+                            patientReviews.length,
                             format: NumberFormat.compact(
                               locale: context.locale.toString(),
                             ),
@@ -393,17 +327,19 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                       ),
                       ListView.builder(
                         shrinkWrap: true,
-                        restorationId: 'patientDependents',
-                        key: const ValueKey('patientDependents'),
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: dependents.length,
+                        restorationId: 'doctorsReview',
+                        key: const ValueKey('doctorsReview'),
+                        physics: const NeverScrollableScrollPhysics(), // Disable ListView's own scrolling
+                        itemCount: patientReviews.length,
                         itemBuilder: (context, index) {
-                          final dependent = dependents[index];
-                          return PatientsDependantsShowBox(
-                            dependent: dependent,
-                            getDataOnUpdate: getDataOnUpdate,
-                            getConfirmationForDeleteDependent: getConfirmationForDeleteDependent,
-                            openAddEditDependentForm: openAddEditDependentForm,
+                          final review = patientReviews[index];
+                          return FadeinWidget(
+                            isCenter: true,
+                            child: PatientReviewShowCard(
+                              review: review,
+                              getDataOnUpdate: getDataOnUpdate,
+                              getConfirmationForDeleteReview: getConfirmationForDeleteReview,
+                            ),
                           );
                         },
                       ),
@@ -465,7 +401,7 @@ class _PatientsDependentsState extends State<PatientsDependents> {
                                 shape: BoxShape.circle,
                               ),
                             ),
-                          ),
+                          )
                       ],
                     ),
                   ),

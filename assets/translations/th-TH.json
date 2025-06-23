@@ -485,8 +485,8 @@
   "rating": "คะแนน",
   "iRecommendTheDoctor": "ฉันแนะนำหมอคนนี้.",
   "iNotRecommendTheDoctor": "ไม่แนะนำ",
-  "recommended_filterTrue": "รีวิวที่แนะนำ",
-  "recommended_filterFalse": "รีวิวที่ไม่แนะนำ",
+  "recommend_filterTrue": "รีวิวที่แนะนำ",
+  "recommend_filterFalse": "รีวิวที่ไม่แนะนำ",
   "replyTo": "ตอบกลับ {}",
   "socialMediaSetup": "การตั้งค่าโซเชียลมีเดีย",
   "facebook_url": "URL ของ Facebook",
@@ -596,5 +596,32 @@
     "many": "คุณได้เลือกผู้ติดตาม {} เพื่อลบ.",
     "other": "คุณได้เลือกผู้ติดตาม {} เพื่อลบ."
   },
-  "confirmDeleteDependents": "ลบผู้ติดตามอย่างถาวร."
+  "confirmDeleteDependents": "ลบผู้ติดตามอย่างถาวร.",
+  "replies": "ตอบกลับ: ",
+  "addDependent": "เพิ่มขึ้นอยู่กับ",
+  "taggleDependentForDelete": {
+    "zero": "ไม่ต้องพึ่งพาลบ.",
+    "one": "คุณมี {} ขึ้นอยู่กับการลบ.",
+    "many": "คุณมีผู้ติดตาม {} ที่จะลบ.",
+    "other": "คุณมีผู้ติดตาม {} ที่จะลบ."
+  },
+  "deleteDependentRequest": {
+    "zero": "ไม่ต้องพึ่งพาลบ.",
+    "one": "{} ขึ้นอยู่กับการเลือกที่จะลบ.",
+    "many": "{} ผู้ติดตามเลือกที่จะลบ.",
+    "other": "{} ผู้ติดตามเลือกที่จะลบ."
+  },
+  "taggleReviewsForDelete": {
+    "zero": "ไม่มีรีวิวเพื่อลบ.",
+    "one": "คุณมีรีวิว {} เพื่อลบ.",
+    "many": "คุณมีบทวิจารณ์ {} เพื่อลบ.",
+    "other": "คุณมีบทวิจารณ์ {} เพื่อลบ."
+  },
+  "deleteReviewRequest": {
+    "zero": "ไม่มีรีวิวเพื่อลบ.",
+    "one": "{} รีวิวเลือกที่จะลบ.",
+    "many": "{} บทวิจารณ์ที่เลือกเพื่อลบ.",
+    "other": "{} บทวิจารณ์ที่เลือกเพื่อลบ."
+  },
+  "confirmDeleteReview": "ลบรีวิวอย่างถาวร."
 }

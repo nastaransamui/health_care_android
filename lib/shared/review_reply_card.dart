@@ -132,6 +132,10 @@ class _ReviewReplyCardState extends State<ReviewReplyCard> {
                             ),
                             style: TextStyle(fontSize: 10, color: textColor),
                           ),
+                          Text(
+                            '#${reply.replyId}',
+                            style: TextStyle(fontSize: 10, color: theme.primaryColorLight),
+                          ),
                         ],
                       ),
                     ],

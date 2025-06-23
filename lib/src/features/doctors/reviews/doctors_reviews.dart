@@ -109,7 +109,6 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
           title: context.tr('reviews'),
           children: Stack(
             children: [
-              // Wrap the entire Column with SingleChildScrollView
               NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   double per = 0;
@@ -264,9 +263,7 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
                   ),
                 ),
               ),
-              // The ScrollButton and FloatingActionButton remain outside the SingleChildScrollView
-              // so they are positioned relative to the ScaffoldWrapper's body.
-              ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
+             ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
               Positioned(
                 bottom: 10,
                 left: 10,

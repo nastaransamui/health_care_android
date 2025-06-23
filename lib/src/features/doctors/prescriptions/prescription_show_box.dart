@@ -14,6 +14,7 @@ import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
 import 'package:health_care/src/features/doctors/invoice/doctor_invoice_preview_screen.dart';
 import 'package:health_care/src/features/doctors/prescriptions/build_patient_prescription_pdf.dart';
+import 'package:health_care/src/features/patients/dependents/patients_dependants_show_box.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -317,114 +318,60 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                 ],
               ),
               //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
-              // createdAt and updateAt
+              MyDevider(theme: theme),
+              // createdAt
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
                   children: [
-                    // createdAt
                     Expanded(
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${context.tr("createdAt")}: ',
-                                  style: TextStyle(color: textColor, fontSize: 12),
-                                ),
-                                const SizedBox(width: 5),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(prescription.createdAt, bangkok)),
-                                      style: TextStyle(color: textColor, fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      DateFormat('HH:mm').format(tz.TZDateTime.from(prescription.createdAt, bangkok)),
-                                      style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                            child: SortIconWidget(
-                              columnName: 'createdAt',
-                              getDataOnUpdate: widget.getDataOnUpdate,
+                          Text('${context.tr('createdAt')}: '),
+                          Text(
+                            DateFormat('dd MMM yyyy HH:mm').format(
+                              tz.TZDateTime.from(prescription.createdAt, bangkok),
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    // Update
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${context.tr("updateAt")}: ',
-                                  style: TextStyle(color: textColor, fontSize: 12),
-                                ),
-                                const SizedBox(width: 5),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(prescription.updateAt, bangkok)),
-                                      style: TextStyle(color: textColor, fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      DateFormat('HH:mm').format(tz.TZDateTime.from(prescription.updateAt, bangkok)),
-                                      style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                            child: SortIconWidget(
-                              columnName: 'updateAt',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'createdAt',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
                   ],
                 ),
               ),
               //Divider
+              MyDevider(theme: theme),
+              // updateAt
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text('${context.tr('updateAt')}: '),
+                          Text(
+                            DateFormat('dd MMM yyyy HH:mm').format(
+                              tz.TZDateTime.from(prescription.updateAt, bangkok),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'updateAt',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
                 ),
               ),
-              //View button
-              const SizedBox(height: 10),
+              MyDevider(theme: theme),
               SizedBox(
                 width: MediaQuery.of(context).size.width - 50,
                 child: Row(
@@ -574,7 +521,7 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                   ],
                 ),
               ),
-
+              MyDevider(theme: theme),
               const SizedBox(height: 10),
               InkWell(
                 onTap: () => widget.onToggle(widget.index),

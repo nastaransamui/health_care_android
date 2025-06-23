@@ -55,6 +55,7 @@ import 'package:health_care/src/features/patients/favourites/patients_favourites
 import 'package:health_care/src/features/patients/medicalRecords/patient_medical_records.dart';
 import 'package:health_care/src/features/doctors/prescriptions/patient_prescriptions.dart';
 import 'package:health_care/src/features/doctors/prescriptions/prescription_add_widget.dart';
+import 'package:health_care/src/features/patients/reviews/patient_reviews_widget.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
 
 import 'package:go_router/go_router.dart';
@@ -738,6 +739,8 @@ final router = GoRouter(
         }
       },
     ),
+    // patientDashoboard
+
     GoRoute(
       path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',
@@ -993,18 +996,37 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/patient/dashboard/see-billing/:encodedId',
-      name: 'seeBillingPatient',
+      path: '/patient/dashboard/billings',
+      name: 'patientBillings',
       builder: (context, state) {
-        final encodedId = state.pathParameters['encodedId']!;
-        final billMongoId = utf8.decode(base64.decode(encodedId));
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => BillingProvider(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => WidgetInjectionProvider(),
+            ),
+          ],
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
 
-        return ChangeNotifierProvider(
-          create: (_) => DoctorPatientProfileProvider(),
-          child: BillEditViewWidget(
-            billMongoId: billMongoId,
-            viewType: 'see',
-            userType: 'patient'
+              if (patientProfile != null) {
+                return PatientBillings(patientId: patientProfile.userId);
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
           ),
         );
       },
@@ -1019,8 +1041,72 @@ final router = GoRouter(
         return null;
       },
     ),
-   
-    
+    GoRoute(
+      path: '/patient/dashboard/review',
+      name: 'patientReview',
+      builder: (context, state) {
+        return ChangeNotifierProvider(
+          create: (context) => ReviewProvider(),
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return const PatientReviewsWidget();
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+
+    //Patient otherlinks
+    GoRoute(
+      path: '/patient/dashboard/see-billing/:encodedId',
+      name: 'seeBillingPatient',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billMongoId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: BillEditViewWidget(billMongoId: billMongoId, viewType: 'see', userType: 'patient'),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+
+    //Doctors otherLinks
     GoRoute(
       path: '/doctors/dashboard/add-prescription/:encodedId',
       name: 'addPrescription',
@@ -1089,53 +1175,6 @@ final router = GoRouter(
         }
       },
     ),
-
-    GoRoute(
-      path: '/patient/dashboard/billings',
-      name: 'patientBillings',
-      builder: (context, state) {
-        return MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (context) => BillingProvider(),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => WidgetInjectionProvider(),
-            ),
-          ],
-          child: Builder(
-            // Using Builder to access the newly provided InvoiceProvider within the same build method
-            builder: (innerContext) {
-              // Use innerContext to get the InvoiceProvider from the local scope
-              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
-              final patientProfile = authProvider.patientProfile;
-
-              if (patientProfile != null) {
-                return PatientBillings(patientId: patientProfile.userId);
-              } else {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (innerContext.mounted) {
-                    // Use innerContext here
-                    innerContext.go('/');
-                  }
-                });
-                return const SizedBox.shrink();
-              }
-            },
-          ),
-        );
-      },
-      redirect: (context, state) {
-        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
-        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
-        if (!isLogin) return '/';
-        if (roleName != 'patient') return '/';
-        if (patientProfile == null) return '/';
-
-        return null;
-      },
-    ),
     GoRoute(
       path: '/doctors/dashboard/add-billing/:encodedId',
       name: 'addBill',
@@ -1179,11 +1218,7 @@ final router = GoRouter(
 
         return ChangeNotifierProvider(
           create: (_) => DoctorPatientProfileProvider(),
-          child: BillEditViewWidget(
-            billMongoId: billMongoId,
-            viewType: 'edit',
-            userType: 'doctors'
-          ),
+          child: BillEditViewWidget(billMongoId: billMongoId, viewType: 'edit', userType: 'doctors'),
         );
       },
       redirect: (context, state) {
@@ -1214,11 +1249,7 @@ final router = GoRouter(
 
         return ChangeNotifierProvider(
           create: (_) => DoctorPatientProfileProvider(),
-          child: BillEditViewWidget(
-            billMongoId: billMongoId,
-            viewType: 'see',
-            userType: 'doctors'
-          ),
+          child: BillEditViewWidget(billMongoId: billMongoId, viewType: 'see', userType: 'doctors'),
         );
       },
       redirect: (context, state) {
@@ -1251,6 +1282,8 @@ final router = GoRouter(
       name: 'eyecarehome',
       builder: (context, state) => const EyeCareHome(),
     ),
+
+    //public links
     GoRoute(
       path: '/pharmacy',
       name: 'pharmacy',
@@ -1266,6 +1299,15 @@ final router = GoRouter(
       name: 'contact',
       builder: (context, state) => const NotFound404Error(),
     ),
+    GoRoute(
+      path: '/loading',
+      name: 'loading',
+      builder: (context, state) {
+        return const LoadingScreen();
+      },
+    ),
+
+    //  Authlinks
     GoRoute(
       path: '/login',
       name: 'login',
@@ -1312,44 +1354,6 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/doctors/search',
-      name: 'doctorsSearch',
-      builder: (context, state) {
-        return DoctorSearch(queryParameters: state.uri.queryParameters);
-      },
-    ),
-    GoRoute(
-      path: '/doctors/profile/:encodedId',
-      name: 'doctorsSearchProfile',
-      builder: (context, state) {
-        final encodedId = state.pathParameters['encodedId']!;
-        final doctorId = utf8.decode(base64.decode(encodedId));
-
-        return DoctorsSearchProfile(
-          doctorId: doctorId,
-        );
-      },
-      redirect: (context, state) {
-        final encodedId = state.pathParameters['encodedId'];
-        if (encodedId == null || encodedId.isEmpty) return '/';
-        try {
-          final decoded = utf8.decode(base64.decode(encodedId));
-          if (decoded.isEmpty) return '/';
-          return null;
-        } catch (e) {
-          log('Redirect decode failed: $e');
-          return '/';
-        }
-      },
-    ),
-    GoRoute(
-      path: '/loading',
-      name: 'loading',
-      builder: (context, state) {
-        return const LoadingScreen();
-      },
-    ),
-    GoRoute(
       path: '/reset-password/:token',
       name: 'resetPassword',
       builder: (context, state) {
@@ -1392,7 +1396,40 @@ final router = GoRouter(
           }
         }
       },
-    )
+    ),
+
+    //Doctors search and bookings link
+    GoRoute(
+      path: '/doctors/search',
+      name: 'doctorsSearch',
+      builder: (context, state) {
+        return DoctorSearch(queryParameters: state.uri.queryParameters);
+      },
+    ),
+    GoRoute(
+      path: '/doctors/profile/:encodedId',
+      name: 'doctorsSearchProfile',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final doctorId = utf8.decode(base64.decode(encodedId));
+
+        return DoctorsSearchProfile(
+          doctorId: doctorId,
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          log('Redirect decode failed: $e');
+          return '/';
+        }
+      },
+    ),
   ],
   errorBuilder: (context, state) {
     return const SafeArea(

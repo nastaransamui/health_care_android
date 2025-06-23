@@ -138,7 +138,7 @@ List patientsDashboardLink = [
   },
   {
     'name': 'reviews',
-    'routeName': "/patient/dashboard/reviews",
+    'routeName': "/patient/dashboard/review",
     "icon": const FaIcon(FontAwesomeIcons.comments),
   },
   {

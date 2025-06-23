@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:health_care/models/users.dart';
 
@@ -289,5 +290,153 @@ class ReviewsReplies {
         createdAt.hashCode ^
         updatedAt.hashCode ^
         patientProfile.hashCode;
+  }
+}
+
+class PatientReviews {
+  final String id;
+  final int reviewId;
+  final String doctorId;
+  final String authorId;
+  final String role;
+  final String title;
+  final String body;
+  final double rating;
+  final bool recommend;
+  final List<ReviewsReplies> replies;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DoctorUserProfile doctorProfile;
+
+  PatientReviews({
+    required this.id,
+    required this.reviewId,
+    required this.doctorId,
+    required this.authorId,
+    required this.role,
+    required this.title,
+    required this.body,
+    required this.rating,
+    required this.recommend,
+    required this.replies,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.doctorProfile,
+  });
+
+  PatientReviews copyWith({
+    String? id,
+    int? reviewId,
+    String? doctorId,
+    String? authorId,
+    String? role,
+    String? title,
+    String? body,
+    double? rating,
+    bool? recommend,
+    List<ReviewsReplies>? replies,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DoctorUserProfile? doctorProfile,
+  }) {
+    return PatientReviews(
+      id: id ?? this.id,
+      reviewId: reviewId ?? this.reviewId,
+      doctorId: doctorId ?? this.doctorId,
+      authorId: authorId ?? this.authorId,
+      role: role ?? this.role,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      rating: rating ?? this.rating,
+      recommend: recommend ?? this.recommend,
+      replies: replies ?? this.replies,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      doctorProfile: doctorProfile ?? this.doctorProfile,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'id': id});
+    result.addAll({'reviewId': reviewId});
+    result.addAll({'doctorId': doctorId});
+    result.addAll({'authorId': authorId});
+    result.addAll({'role': role});
+    result.addAll({'title': title});
+    result.addAll({'body': body});
+    result.addAll({'rating': rating});
+    result.addAll({'recommend': recommend});
+    result.addAll({'replies': replies.map((x) => x.toMap()).toList()});
+    result.addAll({'createdAt': createdAt.millisecondsSinceEpoch});
+    result.addAll({'updatedAt': updatedAt.millisecondsSinceEpoch});
+    result.addAll({'doctorProfile': doctorProfile.toMap()});
+
+    return result;
+  }
+
+  factory PatientReviews.fromMap(Map<String, dynamic> map) {
+    return PatientReviews(
+      id: map['_id'] ?? '',
+      reviewId: map['id']?.toInt() ?? 0,
+      doctorId: map['doctorId'] ?? '',
+      authorId: map['authorId'] ?? '',
+      role: map['role'] ?? '',
+      title: map['title'] ?? '',
+      body: map['body'] ?? '',
+      rating: map['rating']?.toDouble() ?? 0.0,
+      recommend: map['recommend'] ?? false,
+      replies: List<ReviewsReplies>.from(map['replies']?.map((x) => ReviewsReplies.fromMap(x))),
+      createdAt: (map['createdAt'] == null || map['createdAt'] == '') ? DateTime.now() : DateTime.parse(map['createdAt']),
+      updatedAt: (map['updatedAt'] == null || map['updatedAt'] == '') ? DateTime.now() : DateTime.parse(map['updatedAt']),
+      doctorProfile: DoctorUserProfile.fromMap(map['doctorProfile']),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory PatientReviews.fromJson(String source) => PatientReviews.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'PatientsReviews(id: $id, reviewId: $reviewId, doctorId: $doctorId, authorId: $authorId, role: $role, title: $title, body: $body, rating: $rating, recommend: $recommend, replies: $replies, createdAt: $createdAt, updatedAt: $updatedAt, doctorProfile: $doctorProfile)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is PatientReviews &&
+        other.id == id &&
+        other.reviewId == reviewId &&
+        other.doctorId == doctorId &&
+        other.authorId == authorId &&
+        other.role == role &&
+        other.title == title &&
+        other.body == body &&
+        other.rating == rating &&
+        other.recommend == recommend &&
+        listEquals(other.replies, replies) &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        other.doctorProfile == doctorProfile;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        reviewId.hashCode ^
+        doctorId.hashCode ^
+        authorId.hashCode ^
+        role.hashCode ^
+        title.hashCode ^
+        body.hashCode ^
+        rating.hashCode ^
+        recommend.hashCode ^
+        replies.hashCode ^
+        createdAt.hashCode ^
+        updatedAt.hashCode ^
+        doctorProfile.hashCode;
   }
 }

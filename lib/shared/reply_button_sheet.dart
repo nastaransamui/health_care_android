@@ -11,9 +11,17 @@ import 'package:provider/provider.dart';
 import 'package:health_care/models/reviews.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
+
 class ReplyButtonSheet extends StatefulWidget {
-  final Reviews review;
-  const ReplyButtonSheet({super.key, required this.review});
+  final Reviews? review;
+  final PatientReviews? patientReviews;
+  final String replyTo;
+  const ReplyButtonSheet({
+    super.key,
+    required this.replyTo,
+    this.review,
+    this.patientReviews,
+  });
 
   @override
   State<ReplyButtonSheet> createState() => _ReplyButtonSheetState();
@@ -43,7 +51,7 @@ class _ReplyButtonSheetState extends State<ReplyButtonSheet> {
       }
       var payload = {
         "authorId": authorId,
-        "parentId": widget.review.id,
+        "parentId": widget.replyTo == 'patient' ? widget.review?.id : widget.patientReviews?.id,
         "role": roleName,
         "title": formData['title'],
         "body": formData['body'],
@@ -55,24 +63,39 @@ class _ReplyButtonSheetState extends State<ReplyButtonSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final Reviews review = widget.review;
+    final Reviews? review = widget.review;
+    final PatientReviews? patientReviews = widget.patientReviews;
+    final String replyTo = widget.replyTo;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    final PatientUserProfile patientUserProfile = review.patientProfile;
-    final String patientProfileImage = patientUserProfile.profileImage;
-    final encodedpatientId = base64.encode(utf8.encode(patientUserProfile.id.toString()));
-    final String patientName = "${patientUserProfile.gender}${patientUserProfile.gender.isNotEmpty ? '. ' : ''}${patientUserProfile.fullName}";
-    final ImageProvider<Object> avatarImage = patientProfileImage.isEmpty
-        ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
-        : CachedNetworkImageProvider(patientProfileImage);
-    final Color statusColor = patientUserProfile.idle ?? false
-        ? const Color(0xFFFFA812)
-        : patientUserProfile.online
-            ? const Color(0xFF44B700)
-            : const Color.fromARGB(255, 250, 18, 2);
+    final PatientUserProfile? patientUserProfile = review?.patientProfile;
+    final DoctorUserProfile? doctorUserProfile = patientReviews?.doctorProfile;
+    final String? profileImage = replyTo == 'patient' ? patientUserProfile?.profileImage : doctorUserProfile?.profileImage;
+    final encodedId = replyTo == 'patient'
+        ? base64.encode(utf8.encode(patientUserProfile!.id.toString()))
+        : base64.encode(utf8.encode(doctorUserProfile!.id.toString()));
+    final String name = replyTo == 'patient'
+        ? "${patientUserProfile!.gender}${patientUserProfile.gender.isNotEmpty ? '. ' : ''}${patientUserProfile.fullName}"
+        : "Dr. ${doctorUserProfile!.fullName}";
+    final ImageProvider<Object> avatarImage = profileImage!.isEmpty
+        ? replyTo == 'patient'
+            ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
+            : const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
+        : CachedNetworkImageProvider(profileImage);
+    final Color statusColor = replyTo == 'patient'
+        ? patientUserProfile!.idle ?? false
+            ? const Color(0xFFFFA812)
+            : patientUserProfile.online
+                ? const Color(0xFF44B700)
+                : const Color.fromARGB(255, 250, 18, 2)
+        : doctorUserProfile!.idle ?? false
+            ? const Color(0xFFFFA812)
+            : doctorUserProfile.online
+                ? const Color(0xFF44B700)
+                : const Color.fromARGB(255, 250, 18, 2);
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.tr("replyTo", args: [patientName])),
+        title: Text(context.tr("replyTo", args: [name])),
         automaticallyImplyLeading: false, // Removes the back button
         actions: [
           IconButton(
@@ -87,70 +110,81 @@ class _ReplyButtonSheetState extends State<ReplyButtonSheet> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedpatientId').toString());
-                        },
-                        child: CircleAvatar(
-                          backgroundImage: avatarImage,
-                        ),
-                      ),
-                      Positioned(
-                        right: 2,
-                        top: 2,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: statusColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.primaryColor, width: 0.5),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (replyTo == 'patient') {
+                              context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString());
+                            } else {
+                              context.push(Uri(path: '/doctors/profile/$encodedId').toString());
+                            }
+                          },
+                          child: CircleAvatar(
+                            backgroundImage: avatarImage,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedpatientId').toString());
-                            },
-                            child: Text(
-                              patientName,
+                        Positioned(
+                          right: 2,
+                          top: 2,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: theme.primaryColor, width: 0.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (replyTo == 'patient') {
+                                  context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString());
+                                } else {
+                                  context.push(Uri(path: '/doctors/profile/$encodedId').toString());
+                                }
+                              },
+                              child: Text(
+                                name,
+                                style: TextStyle(
+                                  color: theme.primaryColorLight,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              '#${replyTo == 'patient' ? review!.reviewId : patientReviews!.reviewId}',
                               style: TextStyle(
-                                color: theme.primaryColorLight,
-                                decoration: TextDecoration.underline,
+                                color: theme.primaryColor,
                               ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '#${review.reviewId}',
-                            style: TextStyle(
-                              color: theme.primaryColor,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ],
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 8),
               Divider(height: 1, color: theme.primaryColor),
@@ -280,8 +314,8 @@ class _ReplyButtonSheetState extends State<ReplyButtonSheet> {
                             onSubmitEditBank();
                           },
                           colors: [
-                            Theme.of(context).primaryColorLight,
-                            Theme.of(context).primaryColor,
+                            theme.primaryColorLight,
+                            theme.primaryColor,
                           ],
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -289,7 +323,7 @@ class _ReplyButtonSheetState extends State<ReplyButtonSheet> {
                               FaIcon(FontAwesomeIcons.reply, size: 13, color: textColor),
                               const SizedBox(width: 5),
                               Text(
-                                context.tr("replyTo", args: [patientName]),
+                                context.tr("replyTo", args: [name]),
                                 style: TextStyle(fontSize: 12, color: textColor),
                               )
                             ],

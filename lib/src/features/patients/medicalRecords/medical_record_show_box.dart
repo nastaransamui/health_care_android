@@ -102,8 +102,40 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
                   bangkok: bangkok,
                   textColor: textColor),
               MyDivider(theme: theme),
-              // createdAt and updateAt
-              CreatedUpdateRow(textColor: textColor, medicalRecord: medicalRecord, bangkok: bangkok, theme: theme, widget: widget),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            '${context.tr('date')}: ',
+                            style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                          ),
+                          Text(
+                            DateFormat('dd MMM yyyy HH:mm').format(
+                              tz.TZDateTime.from(medicalRecord.date, bangkok),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'date',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              // // createdAt
+              CreatedRow(textColor: textColor, medicalRecord: medicalRecord, bangkok: bangkok, theme: theme, widget: widget),
+              //Divider
+              MyDivider(theme: theme),
+              // createdAt
+              UpdateRow(textColor: textColor, medicalRecord: medicalRecord, bangkok: bangkok, theme: theme, widget: widget),
               //Divider
               MyDivider(theme: theme),
               //Description and Symptoms
@@ -209,7 +241,7 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
                   ],
                 ),
               ),
-               //Divider
+              //Divider
               MyDivider(theme: theme),
               // buttons
               ButtonsRow(widget: widget, medicalRecord: medicalRecord, textColor: textColor)
@@ -484,8 +516,8 @@ class DescriptionRow extends StatelessWidget {
   }
 }
 
-class CreatedUpdateRow extends StatelessWidget {
-  const CreatedUpdateRow({
+class CreatedRow extends StatelessWidget {
+  const CreatedRow({
     super.key,
     required this.textColor,
     required this.medicalRecord,
@@ -515,25 +547,21 @@ class CreatedUpdateRow extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${context.tr("createdAt")}: ',
-                        style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Text(
+                              '${context.tr("createdAt")}: ',
+                              style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                            ),
+                            Text(
+                              DateFormat('dd MMM yyyy HH:mm').format(tz.TZDateTime.from(medicalRecord.createdAt, bangkok)),
+                              style: TextStyle(color: textColor, fontSize: 12),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(width: 5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(medicalRecord.createdAt, bangkok)),
-                            style: TextStyle(color: textColor, fontSize: 12),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            DateFormat('HH:mm').format(tz.TZDateTime.from(medicalRecord.createdAt, bangkok)),
-                            style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),
@@ -547,8 +575,35 @@ class CreatedUpdateRow extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
 
-          // Update
+class UpdateRow extends StatelessWidget {
+  const UpdateRow({
+    super.key,
+    required this.textColor,
+    required this.medicalRecord,
+    required this.bangkok,
+    required this.theme,
+    required this.widget,
+  });
+
+  final Color textColor;
+  final MedicalRecords medicalRecord;
+  final tz.Location bangkok;
+  final ThemeData theme;
+  final MedicalRecordShowBox widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          // createdAt
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -557,25 +612,21 @@ class CreatedUpdateRow extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${context.tr("updateAt")}: ',
-                        style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Text(
+                              '${context.tr("updateAt")}: ',
+                              style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                            ),
+                            Text(
+                              DateFormat('dd MMM yyyy HH:mm').format(tz.TZDateTime.from(medicalRecord.updateAt, bangkok)),
+                              style: TextStyle(color: textColor, fontSize: 12),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(width: 5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(medicalRecord.updateAt, bangkok)),
-                            style: TextStyle(color: textColor, fontSize: 12),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            DateFormat('HH:mm').format(tz.TZDateTime.from(medicalRecord.updateAt, bangkok)),
-                            style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),
@@ -713,42 +764,6 @@ class ProfileRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   SortIconWidget(columnName: 'id', getDataOnUpdate: widget.getDataOnUpdate),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // RichText for dueDate
-                        Expanded(
-                          child: RichText(
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                              style: const TextStyle(fontSize: 11),
-                              children: [
-                                TextSpan(
-                                  text: DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(medicalRecord.date, bangkok)),
-                                  style: TextStyle(color: textColor),
-                                ),
-                                const TextSpan(text: ' '),
-                                TextSpan(
-                                  text: DateFormat('HH:mm').format(tz.TZDateTime.from(medicalRecord.date, bangkok)),
-                                  style: TextStyle(color: theme.primaryColorLight),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SortIconWidget(
-                          columnName: 'date',
-                          getDataOnUpdate: widget.getDataOnUpdate,
-                        ),
-                      ],
-                    ),
-                  )
                 ],
               ),
             ],

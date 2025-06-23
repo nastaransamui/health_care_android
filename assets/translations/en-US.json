@@ -485,8 +485,8 @@
   "rating": "Rating",
   "iRecommendTheDoctor": "I Recommend The doctor.",
   "iNotRecommendTheDoctor": "Not Recommend",
-  "recommended_filterTrue": "Recommended Reviews",
-  "recommended_filterFalse": "Not Recommended Reviews",
+  "recommend_filterTrue": "Recommended Reviews",
+  "recommend_filterFalse": "Not Recommended Reviews",
   "replyTo": "Reply to {}",
   "socialMediaSetup": "SocialMedia Setup",
   "facebook_url": "Facebook URL",
@@ -598,5 +598,32 @@
     "many": "You have selected {} dependents to delete.",
     "other": "You have selected {} dependents to delete."
   },
-  "confirmDeleteDependents": "Delete dependents permanently."
+  "confirmDeleteDependents": "Delete dependents permanently.",
+  "replies": "Replies: ",
+  "addDependent": "Add Dependent",
+  "taggleDependentForDelete": {
+    "zero": "No have dependent to delete.",
+    "one": "You have {} dependent to delete.",
+    "many": "You have {} dependents to delete.",
+    "other": "You have {} dependents to delete."
+  },
+  "deleteDependentRequest": {
+    "zero": "No have dependent to delete.",
+    "one": "{} dependent selected to delete.",
+    "many": "{} dependents selected to delete.",
+    "other": "{} dependents selected to delete."
+  },
+  "taggleReviewsForDelete": {
+    "zero": "No have review to delete.",
+    "one": "You have {} review to delete.",
+    "many": "You have {} reviews to delete.",
+    "other": "You have {} reviews to delete."
+  },
+  "deleteReviewRequest": {
+    "zero": "No have review to delete.",
+    "one": "{} review selected to delete.",
+    "many": "{} reviews selected to delete.",
+    "other": "{} reviews selected to delete."
+  },
+  "confirmDeleteReview": "Delete reviews permanently."
 }

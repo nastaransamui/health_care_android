@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:health_care/models/reviews.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -63,8 +65,8 @@ class ReviewService {
 
     socket.emit('updateReply', payload);
     socket.off('updateReplyReturn');
-    socket.on('updateReplyReturn', (data){
-       if (data['status'] != 200) {
+    socket.on('updateReplyReturn', (data) {
+      if (data['status'] != 200) {
         if (context.mounted) {
           showErrorSnackBar(context, data['message'] ?? data['reason']);
         }
@@ -72,4 +74,87 @@ class ReviewService {
       }
     });
   }
+
+  Future<void> getAuthorReviews(BuildContext context) async {
+    DataGridProvider dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
+    ReviewProvider reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    String patientId = authProvider.patientProfile!.userId;
+    reviewProvider.setLoading(true);
+
+    void getAuthorReviewsWidthUpdate() {
+      final paginationModel = dataGridProvider.paginationModel;
+      final sortModel = dataGridProvider.sortModel;
+      final mongoFilterModel = dataGridProvider.mongoFilterModel;
+      socket.emit('getAuthorReviews', {
+        "patientId": patientId,
+        "paginationModel": paginationModel,
+        "sortModel": sortModel,
+        "mongoFilterModel": mongoFilterModel,
+      });
+    }
+
+    socket.off('getAuthorReviewsReturn');
+    socket.on('getAuthorReviewsReturn', (data) {
+      reviewProvider.setLoading(false);
+      if (data['status'] != 200) {
+        if (context.mounted) {
+          showErrorSnackBar(context, data['message'] ?? data['reason']);
+        }
+        return;
+      }
+      if (data['status'] == 200) {
+        final authorReviews = data['authorReviews'];
+        final int totalReviews = data['totalReviews'];
+        if (authorReviews is List && authorReviews.isNotEmpty) {
+          reviewProvider.setPatientReviews([]);
+          final authorReviewList = authorReviews.map((json) => PatientReviews.fromMap(json)).toList();
+          reviewProvider.setPatientReviews(authorReviewList);
+          reviewProvider.setTotal(totalReviews);
+        } else {
+          reviewProvider.setReviews([]);
+          reviewProvider.setTotal(0);
+        }
+      }
+    });
+    socket.off('updateGetAuthorReviews');
+    socket.on('updateGetAuthorReviews', (_) => getAuthorReviewsWidthUpdate());
+
+    getAuthorReviewsWidthUpdate();
+  }
+
+
+    Future<bool> deleteReview(BuildContext context, List<String> deleteIds) async {
+    var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+    if (!isLogin) return false;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    String patientId = authProvider.patientProfile!.userId;
+
+    final completer = Completer<bool>();
+    void deleteReviewWithUpdate() {
+      socket.emit('deleteReview', {"patientId": patientId, "deleteIds": deleteIds});
+    }
+
+    socket.off('deleteReviewReturn');
+    socket.on('deleteReviewReturn', (data) {
+       if (data['status'] != 200) {
+        if (context.mounted) {
+          showErrorSnackBar(context, data['message']);
+        }
+        if (!completer.isCompleted) {
+          completer.complete(false);
+        }
+      } else {
+        if (!completer.isCompleted) {
+          completer.complete(true);
+        }
+      }
+    });
+
+    deleteReviewWithUpdate();
+
+    return completer.future;
+  }
+
 }

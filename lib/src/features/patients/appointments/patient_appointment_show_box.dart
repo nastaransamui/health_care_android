@@ -15,6 +15,8 @@ import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
 import 'package:health_care/src/features/doctors/invoice/doctor_invoice_preview_screen.dart';
 import 'package:health_care/src/features/patients/appointments/patient_appointment_button_sheet.dart';
+import 'package:health_care/src/features/patients/dependents/patients_dependants_show_box.dart';
+import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
 import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -71,11 +73,11 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
     final String doctorName = 'Dr. ${doctorUserProfile.fullName}';
     final String speciality = doctorUserProfile.specialities.first.specialities;
     final String specialityImage = doctorUserProfile.specialities.first.image;
-
+    final bangkok = tz.getLocation('Asia/Bangkok');
     final uri = Uri.parse(specialityImage);
     final imageIsSvg = uri.path.endsWith('.svg');
     final encodedId = base64.encode(utf8.encode(doctorId.toString()));
-   Color statusColor = doctorUserProfile.idle ?? false
+    Color statusColor = doctorUserProfile.idle ?? false
         ? const Color(0xFFFFA812)
         : doctorUserProfile.online
             ? const Color(0xFF44B700)
@@ -98,7 +100,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Stack(
                     children: [
@@ -149,7 +151,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                   const SizedBox(width: 20),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,7 +166,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                                 child: Text(
                                   doctorName,
                                   style: TextStyle(
-                                    color: theme.primaryColorLight,
+                                    color: theme.primaryColor,
                                     decoration: TextDecoration.underline,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -179,6 +181,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                             )
                           ],
                         ),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -195,285 +198,317 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                             )
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  FaIcon(FontAwesomeIcons.clock, size: 13, color: textColor),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    '${dateFormat.format(selectedDate)} $period',
-                                    style: const TextStyle(fontSize: 12),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            SortIconWidget(
-                              columnName: 'selectedDate',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  FaIcon(FontAwesomeIcons.mapMarkedAlt, size: 13, color: textColor),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    '${doctorUserProfile.address1} ${doctorUserProfile.address2}',
-                                    style: const TextStyle(fontSize: 12),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            SortIconWidget(
-                              columnName: 'doctorProfile.address1',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  imageIsSvg
-                                      ? SvgPicture.network(
-                                          specialityImage,
-                                          width: 15,
-                                          height: 15,
-                                          fit: BoxFit.fitHeight,
-                                        )
-                                      : SizedBox(
-                                          width: 15,
-                                          height: 15,
-                                          child: CachedNetworkImage(
-                                            imageUrl: specialityImage,
-                                            fadeInDuration: const Duration(milliseconds: 0),
-                                            fadeOutDuration: const Duration(milliseconds: 0),
-                                            errorWidget: (ccontext, url, error) {
-                                              return Image.asset(
-                                                'assets/images/default-avatar.png',
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    speciality,
-                                    style: const TextStyle(fontSize: 12),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            SortIconWidget(
-                              columnName: 'doctorProfile.specialities.0.specialities',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                reservation.invoiceId,
-                                style: TextStyle(
-                                  color: theme.primaryColor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            SortIconWidget(
-                              columnName: 'invoiceId',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            )
-                          ],
-                        ),
                       ],
                     ),
                   ),
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  //View button
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width - 50,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 35,
-                            child: GradientButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  useSafeArea: true,
-                                  showDragHandle: true,
-                                  isScrollControlled: true,
-                                  isDismissible: true,
-                                  enableDrag: true,
-                                  context: context,
-                                  builder: (context) {
-                                    return DraggableScrollableSheet(
-                                      expand: false,
-                                      initialChildSize: 0.9,
-                                      minChildSize: 0.5,
-                                      maxChildSize: 0.95,
-                                      builder: (context, scrollController) {
-                                        return PatientAppointmentButtonSheet(patientAppointmentReservation: reservation);
-                                      },
-                                    );
+              MyDevider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.clock, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 5),
+                          Text('${context.tr('createdAt')}: '),
+                          Text(
+                            DateFormat('dd MMM yyyy HH:mm').format(
+                              tz.TZDateTime.from(reservation.createdDate, bangkok),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'createdAt',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
+                ),
+              ),
+              MyDevider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.clock, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 5),
+                          Text('${context.tr('selectedDate')}: '),
+                          Text(
+                            '${dateFormat.format(selectedDate)} $period'
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'selectedDate',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
+                ),
+              ),
+              MyDevider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.mapMarkedAlt, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 5),
+                          Text(
+                            '${doctorUserProfile.address1} ${doctorUserProfile.address2}',
+                            style: const TextStyle(fontSize: 12),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'doctorProfile.address1',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
+                ),
+              ),
+              MyDevider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          imageIsSvg
+                              ? SvgPicture.network(
+                                  specialityImage,
+                                  width: 15,
+                                  height: 15,
+                                  fit: BoxFit.fitHeight,
+                                )
+                              : SizedBox(
+                                  width: 15,
+                                  height: 15,
+                                  child: CachedNetworkImage(
+                                    imageUrl: specialityImage,
+                                    fadeInDuration: const Duration(milliseconds: 0),
+                                    fadeOutDuration: const Duration(milliseconds: 0),
+                                    errorWidget: (ccontext, url, error) {
+                                      return Image.asset(
+                                        'assets/images/default-avatar.png',
+                                      );
+                                    },
+                                  ),
+                                ),
+                          const SizedBox(width: 5),
+                          Text(
+                            speciality,
+                            style: const TextStyle(fontSize: 12),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'doctorProfile.specialities.0.specialities',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
+                ),
+              ),
+              MyDevider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.igloo, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 5),
+                          Text(
+                            reservation.invoiceId,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(
+                      columnName: 'invoiceId',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    )
+                  ],
+                ),
+              ),
+              MyDevider(theme: theme),
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 50,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: GradientButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              useSafeArea: true,
+                              showDragHandle: true,
+                              isScrollControlled: true,
+                              isDismissible: true,
+                              enableDrag: true,
+                              context: context,
+                              builder: (context) {
+                                return DraggableScrollableSheet(
+                                  expand: false,
+                                  initialChildSize: 0.9,
+                                  minChildSize: 0.5,
+                                  maxChildSize: 0.95,
+                                  builder: (context, scrollController) {
+                                    return PatientAppointmentButtonSheet(patientAppointmentReservation: reservation);
                                   },
                                 );
                               },
-                              colors: [
-                                Theme.of(context).primaryColorLight,
-                                Theme.of(context).primaryColor,
-                              ],
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    context.tr("view"),
-                                    style: TextStyle(fontSize: 12, color: textColor),
-                                  )
-                                ],
-                              ),
-                            ),
+                            );
+                          },
+                          colors: [
+                            Theme.of(context).primaryColorLight,
+                            Theme.of(context).primaryColor,
+                          ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                context.tr("view"),
+                                style: TextStyle(fontSize: 12, color: textColor),
+                              )
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 5),
-                        Expanded(
-                          child: SizedBox(
-                            height: 35,
-                            child: GradientButton(
-                              onPressed: () {
-                                PatientUserProfile currentPatientUserProfile;
-                                if (roleName == 'patient') {
-                                  currentPatientUserProfile = patientUserProfile!.userProfile;
-                                } else {
-                                  final doctorPatientProfile = widget.doctorPatientProfile;
-                                  currentPatientUserProfile = createPatientProfileFromDoctorPatientProfile(doctorPatientProfile!);
-                                }
-                                showDialog(
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: GradientButton(
+                          onPressed: () {
+                            PatientUserProfile currentPatientUserProfile;
+                            if (roleName == 'patient') {
+                              currentPatientUserProfile = patientUserProfile!.userProfile;
+                            } else {
+                              final doctorPatientProfile = widget.doctorPatientProfile;
+                              currentPatientUserProfile = createPatientProfileFromDoctorPatientProfile(doctorPatientProfile!);
+                            }
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                            Future.delayed(Duration.zero, () async {
+                              if (!context.mounted) return;
+
+                              try {
+                                final pdf = await buildPatientInvoicePdf(context, reservation, currentPatientUserProfile);
+                                final bytes = await pdf.save();
+
+                                if (!context.mounted) return;
+                                Navigator.of(context).pop();
+                                await showModalBottomSheet<Map<String, dynamic>>(
                                   context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => const Center(
-                                    child: CircularProgressIndicator(),
+                                  isScrollControlled: true,
+                                  useSafeArea: true,
+                                  builder: (context) => FractionallySizedBox(
+                                    heightFactor: 1,
+                                    child: DoctorInvoicePreviewScreen(
+                                      pdfBytes: bytes,
+                                      title: Text(context.tr('invoicePreview')),
+                                    ),
                                   ),
                                 );
-                                Future.delayed(Duration.zero, () async {
-                                  if (!context.mounted) return;
-
-                                  try {
-                                    final pdf = await buildPatientInvoicePdf(context, reservation, currentPatientUserProfile);
-                                    final bytes = await pdf.save();
-
-                                    if (!context.mounted) return;
-                                    Navigator.of(context).pop();
-                                    await showModalBottomSheet<Map<String, dynamic>>(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      useSafeArea: true,
-                                      builder: (context) => FractionallySizedBox(
-                                        heightFactor: 1,
-                                        child: DoctorInvoicePreviewScreen(
-                                          pdfBytes: bytes,
-                                          title: Text(context.tr('invoicePreview')),
-                                        ),
-                                      ),
-                                    );
-                                    // });
-                                  } catch (e) {
-                                    debugPrint('PDF Error: $e');
-                                  }
-                                });
-                              },
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).primaryColorLight,
-                              ],
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  FaIcon(FontAwesomeIcons.print, size: 13, color: textColor),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    context.tr("print"),
-                                    style: TextStyle(fontSize: 12, color: textColor),
-                                  )
-                                ],
-                              ),
-                            ),
+                                // });
+                              } catch (e) {
+                                debugPrint('PDF Error: $e');
+                              }
+                            });
+                          },
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColorLight,
+                          ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.print, size: 13, color: textColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                context.tr("print"),
+                                style: TextStyle(fontSize: 12, color: textColor),
+                              )
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  InkWell(
-                    onTap: () => widget.onToggle(widget.index),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("${context.tr('services')} :", style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Icon(
-                          widget.isExpanded ? Icons.expand_less : Icons.expand_more,
-                          color: widget.isExpanded ? theme.primaryColorLight : theme.primaryColor,
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              InkWell(
+                onTap: () => widget.onToggle(widget.index),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("${context.tr('services')} :", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Icon(
+                      widget.isExpanded ? Icons.expand_less : Icons.expand_more,
+                      color: widget.isExpanded ? theme.primaryColorLight : theme.primaryColor,
+                    ),
+                  ],
+                ),
+              ),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: widget.isExpanded
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: doctorUserProfile.specialitiesServices.map((entry) {
+                            return Card(
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: theme.primaryColorLight),
+                                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                child: Text(entry),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      ],
-                    ),
-                  ),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    child: widget.isExpanded
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: doctorUserProfile.specialitiesServices.map((entry) {
-                                return Card(
-                                  elevation: 6,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: theme.primaryColorLight),
-                                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                                    child: Text(entry),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-              )
+                      )
+                    : const SizedBox.shrink(),
+              ),
             ],
           ),
         ),
