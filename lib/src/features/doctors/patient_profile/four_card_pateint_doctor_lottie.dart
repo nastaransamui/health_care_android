@@ -1041,14 +1041,11 @@ class _FourCardPateintDoctorLottieState extends State<FourCardPateintDoctorLotti
             : widget.title == 'drPatientmedicalRecord'
                 ? drPatientmedicalRecordDeligates
                 : doctorPatientProfileBillDeligates;
-    return Expanded(
-      flex: 7,
-      child: Lottie.asset(
-        lottieAsset,
-        animate: true,
-        delegates: wholeDeligate,
-        fit: BoxFit.contain,
-      ),
+    return Lottie.asset(
+      lottieAsset,
+      animate: true,
+      delegates: wholeDeligate,
+      fit: BoxFit.contain,
     );
   }
 }

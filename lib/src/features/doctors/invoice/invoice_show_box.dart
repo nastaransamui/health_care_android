@@ -11,6 +11,7 @@ import 'package:health_care/shared/sort_icon_widget.dart';
 import 'package:health_care/src/features/doctors/invoice/build_doctor_invoice_pdf.dart';
 import 'package:health_care/src/features/doctors/invoice/doctor_invoice_preview_screen.dart';
 import 'package:health_care/src/features/doctors/invoice/invoice_data_sort.dart';
+import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
 import 'package:health_care/src/utils/hex_to_color.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -156,112 +157,94 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
               ],
             ),
             //Divider
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                height: 1,
-                color: theme.primaryColorLight,
-              ),
-            ),
-            // reserveDate and selectedDate
+            MyDivider(theme: theme),
+            // reserveDate
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // reserveDate
                   Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 '${context.tr("reserveDate")}: ',
                                 style: TextStyle(color: textColor, fontSize: 12),
                               ),
+                              Text(
+                                DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(appointment.createdDate, bangkok)),
+                                style: TextStyle(color: textColor, fontSize: 12),
+                              ),
                               const SizedBox(width: 5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(appointment.createdDate, bangkok)),
-                                    style: TextStyle(color: textColor, fontSize: 12),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    DateFormat('HH:mm').format(tz.TZDateTime.from(appointment.createdDate, bangkok)),
-                                    style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                                  ),
-                                ],
-                              )
+                              Text(
+                                DateFormat('HH:mm').format(tz.TZDateTime.from(appointment.createdDate, bangkok)),
+                                style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                              ),
                             ],
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                          child: SortIconWidget(
-                            columnName: 'createdDate',
-                            getDataOnUpdate: widget.getDataOnUpdate,
-                          ),
-                        ),
+                        )
                       ],
                     ),
                   ),
-
-                  // selectedDate
+                  Padding(
+                    padding: const EdgeInsets.only(right: 2.0, left: 12.0),
+                    child: SortIconWidget(
+                      columnName: 'createdDate',
+                      getDataOnUpdate: widget.getDataOnUpdate,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            MyDivider(theme: theme),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 '${context.tr("selectedDate")}: ',
                                 style: TextStyle(color: textColor, fontSize: 12),
                               ),
+                              Text(
+                                DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(appointment.selectedDate, bangkok)),
+                                style: TextStyle(color: textColor, fontSize: 12),
+                              ),
                               const SizedBox(width: 5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(appointment.selectedDate, bangkok)),
-                                    style: TextStyle(color: textColor, fontSize: 12),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    appointment.timeSlot.period,
-                                    style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                                  ),
-                                ],
-                              )
+                              Text(
+                                appointment.timeSlot.period,
+                                style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                              ),
                             ],
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                          child: SortIconWidget(
-                            columnName: 'selectedDate',
-                            getDataOnUpdate: widget.getDataOnUpdate,
-                          ),
-                        ),
+                        )
                       ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 2.0, left: 12.0),
+                    child: SortIconWidget(
+                      columnName: 'selectedDate',
+                      getDataOnUpdate: widget.getDataOnUpdate,
                     ),
                   ),
                 ],
               ),
             ),
+
             //Divider
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                height: 1,
-                color: theme.primaryColorLight,
-              ),
-            ),
+            MyDivider(theme: theme),
             // id and day period
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -693,7 +676,7 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                 ],
               ),
             ),
-            
+
             //Divider
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -741,7 +724,6 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                       debugPrint('PDF Error: $e');
                     }
                   });
-                
                 },
                 colors: [
                   Theme.of(context).primaryColorLight,

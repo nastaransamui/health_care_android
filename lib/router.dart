@@ -29,7 +29,7 @@ import 'package:health_care/src/features/auth/reset_password.dart';
 import 'package:health_care/src/features/auth/signup_screen.dart';
 import 'package:health_care/src/features/auth/verify_email.dart';
 import 'package:health_care/src/features/blog/blog_screen.dart';
-import 'package:health_care/src/features/dashboard/doctor_dashboard.dart';
+import 'package:health_care/src/features/dashboard/doctor/doctor_dashboard.dart';
 import 'package:health_care/src/features/dashboard/patient/patient_dashboard.dart';
 import 'package:health_care/src/features/doctors/account/account.dart';
 import 'package:health_care/src/features/doctors/appointments/appointments.dart';

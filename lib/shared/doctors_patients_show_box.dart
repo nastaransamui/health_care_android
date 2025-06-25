@@ -8,6 +8,7 @@ import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
+import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class DoctorsPatientsShowBox extends StatefulWidget {
@@ -73,278 +74,305 @@ class _DoctorsPatientsShowBoxState extends State<DoctorsPatientsShowBox> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      InkWell(
-                        splashColor: theme.primaryColorLight,
-                        borderRadius: const BorderRadius.all(Radius.circular(15)),
-                        onTap: () {
-                          context.push(
-                            Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString(),
-                          );
-                        },
-                        child: Container(
-                          height: 80,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(color: theme.primaryColorLight),
-                            shape: BoxShape.rectangle,
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            image: DecorationImage(
-                              fit: BoxFit.contain,
-                              image: profileImage.isEmpty
-                                  ? const AssetImage(
-                                      'assets/images/default-avatar.png',
-                                    ) as ImageProvider
-                                  : CachedNetworkImageProvider(
-                                      profileImage,
-                                    ),
+              // Profile row
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        InkWell(
+                          splashColor: theme.primaryColorLight,
+                          borderRadius: const BorderRadius.all(Radius.circular(15)),
+                          onTap: () {
+                            context.push(
+                              Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString(),
+                            );
+                          },
+                          child: Container(
+                            height: 80,
+                            width: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(color: theme.primaryColorLight),
+                              shape: BoxShape.rectangle,
+                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              image: DecorationImage(
+                                fit: BoxFit.contain,
+                                image: profileImage.isEmpty
+                                    ? const AssetImage(
+                                        'assets/images/default-avatar.png',
+                                      ) as ImageProvider
+                                    : CachedNetworkImageProvider(
+                                        profileImage,
+                                      ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        right: 5,
-                        top: 5,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: statusColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.primaryColor, width: 0.5),
+                        Positioned(
+                          right: 5,
+                          top: 5,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: theme.primaryColor, width: 0.5),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  context.push(
-                                    Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString(),
-                                  );
-                                },
-                                child: Text(
-                                  patientName,
-                                  style: TextStyle(
-                                    color: theme.primaryColorLight,
-                                    decoration: TextDecoration.underline,
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                      Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString(),
+                                    );
+                                  },
+                                  child: Text(
+                                    patientName,
+                                    style: TextStyle(
+                                      color: theme.primaryColorLight,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    softWrap: false,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  softWrap: false,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            SortIconWidget(columnName: 'profile.fullName', getDataOnUpdate: widget.getDataOnUpdate)
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(child: Text('#${patientProfile.patientsId}', style: TextStyle(color: theme.primaryColorLight))),
-                            const SizedBox(width: 6),
-                            SortIconWidget(columnName: 'profile.id', getDataOnUpdate: widget.getDataOnUpdate)
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  FaIcon(FontAwesomeIcons.clock, size: 13, color: theme.primaryColorLight),
-                                  const SizedBox(width: 5),
-                                  Text(context.tr('lastLogin'), style: const TextStyle(fontSize: 12)),
-                                  Text(
-                                    dateTimeFormat.format(tz.TZDateTime.from(lastLoginDate, bangkok)),
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
+                              const SizedBox(width: 6),
+                              SortIconWidget(columnName: 'profile.fullName', getDataOnUpdate: widget.getDataOnUpdate)
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(child: Text('#${patientProfile.patientsId}', style: TextStyle(color: theme.primaryColorLight))),
+                              const SizedBox(width: 6),
+                              SortIconWidget(columnName: 'profile.id', getDataOnUpdate: widget.getDataOnUpdate)
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.clock, size: 13, color: theme.primaryColorLight),
+                                    const SizedBox(width: 5),
+                                    Text(context.tr('lastLogin'), style: const TextStyle(fontSize: 12)),
+                                    Text(
+                                      dateTimeFormat.format(tz.TZDateTime.from(lastLoginDate, bangkok)),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            SortIconWidget(columnName: 'status.lastLogin.date', getDataOnUpdate: widget.getDataOnUpdate)
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.cake,
-                          size: 14,
-                          color: theme.primaryColorLight,
-                        ),
-                        const SizedBox(width: 3),
-                        Text('${context.tr('dob')} :'),
-                        Text(
-                          " ${patientProfile.dob is String ? '---- -- --' : DateFormat("dd MMM yyyy").format(patientProfile.dob.toLocal())}",
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          "$years ${context.tr('years')}, $months ${context.tr('month')}, $days ${context.tr('days')}",
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  SortIconWidget(columnName: 'profile.dob', getDataOnUpdate: widget.getDataOnUpdate)
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text(
-                          bloodGValues.firstWhere(
-                                (bg) => bg['title'] == patientProfile.bloodG,
-                                orElse: () => {'icon': '❓'},
-                              )['icon'] ??
-                              '',
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        const SizedBox(width: 5),
-                        Text('${context.tr('bloodG')} : '),
-                        Text(patientProfile.bloodG),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  SortIconWidget(columnName: 'profile.bloodG', getDataOnUpdate: widget.getDataOnUpdate),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
-                        const SizedBox(width: 5),
-                        Text('${context.tr('city')} '),
-                        Text(
-                          patientProfile.city == '' ? '---' : patientProfile.city,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          softWrap: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  SortIconWidget(columnName: 'profile.city', getDataOnUpdate: widget.getDataOnUpdate)
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
-                        const SizedBox(width: 3),
-                        Text('${context.tr('state')} '),
-                        Text(
-                          patientProfile.state == '' ? '---' : patientProfile.state,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          softWrap: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 3),
-                  SortIconWidget(columnName: 'profile.state', getDataOnUpdate: widget.getDataOnUpdate),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
-                        const SizedBox(width: 5),
-                        Text('${context.tr('country')} '),
-                        Text(
-                          patientProfile.country == '' ? '---' : patientProfile.country,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          softWrap: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  SortIconWidget(columnName: 'profile.country', getDataOnUpdate: widget.getDataOnUpdate)
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 35,
-                      child: GradientButton(
-                        onPressed: () {
-                          context.push(
-                            Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString(),
-                          );
-                        },
-                        colors: [
-                          Theme.of(context).primaryColorLight,
-                          Theme.of(context).primaryColor,
+                              const SizedBox(width: 6),
+                              SortIconWidget(columnName: 'status.lastLogin.date', getDataOnUpdate: widget.getDataOnUpdate)
+                            ],
+                          ),
+                          const SizedBox(height: 5),
                         ],
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
-                            const SizedBox(width: 5),
-                            Text(
-                              context.tr("view"),
-                              style: TextStyle(fontSize: 12, color: textColor),
-                            )
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              // dob
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.cake,
+                            size: 14,
+                            color: theme.primaryColorLight,
+                          ),
+                          const SizedBox(width: 3),
+                          Text('${context.tr('dob')} :'),
+                          Text(
+                            " ${patientProfile.dob is String ? '---- -- --' : DateFormat("dd MMM yyyy").format(patientProfile.dob.toLocal())}",
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            "$years ${context.tr('years')}, $months ${context.tr('month')}, $days ${context.tr('days')}",
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(columnName: 'profile.dob', getDataOnUpdate: widget.getDataOnUpdate)
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              // BoolG
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            bloodGValues.firstWhere(
+                                  (bg) => bg['title'] == patientProfile.bloodG,
+                                  orElse: () => {'icon': '❓'},
+                                )['icon'] ??
+                                '',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          const SizedBox(width: 5),
+                          Text('${context.tr('bloodG')} : '),
+                          Text(patientProfile.bloodG),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(columnName: 'profile.bloodG', getDataOnUpdate: widget.getDataOnUpdate),
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              // City
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 5),
+                          Text('${context.tr('city')} '),
+                          Text(
+                            patientProfile.city == '' ? '---' : patientProfile.city,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(columnName: 'profile.city', getDataOnUpdate: widget.getDataOnUpdate)
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              // State
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 3),
+                          Text('${context.tr('state')} '),
+                          Text(
+                            patientProfile.state == '' ? '---' : patientProfile.state,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    SortIconWidget(columnName: 'profile.state', getDataOnUpdate: widget.getDataOnUpdate),
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              // Clountry
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
+                          const SizedBox(width: 5),
+                          Text('${context.tr('country')} '),
+                          Text(
+                            patientProfile.country == '' ? '---' : patientProfile.country,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SortIconWidget(columnName: 'profile.country', getDataOnUpdate: widget.getDataOnUpdate)
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: GradientButton(
+                          onPressed: () {
+                            context.push(
+                              Uri(path: '/doctors/dashboard/patient-profile/$encodedId').toString(),
+                            );
+                          },
+                          colors: [
+                            Theme.of(context).primaryColorLight,
+                            Theme.of(context).primaryColor,
                           ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                context.tr("view"),
+                                style: TextStyle(fontSize: 12, color: textColor),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

@@ -713,5 +713,6 @@
   "add_heartRate": "Add Heart Rate",
   "add_bodyTemp": "Add body temperature",
   "add_weight": "Add Weight",
-  "add_height": "Add Height"
+  "add_height": "Add Height",
+  "doctorIdHeader": "Doctor ID {}"
 }

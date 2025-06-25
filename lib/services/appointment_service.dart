@@ -1,3 +1,4 @@
+
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/providers/appointment_provider.dart';
@@ -71,29 +72,30 @@ class AppointmentService {
     getDocDashWithUpdate();
   }
 
-  Future<void> getDoctorAppointments(BuildContext context, int limit) async {
+  Future<void> getDoctorAppointments(BuildContext context) async {
     var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
     if (!isLogin) return;
+    DataGridProvider dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
     AppointmentProvider appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
     var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     String userId = "";
-    List<String> reservationsIdArray = [];
+
     if (roleName == 'doctors') {
       userId = authProvider.doctorsProfile!.userId;
-      reservationsIdArray = authProvider.doctorsProfile!.userProfile.reservationsId;
     } else if (roleName == 'patient') {
       userId = authProvider.patientProfile!.userId;
-      reservationsIdArray = authProvider.patientProfile!.userProfile.reservationsId;
     }
     appointmentProvider.setLoading(true);
     void getDoctorAppointmentsWithUpdate() {
-      const skip = 0;
+      final paginationModel = dataGridProvider.paginationModel;
+      final sortModel = dataGridProvider.sortModel;
+      final mongoFilterModel = dataGridProvider.mongoFilterModel;
       socket.emit("getDoctorAppointments", {
         "userId": userId,
-        "reservationsIdArray": reservationsIdArray,
-        "limit": limit,
-        "skip": skip,
+        "paginationModel": paginationModel,
+        "sortModel": sortModel,
+        "mongoFilterModel": mongoFilterModel,
       });
     }
 
@@ -109,12 +111,14 @@ class AppointmentService {
       if (data['status'] == 200) {
         appointmentProvider.setLoading(false);
         final appointments = data['myAppointment'];
+        final totalAppointment = data['totalAppointment'];
         if (appointments is List && appointments.isNotEmpty) {
-          try {
-            final reservationList = (appointments).map((json) => AppointmentReservation.fromJson(json)).toList();
-            appointmentProvider.setAppointmentReservations(reservationList);
-            // ignore: empty_catches
-          } catch (e) {}
+          final reservationList = (appointments).map((json) => AppointmentReservation.fromJson(json)).toList();
+          appointmentProvider.setAppointmentReservations(reservationList);
+          appointmentProvider.setTotal(totalAppointment);
+        }else{
+          appointmentProvider.setAppointmentReservations([]);
+          appointmentProvider.setTotal(0);
         }
       }
     });

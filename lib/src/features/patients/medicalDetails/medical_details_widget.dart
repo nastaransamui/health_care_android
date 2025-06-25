@@ -47,115 +47,117 @@ class _MedicalDetailsWidgetState extends State<MedicalDetailsWidget> {
               return false;
             },
             child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FadeinWidget(
-                      isCenter: true,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 6,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: theme.primaryColorLight),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
-                            ),
+              controller: scrollController,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FadeinWidget(
+                    isCenter: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 6,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: theme.primaryColorLight),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                                child: Text(
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Center(
+                            child: Text(
                               context.tr('vitalSigns'),
                               style: TextStyle(
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.bold,
                                 color: theme.primaryColor,
                               ),
-                            )),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    ...vitalBoxList.map(
-                      (i) {
-                        var image = i['image'];
-                        var icon = i['icon'];
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              elevation: 5.0,
-                              clipBehavior: Clip.hardEdge,
-                              margin: const EdgeInsets.all(0),
-                              child: InkWell(
-                                splashColor: Theme.of(context).primaryColor,
-                                onTap: () {
-                                  context.push(
-                                    Uri(
-                                      path: '/patient/dashboard/singleMedicalDetail',
-                                      queryParameters: {'title': i["title"]},
-                                    ).toString(),
-                                  );
-                                },
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 45,
-                                      child: ListTile(
-                                        title: Center(
-                                          child: Text(
-                                            context.tr(i['title']!),
-                                          ),
+                  ),
+                  ...vitalBoxList.map(
+                    (i) {
+                      var image = i['image'];
+                      var icon = i['icon'];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Theme.of(context).primaryColorLight, width: 2.0),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            elevation: 5.0,
+                            clipBehavior: Clip.hardEdge,
+                            margin: const EdgeInsets.all(0),
+                            child: InkWell(
+                              splashColor: Theme.of(context).primaryColor,
+                              onTap: () {
+                                context.push(
+                                  Uri(
+                                    path: '/patient/dashboard/singleMedicalDetail',
+                                    queryParameters: {'title': i["title"]},
+                                  ).toString(),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 45,
+                                    child: ListTile(
+                                      title: Center(
+                                        child: Text(
+                                          context.tr(i['title']!),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 100,
-                                      child: VitalImage(
-                                        image: image,
-                                        icon: icon,
-                                        brightness: brightness,
-                                      ),
+                                  ),
+                                  SizedBox(
+                                    height: 100,
+                                    child: VitalImage(
+                                      image: image,
+                                      icon: icon,
+                                      brightness: brightness,
                                     ),
-                                    SizedBox(
-                                      height: 45,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: 40,
-                                            child: Text(
-                                              "${i['unit']}",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Theme.of(context).primaryColor,
-                                              ),
+                                  ),
+                                  SizedBox(
+                                    height: 45,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          child: Text(
+                                            "${i['unit']}",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: Theme.of(context).primaryColor,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
-                              // Text(
-                              //   context.tr(i),
-                              //   style: const TextStyle(fontSize: 16.0),
-                              // ),
                             ),
+                            // Text(
+                            //   context.tr(i),
+                            //   style: const TextStyle(fontSize: 16.0),
+                            // ),
                           ),
-                        );
-                      },
-                    )
-                  ],
-                )),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+            ),
           ),
           ScrollButton(scrollController: scrollController, scrollPercentage: scrollPercentage),
         ],

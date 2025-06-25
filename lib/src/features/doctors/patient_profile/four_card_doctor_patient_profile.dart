@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/doctor_patient_profile_model.dart';
@@ -38,7 +41,7 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
+    final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
@@ -237,7 +240,33 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                 ),
                 child: Column(
                   children: [
-                    FourCardPateintDoctorLottie(title: title),
+                    FutureBuilder<bool>(
+                      future: isRunningOnEmulator(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const SizedBox(
+                            height: 100,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+
+                        final isEmulator = snapshot.data ?? false;
+
+                        if (!isEmulator) {
+                          return FourCardPateintDoctorLottie(title: title);
+                        } else {
+                          return SizedBox(
+                            height: 100,
+                            width: double.infinity,
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: textColor,
+                            ),
+                          );
+                        }
+                      },
+                    ),
                     const SizedBox(height: 8),
                     Flexible(
                       flex: 3,
@@ -256,4 +285,16 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
       ),
     );
   }
+}
+
+Future<bool> isRunningOnEmulator() async {
+  final deviceInfo = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    final androidInfo = await deviceInfo.androidInfo;
+    return !androidInfo.isPhysicalDevice;
+  } else if (Platform.isIOS) {
+    final iosInfo = await deviceInfo.iosInfo;
+    return !iosInfo.isPhysicalDevice;
+  }
+  return false;
 }

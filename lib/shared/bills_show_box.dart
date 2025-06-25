@@ -14,6 +14,7 @@ import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
 
 import 'package:health_care/src/features/doctors/invoice/doctor_invoice_preview_screen.dart';
+import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
 import 'package:health_care/src/utils/build_bill_pdf.dart';
 import 'package:health_care/src/utils/hex_to_color.dart';
 import 'package:health_care/src/utils/is_due_date_passed.dart';
@@ -233,72 +234,59 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ],
               ),
               //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
-              if(roleName == 'doctors' && !isSameDoctor) ...[
+              MyDivider(theme: theme),
+              if (roleName == 'doctors' && !isSameDoctor) ...[
                 //InvoiceId
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  children: [
-                    //  Invoice
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                style: const TextStyle(fontSize: 12), // Common style
-                                children: [
-                                  TextSpan(
-                                    text: '${context.tr("doctorName")}: ',
-                                    style: TextStyle(color: textColor), // Normal colored text
-                                  ),
-                                  TextSpan(
-                                    text: doctorName,
-                                    style: TextStyle(
-                                      color: theme.primaryColorLight, // Clickable text color
-                                      decoration: TextDecoration.underline, // Optional: shows it's clickable
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Row(
+                    children: [
+                      //  Invoice
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(fontSize: 12), // Common style
+                                  children: [
+                                    TextSpan(
+                                      text: '${context.tr("doctorName")}: ',
+                                      style: TextStyle(color: textColor), // Normal colored text
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (roleName == 'doctors') {
-                                          context.push(
-                                            Uri(path: '/doctors/profile/$encodeddoctorId').toString(),
-                                          );
-                                        } 
-                                      },
-                                  ),
-                                ],
+                                    TextSpan(
+                                      text: doctorName,
+                                      style: TextStyle(
+                                        color: theme.primaryColorLight, // Clickable text color
+                                        decoration: TextDecoration.underline, // Optional: shows it's clickable
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          if (roleName == 'doctors') {
+                                            context.push(
+                                              Uri(path: '/doctors/profile/$encodeddoctorId').toString(),
+                                            );
+                                          }
+                                        },
+                                    ),
+                                  ],
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: SortIconWidget(columnName: 'doctorProfile.fullName', getDataOnUpdate: widget.getDataOnUpdate),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(right: 2.0),
+                              child: SortIconWidget(columnName: 'doctorProfile.fullName', getDataOnUpdate: widget.getDataOnUpdate),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
-              
+                //Divider
+                MyDivider(theme: theme),
               ],
               //InvoiceId
               Padding(
@@ -354,19 +342,12 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ),
               ),
               //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
+              MyDivider(theme: theme),
               //Due date
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
                   children: [
-
                     // Due Date
                     Expanded(
                       child: Row(
@@ -414,15 +395,8 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ),
               ),
               //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
-              
-              
+              MyDivider(theme: theme),
+
               // Price and Fee
               if (roleName == 'doctors') ...[
                 Padding(
@@ -487,13 +461,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                     ],
                   ),
                 ), //Divider
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    height: 1,
-                    color: theme.primaryColorLight,
-                  ),
-                ),
+                MyDivider(theme: theme),
               ],
               // fee price and total
               if (roleName == 'doctors') ...[
@@ -572,13 +540,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                     ],
                   ),
                 ), //Divider
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    height: 1,
-                    color: theme.primaryColorLight,
-                  ),
-                ),
+                MyDivider(theme: theme),
               ],
               // Patient Total single row total
               if (roleName == 'patient') ...[
@@ -622,113 +584,94 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                   ),
                 ),
                 //Divider
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Container(
-                    height: 1,
-                    color: theme.primaryColorLight,
-                  ),
-                ),
+                MyDivider(theme: theme),
               ],
-              // createdAt and updateAt
+              // createdAt
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // createdAt
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   '${context.tr("createdAt")}: ',
                                   style: TextStyle(color: textColor, fontSize: 12),
                                 ),
+                                Text(
+                                  DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(bill.createdAt, bangkok)),
+                                  style: TextStyle(color: textColor, fontSize: 12),
+                                ),
                                 const SizedBox(width: 5),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(bill.createdAt, bangkok)),
-                                      style: TextStyle(color: textColor, fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      DateFormat('HH:mm').format(tz.TZDateTime.from(bill.createdAt, bangkok)),
-                                      style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                                    ),
-                                  ],
-                                )
+                                Text(
+                                  DateFormat('HH:mm').format(tz.TZDateTime.from(bill.createdAt, bangkok)),
+                                  style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                                ),
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                            child: SortIconWidget(
-                              columnName: 'createdAt',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            ),
-                          ),
+                          )
                         ],
                       ),
                     ),
-
-                    // Update
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2.0, left: 12.0),
+                      child: SortIconWidget(
+                        columnName: 'createdAt',
+                        getDataOnUpdate: widget.getDataOnUpdate,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
+Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   '${context.tr("updateAt")}: ',
                                   style: TextStyle(color: textColor, fontSize: 12),
                                 ),
+                                Text(
+                                  DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(bill.updateAt, bangkok)),
+                                  style: TextStyle(color: textColor, fontSize: 12),
+                                ),
                                 const SizedBox(width: 5),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      DateFormat('dd MMM yyyy').format(tz.TZDateTime.from(bill.updateAt, bangkok)),
-                                      style: TextStyle(color: textColor, fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      DateFormat('HH:mm').format(tz.TZDateTime.from(bill.updateAt, bangkok)),
-                                      style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
-                                    ),
-                                  ],
-                                )
+                                Text(
+                                  DateFormat('HH:mm').format(tz.TZDateTime.from(bill.updateAt, bangkok)),
+                                  style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                                ),
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                            child: SortIconWidget(
-                              columnName: 'updateAt',
-                              getDataOnUpdate: widget.getDataOnUpdate,
-                            ),
-                          ),
+                          )
                         ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2.0, left: 12.0),
+                      child: SortIconWidget(
+                        columnName: 'updateAt',
+                        getDataOnUpdate: widget.getDataOnUpdate,
                       ),
                     ),
                   ],
                 ),
               ),
               //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
+              MyDivider(theme: theme),
               //Items and status
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -831,13 +774,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                 ),
               ),
               //Divider
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 1,
-                  color: theme.primaryColorLight,
-                ),
-              ),
+              MyDivider(theme: theme),
               //View button
               const SizedBox(height: 10),
               SizedBox(
