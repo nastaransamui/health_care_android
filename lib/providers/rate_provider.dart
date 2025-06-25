@@ -1,35 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:health_care/models/vital_signs.dart';
 
-class VitalProvider extends ChangeNotifier {
-  VitalSigns? _vitalSigns;
+class RateProvider extends ChangeNotifier {
+  List<double> _ratesArray = [];
   bool _isLoading = true;
   int _total = 0;
-  List<VitalSignValues> _vitalSignValues = [];
-
-  VitalSigns? get vitalSign => _vitalSigns;
+  List<double> get ratesArray => _ratesArray;
   bool get isLoading => _isLoading;
   int get total => _total;
-  List<VitalSignValues> get vitalSignValues => _vitalSignValues;
-
-  void setVitalSigns(List<dynamic> data) {
-    if (data.isNotEmpty) {
-      final signsFromAdmin = VitalSigns.fromMap(data[0]);
-      _vitalSigns = signsFromAdmin;
-    } else {
-      _vitalSigns = null;
-    }
-
-    notifyListeners();
-  }
-
-  void setVitalSignValues(List<VitalSignValues> vitalSignValues, {bool notify = true}) {
+  void setRateArray(List<double> ratesArray, {bool notify = true}) {
     if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         WidgetsBinding.instance.addPostFrameCallback((__) {
-          _vitalSignValues = vitalSignValues;
+          _ratesArray = ratesArray;
           if (notify) notifyListeners();
         });
         if (notify) notifyListeners();
@@ -38,7 +21,7 @@ class VitalProvider extends ChangeNotifier {
       _isLoading = false;
       if (notify) notifyListeners();
 
-      _vitalSignValues = vitalSignValues;
+      _ratesArray = ratesArray;
       if (notify) notifyListeners();
     }
   }

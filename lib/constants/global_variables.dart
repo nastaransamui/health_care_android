@@ -151,11 +151,11 @@ List patientsDashboardLink = [
     'routeName': "/patient/dashboard/message",
     "icon": const FaIcon(FontAwesomeIcons.comments),
   },
-  {
-    'name': 'orders',
-    'routeName': "/patient/dashboard/orders",
-    "icon": const FaIcon(FontAwesomeIcons.listAlt),
-  },
+  // {
+  //   'name': 'orders',
+  //   'routeName': "/patient/dashboard/orders",
+  //   "icon": const FaIcon(FontAwesomeIcons.listAlt),
+  // },
   {
     'name': 'medicalrecords',
     'routeName': "/patient/dashboard/medicalrecords",

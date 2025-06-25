@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
@@ -34,37 +35,47 @@ final EasyLogger logger = EasyLogger(
   enableBuildModes: [BuildMode.debug, BuildMode.profile, BuildMode.release],
   enableLevels: [LevelMessages.debug, LevelMessages.info, LevelMessages.error, LevelMessages.warning],
 );
-
-
+final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 Future<void> requestNotificationPermission() async {
-  final status = await Permission.notification.request();
-  if (status.isDenied || status.isPermanentlyDenied) {
-    log('Notification permission denied');
+  if (Platform.isAndroid || Platform.isIOS) {
+    final status = await Permission.notification.request();
+    if (status.isDenied || status.isPermanentlyDenied) {
+      log('Notification permission denied');
+    }
+  } else {
+    log('Notification permission not required or not supported on this platform');
   }
 }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await requestNotificationPermission();
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  // Initialize notification settings
+  const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const iosInit = DarwinInitializationSettings();
+  final linuxInit = LinuxInitializationSettings(
+    defaultActionName: 'Open',
+    defaultIcon: AssetsLinuxIcon('icons/app_icon.png'), // Relative to linux/my_application/data/
+  );
 
-  const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
+  final initSettings = InitializationSettings(
+    android: androidInit,
+    iOS: iosInit,
+    linux: linuxInit,
   );
 
   await flutterLocalNotificationsPlugin.initialize(
-  initializationSettings,
-  onDidReceiveNotificationResponse: (NotificationResponse response) async {
-    final payload = response.payload;
-
-    if (payload == 'open_play_store') {
-      const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.healthCareApp';
-      final uri = Uri.parse(playStoreUrl);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+    initSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) async {
+      final payload = response.payload;
+      if (payload == 'open_play_store') {
+        const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.healthCareApp';
+        final uri = Uri.parse(playStoreUrl);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
       }
-    }
-  },
-);
+    },
+  );
   final updated = await isAppUpdated();
   if (updated) {
     await showUpdateNotification();
@@ -103,36 +114,16 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => ClinicsProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SpecialitiesProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => DoctorsProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ThemeProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserDataProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => DeviceProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AuthProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => VitalProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserFromTokenProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => DataGridProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => ClinicsProvider()),
+        ChangeNotifierProvider(create: (_) => SpecialitiesProvider()),
+        ChangeNotifierProvider(create: (_) => DoctorsProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => UserDataProvider()),
+        ChangeNotifierProvider(create: (_) => DeviceProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => VitalProvider()),
+        ChangeNotifierProvider(create: (_) => UserFromTokenProvider()),
+        ChangeNotifierProvider(create: (_) => DataGridProvider()),
       ],
       child: EasyLocalization(
         supportedLocales: const [

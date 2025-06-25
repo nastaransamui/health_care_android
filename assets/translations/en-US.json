@@ -625,5 +625,93 @@
     "many": "{} reviews selected to delete.",
     "other": "{} reviews selected to delete."
   },
-  "confirmDeleteReview": "Delete reviews permanently."
+  "confirmDeleteReview": "Delete reviews permanently.",
+  "totalRates": {
+    "zero": "No any rate found.",
+    "one": "You have {} rate",
+    "many": "You have {} rates",
+    "other": "You have {} rates"
+  },
+  "total_heartRate": {
+    "zero": "No any record for heart Rate found.",
+    "one": "You have {} record for heart Rate",
+    "many": "You have {} records for heart Rate",
+    "other": "You have {} records for heart Rate"
+  },
+  "total_bodyTemp": {
+    "zero": "No any record for Body temperature found.",
+    "one": "You have {} record for Body temperature",
+    "many": "You have {} records for Body temperature",
+    "other": "You have {} records for Body temperature"
+  },
+  "total_weight": {
+    "zero": "No any record for Weight found.",
+    "one": "You have {} record for Weight",
+    "many": "You have {} records for Weight",
+    "other": "You have {} records for Weight"
+  },
+  "total_height": {
+    "zero": "No any record for Height found.",
+    "one": "You have {} record for Height",
+    "many": "You have {} records for Height",
+    "other": "You have {} records for Height"
+  },
+  "taggleMedicalRecordForDelete_heartRate": {
+    "zero": "No have heart rate record to delete.",
+    "one": "{} heart rate record can delete.",
+    "many": "{} heart rate records can delete.",
+    "other": "{} heart rate records can delete."
+  },
+  "taggleMedicalRecordForDelete_bodyTemp": {
+    "zero": "No have body temperature record to delete.",
+    "one": "{} body temperature record can delete.",
+    "many": "{} body temperature records can delete.",
+    "other": "{} body temperature records can delete."
+  },
+  "taggleMedicalRecordForDelete_weight": {
+    "zero": "No have weight record to delete.",
+    "one": "{} weight record can delete.",
+    "many": "{} weight records can delete.",
+    "other": "{} weight records can delete."
+  },
+  "taggleMedicalRecordForDelete_height": {
+    "zero": "No have height record to delete.",
+    "one": "{} height record can delete.",
+    "many": "{} height records can delete.",
+    "other": "{} height records can delete."
+  },
+  "deleteMedicalRecordsRequest_heartRate": {
+    "zero": "No have heart rate to delete.",
+    "one": "{} heart rate selected to delete.",
+    "many": "{} heart rates selected to delete.",
+    "other": "{} heart rates selected to delete."
+  },
+  "deleteMedicalRecordsRequest_bodyTemp": {
+    "zero": "No have body temperature to delete.",
+    "one": "{} body temperature selected to delete.",
+    "many": "{} body temperatures selected to delete.",
+    "other": "{} body temperatures selected to delete."
+  },
+  "deleteMedicalRecordsRequest_weight": {
+    "zero": "No have weight to delete.",
+    "one": "{} weight selected to delete.",
+    "many": "{} weights selected to delete.",
+    "other": "{} weights selected to delete."
+  },
+  "deleteMedicalRecordsRequest_height": {
+    "zero": "No have height to delete.",
+    "one": "{} height selected to delete.",
+    "many": "{} heights selected to delete.",
+    "other": "{} heights selected to delete."
+  },
+  "confirmDeleteMedicalRecords": "Delete Medical records permanently.",
+  "addMedicalDetail_heartRate": "Add heart rate record",
+  "addMedicalDetail_bodyTemp": "Add body temperature record",
+  "addMedicalDetail_weight": "Add weight record",
+  "addMedicalDetail_height": "Add height record",
+  "deleteMedicalRecord": "Delete Medical Record",
+  "add_heartRate": "Add Heart Rate",
+  "add_bodyTemp": "Add body temperature",
+  "add_weight": "Add Weight",
+  "add_height": "Add Height"
 }
