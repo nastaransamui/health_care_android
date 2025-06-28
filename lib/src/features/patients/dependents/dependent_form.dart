@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -285,7 +285,6 @@ class _DependentFormState extends State<DependentForm> {
                                   if (formType != 'create') "createdAt": dependent.createdAt.toIso8601String(),
                                   "profileImageFiles": profileImageFiles,
                                 };
-                                log('$payload');
                                 if (context.mounted) {
                                   Navigator.pop(context, payload);
                                 }

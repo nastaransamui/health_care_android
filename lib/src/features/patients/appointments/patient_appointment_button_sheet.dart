@@ -6,7 +6,6 @@ import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/patient_appointment_reservation.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/shared/status_badge_avatar.dart';
-import 'package:health_care/src/utils/hex_to_color.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class PatientAppointmentButtonSheet extends StatefulWidget {
@@ -29,7 +28,6 @@ class _PatientAppointmentButtonSheetState extends State<PatientAppointmentButton
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final dateFormat = DateFormat('dd MMM yyyy');
     final PatientAppointmentReservation reservation = widget.patientAppointmentReservation;
     final DoctorUserProfile doctorUserProfile = reservation.doctorProfile;
@@ -222,41 +220,7 @@ class _PatientAppointmentButtonSheetState extends State<PatientAppointmentButton
               margin: const EdgeInsetsGeometry.directional(start: 16, end: 16),
               color: theme.primaryColorLight,
             ),
-            Padding(
-              padding: const EdgeInsetsGeometry.symmetric(vertical: 16, horizontal: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(context.tr('status'), style: TextStyle(color: theme.primaryColor, fontSize: 18)),
-                      Chip(
-                        label: Text(
-                          reservation.doctorPaymentStatus,
-                          style: TextStyle(color: textColor),
-                        ),
-                        backgroundColor: reservation.doctorPaymentStatus == "Paid"
-                            ? Colors.green
-                            : reservation.doctorPaymentStatus == "Awaiting Request"
-                                ? hexToColor('#f44336')
-                                : theme.primaryColor, // Chip background
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Rounded corners
-                          side: BorderSide.none, // optional: border color/width
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 20),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 1,
-              margin: const EdgeInsetsGeometry.directional(start: 16, end: 16),
-              color: theme.primaryColorLight,
-            ),
+            
             Padding(
               padding: const EdgeInsetsGeometry.symmetric(vertical: 16, horizontal: 40),
               child: Row(

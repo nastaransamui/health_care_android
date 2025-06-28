@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -69,9 +67,8 @@ class InvoicesService {
 
             invoiceProvider.setAppointmentReservations(reservationList);
             invoiceProvider.setTotal(totalCount);
-          } catch (e) {
-            log('Error parsing reservation: $e');
-          }
+          // ignore: empty_catches
+          } catch (e) {}
         } else {
           invoiceProvider.setAppointmentReservations([]);
           invoiceProvider.setTotal(0);

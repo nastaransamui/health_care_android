@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -83,13 +82,11 @@ class _SocialMediaWidgetState extends State<SocialMediaWidget> {
     socket.emit('socialMediaUpdate', payload);
     socket.once('socialMediaUpdateReturn', (msg) {
       if (!context.mounted) {
-        log('Context not mounted after socket response. Cannot pop loading screen.');
         return;
       }
       // Navigator.pop(context);
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (!context.mounted) {
-          log('Context not mounted in post-frame callback. Cannot show status modal.');
           return;
         }
 

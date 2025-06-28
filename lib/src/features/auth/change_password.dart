@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -91,13 +90,11 @@ class _ChangePasswordState extends State<ChangePassword> {
       socket.emit('passwordUpdate', payload);
       socket.once('passwordUpdateReturn', (msg) {
         if (!context.mounted) {
-          log('Context not mounted after socket response. Cannot pop loading screen.');
           return;
         }
         // Navigator.pop(context);
         SchedulerBinding.instance.addPostFrameCallback((_) {
           if (!context.mounted) {
-            log('Context not mounted in post-frame callback. Cannot show status modal.');
             return;
           }
 
@@ -125,7 +122,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
 
     return ScaffoldWrapper(
-      title: context.tr('changePasswrod'),
+      title: context.tr('changePassword'),
       children: SingleChildScrollView(
         controller: scrollController,
         child: FadeinWidget(

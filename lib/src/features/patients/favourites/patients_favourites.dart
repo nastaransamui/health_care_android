@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,6 @@ class _PatientsFavouritesState extends State<PatientsFavourites> {
   Future<void> getDataOnUpdate() async {
     final patientProfile = authProvider.patientProfile;
     final favIds = patientProfile?.userProfile.favsId;
-    log('message: $favIds');
     await favouriteService.getFavDoctorsForPatientProfile(context, favIds!);
   }
 

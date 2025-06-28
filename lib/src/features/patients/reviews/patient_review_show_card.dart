@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -513,13 +514,16 @@ class ProfileRow extends StatelessWidget {
             Positioned(
               right: 2,
               top: 2,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: theme.primaryColor, width: 0.5),
+              child: AvatarGlow(
+                 glowColor: statusColor,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: theme.primaryColor, width: 0.5),
+                  ),
                 ),
               ),
             ),

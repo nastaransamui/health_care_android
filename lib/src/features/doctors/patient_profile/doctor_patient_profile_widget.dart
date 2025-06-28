@@ -10,7 +10,7 @@ import 'package:health_care/services/doctor_pateint_profile_service.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:health_care/src/features/doctors/patient_profile/dcoctor_pateint_profile_header.dart';
+import 'package:health_care/src/features/doctors/patient_profile/doctor_pateint_profile_header.dart';
 import 'package:health_care/src/features/doctors/patient_profile/four_card_doctor_patient_profile.dart';
 import 'package:health_care/src/features/doctors/patient_profile/last_two_appointment_patient_profile.dart';
 import 'package:health_care/stream_socket.dart';
@@ -116,7 +116,7 @@ class _DoctorPatientProfileWidgetState extends State<DoctorPatientProfileWidget>
                     children: [
                       FadeinWidget(
                         isCenter: true,
-                        child: DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                        child: DoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
                       ),
                       FadeinWidget(
                         isCenter: true,

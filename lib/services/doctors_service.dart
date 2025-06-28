@@ -1,15 +1,12 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:health_care/models/doctors.dart';
 import 'package:health_care/providers/doctors_provider.dart';
+import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
-import 'package:session_storage/session_storage.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorsService {
-  Future<void> getDoctorsData(
-      BuildContext context, Map<String, dynamic> queryParameters) async {
+  Future<void> getDoctorsData(BuildContext context, Map<String, dynamic> queryParameters) async {
     var doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
     void doctorWithUpdate() {
       socket.emit('doctorSearch', queryParameters);
@@ -21,31 +18,46 @@ class DoctorsService {
     }
 
     doctorWithUpdate();
-
-    // socket.on('updateDoctorSearch', (data) {
-    //   doctorWithUpdate();
-    // });
   }
 
-  Future<void> searchDoctorsData(
-      BuildContext context, Map<String, dynamic> queryParameters) async {
-    var doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
-    final session = SessionStorage();
-    void searchWithUpdate() {
-      socket.emit('doctorSearch',
-          {...queryParameters, "limit": int.parse(session['limit']!)});
-      socket.on('doctorSearchReturn', (data) {
-        if (data['status'] == 200) {
-          doctorsProvider.setDoctorsSearch(data['doctors'], data['total'] ?? 0);
-        }
-      });
+  Future<void> doctorSearch(BuildContext context, Map<String, dynamic> payload, VoidCallback onDone) async {
+    DoctorsProvider doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
+
+    void doctorSearchWithUpdate(payload) {
+      socket.emit('doctorSearch', payload);
     }
 
-    searchWithUpdate();
+    socket.off('doctorSearchReturn');
+    socket.on('doctorSearchReturn', (data) {
+      if (data['status'] != 200) {
+        if (context.mounted) {
+          showErrorSnackBar(context, data['message']);
+        }
+        return;
+      }
+      final doctors = data['doctors'];
+      final total = data['total'];
 
-    socket.on('updateDoctorSearch', (data) {
-      searchWithUpdate();
+      if (doctors is List) {
+        final doctorsList = doctors.map((json) => Doctors.fromJson(json)).toList();
+        doctorsProvider.setDoctorsSearch(doctorsList);
+        if(total != null) {
+          doctorsProvider.setTotal(total);
+        }else{
+          doctorsProvider.setTotal(0);
+          onDone();
+        }
+        // onDone();
+      } else {
+        doctorsProvider.setDoctorsSearch([]);
+        doctorsProvider.setTotal(0);
+        onDone();
+      }
     });
+
+    socket.off('updateDoctorSearch');
+    socket.on('updateDoctorSearch', (_) => doctorSearchWithUpdate(payload));
+    doctorSearchWithUpdate(payload);
   }
 
   Future<void> findUserById(BuildContext context, String id) async {
@@ -53,7 +65,7 @@ class DoctorsService {
     void findUserWithUpdate() {
       socket.emit('findUserById', {"_id": id});
       socket.on('findUserByIdReturn', (data) {
-        if(data['status'] == 200){
+        if (data['status'] == 200) {
           doctorsProvider.setSingleDoctor(data['user']);
         }
       });

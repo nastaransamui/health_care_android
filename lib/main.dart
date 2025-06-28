@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -40,10 +40,10 @@ Future<void> requestNotificationPermission() async {
   if (Platform.isAndroid || Platform.isIOS) {
     final status = await Permission.notification.request();
     if (status.isDenied || status.isPermanentlyDenied) {
-      log('Notification permission denied');
+      
     }
   } else {
-    log('Notification permission not required or not supported on this platform');
+   
   }
 }
 

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/constants/navigator_key.dart';
@@ -738,7 +736,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },
@@ -858,6 +855,32 @@ final router = GoRouter(
                 return const SizedBox.shrink();
               }
             },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/patient/dashboard/see-prescription/:encodedId',
+      name: 'patientSeePrescription',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final prescriptionMongoId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (_) => DoctorPatientProfileProvider(),
+          child: PrescriptionEditViewWidget(
+            prescriptionMongoId: prescriptionMongoId,
+            viewType: 'view',
           ),
         );
       },
@@ -1288,7 +1311,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },
@@ -1322,7 +1344,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },
@@ -1356,7 +1377,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },
@@ -1387,7 +1407,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },
@@ -1418,7 +1437,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },
@@ -1577,7 +1595,6 @@ final router = GoRouter(
           if (decoded.isEmpty) return '/';
           return null;
         } catch (e) {
-          log('Redirect decode failed: $e');
           return '/';
         }
       },

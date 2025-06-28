@@ -1,4 +1,5 @@
 
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -23,8 +24,6 @@ class StatusBadgeAvatar extends StatefulWidget {
 }
 
 class _StatusBadgeAvatarState extends State<StatusBadgeAvatar> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
 
   Color get statusColor {
     if (widget.idle) return const Color(0xFFFFA812); // amber
@@ -35,21 +34,8 @@ class _StatusBadgeAvatarState extends State<StatusBadgeAvatar> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-    _animation = Tween<double>(begin: 0.8, end: 1.4).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,36 +70,22 @@ class _StatusBadgeAvatarState extends State<StatusBadgeAvatar> with SingleTicker
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Ripple animation
-                  AnimatedBuilder(
-                    animation: _animation,
-                    builder: (_, __) {
-                      final double opacity = (1 - _animation.value).clamp(0.0, 1.0);
-                      final int alpha = (opacity * 255).round();
-                      return Container(
-                        width: 14 * _animation.value,
-                        height: 14 * _animation.value,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: statusColor, width: 1),
-                          color: statusColor.withAlpha(alpha),
-                        ),
-                      );
-                    },
-                  ),
                   // Actual dot
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                  AvatarGlow(
+                    glowColor: statusColor,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: statusColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

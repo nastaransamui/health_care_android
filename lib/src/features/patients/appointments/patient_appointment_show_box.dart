@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -135,14 +136,17 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                       ),
                       Positioned(
                         right: 5,
-                        top: 5,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: statusColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.primaryColor, width: 0.5),
+                        bottom: 10,
+                        child: AvatarGlow(
+                          glowColor: statusColor,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: theme.primaryColor, width: 0.5),
+                            ),
                           ),
                         ),
                       ),
@@ -241,9 +245,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                           FaIcon(FontAwesomeIcons.clock, size: 13, color: theme.primaryColorLight),
                           const SizedBox(width: 5),
                           Text('${context.tr('selectedDate')}: '),
-                          Text(
-                            '${dateFormat.format(selectedDate)} $period'
-                          ),
+                          Text('${dateFormat.format(selectedDate)} $period'),
                         ],
                       ),
                     ),
@@ -337,7 +339,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                     Expanded(
                       child: Row(
                         children: [
-                          FaIcon(FontAwesomeIcons.igloo, size: 13, color: theme.primaryColorLight),
+                          FaIcon(FontAwesomeIcons.invision, size: 13, color: theme.primaryColorLight),
                           const SizedBox(width: 5),
                           Text(
                             reservation.invoiceId,

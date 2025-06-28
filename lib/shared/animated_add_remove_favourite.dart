@@ -1,15 +1,19 @@
+
 import 'package:flutter/material.dart';
 
 class AnimatedAddRemoveFavourite extends StatefulWidget {
   final bool isHeart;
   final double size;
   final Color color;
-
+  final bool isLogin;
+  final bool isFave;
   const AnimatedAddRemoveFavourite({
     super.key,
     required this.isHeart,
     this.size = 32.0,
     this.color = Colors.red,
+    this.isLogin = true,
+    this.isFave = true,
   });
 
   @override
@@ -74,7 +78,15 @@ class _AnimatedAddRemoveFavouriteState extends State<AnimatedAddRemoveFavourite>
           ? ScaleTransition(
               key: const ValueKey('heart'),
               scale: _heartController,
-              child: Icon(Icons.favorite, color: widget.color, size: widget.size),
+              child: Icon(
+                widget.isLogin
+                    ? widget.isFave
+                        ? Icons.favorite
+                        : Icons.favorite_border
+                    : Icons.favorite_outline,
+                color: widget.color,
+                size: widget.size,
+              ),
             )
           : RotationTransition(
               key: const ValueKey('sync'),

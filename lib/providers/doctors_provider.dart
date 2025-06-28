@@ -1,18 +1,18 @@
 
-
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:health_care/models/doctors.dart';
 import 'package:health_care/models/users.dart';
 
 class DoctorsProvider extends ChangeNotifier {
   final List<Doctors> _doctors = [];
-  final List<Doctors> _searchDoctors = [];
-  int? _totalDoctors;
+  List<Doctors> _searchDoctors = [];
+  int _total = 0;
   DoctorUserProfile? _doctor;
 
   List<Doctors> get doctors => _doctors;
   List<Doctors> get searchDoctors => _searchDoctors;
-  int? get totalDoctors => _totalDoctors;
+  int get total => _total;
   DoctorUserProfile? get singleDoctor => _doctor;
 
   void setDoctors(List<dynamic> doctors) {
@@ -24,18 +24,33 @@ class DoctorsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setDoctorsSearch(List<dynamic> doctors, int totalDoctors) {
-    _searchDoctors.clear();
-    for (var element in doctors) {
-      final doctorsFromAdmin = Doctors.fromJson(element);
-      _searchDoctors.add(doctorsFromAdmin);
+  void setDoctorsSearch(List<Doctors> searchDoctors, {bool notify = true}) {
+    if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((__) {
+          _searchDoctors = searchDoctors;
+          if (notify) notifyListeners();
+        });
+        if (notify) notifyListeners();
+      });
+    } else {
+      if (notify) notifyListeners();
+
+      _searchDoctors = searchDoctors;
+      if (notify) notifyListeners();
     }
-    _totalDoctors = totalDoctors;
-    notifyListeners();
+  }
+
+
+  void setTotal(int value, {bool notify = true}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _total = value;
+      if (notify) notifyListeners();
+    });
   }
 
   void setSingleDoctor(Map<String, dynamic> doctor) {
-     final doctorFromAdmin = DoctorUserProfile.fromMap(doctor);
+    final doctorFromAdmin = DoctorUserProfile.fromMap(doctor);
     _doctor = doctorFromAdmin;
     notifyListeners();
   }

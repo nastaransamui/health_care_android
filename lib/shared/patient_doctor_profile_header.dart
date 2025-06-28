@@ -1,3 +1,4 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -211,13 +212,16 @@ class _PatientDoctorProfileHeaderState extends State<PatientDoctorProfileHeader>
                 Positioned(
                   top: 10,
                   right: MediaQuery.of(context).size.width / 2 - 75 + 20, // Aligns near top-right of avatar
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: theme.primaryColor, width: 0.5),
+                  child: AvatarGlow(
+                    glowColor: statusColor,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: statusColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: theme.primaryColor, width: 0.5),
+                      ),
                     ),
                   ),
                 ),

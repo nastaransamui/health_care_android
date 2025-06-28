@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ import 'package:health_care/services/prescription_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:health_care/src/features/doctors/patient_profile/dcoctor_pateint_profile_header.dart';
+import 'package:health_care/src/features/doctors/patient_profile/doctor_pateint_profile_header.dart';
 import 'package:health_care/src/features/doctors/prescriptions/prescription_add_widget.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
@@ -171,7 +172,7 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
                   controller: scrollController,
                   child: Column(
                     children: [
-                      DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                      DoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
                       Card(
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -291,14 +292,17 @@ class OriginalDoctorPrescription extends StatelessWidget {
                       ),
                       Positioned(
                         right: 5,
-                        top: 5,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: statusColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: theme.primaryColor, width: 0.5),
+                        bottom: 10,
+                        child: AvatarGlow(
+                          glowColor: statusColor,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: theme.primaryColor, width: 0.5),
+                            ),
                           ),
                         ),
                       ),

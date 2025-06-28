@@ -1,18 +1,19 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/doctor_patient_profile_model.dart';
 
-class DcoctorPateintProfileHeader extends StatefulWidget {
+class DoctorPateintProfileHeader extends StatefulWidget {
   final DoctorPatientProfileModel doctorPatientProfile;
-  const DcoctorPateintProfileHeader({super.key, required this.doctorPatientProfile});
+  const DoctorPateintProfileHeader({super.key, required this.doctorPatientProfile});
 
   @override
-  State<DcoctorPateintProfileHeader> createState() => _DcoctorPateintProfileHeaderState();
+  State<DoctorPateintProfileHeader> createState() => _DoctorPateintProfileHeaderState();
 }
 
-class _DcoctorPateintProfileHeaderState extends State<DcoctorPateintProfileHeader> {
+class _DoctorPateintProfileHeaderState extends State<DoctorPateintProfileHeader> {
   @override
   Widget build(BuildContext context) {
     final doctorPatientProfile = widget.doctorPatientProfile;
@@ -188,13 +189,16 @@ class _DcoctorPateintProfileHeaderState extends State<DcoctorPateintProfileHeade
                 Positioned(
                   top: 10,
                   right: MediaQuery.of(context).size.width / 2 - 75 + 20, // Aligns near top-right of avatar
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: theme.primaryColor, width: 0.5),
+                  child: AvatarGlow(
+                    glowColor: statusColor,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: statusColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: theme.primaryColor, width: 0.5),
+                      ),
                     ),
                   ),
                 ),

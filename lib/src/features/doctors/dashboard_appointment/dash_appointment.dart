@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
 import 'package:health_care/src/utils/hex_to_color.dart';
+import 'package:health_care/stream_socket.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import 'package:health_care/services/appointment_service.dart';
@@ -66,6 +68,8 @@ class _DashboardAppointmentsState extends State<DashboardAppointments> {
   @override
   void dispose() {
     super.dispose();
+    socket.off('getDocDashAppointmentsReturn');
+    socket.off('updateGetDocDashAppointments');
     _dataGridProvider.setSortModel([
       {"field": "id", "sort": 'asc'}
     ], notify: false);
@@ -326,14 +330,17 @@ class _DashboardAppointmentShowBoxState extends State<DashboardAppointmentShowBo
                     ),
                     Positioned(
                       right: 5,
-                      top: 5,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: statusColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: theme.primaryColor, width: 0.5),
+                      bottom: 10,
+                      child: AvatarGlow(
+                        glowColor: statusColor,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: statusColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: theme.primaryColor, width: 0.5),
+                          ),
                         ),
                       ),
                     ),
@@ -377,21 +384,21 @@ class _DashboardAppointmentShowBoxState extends State<DashboardAppointmentShowBo
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           RichText(
-                                textAlign: TextAlign.start,
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '$formattedTotal ',
-                                      style: TextStyle(color: textColor),
-                                    ),
-                                    TextSpan(
-                                      text: appointment.timeSlot.currencySymbol,
-                                      style: TextStyle(color: theme.primaryColorLight),
-                                    ),
-                                  ],
+                            textAlign: TextAlign.start,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '$formattedTotal ',
+                                  style: TextStyle(color: textColor),
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                                TextSpan(
+                                  text: appointment.timeSlot.currencySymbol,
+                                  style: TextStyle(color: theme.primaryColorLight),
+                                ),
+                              ],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           const SizedBox(width: 6),
                           SortIconWidget(columnName: 'timeSlot.total', getDataOnUpdate: widget.getDataOnUpdate),
                         ],

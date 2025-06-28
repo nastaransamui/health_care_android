@@ -17,7 +17,7 @@ import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:health_care/src/features/doctors/patient_profile/dcoctor_pateint_profile_header.dart';
+import 'package:health_care/src/features/doctors/patient_profile/doctor_pateint_profile_header.dart';
 import 'package:provider/provider.dart';
 
 class PrescriptionAddWidget extends StatefulWidget {
@@ -135,7 +135,7 @@ class _PrescriptionAddWidgetState extends State<PrescriptionAddWidget> {
                 controller: scrollController,
                 child: Column(
                   children: [
-                    DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                    DoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
                     Card(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(

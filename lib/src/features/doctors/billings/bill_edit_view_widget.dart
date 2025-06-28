@@ -14,7 +14,7 @@ import 'package:health_care/shared/patient_doctor_profile_header.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/src/features/doctors/billings/bill_details_form.dart';
-import 'package:health_care/src/features/doctors/patient_profile/dcoctor_pateint_profile_header.dart';
+import 'package:health_care/src/features/doctors/patient_profile/doctor_pateint_profile_header.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
@@ -144,7 +144,7 @@ class _BillEditViewWidgetState extends State<BillEditViewWidget> {
                   child: Column(
                     children: [
                       if (widget.userType == 'doctors') ...[
-                        DcoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                        DoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
                       ] else
                         ...[
                           PatientDoctorProfileHeader(doctorUserProfile: singleBill!.doctorProfile),

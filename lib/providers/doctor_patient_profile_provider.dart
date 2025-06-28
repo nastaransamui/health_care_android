@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -14,11 +13,9 @@ class DoctorPatientProfileProvider extends ChangeNotifier {
     if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         WidgetsBinding.instance.addPostFrameCallback((__) {
-          log('message');
           _patientProfile = DoctorPatientProfileModel.fromMap(rawDoctorPatientProfile);
           if (notify) notifyListeners();
         });
-          log('message');
           _patientProfile = DoctorPatientProfileModel.fromMap(rawDoctorPatientProfile);
         if (notify) notifyListeners();
       });

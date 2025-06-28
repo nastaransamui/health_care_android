@@ -10,7 +10,7 @@ import 'package:health_care/providers/medical_records_provider.dart';
 import 'package:health_care/providers/patient_appointment_provider.dart';
 import 'package:health_care/providers/prescription_provider.dart';
 import 'package:health_care/providers/widget_injection_provider.dart';
-import 'package:health_care/src/features/doctors/patient_profile/dcoctor_pateint_profile_header.dart';
+import 'package:health_care/src/features/doctors/patient_profile/doctor_pateint_profile_header.dart';
 import 'package:health_care/src/features/doctors/patient_profile/four_card_pateint_doctor_lottie.dart';
 import 'package:health_care/src/features/patients/appointments/patient_appointments.dart';
 import 'package:health_care/src/features/patients/billings/patient_billings.dart';
@@ -91,7 +91,7 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                                 context.read<WidgetInjectionProvider>().inject(
                                   Consumer<DoctorPatientProfileProvider>(
                                     builder: (context, provider, _) {
-                                      return DcoctorPateintProfileHeader(
+                                      return DoctorPateintProfileHeader(
                                         doctorPatientProfile: provider.patientProfile,
                                       );
                                     },
@@ -130,7 +130,7 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                                       context.read<WidgetInjectionProvider>().inject(
                                         Consumer<DoctorPatientProfileProvider>(
                                           builder: (context, provider, _) {
-                                            return DcoctorPateintProfileHeader(
+                                            return DoctorPateintProfileHeader(
                                               doctorPatientProfile: provider.patientProfile,
                                             );
                                           },
@@ -168,7 +168,7 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                                           context.read<WidgetInjectionProvider>().inject(
                                             Consumer<DoctorPatientProfileProvider>(
                                               builder: (context, provider, _) {
-                                                return DcoctorPateintProfileHeader(
+                                                return DoctorPateintProfileHeader(
                                                   doctorPatientProfile: provider.patientProfile,
                                                 );
                                               },
@@ -205,7 +205,7 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                                         context.read<WidgetInjectionProvider>().inject(
                                           Consumer<DoctorPatientProfileProvider>(
                                             builder: (context, provider, _) {
-                                              return DcoctorPateintProfileHeader(
+                                              return DoctorPateintProfileHeader(
                                                 doctorPatientProfile: provider.patientProfile,
                                               );
                                             },
@@ -238,45 +238,51 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                   side: BorderSide(color: Theme.of(context).primaryColorLight),
                   borderRadius: const BorderRadius.all(Radius.circular(15)),
                 ),
-                child: Column(
-                  children: [
-                    FutureBuilder<bool>(
-                      future: isRunningOnEmulator(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const SizedBox(
-                            height: 100,
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FutureBuilder<bool>(
+                        future: isRunningOnEmulator(),
+                        builder: (context, snapshot) {
+                          final isEmulator = snapshot.data ?? false;
 
-                        final isEmulator = snapshot.data ?? false;
-
-                        if (!isEmulator) {
-                          return FourCardPateintDoctorLottie(title: title);
-                        } else {
+                          // if (!isEmulator) {
+                          //   return FourCardPateintDoctorLottie(title: title);
+                          // } else {
+                          //   return SizedBox(
+                          //     height: 90,
+                          //     width: double.infinity,
+                          //     child: Icon(
+                          //       Icons.image_not_supported,
+                          //       size: 40,
+                          //       color: textColor,
+                          //     ),
+                          //   );
+                          // }
                           return SizedBox(
-                            height: 100,
-                            width: double.infinity,
-                            child: Icon(
-                              Icons.image_not_supported,
-                              size: 40,
-                              color: textColor,
-                            ),
+                            height:80,
+                            child: isEmulator
+                                ? Center(
+                                    child: Icon(
+                                      Icons.image_not_supported,
+                                      size: 40,
+                                      color: textColor,
+                                    ),
+                                  )
+                                : FourCardPateintDoctorLottie(title: title),
                           );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    Flexible(
-                      flex: 3,
-                      child: Text(
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
                         context.tr(title, args: ['$length']),
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 16),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );

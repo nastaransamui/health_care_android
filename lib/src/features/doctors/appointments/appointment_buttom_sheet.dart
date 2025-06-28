@@ -235,7 +235,7 @@ class _AppointmentButtomSheetState extends State<AppointmentButtomSheet> {
                             ? Colors.green
                             : reservation.doctorPaymentStatus == "Awaiting Request"
                                 ? hexToColor('#f44336')
-                                : theme.primaryColor, // Chip background
+                                : hexToColor('#ffa500'), // Chip background
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20), // Rounded corners
                           side: BorderSide.none, // optional: border color/width

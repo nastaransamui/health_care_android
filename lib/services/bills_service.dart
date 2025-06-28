@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/bills.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -63,12 +61,7 @@ class BillsService {
           billingProvider.setDoctorsBills(billingList);
 
           // ignore: empty_catches
-        } catch (e) {
-          log('$e');
-          // showErrorSnackBar(context, '$e');
-          // billingProvider.setDoctorsBills([]);
-          // billingProvider.setTotal(0);
-        }
+        } catch (e) { }
         final int finalTotal = totalBilling;
         billingProvider.setTotal(finalTotal);
       } else {
@@ -119,12 +112,7 @@ class BillsService {
           billingProvider.setDoctorsBills(billingList);
 
           // ignore: empty_catches
-        } catch (e) {
-          log('$e');
-          // showErrorSnackBar(context, '$e');
-          // billingProvider.setDoctorsBills([]);
-          // billingProvider.setTotal(0);
-        }
+        } catch (e) {}
         final int finalTotal = totalBilling;
         billingProvider.setTotal(finalTotal);
       } else {
