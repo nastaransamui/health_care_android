@@ -1,11 +1,11 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/models/doctors.dart';
-import 'package:health_care/src/features/doctors/search/slideableWidgets/get_recommendation_percentage.dart';
 
-class VoteWidget extends StatelessWidget {
-  const VoteWidget({
+class AverageHourWidget extends StatelessWidget {
+  const AverageHourWidget({
     super.key,
     required this.singleDoctor,
   });
@@ -14,6 +14,11 @@ class VoteWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final timeslots = singleDoctor.timeslots;
+    final averageHourlyPrice = (timeslots != null && timeslots.isNotEmpty) ? timeslots.first.averageHourlyPrice : null;
+
+    final String averageHour = (averageHourlyPrice != null) ? NumberFormat("#,##0", "en_US").format(averageHourlyPrice) : '--';
+    final String currency = (singleDoctor.currency.isNotEmpty) ? singleDoctor.currency[0].currency : '';
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: SizedBox.expand(
@@ -26,11 +31,9 @@ class VoteWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-                FaIcon(FontAwesomeIcons.thumbsUp, size: 12,color: Theme.of(context).primaryColor),
-              Text(getRecommendationPercentage(singleDoctor)),
-              Text(
-                "(${singleDoctor.recommendArray.length} ${context.tr('votes')})",
-              )
+              FaIcon(FontAwesomeIcons.moneyBill, size: 12, color: Theme.of(context).primaryColor),
+              Text(context.tr('averagePrice')),
+              Text('$averageHour $currency'),
             ],
           ),
         ),

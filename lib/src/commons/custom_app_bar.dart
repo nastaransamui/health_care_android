@@ -33,7 +33,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               Transform.translate(
-                offset: const Offset(-12.0, 0), // Move the back button 4 pixels to the left
+                offset:  Offset(!canPop ? 2.0 :-12.0, 0), 
                 child: IconButton(
                   icon: const Icon(Icons.menu),
                   onPressed: () => Scaffold.of(context).openDrawer(),

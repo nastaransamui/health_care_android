@@ -6,12 +6,15 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_lightbox/flutter_lightbox.dart';
+import 'package:flutter_lightbox/image_type.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:health_care/models/doctors.dart';
+import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
 import 'package:health_care/shared/star_review_widget.dart';
 import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
@@ -68,6 +71,40 @@ class DoctorCard extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 35,
+                        child: GradientButton(
+                          onPressed: () {
+                            context.push(Uri(path: '/doctors/profile/$encodedId').toString());
+                          },
+                          colors: [
+                            Theme.of(context).primaryColorLight,
+                            Theme.of(context).primaryColor,
+                          ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                context.tr("view"),
+                                style: TextStyle(fontSize: 12, color: textColor),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              MyDivider(theme: theme),
               // Profile Row
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +113,6 @@ class DoctorCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      
                       Stack(
                         children: [
                           InkWell(
@@ -236,19 +272,33 @@ class DoctorCard extends StatelessWidget {
                           Row(
                             children: [
                               ...singleDoctor.clinicImages.map((i) {
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: Theme.of(context).primaryColorLight, width: 0.5),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  elevation: 5.0,
-                                  clipBehavior: Clip.hardEdge,
-                                  child: Image.network(
-                                    semanticLabel: i.tags[0].title,
-                                    fit: BoxFit.cover,
-                                    i.src,
-                                    width: 30,
-                                    height: 30,
+                                return InkWell(
+                                  onTap: () {
+                                    showGeneralDialog(
+                                      context: context,
+                                      pageBuilder: (BuildContext context, Animation animation, Animation secondaryAnimation) {
+                                        return LightBox(
+                                          initialIndex: index,
+                                          images: singleDoctor.clinicImages.map((e) => e.src).toList(),
+                                          imageType: ImageType.network,
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Theme.of(context).primaryColorLight, width: 0.5),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    elevation: 5.0,
+                                    clipBehavior: Clip.hardEdge,
+                                    child: Image.network(
+                                      semanticLabel: i.tags[0].title,
+                                      fit: BoxFit.cover,
+                                      i.src,
+                                      width: 30,
+                                      height: 30,
+                                    ),
                                   ),
                                 );
                               }),

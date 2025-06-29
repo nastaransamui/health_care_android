@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:health_care/models/doctors.dart';
+import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/doctors_provider.dart';
 import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/stream_socket.dart';
@@ -41,9 +43,9 @@ class DoctorsService {
       if (doctors is List) {
         final doctorsList = doctors.map((json) => Doctors.fromJson(json)).toList();
         doctorsProvider.setDoctorsSearch(doctorsList);
-        if(total != null) {
+        if (total != null) {
           doctorsProvider.setTotal(total);
-        }else{
+        } else {
           doctorsProvider.setTotal(0);
           onDone();
         }
@@ -60,18 +62,26 @@ class DoctorsService {
     doctorSearchWithUpdate(payload);
   }
 
-  Future<void> findUserById(BuildContext context, String id) async {
+  Future<void> findUserById(BuildContext context, String id, VoidCallback onDone) async {
     var doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
-    void findUserWithUpdate() {
+    void findUserByIdWithUpdate() {
       socket.emit('findUserById', {"_id": id});
-      socket.on('findUserByIdReturn', (data) {
-        if (data['status'] == 200) {
-          doctorsProvider.setSingleDoctor(data['user']);
-        }
-      });
     }
 
-    findUserWithUpdate();
-    socket.on('updateFindUserById', (data) => findUserWithUpdate());
+    socket.off('findUserByIdReturn');
+    socket.on('findUserByIdReturn', (data) {
+      if (data['status'] != 200) {
+        if (context.mounted) {
+          showErrorSnackBar(context, data['message']);
+        }
+        return;
+      }
+      final singleDoctor = DoctorUserProfile.fromMap(data['user']);
+      doctorsProvider.setSingleDoctor(singleDoctor);
+      onDone();
+    });
+    socket.off('updateFindUserById');
+    socket.on('updateFindUserById', (data) => findUserByIdWithUpdate());
+    findUserByIdWithUpdate();
   }
 }

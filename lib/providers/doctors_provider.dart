@@ -49,9 +49,9 @@ class DoctorsProvider extends ChangeNotifier {
     });
   }
 
-  void setSingleDoctor(Map<String, dynamic> doctor) {
-    final doctorFromAdmin = DoctorUserProfile.fromMap(doctor);
-    _doctor = doctorFromAdmin;
+  void setSingleDoctor(DoctorUserProfile singleDoctor) {
+   
+    _doctor = singleDoctor;
     notifyListeners();
   }
 }

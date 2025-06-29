@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable_panel/controllers/slide_controller.dart';
 import 'package:flutter_slidable_panel/delegates/action_layout_delegate.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_slidable_panel/widgets/slidable_panel.dart';
 
 import 'package:health_care/models/doctors.dart';
 import 'package:health_care/src/features/doctors/search/doctor_card.dart';
+import 'package:health_care/src/features/doctors/search/slideableWidgets/average_hour_widget.dart';
 
 import 'package:health_care/src/features/doctors/search/slideableWidgets/booking_widget.dart';
 import 'package:health_care/src/features/doctors/search/slideableWidgets/check_availability_widget.dart';
@@ -62,13 +64,17 @@ class _DoctorSlideableWidgetState extends State<DoctorSlideableWidget> {
         ),
       ],
       postActions: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            VoteWidget(singleDoctor: singleDoctor),
-            BookingWidget(singleDoctor: singleDoctor),
-            CheckAvailabilityWidget(singleDoctor: singleDoctor)
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: VoteWidget(singleDoctor: singleDoctor)),
+              Expanded(child: AverageHourWidget(singleDoctor: singleDoctor)),
+              BookingWidget(singleDoctor: singleDoctor),
+              CheckAvailabilityWidget(singleDoctor: singleDoctor)
+            ],
+          ),
         )
       ],
       child: GestureDetector(

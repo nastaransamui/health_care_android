@@ -180,10 +180,6 @@ class Doctors {
       reservationsId: List<String>.from(json['reservations_id']),
       roleName: json['roleName'] ?? "",
       services: json['services'] ?? "",
-      // roleName: DoctorRoleName.values.firstWhere(
-      //     (e) => e.toString() == 'DoctorRoleName.${json['roleName']}'),
-      // services: Services.values
-      //     .firstWhere((e) => e.toString() == 'Services.${json['services']}'),
       socialMedia: (json['socialMedia'] as List)
           .map((e) => SocialMedia.fromJson(e))
           .toList(),

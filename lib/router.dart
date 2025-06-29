@@ -109,26 +109,6 @@ final router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/patient/dashboard',
-      name: 'patientDashboard',
-      builder: (context, state) => const PatientDashboard(),
-      redirect: (context, state) {
-        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
-        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
-        if (isLogin) {
-          if (roleName == 'doctors') {
-            return '/doctors/dashboard';
-          } else if (roleName == 'patient') {
-            return '/patient/dashboard';
-          } else {
-            return null;
-          }
-        } else {
-          return null;
-        }
-      },
-    ),
     //Doctors Dashboard
     GoRoute(
       path: '/doctors/dashboard',
@@ -743,6 +723,26 @@ final router = GoRouter(
     // patientDashoboard
 
     GoRoute(
+      path: '/patient/dashboard',
+      name: 'patientDashboard',
+      builder: (context, state) => const PatientDashboard(),
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        if (isLogin) {
+          if (roleName == 'doctors') {
+            return '/doctors/dashboard';
+          } else if (roleName == 'patient') {
+            return '/patient/dashboard';
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+    ),
+    GoRoute(
       path: '/patient/dashboard/profile',
       name: 'patientsDashboardProfile',
       builder: (context, state) {
@@ -1205,7 +1205,7 @@ final router = GoRouter(
             final patientProfile = authProvider.patientProfile;
             final title = state.uri.queryParameters['title']!;
             if (patientProfile != null) {
-              return  SingleMedicalDetailWidget(title: title);
+              return SingleMedicalDetailWidget(title: title);
             } else {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (innerContext.mounted) {
@@ -1255,7 +1255,7 @@ final router = GoRouter(
         return null;
       },
     ),
-   
+
     //Patient otherlinks
     GoRoute(
       path: '/patient/dashboard/see-billing/:encodedId',

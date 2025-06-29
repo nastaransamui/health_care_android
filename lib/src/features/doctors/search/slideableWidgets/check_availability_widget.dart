@@ -83,9 +83,12 @@ class _CheckAvailabilityWidgetState extends State<CheckAvailabilityWidget> {
               : () {
                   checkAvailability(context, widget.singleDoctor);
                 },
-          child: Text(
-            context.tr('checkAvailability'),
-            style: const TextStyle(color: Colors.black),
+          child: Center(
+            child: Text(
+              context.tr('checkAvailability'),
+              style: const TextStyle(color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),

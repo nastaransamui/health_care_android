@@ -33,7 +33,7 @@ class KeyWordWidget extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: TextField(
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();

@@ -714,5 +714,8 @@
   "add_bodyTemp": "Add body temperature",
   "add_weight": "Add Weight",
   "add_height": "Add Height",
-  "doctorIdHeader": "Doctor ID {}"
+  "doctorIdHeader": "Doctor ID {}",
+  "averagePrice": "Averrage price per hour: ",
+  "checkAvailability": "Check Availability",
+  "votes": "Votes"
 }

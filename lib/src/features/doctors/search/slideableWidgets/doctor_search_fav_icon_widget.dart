@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable_panel/controllers/slide_controller.dart';
@@ -26,7 +27,7 @@ class _DoctorSearchFavIconWidgetState extends State<DoctorSearchFavIconWidget> {
   final FavouriteService favouriteService = FavouriteService();
   bool _isProvidersInitialized = false;
   bool isHeart = true;
-
+  late String roleName = "";
   bool isFave = false;
   String patientId = '';
 
@@ -37,7 +38,7 @@ class _DoctorSearchFavIconWidgetState extends State<DoctorSearchFavIconWidget> {
       authProvider = Provider.of<AuthProvider>(context, listen: false);
       _isProvidersInitialized = true;
     }
-    final roleName = authProvider.roleName;
+    roleName = authProvider.roleName;
     final userId = roleName == 'patient' ? authProvider.patientProfile?.userId : authProvider.doctorsProfile?.userId;
 
     final newPatientId = userId ?? '';
@@ -96,7 +97,7 @@ class _DoctorSearchFavIconWidgetState extends State<DoctorSearchFavIconWidget> {
   Widget build(BuildContext context) {
     final bool isLogin = authProvider.isLogin;
     return IconButton(
-      onPressed: () {
+      onPressed:isLogin && roleName == 'doctors' ?  null : () {
         if (!isLogin) {
           favLoginError(context);
         } else {
@@ -124,7 +125,7 @@ class _DoctorSearchFavIconWidgetState extends State<DoctorSearchFavIconWidget> {
           AnimatedAddRemoveFavourite(
             isHeart: isHeart,
             size: 20,
-            color: Colors.pink,
+            color: isLogin && roleName == 'doctors' ? Theme.of(context).disabledColor : Colors.pink,
             isLogin: isLogin,
             isFave: isFave,
           ),

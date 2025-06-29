@@ -711,5 +711,9 @@
   "add_heartRate": "เพิ่มอัตราการเต้นของหัวใจ",
   "add_bodyTemp": "เพิ่มอุณหภูมิร่างกาย",
   "add_weight": "เพิ่มน้ำหนัก",
-  "add_height": "เพิ่มส่วนสูง"
+  "add_height": "เพิ่มส่วนสูง",
+  "doctorIdHeader": "รหัสแพทย์ {}",
+  "averagePrice": "ราคาเฉลี่ยต่อชั่วโมง: ",
+  "checkAvailability": "ตรวจสอบความพร้อมใช้งาน",
+  "votes": "โหวต"
 }

@@ -39,7 +39,6 @@ class _DoctorSearchState extends State<DoctorSearch> {
   double scrollPercentage = 0;
   bool isLoading = true;
   int? expandedIndex;
-  final keyWordController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final session = SessionStorage();
   bool isFinished = false;
@@ -81,8 +80,6 @@ class _DoctorSearchState extends State<DoctorSearch> {
   void initState() {
     super.initState();
     authService.updateLiveAuth(context);
-
-    keyWordController.text = widget.queryParameters['keyWord'] ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getDataOnUpdate();
     });
@@ -95,7 +92,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
       doctorsProvider = Provider.of<DoctorsProvider>(context, listen: false);
       dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
       dataGridProvider.setSortModel([
-        {"field": "profile.userName", "sort": 'asc'}
+        {"field": "profile.fullName", "sort": 'asc'}
       ], notify: false);
       _isProvidersInitialized = true;
     }
@@ -107,7 +104,6 @@ class _DoctorSearchState extends State<DoctorSearch> {
     socket.off('updateDoctorSearch');
     doctorsProvider.setDoctorsSearch([], notify: false);
     doctorsProvider.setTotal(0, notify: false);
-    keyWordController.dispose();
     scrollController.dispose();
     super.dispose();
   }

@@ -38,6 +38,7 @@ class DoctorsTimeSlot {
       doctorId: json['doctorId'],
       createDate: DateTime.parse(json['createDate']),
       updateDate: DateTime.parse(json['updateDate']),
+      averageHourlyPrice: (json['averageHourlyPrice'] as num?)?.toDouble(),
       availableSlots: (json['availableSlots'] as List<dynamic>).map((e) => AvailableType.fromJson(e)).toList(),
       isTodayAvailable: json['isTodayAvailable'],
       isTommorowAvailable: json['isTommorowAvailable'],

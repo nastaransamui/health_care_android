@@ -40,8 +40,7 @@ class _FilterBoxWidgetState extends State<FilterBoxWidget> {
   bool _isFinished = false;
   int perPage = 10;
   int page = 1;
-  static late String _chosenModel;
-  // static late String _sortByModel;
+  late String _chosenModel;
   String? specialitiesValue;
   String? genderValue;
   String? countryValue;
@@ -68,8 +67,9 @@ class _FilterBoxWidgetState extends State<FilterBoxWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_isProvidersInitialized) {
-      availabilityValues = [
+
+    keyWordController.text = widget.queryParameters['keyWord'] ?? '';
+          availabilityValues = [
         {"value": context.tr('availability'), "search": null},
         {"value": context.tr('available'), "search": "Available"},
         {"value": context.tr('today'), "search": "AvailableToday"},
@@ -77,21 +77,12 @@ class _FilterBoxWidgetState extends State<FilterBoxWidget> {
         {"value": context.tr('thisWeek'), "search": "AvailableThisWeek"},
         {"value": context.tr('thisMonth'), "search": "AvailableThisMonth"},
       ];
-      // sortByValues = [
-      //   {"value": context.tr('userName'), 'search': 'profile.userName'},
-      //   {"value": context.tr('joinDate'), 'search': 'createdAt'},
-      // ];
-
-      // for (var element in sortByValues) {
-      //   if (element['search'] == sortBy) {
-      //     _sortByModel = element['value'];
-      //   }
-      // }
       for (var element in availabilityValues) {
         if (element['search'] == widget.queryParameters['available']) {
           _chosenModel = element['value'];
         }
       }
+    if (!_isProvidersInitialized) {
       _isProvidersInitialized = true;
     }
   }
@@ -169,24 +160,6 @@ class _FilterBoxWidgetState extends State<FilterBoxWidget> {
     }
   }
 
-  // void onSortByChange(String? newValue, Map<String, String> localQueryParams) {
-  //   _sortByModel = newValue!;
-  //   // widget.doctorsProvider.setLoading(true);
-  //   for (var element in sortByValues) {
-  //     if (element['value'] == newValue) {
-  //       setState(() {
-  //         sortBy = element['search'];
-  //       });
-  //       widget.updateSortBy(element['search']);
-  //       context.replace(
-  //         Uri(
-  //           path: '/doctors/search',
-  //           queryParameters: localQueryParams,
-  //         ).toString(),
-  //       );
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +184,7 @@ class _FilterBoxWidgetState extends State<FilterBoxWidget> {
               localQueryParams: widget.queryParameters,
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -222,19 +195,11 @@ class _FilterBoxWidgetState extends State<FilterBoxWidget> {
                     localQueryParams: widget.queryParameters,
                     onAvaliablityChange: onAvaliablityChange,
                   ),
-                  // const SizedBox(width: 5),
-                  // SortBySelcetWidget(
-                  //   textColor: textColor,
-                  //   sortByModel: _sortByModel,
-                  //   sortByValues: sortByValues,
-                  //   localQueryParams: widget.queryParameters,
-                  //   onSortByChange: onSortByChange,
-                  // )
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: SwipeableButtonView(
                 indicatorColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                 isFinished: _isFinished,

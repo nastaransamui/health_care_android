@@ -542,6 +542,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.1"
+  flutter_lightbox:
+    dependency: "direct main"
+    description:
+      name: flutter_lightbox
+      sha256: "4fc714d1bc7ca8d355dd2256590747dd9a0ef29272a96393efbb69d5d74a3692"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   flutter_lints:
     dependency: "direct dev"
     description:
