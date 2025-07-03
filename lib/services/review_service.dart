@@ -10,12 +10,9 @@ import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 
 class ReviewService {
-  Future<void> getDoctorReviews(BuildContext context) async {
+  Future<void> getDoctorReviews(BuildContext context, String doctorId) async {
     DataGridProvider dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
     ReviewProvider reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
-    AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    String doctorId = authProvider.doctorsProfile!.userId;
     reviewProvider.setLoading(true);
 
     void getDoctorReviewsWidthUpdate() {
@@ -54,7 +51,9 @@ class ReviewService {
       }
     });
     socket.off('updateGetDoctorReviews');
-    socket.on('updateGetDoctorReviews', (_) => getDoctorReviewsWidthUpdate());
+    socket.on('updateGetDoctorReviews', (data) {
+      getDoctorReviewsWidthUpdate();
+    });
 
     getDoctorReviewsWidthUpdate();
   }
@@ -124,8 +123,7 @@ class ReviewService {
     getAuthorReviewsWidthUpdate();
   }
 
-
-    Future<bool> deleteReview(BuildContext context, List<String> deleteIds) async {
+  Future<bool> deleteReview(BuildContext context, List<String> deleteIds) async {
     var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
     if (!isLogin) return false;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -138,7 +136,7 @@ class ReviewService {
 
     socket.off('deleteReviewReturn');
     socket.on('deleteReviewReturn', (data) {
-       if (data['status'] != 200) {
+      if (data['status'] != 200) {
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
         }
@@ -157,4 +155,23 @@ class ReviewService {
     return completer.future;
   }
 
+  Future<bool> updateReview(BuildContext context, Map<String, dynamic> payload) async {
+    final completer = Completer<bool>();
+    socket.emit('updateReview', payload);
+    socket.once('updateReviewReturn', (data) {
+      if (data['status'] != 200) {
+        if (context.mounted) {
+          showErrorSnackBar(context, data['message']);
+        }
+        if (!completer.isCompleted) {
+          completer.complete(false);
+        }
+      } else {
+        if (!completer.isCompleted) {
+          completer.complete(true);
+        }
+      }
+    });
+    return completer.future;
+  }
 }

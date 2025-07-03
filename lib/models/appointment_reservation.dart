@@ -5,23 +5,23 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 
 class AppointmentReservation {
-  final String id;
   final int appointmentId;
-  final TimeType timeSlot;
-  final DateTime selectedDate;
+  final DateTime createdDate;
   final String dayPeriod;
   final String doctorId;
-  final DateTime startDate;
+  final String doctorPaymentStatus;
   final DateTime finishDate;
-  final String slotId;
+  final String id;
+  final String invoiceId;
   final String patientId;
+  final PatientUserProfile? patientProfile;
+  final dynamic paymentDate;
   final String paymentToken;
   final String paymentType;
-  final String invoiceId;
-  final String doctorPaymentStatus;
-  final dynamic paymentDate;
-  final DateTime createdDate;
-  final PatientUserProfile? patientProfile;
+  final DateTime selectedDate;
+  final String slotId;
+  final DateTime startDate;
+  final TimeType timeSlot;
 
   AppointmentReservation({
     required this.id,

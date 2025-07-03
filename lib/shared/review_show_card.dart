@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/reply_button_sheet.dart';
 import 'package:health_care/shared/review_reply_card.dart';
@@ -16,16 +17,19 @@ import 'package:health_care/src/utils/hex_to_color.dart';
 import 'package:health_care/models/reviews.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/services/review_service.dart';
+import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class ReviewShowCard extends StatefulWidget {
   final Reviews review;
   final VoidCallback getDataOnUpdate;
+  final String doctorName;
   const ReviewShowCard({
     super.key,
     required this.review,
     required this.getDataOnUpdate,
+    required this.doctorName,
   });
 
   @override
@@ -34,6 +38,29 @@ class ReviewShowCard extends StatefulWidget {
 
 class _ReviewShowCardState extends State<ReviewShowCard> {
   final ReviewService reviewService = ReviewService();
+  late final AuthProvider authProvider;
+  late String roleName = "";
+  String userId = '';
+  bool _isProvidersInitialized = false;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isProvidersInitialized) {
+      authProvider = Provider.of<AuthProvider>(context, listen: false);
+      _isProvidersInitialized = true;
+    }
+    roleName = authProvider.roleName;
+    final id = roleName == 'patient' ? authProvider.patientProfile?.userId : authProvider.doctorsProfile?.userId;
+
+    final newPatientId = id ?? '';
+
+    if (userId != newPatientId) {
+      setState(() {
+        userId = newPatientId;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Reviews review = widget.review;
@@ -67,6 +94,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Profile
               Row(
                 children: [
                   Stack(
@@ -155,6 +183,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                 ],
               ),
               MyDevider(theme: theme),
+              // Rating
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -176,6 +205,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                 ),
               ),
               MyDevider(theme: theme),
+              // created
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -201,6 +231,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                 ),
               ),
               MyDevider(theme: theme),
+              // Recomended
               review.recommend
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -259,6 +290,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                       ),
                     ),
               MyDevider(theme: theme),
+              // title
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -281,6 +313,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                 ),
               ),
               MyDevider(theme: theme),
+              // Message
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -298,7 +331,7 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
               ),
               // Text(review.body),
               Padding(
-                 padding: const EdgeInsets.symmetric(vertical: 4.0),
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: ReadMoreText(
                   review.body,
                   trimLines: 2,
@@ -333,53 +366,60 @@ class _ReviewShowCardState extends State<ReviewShowCard> {
                 ),
               ],
               //  MyDevider(theme: theme),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 35,
-                        child: GradientButton(
-                          onPressed: () async {
-                            final payload = await showModalBottomSheet<Map<String, dynamic>>(
-                              context: context,
-                              isScrollControlled: true,
-                              useSafeArea: true,
-                              builder: (context) => FractionallySizedBox(
-                                heightFactor: 1,
-                                child: ReplyButtonSheet(review: review, replyTo: 'patient',),
-                              ),
-                            );
+              
+              if (roleName.isNotEmpty) ...[
+                if (userId == review.doctorId || userId == review.authorId)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 35,
+                            child: GradientButton(
+                              onPressed: () async {
+                                final payload = await showModalBottomSheet<Map<String, dynamic>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  useSafeArea: true,
+                                  builder: (context) => FractionallySizedBox(
+                                    heightFactor: 1,
+                                    child: ReplyButtonSheet(
+                                      review: review,
+                                      replyTo: 'patient',
+                                    ),
+                                  ),
+                                );
 
-                            if (payload != null) {
-                              if (context.mounted) {
-                                reviewService.updateReply(context, payload);
-                              }
-                            }
-                          },
-                          colors: [
-                            theme.primaryColorLight,
-                            theme.primaryColor,
-                          ],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FaIcon(FontAwesomeIcons.reply, size: 13, color: textColor),
-                              const SizedBox(width: 5),
-                              Text(
-                                context.tr("replyTo", args: [patientName]),
-                                style: TextStyle(fontSize: 12, color: textColor),
-                              )
-                            ],
+                                if (payload != null) {
+                                  if (context.mounted) {
+                                    reviewService.updateReply(context, payload);
+                                  }
+                                }
+                              },
+                              colors: [
+                                theme.primaryColorLight,
+                                theme.primaryColor,
+                              ],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FaIcon(FontAwesomeIcons.reply, size: 13, color: textColor),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    context.tr("replyTo", args: [roleName == 'patient' ? 'Dr. ${widget.doctorName}' : patientName]),
+                                    style: TextStyle(fontSize: 12, color: textColor),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+              ]
             ],
           ),
         ),

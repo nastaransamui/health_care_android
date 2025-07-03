@@ -113,13 +113,20 @@ class AuthService {
       ..disconnect()
       ..connect();
     authProvider.setAuth(token, true, payloadData);
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
-        if (roleName == 'doctors') {
-          context.go('/doctors/dashboard');
-        } else if (roleName == 'patient') {
-          context.go('/patient/dashboard');
+      final currentUri = GoRouter.of(context).routerDelegate.currentConfiguration.uri;
+      final isLoginPage = currentUri.path == '/login';
+      if (isLoginPage) {
+        if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
+          if (roleName == 'doctors') {
+            context.go('/doctors/dashboard');
+          } else if (roleName == 'patient') {
+            context.go('/patient/dashboard');
+          }
         }
+      } else {
+        Navigator.of(context).maybePop();
       }
     });
   }
@@ -160,7 +167,8 @@ class AuthService {
       ..disconnect()
       ..connect();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString() != '/') {
+      final currentUri = GoRouter.of(context).routerDelegate.currentConfiguration.uri;
+      if (currentUri.path.startsWith('/dashboard')) {
         context.go('/');
       }
     });

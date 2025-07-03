@@ -269,41 +269,7 @@ class DoctorCard extends StatelessWidget {
                           ],
                         ),
                         if (singleDoctor.clinicImages.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              ...singleDoctor.clinicImages.map((i) {
-                                return InkWell(
-                                  onTap: () {
-                                    showGeneralDialog(
-                                      context: context,
-                                      pageBuilder: (BuildContext context, Animation animation, Animation secondaryAnimation) {
-                                        return LightBox(
-                                          initialIndex: index,
-                                          images: singleDoctor.clinicImages.map((e) => e.src).toList(),
-                                          imageType: ImageType.network,
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(color: Theme.of(context).primaryColorLight, width: 0.5),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    elevation: 5.0,
-                                    clipBehavior: Clip.hardEdge,
-                                    child: Image.network(
-                                      semanticLabel: i.tags[0].title,
-                                      fit: BoxFit.cover,
-                                      i.src,
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ],
-                          )
+                          ClinicImagesWidget(clinicImages: singleDoctor.clinicImages)
                         ]
                       ],
                     ),
@@ -501,6 +467,56 @@ class DoctorCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ClinicImagesWidget extends StatelessWidget {
+  const ClinicImagesWidget({
+    super.key,
+    required this.clinicImages,
+  });
+
+  final List<ClinicImages> clinicImages;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ...clinicImages.asMap().entries.map((entry) {
+           final int index = entry.key;
+           final img = entry.value;
+          return InkWell(
+            onTap: () {
+              showGeneralDialog(
+                context: context,
+                pageBuilder: (BuildContext context, Animation animation, Animation secondaryAnimation) {
+                  return LightBox(
+                    initialIndex: index,
+                    images: clinicImages.map((e) => e.src).toList(),
+                    imageType: ImageType.network,
+                  );
+                },
+              );
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 0.5),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              elevation: 5.0,
+              clipBehavior: Clip.hardEdge,
+              child: Image.network(
+                semanticLabel: img.tags[0].title,
+                fit: BoxFit.cover,
+                img.src,
+                width: 30,
+                height: 30,
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

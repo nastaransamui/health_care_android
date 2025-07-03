@@ -396,6 +396,12 @@
     "many": "คุณมีรีวิว {} รายการ",
     "other": "คุณมีรีวิว {} รายการ"
   },
+  "totalPublicReviews": {
+    "zero": "ไม่พบรีวิวใดๆ",
+    "one": "รวม: {} รีวิว",
+    "many": "รวม: {} รีวิว",
+    "other": "รวม: {} รีวิว"
+  },
   "actions": "การดำเนินการ",
   "paymentDate": "วันที่ชำระเงิน",
   "paymentToken": "โทเค็นการชำระเงิน",
@@ -715,5 +721,18 @@
   "doctorIdHeader": "รหัสแพทย์ {}",
   "averagePrice": "ราคาเฉลี่ยต่อชั่วโมง: ",
   "checkAvailability": "ตรวจสอบความพร้อมใช้งาน",
-  "votes": "โหวต"
+  "votes": "โหวต",
+  "overView": "ภาพรวม",
+  "businessHours": "เวลาทำการ",
+  "workAndExperince": "งานและประสบการณ์",
+  "loginToAddReview": "เข้าสู่ระบบเพื่อเพิ่มรีวิว",
+  "cantAddReviewToOwnDoctor": "คุณไม่สามารถเพิ่มรีวิวในบัญชีของคุณเองได้",
+  "addReview": "เขียนรีวิวสำหรับ {}",
+  "cantAddReviewWithoutReservation": "คุณไม่สามารถเขียนรีวิวสำหรับดร. {} โดยไม่ต้องจองใด ๆ ",
+  "readAndAccept": "ฉันได้อ่านและยอมรับ *",
+  "termsError": "โปรดยอมรับข้อกำหนดและเงื่อนไขก่อน",
+  "addReviewAlready": "คุณเขียนรีวิวสำหรับดร. {} แล้ว",
+  "reviewAdded": "มีการเพิ่มรีวิวให้สำเร็จสำหรับ Dr. {}",
+  "tommorow": "มีพรุ่งนี้",
+  "notAvailable": "ไม่มี"
 }

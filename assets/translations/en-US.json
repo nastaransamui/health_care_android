@@ -396,6 +396,12 @@
     "many": "You have {} reviews",
     "other": "You have {} reviews"
   },
+  "totalPublicReviews": {
+    "zero": "No any review found.",
+    "one": "Total: {} review",
+    "many": "Total: {} reviews",
+    "other": "Total: {} reviews"
+  },
   "actions": "Actions",
   "paymentDate": "Payment Date",
   "paymentToken": "Payment Token",
@@ -717,5 +723,18 @@
   "doctorIdHeader": "Doctor ID {}",
   "averagePrice": "Averrage price per hour: ",
   "checkAvailability": "Check Availability",
-  "votes": "Votes"
+  "votes": "Votes",
+  "overView": "Overview",
+  "businessHours": "Business hours",
+  "workAndExperince": "Work & Experience",
+  "loginToAddReview": "Login to add review",
+  "cantAddReviewToOwnDoctor": "You can't add review to your own account.",
+  "addReview": "Write a review for {}",
+  "cantAddReviewWithoutReservation": "You Can't write review for Dr.{}  without any reservation.  ",
+  "readAndAccept": "I have read and accept * ",
+  "termsError": "Please accept terms and condition first.",
+  "addReviewAlready": "You wrote review for Dr. {} already ",
+  "reviewAdded": "Review was added successfully for Dr. {}.",
+  "tommorow": "Available Tommorow",
+  "notAvailable": "Not available"
 }

@@ -301,7 +301,11 @@ class TimeType {
       isReserved: json['isReserved'],
       period: json['period'],
       price: json['price'].toDouble(),
-      reservations: (json['reservations'] as List<dynamic>?)?.map((e) => AppointmentReservation.fromJson(e)).toList() ?? [],
+      reservations: (json['reservations'] as List?)
+        ?.map((e) => e is AppointmentReservation
+            ? e
+            : AppointmentReservation.fromJson(e as Map<String, dynamic>))
+        .toList() ?? [],
       total: json['total'].toDouble(),
     );
   }

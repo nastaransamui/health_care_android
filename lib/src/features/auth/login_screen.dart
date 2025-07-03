@@ -60,12 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     deviceData,
     context,
   ) async {
-    var formData = {
-      "password": password,
-      "email": email,
-      "ipAddr": userData?.query,
-      "userAgent": deviceData
-    };
+    var formData = {"password": password, "email": email, "ipAddr": userData?.query, "userAgent": deviceData};
     FocusManager.instance.primaryFocus?.unfocus();
     socket.emit('loginFormSubmit', formData);
     socket.once('loginFormReturn', (data) {
@@ -111,11 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 id: '_toast',
                 child: CustomInfoToast(
                   onConfirm: () {
-                    socket.emit('logOutAllUsersSubmit', {
-                      "email": formData['email'],
-                      'services': 'password',
-                      "password": formData['password']
-                    });
+                    socket.emit('logOutAllUsersSubmit', {"email": formData['email'], 'services': 'password', "password": formData['password']});
                     socket.once('logOutAllUsersReturn', (msg) {
                       Navigator.pop(context);
                       if (msg['status'] != 200) {
@@ -148,8 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   title: '',
                   confirmText: 'logoutOthers',
                   closeText: 'close',
-                  description:
-                      '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
+                  description: '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
                 ),
                 transitionBuilder: (animation, child, isRemoving) {
                   if (isRemoving) {
@@ -175,8 +165,14 @@ class _LoginScreenState extends State<LoginScreen> {
           break;
         default:
           var token = data['accessToken'];
-          authService.loginService(context, token);
-
+          final currentUri = GoRouter.of(context).routerDelegate.currentConfiguration.uri;
+          final isLoginPage = currentUri.path == '/login';
+          if (isLoginPage) {
+            authService.loginService(context, token);
+          } else {
+            Navigator.pop(context);
+            authService.loginService(context, token);
+          }
           break;
       }
     });
@@ -199,9 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onNotification: (notification) {
             final email = notification.emailValue;
             final password = notification.passwordValue;
-            if (_loginFormKey.currentState!.validate() &&
-                email != '' &&
-                password != '') {
+            if (_loginFormKey.currentState!.validate() && email != '' && password != '') {
               showModalBottomSheet(
                 isDismissible: false,
                 enableDrag: false,
@@ -327,12 +321,8 @@ class _InputFieldState extends State<InputField> {
       var formData = {"ipAddr": userData?.query, "userAgent": deviceData};
       googleSignIn.signIn().then((result) {
         result?.authentication.then((googleKey) async {
-          final http.Response response = await http.get(
-              Uri.parse("https://www.googleapis.com/oauth2/v3/userinfo"),
-              headers: {
-                'Accept': 'application/json',
-                "Authorization": "Bearer ${googleKey.accessToken}"
-              });
+          final http.Response response = await http.get(Uri.parse("https://www.googleapis.com/oauth2/v3/userinfo"),
+              headers: {'Accept': 'application/json', "Authorization": "Bearer ${googleKey.accessToken}"});
           if (response.statusCode != 200) {
             debugPrint('${response.statusCode} response: ${response.body}');
           } else {
@@ -422,8 +412,7 @@ class _InputFieldState extends State<InputField> {
                         title: '',
                         confirmText: 'logoutOthers',
                         closeText: 'close',
-                        description:
-                            '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
+                        description: '${data['reason'].replaceAll(RegExp(r"\n"), " ").replaceAll('   ', '')}',
                       ),
                       transitionBuilder: (animation, child, isRemoving) {
                         if (isRemoving) {
@@ -479,8 +468,7 @@ class _InputFieldState extends State<InputField> {
             ).pop();
           },
           style: AlertStyle(
-            constraints:
-                BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+            constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
             alertPadding: const EdgeInsets.only(left: 0, right: 0),
             animationType: AnimationType.fromTop,
             animationDuration: const Duration(milliseconds: 400),
@@ -491,12 +479,10 @@ class _InputFieldState extends State<InputField> {
               ),
             ),
             titleStyle: TextStyle(
-              color:
-                  brightness == Brightness.dark ? Colors.white : Colors.black,
+              color: brightness == Brightness.dark ? Colors.white : Colors.black,
             ),
             descStyle: TextStyle(
-              color:
-                  brightness == Brightness.dark ? Colors.white : Colors.black,
+              color: brightness == Brightness.dark ? Colors.white : Colors.black,
             ),
           ),
           context: context,
@@ -513,10 +499,7 @@ class _InputFieldState extends State<InputField> {
                 }
               },
               border: Border.fromBorderSide(
-                BorderSide(
-                    color: Theme.of(context).primaryColorLight,
-                    width: 1,
-                    style: BorderStyle.solid),
+                BorderSide(color: Theme.of(context).primaryColorLight, width: 1, style: BorderStyle.solid),
               ),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -560,10 +543,7 @@ class _InputFieldState extends State<InputField> {
                         initialValue: null,
                         name: 'roleName',
                         onChanged: onChanged,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(
-                              errorText: context.tr('required'))
-                        ]),
+                        validator: FormBuilderValidators.compose([FormBuilderValidators.required(errorText: context.tr('required'))]),
                         options: [
                           'doctors',
                           'patient',

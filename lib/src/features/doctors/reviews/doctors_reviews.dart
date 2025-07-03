@@ -43,7 +43,8 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
   double scrollPercentage = 0;
 
   Future<void> getDataOnUpdate() async {
-    reviewService.getDoctorReviews(context);
+    String doctorId = authProvider.doctorsProfile!.userId;
+    reviewService.getDoctorReviews(context, doctorId);
   }
 
   @override
@@ -247,6 +248,7 @@ class _DoctorsReviewsState extends State<DoctorsReviews> {
                             child: ReviewShowCard(
                               review: review,
                               getDataOnUpdate: getDataOnUpdate,
+                              doctorName: '',
                             ),
                           );
                         },

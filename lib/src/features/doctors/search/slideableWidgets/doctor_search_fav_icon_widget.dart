@@ -1,11 +1,12 @@
 
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable_panel/controllers/slide_controller.dart';
 import 'package:health_care/models/doctors.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/services/favourite_service.dart';
 import 'package:health_care/shared/animated_add_remove_favourite.dart';
+import 'package:health_care/src/features/auth/login_screen.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 
@@ -137,29 +138,16 @@ class _DoctorSearchFavIconWidgetState extends State<DoctorSearchFavIconWidget> {
 
   Future<dynamic> favLoginError(BuildContext context) {
     return showModalBottomSheet(
-      context: context,
+      isScrollControlled: true,
       useSafeArea: true,
       isDismissible: true,
+      enableDrag: true,
       showDragHandle: true,
-      barrierColor: Theme.of(context).cardColor.withAlpha((0.8 * 255).round()),
-      constraints: BoxConstraints(
-        maxHeight: double.infinity,
-        minWidth: MediaQuery.of(context).size.width,
-        minHeight: MediaQuery.of(context).size.height / 5,
+      context: context,
+      builder: (context) => SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: LoginScreen(),
       ),
-      scrollControlDisabledMaxHeightRatio: 1,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            context.tr('favLoginError'),
-            textAlign: TextAlign.justify,
-            style: const TextStyle(
-              fontSize: 18.0,
-            ),
-          ),
-        );
-      },
     );
   }
 

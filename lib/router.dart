@@ -1583,8 +1583,13 @@ final router = GoRouter(
         final encodedId = state.pathParameters['encodedId']!;
         final doctorId = utf8.decode(base64.decode(encodedId));
 
-        return DoctorsSearchProfile(
-          doctorId: doctorId,
+        return ChangeNotifierProvider(
+          create: (context) => ReviewProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return DoctorsSearchProfile(doctorId: doctorId);
+            },
+          ),
         );
       },
       redirect: (context, state) {
