@@ -3,6 +3,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
@@ -39,8 +40,10 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final String patientName = "${patientProfile!.gender.isEmpty ? '' : '${patientProfile.gender}.'}${patientProfile.fullName}";
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final encodedId = base64.encode(utf8.encode(appointment.patientId.toString()));
+    final encodedInvoice = base64.encode(utf8.encode(appointment.id.toString()));
+
     final ImageProvider<Object> finalImage = patientProfile.profileImage.isEmpty
         ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
         : CachedNetworkImageProvider(patientProfile.profileImage);
@@ -144,15 +147,68 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Text(
-                              appointment.invoiceId,
-                              style: TextStyle(color: theme.primaryColor),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.push(
+                                  Uri(path: '/doctors/dashboard/invoice-view/$encodedInvoice').toString(),
+                                );
+                              },
+                              child: Text(
+                                appointment.invoiceId,
+                                style: TextStyle(
+                                  color: theme.primaryColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 6),
                           SortIconWidget(columnName: 'invoiceId', getDataOnUpdate: widget.getDataOnUpdate),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      // id
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // id
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '${context.tr("id")}: ',
+                                            style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                                          ),
+                                          const SizedBox(width: 1),
+                                          Text(
+                                            '#${appointment.appointmentId}',
+                                            style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 2.0, left: 12.0),
+                                  child: SortIconWidget(
+                                    columnName: 'id',
+                                    getDataOnUpdate: widget.getDataOnUpdate,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -249,44 +305,11 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
 
             //Divider
             MyDivider(theme: theme),
-            // id and day period
+            // day period
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Row(
                 children: [
-                  // id
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${context.tr("id")}: ',
-                                style: TextStyle(color: textColor, fontSize: 12),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                '#${appointment.appointmentId}',
-                                style: TextStyle(color: textColor, fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                          child: SortIconWidget(
-                            columnName: 'id',
-                            getDataOnUpdate: widget.getDataOnUpdate,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
                   // dayTime
                   Expanded(
                     child: Row(
@@ -296,20 +319,19 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                '${context.tr("dayTime")}: ',
-                                style: TextStyle(color: textColor, fontSize: 12),
-                              ),
-                              const SizedBox(width: 5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              Row(
                                 children: [
                                   Text(
-                                    appointment.dayPeriod[0].toUpperCase() + appointment.dayPeriod.substring(1).toLowerCase(),
+                                    '${context.tr("dayTime")}: ',
                                     style: TextStyle(color: textColor, fontSize: 12),
                                   ),
+                                  const SizedBox(width: 1),
+                                  Text(
+                                    context.tr(appointment.dayPeriod),
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                  )
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -327,14 +349,8 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
               ),
             ),
             //Divider
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                height: 1,
-                color: theme.primaryColorLight,
-              ),
-            ),
-            // price and bookingsFee
+            MyDivider(theme: theme),
+            // price
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Row(
@@ -348,16 +364,24 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                '${context.tr("price")}: ',
-                                style: TextStyle(color: textColor, fontSize: 12),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${context.tr("price")}: ',
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                  ),
+                                  Text(
+                                    NumberFormat("#,##0.00", "en_US").format(appointment.timeSlot.price),
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    appointment.timeSlot.currencySymbol,
+                                    style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 5),
-                              Text(
-                                NumberFormat("#,##0.00", "en_US").format(appointment.timeSlot.price),
-                                style: TextStyle(color: textColor, fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              )
                             ],
                           ),
                         ),
@@ -371,7 +395,16 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                       ],
                     ),
                   ),
-
+                ],
+              ),
+            ),
+            //Divider
+            MyDivider(theme: theme),
+            // bookingsFee
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                children: [
                   // bookingsFee
                   Expanded(
                     child: Row(
@@ -381,20 +414,67 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                '${context.tr("bookingsFeePrice")}: ',
-                                style: TextStyle(color: textColor, fontSize: 12),
-                              ),
-                              const SizedBox(width: 5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              Row(
                                 children: [
+                                  Text(
+                                    '${context.tr("bookingsFee")}: ',
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                  ),
                                   Text(
                                     '${appointment.timeSlot.bookingsFee.toInt()} %',
                                     style: TextStyle(color: textColor, fontSize: 12),
                                   ),
                                 ],
-                              )
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 2.0, left: 12.0),
+                          child: SortIconWidget(
+                            columnName: 'timeSlot.bookingsFee',
+                            getDataOnUpdate: widget.getDataOnUpdate,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            MyDivider(theme: theme),
+            // feePrice
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                children: [
+                  // bookingsFeePrice
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    '${context.tr("bookingsFeePrice")}: ',
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                  ),
+                                  Text(
+                                    NumberFormat("#,##0.00", "en_US").format(appointment.timeSlot.bookingsFeePrice),
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    appointment.timeSlot.currencySymbol,
+                                    style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -412,14 +492,8 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
               ),
             ),
             //Divider
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                height: 1,
-                color: theme.primaryColorLight,
-              ),
-            ),
-            // feePrice and total
+            MyDivider(theme: theme),
+            // total
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Row(
@@ -433,53 +507,24 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                '${context.tr("bookingsFeePrice")}: ',
-                                style: TextStyle(color: textColor, fontSize: 12),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                NumberFormat("#,##0.00", "en_US").format(appointment.timeSlot.bookingsFeePrice),
-                                style: TextStyle(color: textColor, fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 2.0, left: 12.0),
-                          child: SortIconWidget(
-                            columnName: 'timeSlot.bookingsFeePrice',
-                            getDataOnUpdate: widget.getDataOnUpdate,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // total
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${context.tr("total")}: ',
-                                style: TextStyle(color: textColor, fontSize: 12),
-                              ),
-                              const SizedBox(width: 5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              Row(
                                 children: [
+                                  Text(
+                                    '${context.tr("total")}: ',
+                                    style: TextStyle(color: textColor, fontSize: 12),
+                                  ),
                                   Text(
                                     NumberFormat("#,##0.00", "en_US").format(appointment.timeSlot.total),
                                     style: TextStyle(color: textColor, fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    appointment.timeSlot.currencySymbol,
+                                    style: TextStyle(color: theme.primaryColorLight, fontSize: 12),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -497,13 +542,7 @@ class _InvoiceShowBoxState extends State<InvoiceShowBox> {
               ),
             ),
             //Divider
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                height: 1,
-                color: theme.primaryColorLight,
-              ),
-            ),
+            MyDivider(theme: theme),
             // paymentType and paymentToken
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),

@@ -21,7 +21,7 @@ class DoctorInvoicePreviewScreen extends StatelessWidget {
       final directory = await getExternalStorageDirectory(); // path: Android/data/<package>/files/
       if (directory == null) throw Exception("Cannot get external directory");
       final path = directory.path;
-      final file = File('$path/invoice_${DateTime.now().millisecondsSinceEpoch}.pdf');
+      final file = File('$path/bill_${DateTime.now().millisecondsSinceEpoch}.pdf');
       await file.writeAsBytes(pdfBytes);
 
       if (context.mounted) {

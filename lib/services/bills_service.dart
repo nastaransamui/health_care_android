@@ -14,6 +14,8 @@ class BillsService {
     final dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
     final billingProvider = Provider.of<BillingProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isLogin = authProvider.isLogin;
+    if (!isLogin) return;
 
     String? doctorId;
     String? patientId;
@@ -27,7 +29,7 @@ class BillsService {
       patientId = authProvider.patientProfile?.userId;
       doctorId = null;
     }
-    billingProvider.setLoading(true);
+
     void getBillingRecordWithUpdate() {
       final paginationModel = dataGridProvider.paginationModel;
       final sortModel = dataGridProvider.sortModel;
@@ -61,7 +63,7 @@ class BillsService {
           billingProvider.setDoctorsBills(billingList);
 
           // ignore: empty_catches
-        } catch (e) { }
+        } catch (e) {}
         final int finalTotal = totalBilling;
         billingProvider.setTotal(finalTotal);
       } else {
@@ -78,8 +80,9 @@ class BillsService {
   Future<void> getPatientBillingRecord(BuildContext context, String patientId) async {
     final dataGridProvider = Provider.of<DataGridProvider>(context, listen: false);
     final billingProvider = Provider.of<BillingProvider>(context, listen: false);
-
-    billingProvider.setLoading(true);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isLogin = authProvider.isLogin;
+    if (!isLogin) return;
     void getBillingRecordWithUpdate() {
       final paginationModel = dataGridProvider.paginationModel;
       final sortModel = dataGridProvider.sortModel;

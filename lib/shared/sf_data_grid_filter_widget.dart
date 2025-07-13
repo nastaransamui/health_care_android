@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
@@ -387,8 +388,8 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
                 
                 final mongoQuery = convertFilterToMongoDB(
                     filterModel,
-                    widget.columns, // your List<Map<String, dynamic>> column definitions
-                    'Asia/Bangkok' // or your custom timezone string
+                    widget.columns, 
+                    dotenv.env['TZ']!
                     );
 
                 Navigator.pop(context, mongoQuery);

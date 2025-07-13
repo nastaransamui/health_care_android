@@ -801,7 +801,11 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                         //BasicInformation
                         ProfileCardWidget(
                           childrens: [
-                            ProfileInputWidget(controller: emailController, readOnly: true, lable: context.tr('email')),
+                            ProfileInputWidget(
+                              controller: emailController,
+                              readOnly: true,
+                              lable: context.tr('email'),
+                            ),
                             ProfileInputWidget(
                               controller: firstNameController,
                               readOnly: false,

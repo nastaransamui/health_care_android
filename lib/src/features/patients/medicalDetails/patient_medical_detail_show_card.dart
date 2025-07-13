@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/vital_signs.dart';
 import 'package:health_care/shared/gradient_button.dart';
@@ -38,7 +39,7 @@ class _PatientMedicalDetailShowCardState extends State<PatientMedicalDetailShowC
       (element) => element['title'] == title,
       orElse: () => {},
     );
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     // Extract image and icon safely with fallback empty string
     final String image = matchedVital['image'] ?? '';
     final String icon = matchedVital['icon'] ?? '';

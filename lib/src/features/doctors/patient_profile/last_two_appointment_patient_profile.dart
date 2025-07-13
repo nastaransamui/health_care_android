@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/doctor_patient_profile_model.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
@@ -49,7 +50,7 @@ class LastTwoAppointmentPatientProfile extends StatelessWidget {
         ...doctorPatientProfile.lastTwoAppointments.map(
           (entry) {
             final dateTimeFormat = DateFormat('dd MMM yyyy HH:mm');
-            final bangkok = tz.getLocation('Asia/Bangkok');
+            final bangkok = tz.getLocation(dotenv.env['TZ']!);
             final encodedinvoice = base64.encode(utf8.encode(entry.id.toString()));
             return FadeinWidget(
               isCenter: true,

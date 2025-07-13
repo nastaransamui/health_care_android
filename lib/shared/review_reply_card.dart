@@ -3,6 +3,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:health_care/models/reviews.dart';
@@ -47,7 +48,7 @@ class _ReviewReplyCardState extends State<ReviewReplyCard> {
     final ImageProvider<Object> avatarImage =
         profileImage.isEmpty ? const AssetImage('assets/images/default-avatar.png') as ImageProvider : CachedNetworkImageProvider(profileImage);
 
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final Color statusColor = authorProfile.idle ?? false
         ? const Color(0xFFFFA812)
         : authorProfile.online

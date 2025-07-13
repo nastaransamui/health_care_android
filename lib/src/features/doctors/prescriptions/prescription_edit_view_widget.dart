@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/doctor_patient_profile_model.dart';
@@ -13,6 +14,7 @@ import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/doctor_patient_profile_provider.dart';
 import 'package:health_care/services/prescription_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
+import 'package:health_care/shared/patient_doctor_profile_header.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/src/features/doctors/patient_profile/doctor_pateint_profile_header.dart';
@@ -40,6 +42,7 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
   final PrescriptionService prescriptionService = PrescriptionService();
   ScrollController scrollController = ScrollController();
   late final DoctorPatientProfileProvider doctorPatientProfileProvider;
+  late final AuthProvider authProvider;
   bool _isProvidersInitialized = false;
   double scrollPercentage = 0;
   DoctorsProfile? doctorsProfile;
@@ -62,7 +65,8 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
     super.didChangeDependencies();
     if (!_isProvidersInitialized) {
       doctorPatientProfileProvider = Provider.of<DoctorPatientProfileProvider>(context, listen: false);
-      doctorsProfile = Provider.of<AuthProvider>(context, listen: false).doctorsProfile;
+      authProvider = Provider.of<AuthProvider>(context, listen: false);
+      doctorsProfile = authProvider.doctorsProfile;
       _isProvidersInitialized = true;
     }
   }
@@ -110,10 +114,10 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DoctorPatientProfileProvider>(builder: (context, doctorPatientProfileProvider, child) {
+    return Consumer2<DoctorPatientProfileProvider, AuthProvider>(builder: (context, doctorPatientProfileProvider, authProvider, child) {
       final theme = Theme.of(context);
       final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-
+      final String roleName = authProvider.roleName;
       final DoctorPatientProfileModel doctorPatientProfile = doctorPatientProfileProvider.patientProfile;
       final bool isLoading = doctorPatientProfileProvider.isLoading;
       // final ThemeData theme = Theme.of(context);
@@ -133,7 +137,7 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
       final DoctorUserProfile prescriptionDoctorProfile = doctorPatientProfile.singlePrescription!.doctorProfile;
       final String speciality = prescriptionDoctorProfile.specialities.first.specialities;
       final String specialityImage = prescriptionDoctorProfile.specialities.first.image;
-      final bangkok = tz.getLocation('Asia/Bangkok');
+      final bangkok = tz.getLocation(dotenv.env['TZ']!);
       final uri = Uri.parse(specialityImage);
       final imageIsSvg = uri.path.endsWith('.svg');
       final String doctorName = "Dr. ${prescriptionDoctorProfile.fullName}";
@@ -172,7 +176,9 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
                   controller: scrollController,
                   child: Column(
                     children: [
-                      DoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile),
+                      roleName == 'doctors'
+                          ? DoctorPateintProfileHeader(doctorPatientProfile: doctorPatientProfile)
+                          : PatientDoctorProfileHeader(doctorUserProfile: prescriptionDoctorProfile),
                       Card(
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -184,7 +190,7 @@ class _PrescriptionEditViewWidgetState extends State<PrescriptionEditViewWidget>
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
-                              padding: const EdgeInsets.only(top: 0.0, right: 16.0, bottom: 16.0, left: 16.0),
+                              padding: const EdgeInsets.only(top: 10.0, right: 16.0, bottom: 16.0, left: 16.0),
                               child: Column(
                                 children: [
                                   OriginalDoctorPrescription(
@@ -258,6 +264,7 @@ class OriginalDoctorPrescription extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Card(
+        color: theme.canvasColor,
         elevation: 12,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: theme.primaryColor),

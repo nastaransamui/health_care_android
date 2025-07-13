@@ -6,6 +6,7 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_lightbox/flutter_lightbox.dart';
 import 'package:flutter_lightbox/image_type.dart';
 
@@ -14,7 +15,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:health_care/models/doctors.dart';
-import 'package:health_care/shared/gradient_button.dart';
 import 'package:health_care/shared/sort_icon_widget.dart';
 import 'package:health_care/shared/star_review_widget.dart';
 import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
@@ -43,7 +43,7 @@ class DoctorCard extends StatelessWidget {
     final String doctorName = "Dr. ${singleDoctor.fullName}";
     final String doctorProfileImage = singleDoctor.profileImage;
     final encodedId = base64.encode(utf8.encode(singleDoctor.id.toString()));
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final ImageProvider<Object> finalImage = doctorProfileImage.isEmpty
         ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
         : CachedNetworkImageProvider(doctorProfileImage);
@@ -71,37 +71,58 @@ class DoctorCard extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              //View button
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 35,
-                        child: GradientButton(
-                          onPressed: () {
-                            context.push(Uri(path: '/doctors/profile/$encodedId').toString());
-                          },
+                child: Container(
+                  height: 35,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.primaryColor,
+                        theme.primaryColorLight,
+                      ],
+                    ),
+                    borderRadius: const BorderRadius.horizontal(
+                      left: Radius.circular(8),
+                      right: Radius.circular(8),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(1),
+                  child: GestureDetector(
+                    onTap: () {
+                      context.push(Uri(path: '/doctors/profile/$encodedId').toString());
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                           colors: [
-                            Theme.of(context).primaryColorLight,
-                            Theme.of(context).primaryColor,
+                            theme.primaryColorLight,
+                            theme.primaryColor,
                           ],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
-                              const SizedBox(width: 5),
-                              Text(
-                                context.tr("view"),
-                                style: TextStyle(fontSize: 12, color: textColor),
-                              )
-                            ],
-                          ),
+                        ),
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(7),
+                          right: Radius.circular(7),
                         ),
                       ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(FontAwesomeIcons.eye, size: 13, color: textColor),
+                          const SizedBox(width: 5),
+                          Text(
+                            context.tr("view"),
+                            style: TextStyle(fontSize: 12, color: textColor),
+                          )
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
               MyDivider(theme: theme),
@@ -268,9 +289,7 @@ class DoctorCard extends StatelessWidget {
                             )
                           ],
                         ),
-                        if (singleDoctor.clinicImages.isNotEmpty) ...[
-                          ClinicImagesWidget(clinicImages: singleDoctor.clinicImages)
-                        ]
+                        if (singleDoctor.clinicImages.isNotEmpty) ...[ClinicImagesWidget(clinicImages: singleDoctor.clinicImages)]
                       ],
                     ),
                   ),
@@ -484,8 +503,8 @@ class ClinicImagesWidget extends StatelessWidget {
     return Row(
       children: [
         ...clinicImages.asMap().entries.map((entry) {
-           final int index = entry.key;
-           final img = entry.value;
+          final int index = entry.key;
+          final img = entry.value;
           return InkWell(
             onTap: () {
               showGeneralDialog(

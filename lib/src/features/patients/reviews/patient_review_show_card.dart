@@ -3,6 +3,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/reviews.dart';
@@ -42,7 +43,7 @@ class _PatientReviewShowCardState extends State<PatientReviewShowCard> {
     final Color textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final DoctorUserProfile doctorUserProfile = review.doctorProfile;
     final String doctorProfileImage = doctorUserProfile.profileImage;
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final encodeddoctorId = base64.encode(utf8.encode(doctorUserProfile.id.toString()));
     final String doctorName = "Dr. ${doctorUserProfile.fullName}";
     final ImageProvider<Object> avatarImage = doctorProfileImage.isEmpty

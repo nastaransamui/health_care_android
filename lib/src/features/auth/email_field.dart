@@ -52,7 +52,7 @@ class _EmailFieldState extends State<EmailField> {
           filled: true,
           prefixIcon: Icon(Icons.email_sharp, color: Theme.of(context).primaryColorLight),
           isDense: true,
-          alignLabelWithHint: true,
+          alignLabelWithHint: false,
         ),
       ),
     );

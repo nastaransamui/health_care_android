@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -18,7 +19,7 @@ class BillDueDateIntput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Semantics(

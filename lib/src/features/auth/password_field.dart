@@ -75,7 +75,7 @@ class _PasswordFieldState extends State<PasswordField> {
             ),
           ),
           isDense: true,
-          alignLabelWithHint: true,
+          alignLabelWithHint: false,
         ),
         obscureText: _isObscureText,
       ),

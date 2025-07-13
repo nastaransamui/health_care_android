@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/models/prescriptions.dart';
 import 'package:health_care/models/users.dart';
 import 'package:pdf/pdf.dart';
@@ -20,7 +21,7 @@ Future<pw.Document> buildPatientPrescriptionPdf(
 
   final pdf = pw.Document();
   final dateFormat = DateFormat('dd MMM yyyy');
-  final bangkok = tz.getLocation('Asia/Bangkok');
+  final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
   final imageBytes = await rootBundle.load('assets/icon/icon.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());

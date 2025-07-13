@@ -2,6 +2,7 @@ import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
@@ -91,7 +92,7 @@ class InvoiceDataSort extends DataGridSource {
     bool isSelectable = doctorPaymentStatus == 'Awaiting Request' && !disablePastTime(selectedDate, period);
     final dateTimeFormat = DateFormat('dd MMM yyyy HH:mm');
     final dateFormat = DateFormat('dd MMM yyyy');
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;

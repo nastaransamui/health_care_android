@@ -373,7 +373,7 @@ void didChangeDependencies() {
                       fit: FlexFit.tight,
                       flex: 11,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
+                        padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
                           '$keyWordValue ${availabilityValue == null ? '' : _chosenModel} ${widget.genderValue ?? ''}  ${widget.specialitiesValue ?? ''}\n${widget.countryValue ?? ''} ${widget.stateValue ?? ''} ${widget.cityValue ?? ''}',
                         ),

@@ -3,6 +3,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -152,7 +153,7 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
     final DoctorUserProfile doctorProfile = prescription.doctorProfile;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final bool isSameDoctor = roleName == 'doctors' && doctorsProfile?.userId == prescription.doctorId;
     final String speciality = doctorProfile.specialities.first.specialities;
     final String specialityImage = doctorProfile.specialities.first.image;

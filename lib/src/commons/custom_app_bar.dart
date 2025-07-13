@@ -64,7 +64,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           },
         ),
         PopupMenuButton<int>(
+          color: Theme.of(context).cardColor,
           icon: const Icon(Icons.language, size: 32),
+          offset: const Offset(0, 53),
           itemBuilder: (context) => [
             const PopupMenuItem(
               value: 1,

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/bills.dart';
@@ -66,7 +67,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final Color cardColor = userType != 'doctors' ? theme.canvasColor : theme.cardTheme.color!;
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final String gender = patientProfile?.gender ?? "";
     final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile?.fullName}";
     final String patientProfileImage = patientProfile?.profileImage ?? "";
@@ -87,7 +88,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
     final formattedBookingsFeePrice = NumberFormat("#,##0.00", "en_US").format(bookingsFeePrice);
     final double total = bill.total;
     final formattedTotal = NumberFormat("#,##0.00", "en_US").format(total);
-    final encodedpatientId = base64.encode(utf8.encode(bill.patientId.toString()));
+    final encodedPatientId = base64.encode(utf8.encode(bill.patientId.toString()));
     final encodeddoctorId = base64.encode(utf8.encode(bill.doctorId.toString()));
     final encodedInvoiceId = base64.encode(utf8.encode(bill.id.toString()));
     late Color statusColor;
@@ -128,7 +129,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                         borderRadius: const BorderRadius.all(Radius.circular(15)),
                         onTap: () {
                           if (userType == 'doctors') {
-                            context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedpatientId').toString());
+                            context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedPatientId').toString());
                           }
                           if (userType == 'patient') {
                             context.push(Uri(path: '/doctors/profile/$encodeddoctorId').toString());
@@ -176,7 +177,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                               child: GestureDetector(
                                 onTap: () {
                                   if (roleName == 'doctors') {
-                                    context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedpatientId').toString());
+                                    context.push(Uri(path: '/doctors/dashboard/patient-profile/$encodedPatientId').toString());
                                   }
                                   if (roleName == 'patient') {
                                     context.push(Uri(path: '/doctors/profile/$encodeddoctorId').toString());
@@ -321,7 +322,12 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                                       ..onTap = () {
                                         if (roleName == 'doctors') {
                                           context.push(
-                                            Uri(path: '/doctors/dashboard/bill-view/$encodedInvoiceId').toString(),
+                                            Uri(
+                                              path: '/doctors/dashboard/bill-view/$encodedInvoiceId',
+                                              queryParameters: {
+                                                'patientId': encodedPatientId,
+                                              },
+                                            ).toString(),
                                           );
                                         } else if (roleName == 'patient') {
                                           context.push(
@@ -442,8 +448,16 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                           ],
                         ),
                       ),
-
-                      // Second half
+                    ],
+                  ),
+                ),
+                //Divider
+                MyDivider(theme: theme),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Row(
+                    children: [
+                      // bookingsFee
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -464,7 +478,8 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                       ),
                     ],
                   ),
-                ), //Divider
+                ),
+                //Divider
                 MyDivider(theme: theme),
               ],
               // fee price and total
@@ -473,7 +488,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
-                      // Price
+                      //Fee Price
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -508,8 +523,15 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                           ],
                         ),
                       ),
-
-                      // Second half
+                    ],
+                  ),
+                ), //Divider
+                MyDivider(theme: theme),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Row(
+                    children: [
+                      //total Price
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -978,7 +1000,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
                                 ),
                               ),
                               onPressed: () {
-                                Uri(path: '/patient/check-out/$encodedInvoiceId').toString();
+                                context.push(Uri(path: '/patient/check-out/$encodedInvoiceId').toString());
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,

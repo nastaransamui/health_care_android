@@ -2,6 +2,7 @@ import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/models/users.dart';
@@ -44,7 +45,7 @@ class AppointmentDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     final dateTimeFormat = DateFormat('dd MMM yyyy HH:mm');
     final dateFormat = DateFormat('dd MMM yyyy');
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;

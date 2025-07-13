@@ -2,6 +2,7 @@
 // ignore: depend_on_referenced_packages
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/providers/auth_provider.dart';
 // ignore: depend_on_referenced_packages
@@ -27,7 +28,7 @@ Future<pw.Document> buildDoctorInvoicePdf(BuildContext context, AppointmentReser
 
   final pdf = pw.Document();
   final dateFormat = DateFormat('dd MMM yyyy');
-  final bangkok = tz.getLocation('Asia/Bangkok');
+  final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
   final imageBytes = await rootBundle.load('assets/icon/icon.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());

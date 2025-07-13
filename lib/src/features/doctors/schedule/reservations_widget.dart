@@ -4,6 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/models/users.dart';
@@ -139,8 +140,10 @@ class _ScheduleAppointmentShowBoxState extends State<ScheduleAppointmentShowBox>
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final String patientName = "${patientProfile!.gender.isEmpty ? '' : '${patientProfile.gender}.'}${patientProfile.fullName}";
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final encodedId = base64.encode(utf8.encode(appointment.patientId.toString()));
+    final encodedInvoice = base64.encode(utf8.encode(appointment.id.toString()));
+
     final ImageProvider<Object> finalImage = patientProfile.profileImage.isEmpty
         ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
         : CachedNetworkImageProvider(patientProfile.profileImage);
@@ -242,11 +245,21 @@ class _ScheduleAppointmentShowBoxState extends State<ScheduleAppointmentShowBox>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Text(
-                              appointment.invoiceId,
-                              style: TextStyle(color: theme.primaryColor),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.push(
+                                  Uri(path: '/doctors/dashboard/invoice-view/$encodedInvoice').toString(),
+                                );
+                              },
+                              child: Text(
+                                appointment.invoiceId,
+                                style: TextStyle(
+                                  color: theme.primaryColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 6),

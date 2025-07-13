@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/models/doctors_time_slot.dart';
@@ -31,7 +32,7 @@ class _AppointmentButtomSheetState extends State<AppointmentButtomSheet> {
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final dateFormat = DateFormat('dd MMM yyyy');
     final dateTimeFormat = DateFormat('dd MMM yyyy HH:mm');
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final PatientUserProfile patientProfile = reservation.patientProfile!;
     final DateTime selectedDate = reservation.selectedDate;
     final TimeType timeSlot = reservation.timeSlot;
@@ -48,7 +49,7 @@ class _AppointmentButtomSheetState extends State<AppointmentButtomSheet> {
     final String patientName = "$gender ${gender != '' ? '.' : ''} ${patientProfile.fullName}";
     final encodedId = base64.encode(utf8.encode(patientId.toString()));
 
-    final encodedinvoice = base64.encode(utf8.encode(reservation.id.toString()));
+    final encodedInvoice = base64.encode(utf8.encode(reservation.id.toString()));
     return Scaffold(
       body: SingleChildScrollView(
         controller: widget.scrollController,
@@ -260,11 +261,17 @@ class _AppointmentButtomSheetState extends State<AppointmentButtomSheet> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(context.tr('invoice'), style: TextStyle(color: theme.primaryColor, fontSize: 18)),
+                      Text(
+                        context.tr('invoice'),
+                        style: TextStyle(
+                          color: theme.primaryColor,
+                          fontSize: 18,
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           context.push(
-                            Uri(path: '/doctors/dashboard/invoice-view/$encodedinvoice').toString(),
+                            Uri(path: '/doctors/dashboard/invoice-view/$encodedInvoice').toString(),
                           );
                         },
                         child: Text(

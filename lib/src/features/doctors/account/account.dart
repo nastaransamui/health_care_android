@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/models/users.dart';
@@ -50,7 +51,7 @@ class _AccountState extends State<Account> {
 
     // Format and clean individual fields
     final formattedMap = <String, dynamic>{};
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
     for (final entry in filtered.entries) {
       final key = entry.key;
@@ -152,7 +153,7 @@ class _AccountState extends State<Account> {
             final bankData = data['bankData'];
             final filtered = Map<String, dynamic>.from(bankData);
 
-            final bangkok = tz.getLocation('Asia/Bangkok');
+            final bangkok = tz.getLocation(dotenv.env['TZ']!);
             final formattedMap = <String, dynamic>{};
 
             filtered.forEach((key, value) {

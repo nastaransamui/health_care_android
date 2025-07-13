@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/models/users.dart';
@@ -280,7 +281,7 @@ class _DashboardAppointmentShowBoxState extends State<DashboardAppointmentShowBo
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final String patientName = "${patientProfile!.gender.isEmpty ? '' : '${patientProfile.gender}.'}${patientProfile.fullName}";
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final encodedId = base64.encode(utf8.encode(appointment.patientId.toString()));
     final formattedTotal = NumberFormat("#,##0.00", "en_US").format(appointment.timeSlot.total);
     final ImageProvider<Object> finalImage = patientProfile.profileImage.isEmpty

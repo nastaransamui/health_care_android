@@ -103,12 +103,6 @@ List vitalBoxList = [
   {'title': 'height', "icon": "", "image": "assets/images/height.png", "unit": "cm"},
 ];
 
-List patinetDataScroll = [
-  {"title": "appointments", "icon": const FaIcon(FontAwesomeIcons.calendarCheck), "routeName": "/patient/dashboard/appointments"},
-  {"title": "prescriptions", "icon": const FaIcon(FontAwesomeIcons.clipboard), "routeName": "/patient/dashboard/prescriptions"},
-  {"title": "medicalRecords", "icon": const Icon(Icons.medication), "routeName": "/patient/dashboard/medicalRecords"},
-  {"title": "billings", "icon": const Icon(Icons.attach_money), "routeName": "/patient/dashboard/billings"}
-];
 
 List socialPlatforms = ["facebook", "x", "instagram", "pinterest", "linkedin", "youtube"];
 final Map<String, IconData> platformToIconMap = {
@@ -130,6 +124,22 @@ List patientsDashboardLink = [
     'name': 'favourites',
     'routeName': "/patient/dashboard/favourites",
     "icon": const FaIcon(FontAwesomeIcons.bookmark),
+  },
+  {
+    'name': 'appointments',
+    'routeName': "/patient/dashboard/appointments",
+    "icon": const FaIcon(FontAwesomeIcons.calendarCheck),
+  },
+
+  {
+    'name': 'invoices',
+    'routeName': "/patient/dashboard/invoice",
+    "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
+  },
+  {
+    'name': 'billings',
+    'routeName': "/patient/dashboard/billings",
+    "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
   },
   {
     'name': 'dependent',
@@ -159,6 +169,11 @@ List patientsDashboardLink = [
   {
     'name': 'medicalrecords',
     'routeName': "/patient/dashboard/medicalrecords",
+    "icon": const FaIcon(FontAwesomeIcons.clipboard),
+  },
+  {
+    'name': 'prescriptions',
+    'routeName': "/patient/dashboard/prescriptions",
     "icon": const FaIcon(FontAwesomeIcons.clipboard),
   },
   {
@@ -390,3 +405,34 @@ final int afterNoonMinutes = afterNoonFinish.difference(afterNoonStart).inMinute
 final DateTime eveningStart = DateTime(now.year, now.month, now.day, 17);
 final DateTime eveningFinish = DateTime(now.year, now.month, now.day, 20);
 final int eveningMinutes = eveningFinish.difference(eveningStart).inMinutes;
+
+  Map<String, dynamic> googlePayData = {
+    "provider": "google_pay",
+    "data": {
+      "environment": "TEST",
+      "apiVersion": 2,
+      "apiVersionMinor": 0,
+      "allowedPaymentMethods": [
+        {
+          "type": "CARD",
+          "tokenizationSpecification": {
+            "type": "PAYMENT_GATEWAY",
+            "parameters": {"gateway": "example", "gatewayMerchantId": "exampleGatewayMerchantId"}
+          },
+          "parameters": {
+            "allowedCardNetworks": ["VISA", "MASTERCARD"],
+            "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+            "billingAddressRequired": true,
+            "billingAddressParameters": {"format": "FULL", "phoneNumberRequired": true}
+          }
+        }
+      ],
+      "merchantInfo": {"merchantName": "Demo Merchant", "merchantId": "12345678901234567890"},
+      "transactionInfo": {
+        "countryCode": "US",
+        "currencyCode": "USD",
+        "totalPriceStatus": "FINAL",
+        "totalPrice": "0.00" // will update this dynamically
+      }
+    }
+  };

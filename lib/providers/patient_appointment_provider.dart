@@ -23,7 +23,7 @@ class PatientAppointmentProvider extends ChangeNotifier {
       });
     } else {
       // We're not in a build phase, so safe to update immediately
-      _isLoading = true;
+      _isLoading = false;
       if (notify) notifyListeners();
 
       _patientAppointmentReservations = reservations;

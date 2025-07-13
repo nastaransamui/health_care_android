@@ -5,7 +5,9 @@ import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/providers/appointment_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/bank_provider.dart';
+import 'package:health_care/providers/bill_provider.dart';
 import 'package:health_care/providers/billing_provider.dart';
+import 'package:health_care/providers/booking_information_provider.dart';
 import 'package:health_care/providers/dependents_provider.dart';
 import 'package:health_care/providers/doctor_patient_profile_provider.dart';
 import 'package:health_care/providers/favourites_provider.dart';
@@ -15,6 +17,7 @@ import 'package:health_care/providers/my_patients_provider.dart';
 import 'package:health_care/providers/patient_appointment_provider.dart';
 import 'package:health_care/providers/prescription_provider.dart';
 import 'package:health_care/providers/rate_provider.dart';
+import 'package:health_care/providers/reservation_provider.dart';
 import 'package:health_care/providers/review_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/providers/time_schedule_provider.dart';
@@ -35,11 +38,15 @@ import 'package:health_care/src/features/doctors/available_timing/doctors_availa
 import 'package:health_care/src/features/doctors/billings/bill_add_widget.dart';
 import 'package:health_care/src/features/doctors/billings/bill_edit_view_widget.dart';
 import 'package:health_care/src/features/doctors/billings/doctors_billings.dart';
+import 'package:health_care/src/features/doctors/booking/booking_page.dart';
+import 'package:health_care/src/features/doctors/check-out/checkout.dart';
 import 'package:health_care/src/features/doctors/dashboard_appointment/dash_appointment.dart';
 import 'package:health_care/src/features/doctors/favourites/doctors_favourites.dart';
+import 'package:health_care/src/features/doctors/invoice-view/invoice_view.dart';
 import 'package:health_care/src/features/doctors/invoice/doctors_invoice.dart';
 import 'package:health_care/src/features/doctors/my_patients/doctors_my_patients.dart';
 import 'package:health_care/src/features/doctors/patient_profile/doctor_patient_profile_widget.dart';
+import 'package:health_care/src/features/doctors/payment-success/payment_success.dart';
 import 'package:health_care/src/features/doctors/prescriptions/prescription_edit_view_widget.dart';
 import 'package:health_care/src/features/doctors/profile/doctors_search_profile.dart';
 import 'package:health_care/src/features/doctors/reviews/doctors_reviews.dart';
@@ -48,14 +55,18 @@ import 'package:health_care/src/features/doctors/search/doctor_search.dart';
 import 'package:health_care/src/features/doctors/social_media_widget/social_media_widget.dart';
 import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/features/patients/appointments/patient_appointments.dart';
+import 'package:health_care/src/features/patients/bill-view/bill_invoice.dart';
 import 'package:health_care/src/features/patients/billings/patient_billings.dart';
+import 'package:health_care/src/features/patients/check-out/bill_check_out.dart';
 import 'package:health_care/src/features/patients/dependents/patients_dependents.dart';
 import 'package:health_care/src/features/patients/favourites/patients_favourites.dart';
+import 'package:health_care/src/features/patients/invoice/patient_invoice.dart';
 import 'package:health_care/src/features/patients/medicalDetails/medical_details_widget.dart';
 import 'package:health_care/src/features/patients/medicalDetails/single_medical_detail_widget.dart';
 import 'package:health_care/src/features/patients/medicalRecords/patient_medical_records.dart';
 import 'package:health_care/src/features/doctors/prescriptions/patient_prescriptions.dart';
 import 'package:health_care/src/features/doctors/prescriptions/prescription_add_widget.dart';
+import 'package:health_care/src/features/patients/payment-success/bill_payment_success.dart';
 import 'package:health_care/src/features/patients/rates/patient_rates_widget.dart';
 import 'package:health_care/src/features/patients/reviews/patient_reviews_widget.dart';
 import 'package:health_care/src/features/pharmacy/pharmacy_screen.dart';
@@ -720,6 +731,70 @@ final router = GoRouter(
         }
       },
     ),
+    GoRoute(
+      path: '/doctors/dashboard/invoice-view/:encodedId',
+      name: 'doctorsDashboardInvoiceView',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final reservationId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => ReservationProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return InvoiceView(reservationId: reservationId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        if (!isLogin) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    // doctor Bill view
+    GoRoute(
+      path: '/doctors/dashboard/bill-view/:encodedId',
+      name: 'doctorsBillView',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billingId = utf8.decode(base64.decode(encodedId));
+        final encodedPatientId = state.uri.queryParameters['patientId'];
+        final patientId = encodedPatientId != null ? utf8.decode(base64.decode(encodedPatientId)) : null;
+        return ChangeNotifierProvider(
+          create: (context) => BillProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return BillInvoice(
+                billingId: billingId,
+                patientId: patientId,
+              );
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+
     // patientDashoboard
 
     GoRoute(
@@ -808,6 +883,23 @@ final router = GoRouter(
             },
           ),
         );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/patient/dashboard/invoice',
+      name: 'patientInvoices',
+      builder: (context, state) {
+        return ChangeNotifierProvider(create: (_) => PatientAppointmentProvider(), child: const PatientInvoice());
       },
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -1280,7 +1372,37 @@ final router = GoRouter(
         return null;
       },
     ),
+    // /patient/dashboard/invoice-view/
+    GoRoute(
+      path: '/patient/dashboard/invoice-view/:encodedId',
+      name: 'patientDashboardInvoiceView',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final reservationId = utf8.decode(base64.decode(encodedId));
 
+        return ChangeNotifierProvider(
+          create: (context) => ReservationProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return InvoiceView(reservationId: reservationId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        if (!isLogin) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
     //Doctors otherLinks
     GoRoute(
       path: '/doctors/dashboard/add-prescription/:encodedId',
@@ -1576,6 +1698,7 @@ final router = GoRouter(
         return DoctorSearch(queryParameters: state.uri.queryParameters);
       },
     ),
+    //Doctors profile
     GoRoute(
       path: '/doctors/profile/:encodedId',
       name: 'doctorsSearchProfile',
@@ -1588,6 +1711,213 @@ final router = GoRouter(
           child: Builder(
             builder: (innerContext) {
               return DoctorsSearchProfile(doctorId: doctorId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    //Doctors booking
+    GoRoute(
+      path: '/doctors/booking/:encodedId',
+      name: 'doctorsBooking',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final doctorId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => BookingInformationProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return BookingPage(doctorId: doctorId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        // var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        // var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        // if (!isLogin) return '/doctors/search';
+        // if (roleName == 'doctors') return '/doctors/dashboard';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    //Doctors booking
+    GoRoute(
+      path: '/doctors/check-out/:encodedId',
+      name: 'doctorsCheckout',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final occupyId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => BookingInformationProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return CheckOut(occupyId: occupyId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    // payment success doctors
+    GoRoute(
+      path: '/doctors/payment-success/:encodedId',
+      name: 'doctorsPaymentSuccess',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final reservationId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => ReservationProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return PaymentSuccess(reservationId: reservationId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    // patient invoice view
+    GoRoute(
+      path: '/doctors/invoice-view/:encodedId',
+      name: 'doctorsInvoiceView',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final reservationId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => ReservationProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return InvoiceView(reservationId: reservationId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    // patient Bill view
+    GoRoute(
+      path: '/patient/dashboard/bill-view/:encodedId',
+      name: 'patientBillView',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billingId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => BillProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return BillInvoice(billingId: billingId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    // patient Bill payment
+    GoRoute(
+      path: '/patient/check-out/:encodedId',
+      name: 'patientBillCheckout',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billingId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => BillProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return BillCheckOut(billingId: billingId);
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        final encodedId = state.pathParameters['encodedId'];
+        if (encodedId == null || encodedId.isEmpty) return '/';
+        try {
+          final decoded = utf8.decode(base64.decode(encodedId));
+          if (decoded.isEmpty) return '/';
+          return null;
+        } catch (e) {
+          return '/';
+        }
+      },
+    ),
+    // patient Bill payment success
+    GoRoute(
+      path: '/patient/payment-success/:encodedId',
+      name: 'patientBillSuccess',
+      builder: (context, state) {
+        final encodedId = state.pathParameters['encodedId']!;
+        final billingId = utf8.decode(base64.decode(encodedId));
+
+        return ChangeNotifierProvider(
+          create: (context) => BillProvider(),
+          child: Builder(
+            builder: (innerContext) {
+              return BillPaymentSuccess(billingId: billingId);
             },
           ),
         );

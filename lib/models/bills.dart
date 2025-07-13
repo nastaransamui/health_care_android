@@ -94,11 +94,14 @@ class Bills {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(
+    String paymentToken,
+    String paymentType,
+  ) {
     final result = <String, dynamic>{};
 
-    result.addAll({'id': id});
-    result.addAll({'billId': billId});
+    result.addAll({'_id': id});
+    result.addAll({'id': billId});
     result.addAll({'doctorId': doctorId});
     result.addAll({'patientId': patientId});
     result.addAll({'price': price});
@@ -109,14 +112,12 @@ class Bills {
     result.addAll({'paymentToken': paymentToken});
     result.addAll({'paymentType': paymentType});
     result.addAll({'billDetailsArray': billDetailsArray.map((x) => x.toMap()).toList()});
-    result.addAll({'createdAt': createdAt});
-    result.addAll({'updateAt': updateAt});
-    result.addAll({'status': status});
+    result.addAll({'createdAt': createdAt.toIso8601String()});
+    result.addAll({'updateAt': DateTime.now().toIso8601String()});
+    result.addAll({'status': "Paid"});
     result.addAll({'invoiceId': invoiceId});
-    result.addAll({'paymentDate': paymentDate});
-    result.addAll({'dueDate': dueDate});
-    result.addAll({'patientProfile': patientProfile});
-    result.addAll({'doctorProfile': doctorProfile});
+    result.addAll({'paymentDate': DateTime.now().toIso8601String()});
+    result.addAll({'dueDate': dueDate.toIso8601String()});
 
     return result;
   }
@@ -148,7 +149,7 @@ class Bills {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  // String toJson() => json.encode(toMap());
 
   factory Bills.fromJson(String source) => Bills.fromMap(json.decode(source));
 

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health_care/models/bills.dart';
 import 'package:health_care/models/users.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -24,7 +25,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
 
   final pdf = pw.Document();
   final dateFormat = DateFormat('dd MMM yyyy');
-  final bangkok = tz.getLocation('Asia/Bangkok');
+  final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
   final imageBytes = await rootBundle.load('assets/icon/icon.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());
@@ -97,25 +98,28 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
         text = status.toUpperCase();
     }
 
-    return pw.Container(
-      width: 328,
-      child: pw.Transform.rotateBox(
-        angle: 0.17,
-        child: pw.Align(
-          alignment: pw.Alignment.center, // or center, if you want it centered
-          child: pw.Container(
-            padding: const pw.EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(color: borderColor, width: 3),
-              borderRadius: pw.BorderRadius.circular(10),
-            ),
-            child: pw.Text(
-              text,
-              style: pw.TextStyle(
-                fontSize: 20,
-                fontWeight: pw.FontWeight.bold,
-                color: borderColor,
-                letterSpacing: 1.2,
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(top: 28.0),
+      child: pw.Container(
+        width: 310,
+        child: pw.Transform.rotateBox(
+          angle: 0.17,
+          child: pw.Align(
+            alignment: pw.Alignment.center, // or center, if you want it centered
+            child: pw.Container(
+              padding: const pw.EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: borderColor, width: 3),
+                borderRadius: pw.BorderRadius.circular(10),
+              ),
+              child: pw.Text(
+                text,
+                style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                  color: borderColor,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
           ),
@@ -124,7 +128,17 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
     );
   }
 
-  pdf.addPage(pw.Page(
+  double calculateDynamicSpacing(int itemCount, String locale) {
+    if (itemCount <= 1) return locale == 'th_TH' ? 190.0 : 230.0;
+    if (itemCount == 2) return locale == 'th_TH' ? 140.0 : 200.0;
+    if (itemCount == 3) return locale == 'th_TH' ? 120.0 : 140.0;
+    if (itemCount == 4) return locale == 'th_TH' ? 100.0 : 120.0;
+    if (itemCount == 5) return locale == 'th_TH' ? 50.0 : 110.0;
+    return 60.0; // for 8 or more, fixed minimum
+  }
+
+  pdf.addPage(
+    pw.Page(
       margin: const pw.EdgeInsets.all(6.0),
       build: (pwContext) {
         final fontBold = context.locale.toString() == 'th_TH' ? sarabunBold : robotoBold;
@@ -190,7 +204,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
                       ),
 
                       pw.SizedBox(height: 6),
-                      //Issue day
+                      //due day
                       pw.Row(
                         children: [
                           pw.Text(
@@ -377,13 +391,16 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       // Left: Stamp (if doctor)
-                      if (roleName == 'doctors' && isSameDoctor)
-                        pw.Positioned(
-                          top: 50,
-                          child: buildDoctorPaymentStamp(bill.status != 'Paid' && isDueDatePassed(dueDate) ? 'Over Due' : bill.status),
-                        )
-                      else
-                        pw.Expanded(child: pw.SizedBox(height: 100)),
+                      buildDoctorPaymentStamp(
+                        bill.status != 'Paid' && isDueDatePassed(dueDate) ? 'Over Due' : bill.status,
+                      ),
+                      // if (roleName == 'doctors' && isSameDoctor)
+                      //   pw.Positioned(
+                      //     top: 50,
+                      //     child: buildDoctorPaymentStamp(bill.status != 'Paid' && isDueDatePassed(dueDate) ? 'Over Due' : bill.status),
+                      //   )
+                      // else
+                      //   pw.Expanded(child: pw.SizedBox(height: 100)),
 
                       // Right: Summary Table
                       pw.Expanded(
@@ -452,7 +469,7 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
                                   pw.Align(
                                     alignment: !isSameDoctor && roleName == 'doctors' ? pw.Alignment.centerLeft : pw.Alignment.centerRight,
                                     child: pw.Padding(
-                                      padding:  pw.EdgeInsets.only(right: !isSameDoctor && roleName == 'doctors'  ? 4.0 : 55.0, top: 6.0),
+                                      padding: pw.EdgeInsets.only(right: roleName == 'doctors' ? isSameDoctor ? 4.0:  4.0 : 55.0, top: 6.0),
                                       child: pw.Text('${NumberFormat("#,##0.0", "en_US").format(bill.total)} ${bill.currencySymbol} ',
                                           style: pw.TextStyle(font: fontReqular)),
                                     ),
@@ -465,7 +482,9 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
                       ),
                     ],
                   ),
-                  pw.SizedBox(height: context.locale.toString() == 'th_TH' ? 100 : 200),
+                  pw.SizedBox(
+                    height: calculateDynamicSpacing(bill.billDetailsArray.length, context.locale.toString()),
+                  ),
                   //Footer
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -496,6 +515,9 @@ Future<pw.Document> buildBillPdf(BuildContext context, Bills bill, bool isSameDo
             ],
           ),
         );
-      }));
+      },
+    ),
+  );
+
   return pdf;
 }

@@ -1,9 +1,10 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide VerticalDivider;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/doctor_patient_profile_model.dart';
+import 'package:health_care/shared/patient_doctor_profile_header.dart';
 
 class DoctorPateintProfileHeader extends StatefulWidget {
   final DoctorPatientProfileModel doctorPatientProfile;
@@ -76,98 +77,278 @@ class _DoctorPateintProfileHeaderState extends State<DoctorPateintProfileHeader>
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      // 'PatientID : #${doctorPatientProfile.patientsId}',
                       context.tr('patientIdHeader', args: ['#${doctorPatientProfile.patientsId}']),
                       style: const TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: theme.primaryColorLight),
+                          left: BorderSide(color: theme.primaryColorLight),
+                          right: BorderSide(color: theme.primaryColorLight),
+                        ),
+                      ),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start, // important for vertical alignment
                           children: [
-                            Icon(
-                              Icons.cake,
-                              size: 18,
-                              color: theme.primaryColor,
+                            // Country Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: Padding(
+                                padding: const EdgeInsets.only(left: 2.0),
+                                child: Icon(
+                                  Icons.cake,
+                                  size: 18,
+                                  color: theme.primaryColor,
+                                ),
+                              ),
+                              titleWidget: Text(
+                                '${context.tr('dob')}:',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              mainTextWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Text(
+                                  doctorPatientProfile.dob is String
+                                      ? '---- -- --'
+                                      : DateFormat("dd MMM yyyy").format(
+                                          doctorPatientProfile.dob.toLocal(),
+                                        ),
+                                ),
+                              ),
                             ),
-                            const SizedBox(width: 3),
-                            Text(
-                              " ${doctorPatientProfile.dob is String ? '---- -- --' : DateFormat("dd MMM yyyy").format(doctorPatientProfile.dob.toLocal())}",
-                              style: const TextStyle(fontSize: 18),
+                            VerticalDivider(theme: theme),
+                            // Speciality Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: const SizedBox(width: 0),
+                              titleWidget: Text(
+                                '${context.tr('age')}:',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              mainTextWidget: Text(
+                                doctorPatientProfile.dob is String
+                                    ? '---- -- --'
+                                    : "$years ${context.tr('year')}, $months ${context.tr('monthFull')}, $days ${context.tr('daysFull')}",
+                                textAlign: TextAlign.left,
+                              ),
                             ),
                           ],
                         ),
-                        Text(
-                          "$years ${context.tr('year')}, $months ${context.tr('monthFull')}, $days ${context.tr('daysFull')}",
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
-                            const SizedBox(width: 5),
-                            Text('${context.tr('city')} '),
-                            Text(doctorPatientProfile.city == '' ? '---' : doctorPatientProfile.city),
-                          ],
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: theme.primaryColorLight),
+                          left: BorderSide(color: theme.primaryColorLight),
+                          right: BorderSide(color: theme.primaryColorLight),
                         ),
-                        Row(
+                      ),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start, // important for vertical alignment
                           children: [
-                            FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
-                            const SizedBox(width: 5),
-                            Text('${context.tr('state')} '),
-                            Text(doctorPatientProfile.state == '' ? '---' : doctorPatientProfile.state),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
-                            const SizedBox(width: 5),
-                            Text('${context.tr('country')} '),
-                            Text(doctorPatientProfile.country == '' ? '---' : doctorPatientProfile.country),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              bloodGValues.firstWhere(
-                                    (bg) => bg['title'] == doctorPatientProfile.bloodG,
-                                    orElse: () => {'icon': '❓'},
-                                  )['icon'] ??
-                                  '',
-                              style: const TextStyle(fontSize: 12),
+                            // state Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
+                              ),
+                              titleWidget: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  context.tr('city'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              mainTextWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: doctorPatientProfile.city.isEmpty ? '---' : doctorPatientProfile.city,
+                                      ),
+                                    ],
+                                  ),
+                                  style: const TextStyle(fontSize: 12),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
                             ),
-                            const SizedBox(width: 5),
-                            Text('${context.tr('bloodG')} : '),
-                            Text(doctorPatientProfile.bloodG),
+                            VerticalDivider(theme: theme),
+                            // city Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
+                              titleWidget: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  context.tr('state'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              mainTextWidget: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: doctorPatientProfile.state.isEmpty ? '---' : doctorPatientProfile.state,
+                                    ),
+                                  ],
+                                ),
+                                style: const TextStyle(fontSize: 12),
+                                overflow: TextOverflow.visible,
+                              ),
+                            ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        FaIcon(FontAwesomeIcons.phone, size: 13, color: theme.primaryColor),
-                        const SizedBox(width: 5),
-                        Text('${context.tr('mobileNumber')} '),
-                        Text(doctorPatientProfile.mobileNumber == '' ? '---' : doctorPatientProfile.mobileNumber),
-                      ],
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: theme.primaryColorLight),
+                          bottom: BorderSide(color: theme.primaryColorLight),
+                          left: BorderSide(color: theme.primaryColorLight),
+                          right: BorderSide(color: theme.primaryColorLight),
+                        ),
+                      ),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start, // important for vertical alignment
+                          children: [
+                            // Country Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
+                              ),
+                              titleWidget: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  context.tr('country'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              mainTextWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: doctorPatientProfile.country.isEmpty ? '---' : doctorPatientProfile.country,
+                                      ),
+                                    ],
+                                  ),
+                                  style: const TextStyle(fontSize: 12),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
+                            ),
+                            VerticalDivider(theme: theme),
+                            // Speciality Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Text(
+                                  bloodGValues.firstWhere(
+                                        (bg) => bg['title'] == doctorPatientProfile.bloodG,
+                                        orElse: () => {'icon': '❓'},
+                                      )['icon'] ??
+                                      '',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ),
+                              titleWidget: Text(
+                                '${context.tr('bloodG')}:',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              mainTextWidget: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      doctorPatientProfile.bloodG,
+                                      style: const TextStyle(fontSize: 12),
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 5.0),
-                    Divider(
-                      color: theme.primaryColor,
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: theme.primaryColorLight),
+                          left: BorderSide(color: theme.primaryColorLight),
+                          right: BorderSide(color: theme.primaryColorLight),
+                        ),
+                      ),
+                      child: IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start, // important for vertical alignment
+                          children: [
+                            // state Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: FaIcon(FontAwesomeIcons.phone, size: 13, color: theme.primaryColor),
+                              ),
+                              titleWidget: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  context.tr('phone'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              mainTextWidget: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: doctorPatientProfile.mobileNumber.isEmpty ? '---' : doctorPatientProfile.mobileNumber,
+                                      ),
+                                    ],
+                                  ),
+                                  style: const TextStyle(fontSize: 12),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
+                            ),
+                            VerticalDivider(theme: theme),
+                            // city Column
+                            ProfileHeaderCellWidget(
+                              iconWidget: FaIcon(FontAwesomeIcons.envelope, size: 13, color: theme.primaryColor),
+                              titleWidget: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  context.tr('userName'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              mainTextWidget: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: doctorPatientProfile.userName,
+                                    ),
+                                  ],
+                                ),
+                                style: const TextStyle(fontSize: 12),
+                                overflow: TextOverflow.visible,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 5.0),
                   ],

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/models/dependents.dart';
 import 'package:health_care/models/doctor_patient_profile_model.dart';
@@ -64,7 +65,7 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
     final MedicalRecords medicalRecord = widget.medicalRecord;
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final bool isForDependent = medicalRecord.isForDependent;
     final Dependents? dependentProfile = medicalRecord.dependentProfile;
     final ImageProvider<Object> finalImage = isForDependent

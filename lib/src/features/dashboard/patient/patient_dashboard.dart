@@ -14,7 +14,6 @@ import 'package:health_care/shared/dashboard_main_card_under_header.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/src/features/dashboard/patient/BMI/bmi_container.dart';
-import 'package:health_care/src/features/dashboard/patient/information_scroll_view.dart';
 import 'package:health_care/src/features/dashboard/patient/patient_dashboard_header.dart';
 import 'package:health_care/src/features/dashboard/patient/vital_sign_scroll_view.dart';
 import 'package:provider/provider.dart';
@@ -126,12 +125,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
                           ),
                           // BMI Card
                           BMIContainer(theme: theme, vitalSigns: vitalSigns, patientProfile: patientProfile),
-                          // Information title
-                          ListTile(
-                            title: Text(context.tr('informations')),
-                          ),
-                          // InfomationScrollview
-                          InformationScrollView(theme: theme),
                           // Link title
                           ListTile(
                             title: Text(context.tr('links')),

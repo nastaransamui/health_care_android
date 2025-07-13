@@ -38,6 +38,8 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
     final String profileImage = patientProfile.profileImage;
     final String patientName = "$gender${gender != '' ? '. ' : ''}${patientProfile.fullName}";
     final encodedId = base64.encode(utf8.encode(patientId.toString()));
+    final encodedInvoice = base64.encode(utf8.encode(reservation.id.toString()));
+    
     Color statusColor = patientProfile.idle ?? false
         ? const Color(0xFFFFA812)
         : patientProfile.online
@@ -192,17 +194,25 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
               // mobileNumber
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    FaIcon(FontAwesomeIcons.invision, size: 13, color: theme.primaryColorLight),
-                    const SizedBox(width: 5),
-                    Text(
-                      reservation.invoiceId,
-                      style: TextStyle(
-                        color: theme.primaryColor,
+                child: GestureDetector(
+                   onTap: () {
+                          context.push(
+                            Uri(path: '/doctors/dashboard/invoice-view/$encodedInvoice').toString(),
+                          );
+                        },
+                  child: Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.invision, size: 13, color: theme.primaryColorLight),
+                      const SizedBox(width: 5),
+                      Text(
+                        reservation.invoiceId,
+                        style: TextStyle(
+                          color: theme.primaryColor,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               MyDivider(theme: theme),

@@ -273,7 +273,7 @@ class TimeType {
   final double bookingsFeePrice;
   final String currencySymbol;
   final String? id;
-  final bool isReserved;
+   bool isReserved;
   final String period;
   final double price;
   final List<AppointmentReservation> reservations;

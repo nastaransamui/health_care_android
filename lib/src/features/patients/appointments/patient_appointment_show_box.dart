@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -74,10 +75,11 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
     final String doctorName = 'Dr. ${doctorUserProfile.fullName}';
     final String speciality = doctorUserProfile.specialities.first.specialities;
     final String specialityImage = doctorUserProfile.specialities.first.image;
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final uri = Uri.parse(specialityImage);
     final imageIsSvg = uri.path.endsWith('.svg');
     final encodedId = base64.encode(utf8.encode(doctorId.toString()));
+    final encodedinvoice = base64.encode(utf8.encode(reservation.id.toString()));
     Color statusColor = doctorUserProfile.idle ?? false
         ? const Color(0xFFFFA812)
         : doctorUserProfile.online
@@ -103,6 +105,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // DoctorProfile image
                   Stack(
                     children: [
                       InkWell(
@@ -157,6 +160,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // DoctorName
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -186,6 +190,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                           ],
                         ),
                         const SizedBox(height: 10),
+                        // appointmentId
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -208,6 +213,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                 ],
               ),
               MyDevider(theme: theme),
+              // Created Row
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -228,13 +234,14 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                     ),
                     const SizedBox(width: 6),
                     SortIconWidget(
-                      columnName: 'createdAt',
+                      columnName: 'createdDate',
                       getDataOnUpdate: widget.getDataOnUpdate,
                     )
                   ],
                 ),
               ),
               MyDevider(theme: theme),
+              // Selected date
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -258,6 +265,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                 ),
               ),
               MyDevider(theme: theme),
+              // Doctor Adddress
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -285,6 +293,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                 ),
               ),
               MyDevider(theme: theme),
+              // Doctor Speciality
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
@@ -332,19 +341,31 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                 ),
               ),
               MyDevider(theme: theme),
+              // Invoice id
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Row(
-                        children: [
-                          FaIcon(FontAwesomeIcons.invision, size: 13, color: theme.primaryColorLight),
-                          const SizedBox(width: 5),
-                          Text(
-                            reservation.invoiceId,
-                          ),
-                        ],
+                      child: GestureDetector(
+                        onTap: () {
+                          context.push(
+                            Uri(path: '/patient/dashboard/invoice-view/$encodedinvoice').toString(),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            FaIcon(FontAwesomeIcons.invision, size: 13, color: theme.primaryColorLight),
+                            const SizedBox(width: 5),
+                            Text(
+                              reservation.invoiceId,
+                              style: TextStyle(
+                              color: theme.primaryColor,
+                              decoration: TextDecoration.underline,
+                            ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -356,6 +377,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                 ),
               ),
               MyDevider(theme: theme),
+              // Buttons
               SizedBox(
                 width: MediaQuery.of(context).size.width - 50,
                 child: Row(
@@ -472,6 +494,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                 ),
               ),
               MyDivider(theme: theme),
+              // Services dropdown
               InkWell(
                 onTap: () => widget.onToggle(widget.index),
                 child: Row(
@@ -485,6 +508,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                   ],
                 ),
               ),
+            //  Services show
               AnimatedSize(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
@@ -573,7 +597,7 @@ Future<pw.Document> buildPatientInvoicePdf(
 
   final pdf = pw.Document();
   final dateFormat = DateFormat('dd MMM yyyy');
-  final bangkok = tz.getLocation('Asia/Bangkok');
+  final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
   final imageBytes = await rootBundle.load('assets/icon/icon.png');
   final image = pw.MemoryImage(imageBytes.buffer.asUint8List());

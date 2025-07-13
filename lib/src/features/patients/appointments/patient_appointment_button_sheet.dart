@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/models/doctors_time_slot.dart';
 import 'package:health_care/models/patient_appointment_reservation.dart';
@@ -39,7 +40,7 @@ class _PatientAppointmentButtonSheetState extends State<PatientAppointmentButton
     final String doctorName = 'Dr. ${doctorUserProfile.fullName}';
 
     final dateTimeFormat = DateFormat('dd MMM yyyy HH:mm');
-    final bangkok = tz.getLocation('Asia/Bangkok');
+    final bangkok = tz.getLocation(dotenv.env['TZ']!);
 
     final String currencySymbol = timeSlot.currencySymbol;
     final double total = timeSlot.total;
@@ -233,7 +234,7 @@ class _PatientAppointmentButtonSheetState extends State<PatientAppointmentButton
                       GestureDetector(
                         onTap: () {
                           context.push(
-                            Uri(path: '/doctors/dashboard/invoice-view/$encodedinvoice').toString(),
+                            Uri(path: '/patient/dashboard/invoice-view/$encodedinvoice').toString(),
                           );
                         },
                         child: Text(

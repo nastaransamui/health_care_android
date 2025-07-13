@@ -152,3 +152,49 @@ void showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
+
+void _defaultOnClose() {}
+void showConsistSnackBar(
+  BuildContext context,
+  String message, {
+  VoidCallback onClose = _defaultOnClose,
+}) {
+  if (!context.mounted) return;
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
+  final snackBar = SnackBar(
+    backgroundColor: Theme.of(context).primaryColorLight,
+    content: Text(
+      message,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    duration: const Duration(days: 1), // Prevent auto-dismiss
+    action: SnackBarAction(
+      label: '✕',
+      textColor: Colors.black,
+      onPressed: () {
+        if (context.mounted) {
+          scaffoldMessenger.hideCurrentSnackBar();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              onClose();
+            }
+          });
+        }
+      },
+    ),
+  );
+
+  if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        scaffoldMessenger.showSnackBar(snackBar);
+      }
+    });
+  } else {
+    scaffoldMessenger.showSnackBar(snackBar);
+  }
+}
