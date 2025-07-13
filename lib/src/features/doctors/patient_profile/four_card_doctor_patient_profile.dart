@@ -42,166 +42,90 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.all(16),
-      color: Theme.of(context).canvasColor,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Theme.of(context).primaryColorLight),
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          children: cardTitles.map((title) {
-            final int length = title == 'drPatientappointment'
-                ? widget.doctorPatientProfile.reservationsId.length
-                : title == 'drPatientprescription'
-                    ? widget.doctorPatientProfile.prescriptionsId.length
-                    : title == 'drPatientmedicalRecord'
-                        ? widget.doctorPatientProfile.medicalRecordsArray.length
-                        : widget.doctorPatientProfile.billingsIds.length;
-
-            return InkWell(
-              splashColor: theme.primaryColor.withAlpha((0.5 * 255).round()),
-              onTap: () {
-                final Widget modalWidget = title == 'drPatientappointment'
-                    ? FractionallySizedBox(
-                        heightFactor: 1,
-                        child: MultiProvider(
-                          providers: [
-                            ChangeNotifierProvider(
-                              create: (context) => PatientAppointmentProvider(),
-                            ),
-                            ChangeNotifierProvider(
-                              create: (context) => WidgetInjectionProvider(),
-                            ),
-                            ChangeNotifierProvider.value(
-                              value: context.read<DoctorPatientProfileProvider>(),
-                            ),
-                          ],
-                          child: Builder(
-                            builder: (context) {
-                              // Now the provider is available!
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                context.read<WidgetInjectionProvider>().inject(
-                                  Consumer<DoctorPatientProfileProvider>(
-                                    builder: (context, provider, _) {
-                                      return DoctorPateintProfileHeader(
-                                        doctorPatientProfile: provider.patientProfile,
-                                      );
-                                    },
-                                  ),
-                                );
-                              });
-
-                              return PatientAppointments(
-                                patientId: widget.doctorPatientProfile.id!,
-                                doctorPatientProfile: widget.doctorPatientProfile,
-                              );
-                            },
-                          ),
-                        ),
-                      )
-                    : title == 'drPatientprescription'
-                        ? FractionallySizedBox(
-                            heightFactor: 1,
-                            child: MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider(
-                                  create: (context) => PrescriptionProvider(),
-                                ),
-                                ChangeNotifierProvider(
-                                  create: (context) => WidgetInjectionProvider(),
-                                ),
-                                ChangeNotifierProvider.value(
-                                  value: context.read<DoctorPatientProfileProvider>(),
-                                ),
-                              ],
-                              child: Builder(
-                                builder: (context) {
-                                  // Now the provider is available!
-                                  WidgetsBinding.instance.addPostFrameCallback(
-                                    (_) {
-                                      context.read<WidgetInjectionProvider>().inject(
-                                        Consumer<DoctorPatientProfileProvider>(
-                                          builder: (context, provider, _) {
-                                            return DoctorPateintProfileHeader(
-                                              doctorPatientProfile: provider.patientProfile,
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  );
-                                  return PatientPrescriptions(
-                                    patientId: widget.doctorPatientProfile.id!,
-                                  );
-                                },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: cardTitles.map((title) {
+        final int length = title == 'drPatientappointment'
+            ? widget.doctorPatientProfile.reservationsId.length
+            : title == 'drPatientprescription'
+                ? widget.doctorPatientProfile.prescriptionsId.length
+                : title == 'drPatientmedicalRecord'
+                    ? widget.doctorPatientProfile.medicalRecordsArray.length
+                    : widget.doctorPatientProfile.billingsIds.length;
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Card(
+              color: theme.canvasColor,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              elevation: 5.0,
+              clipBehavior: Clip.hardEdge,
+              margin: const EdgeInsets.all(0),
+              child: InkWell(
+                splashColor: theme.primaryColor.withAlpha((0.5 * 255).round()),
+                onTap: () {
+                  final Widget modalWidget = title == 'drPatientappointment'
+                      ? FractionallySizedBox(
+                          heightFactor: 1,
+                          child: MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider(
+                                create: (context) => PatientAppointmentProvider(),
                               ),
+                              ChangeNotifierProvider(
+                                create: (context) => WidgetInjectionProvider(),
+                              ),
+                              ChangeNotifierProvider.value(
+                                value: context.read<DoctorPatientProfileProvider>(),
+                              ),
+                            ],
+                            child: Builder(
+                              builder: (context) {
+                                // Now the provider is available!
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  context.read<WidgetInjectionProvider>().inject(
+                                    Consumer<DoctorPatientProfileProvider>(
+                                      builder: (context, provider, _) {
+                                        return DoctorPateintProfileHeader(
+                                          doctorPatientProfile: provider.patientProfile,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                });
+
+                                return PatientAppointments(
+                                  patientId: widget.doctorPatientProfile.id!,
+                                  doctorPatientProfile: widget.doctorPatientProfile,
+                                );
+                              },
                             ),
-                          )
-                        : title == 'drPatientmedicalRecord'
-                            ? FractionallySizedBox(
-                                heightFactor: 1,
-                                child: MultiProvider(
-                                  providers: [
-                                    ChangeNotifierProvider(
-                                      create: (context) => MedicalRecordsProvider(),
-                                    ),
-                                    ChangeNotifierProvider(
-                                      create: (context) => WidgetInjectionProvider(),
-                                    ),
-                                    ChangeNotifierProvider.value(
-                                      value: context.read<DoctorPatientProfileProvider>(),
-                                    ),
-                                  ],
-                                  child: Builder(
-                                    builder: (context) {
-                                      // Now the provider is available!
-                                      WidgetsBinding.instance.addPostFrameCallback(
-                                        (_) {
-                                          context.read<WidgetInjectionProvider>().inject(
-                                            Consumer<DoctorPatientProfileProvider>(
-                                              builder: (context, provider, _) {
-                                                return DoctorPateintProfileHeader(
-                                                  doctorPatientProfile: provider.patientProfile,
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      );
-                                      return PatientMedicalRecords(
-                                        patientId: widget.doctorPatientProfile.id!,
-                                        doctorPatientProfile: widget.doctorPatientProfile,
-                                      );
-                                    },
+                          ),
+                        )
+                      : title == 'drPatientprescription'
+                          ? FractionallySizedBox(
+                              heightFactor: 1,
+                              child: MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider(
+                                    create: (context) => PrescriptionProvider(),
                                   ),
-                                ),
-                              )
-                            : FractionallySizedBox(
-                                heightFactor: 1,
-                                child: MultiProvider(
-                                  providers: [
-                                    ChangeNotifierProvider(
-                                      create: (context) => BillingProvider(),
-                                    ),
-                                    ChangeNotifierProvider(
-                                      create: (context) => WidgetInjectionProvider(),
-                                    ),
-                                    ChangeNotifierProvider.value(
-                                      value: context.read<DoctorPatientProfileProvider>(),
-                                    ),
-                                  ],
-                                  child: Builder(
-                                    builder: (context) {
-                                      // Now the provider is available!
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  ChangeNotifierProvider(
+                                    create: (context) => WidgetInjectionProvider(),
+                                  ),
+                                  ChangeNotifierProvider.value(
+                                    value: context.read<DoctorPatientProfileProvider>(),
+                                  ),
+                                ],
+                                child: Builder(
+                                  builder: (context) {
+                                    // Now the provider is available!
+                                    WidgetsBinding.instance.addPostFrameCallback(
+                                      (_) {
                                         context.read<WidgetInjectionProvider>().inject(
                                           Consumer<DoctorPatientProfileProvider>(
                                             builder: (context, provider, _) {
@@ -211,84 +135,139 @@ class _FourCardDoctorPatientProfileState extends State<FourCardDoctorPatientProf
                                             },
                                           ),
                                         );
-                                      });
-
-                                      return PatientBillings(
-                                        patientId: widget.doctorPatientProfile.id!,
-                                      );
-                                    },
-                                  ),
+                                      },
+                                    );
+                                    return PatientPrescriptions(
+                                      patientId: widget.doctorPatientProfile.id!,
+                                    );
+                                  },
                                 ),
-                              );
-                showModalBottomSheet(
-                  useSafeArea: true,
-                  showDragHandle: false,
-                  isScrollControlled: true,
-                  isDismissible: false,
-                  enableDrag: false,
-                  context: context,
-                  builder: (context) {
-                    return modalWidget;
-                  },
-                );
-              },
-              child: Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Theme.of(context).primaryColorLight),
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FutureBuilder<bool>(
-                        future: isRunningOnEmulator(),
-                        builder: (context, snapshot) {
-                          final isEmulator = snapshot.data ?? false;
-
-                          // if (!isEmulator) {
-                          //   return FourCardPateintDoctorLottie(title: title);
-                          // } else {
-                          //   return SizedBox(
-                          //     height: 90,
-                          //     width: double.infinity,
-                          //     child: Icon(
-                          //       Icons.image_not_supported,
-                          //       size: 40,
-                          //       color: textColor,
-                          //     ),
-                          //   );
-                          // }
-                          return SizedBox(
-                            height:80,
-                            child: isEmulator
-                                ? Center(
-                                    child: Icon(
-                                      Icons.image_not_supported,
-                                      size: 40,
-                                      color: textColor,
+                              ),
+                            )
+                          : title == 'drPatientmedicalRecord'
+                              ? FractionallySizedBox(
+                                  heightFactor: 1,
+                                  child: MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider(
+                                        create: (context) => MedicalRecordsProvider(),
+                                      ),
+                                      ChangeNotifierProvider(
+                                        create: (context) => WidgetInjectionProvider(),
+                                      ),
+                                      ChangeNotifierProvider.value(
+                                        value: context.read<DoctorPatientProfileProvider>(),
+                                      ),
+                                    ],
+                                    child: Builder(
+                                      builder: (context) {
+                                        // Now the provider is available!
+                                        WidgetsBinding.instance.addPostFrameCallback(
+                                          (_) {
+                                            context.read<WidgetInjectionProvider>().inject(
+                                              Consumer<DoctorPatientProfileProvider>(
+                                                builder: (context, provider, _) {
+                                                  return DoctorPateintProfileHeader(
+                                                    doctorPatientProfile: provider.patientProfile,
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        return PatientMedicalRecords(
+                                          patientId: widget.doctorPatientProfile.id!,
+                                          doctorPatientProfile: widget.doctorPatientProfile,
+                                        );
+                                      },
                                     ),
-                                  )
-                                : FourCardPateintDoctorLottie(title: title),
-                          );
-                        },
+                                  ),
+                                )
+                              : FractionallySizedBox(
+                                  heightFactor: 1,
+                                  child: MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider(
+                                        create: (context) => BillingProvider(),
+                                      ),
+                                      ChangeNotifierProvider(
+                                        create: (context) => WidgetInjectionProvider(),
+                                      ),
+                                      ChangeNotifierProvider.value(
+                                        value: context.read<DoctorPatientProfileProvider>(),
+                                      ),
+                                    ],
+                                    child: Builder(
+                                      builder: (context) {
+                                        // Now the provider is available!
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          context.read<WidgetInjectionProvider>().inject(
+                                            Consumer<DoctorPatientProfileProvider>(
+                                              builder: (context, provider, _) {
+                                                return DoctorPateintProfileHeader(
+                                                  doctorPatientProfile: provider.patientProfile,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        });
+
+                                        return PatientBillings(
+                                          patientId: widget.doctorPatientProfile.id!,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                  showModalBottomSheet(
+                    useSafeArea: true,
+                    showDragHandle: false,
+                    isScrollControlled: true,
+                    isDismissible: false,
+                    enableDrag: false,
+                    context: context,
+                    builder: (context) {
+                      return modalWidget;
+                    },
+                  );
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 45,
+                      child: Center(
+                        child: Text(
+                          context.tr(title, args: ['$length']),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        context.tr(title, args: ['$length']),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                    ),
+                    FutureBuilder<bool>(
+                      future: isRunningOnEmulator(),
+                      builder: (context, snapshot) {
+                        final bool isEmulator = snapshot.data ?? false;
+                        return SizedBox(
+                          height: 250,
+                          child: isEmulator
+                              ? Center(
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    size: 40,
+                                    color: textColor,
+                                  ),
+                                )
+                              : FourCardPateintDoctorLottie(title: title),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-            );
-          }).toList(),
-        ),
-      ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

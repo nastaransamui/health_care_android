@@ -28,7 +28,13 @@ class InlinePdfPreview extends StatelessWidget {
     final String paCity = userProfile.city;
     final String paState = userProfile.state;
     final String paCountry = userProfile.country;
-    final String roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final String roleName = authProvider.roleName;
+    bool isSameDoctor = false;
+    if (roleName == 'doctors') {
+      final String currentDoctorId = authProvider.doctorsProfile!.userId;
+      isSameDoctor = currentDoctorId == reservation.doctorId;
+    }
     final String issueDay = dateFormat.format(tz.TZDateTime.from(reservation.createdDate, bangkok));
     final DoctorUserProfile doctorUserProfile = reservation.doctorProfile;
     final String drName = "Dr.${doctorUserProfile.fullName}";
@@ -309,85 +315,108 @@ class InlinePdfPreview extends StatelessWidget {
                           ],
                         ),
                         // Bottom Row: Stamp and Total Summary
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Left: Stamp (if doctor)
-                            if (roleName == 'doctors')
-                              buildDoctorPaymentStamp(doctorPaymentStatus, context)
-                            else
-                              const Expanded(child: SizedBox(height: 100)),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final width = constraints.maxWidth;
 
-                            // Right: Summary Table
-                            Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              alignment: Alignment.topRight,
-                              child: Table(
-                                border: TableBorder(
-                                  horizontalInside: BorderSide(color: theme.primaryColor, width: 0.5),
+                            return Row(
+                              children: [
+                                SizedBox(
+                                  width: width * 0.5,
+                                  child: (roleName == 'doctors' && isSameDoctor
+                                      ? buildDoctorPaymentStamp(
+                                          doctorPaymentStatus,
+                                          context,
+                                        )
+                                      : const SizedBox(
+                                          height: 100,
+                                        )),
                                 ),
-                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                children: [
-                                  TableRow(children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(
-                                        '${context.tr('subtotal')} :',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
-                                      ),
+                                Container(
+                                  width: width * 0.5,
+                                  alignment: Alignment.topRight,
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Table(
+                                    border: TableBorder(
+                                      bottom: BorderSide(color: theme.primaryColor, width: 0.5),
+                                      top: BorderSide(color: theme.primaryColor, width: 0.5),
                                     ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(right: 4.0, top: 6.0),
-                                        child: Text(
-                                          '${NumberFormat("#,##0.0", "en_US").format(timeSlot.total)} ${timeSlot.currencySymbol} ',
+                                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                    children: [
+                                      TableRow(children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                          child: Text(
+                                            '${context.tr('subtotal')} :',
+                                            style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ]),
-                                  TableRow(children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(
-                                        '${context.tr('discount')} :',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
-                                      ),
-                                    ),
-                                    const Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 4.0, top: 6.0),
-                                        child: Text('---'),
-                                      ),
-                                    ),
-                                  ]),
-                                  TableRow(children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(
-                                        '${context.tr('totalAmount')} :',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(right: 4.0, top: 6.0),
-                                        child: Text(
-                                          '${NumberFormat("#,##0.0", "en_US").format(timeSlot.total)} ${timeSlot.currencySymbol} ',
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(right: 4.0, top: 8.0),
+                                            child: Transform.translate(
+                                              offset: const Offset(0, -4),
+                                              child: Text(
+                                                '${NumberFormat("#,##0.0", "en_US").format(timeSlot.total)} ${timeSlot.currencySymbol} ',
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ]),
-                                ],
-                              ),
-                            ),
-                          ],
+                                      ]),
+                                      TableRow(
+                                          decoration:
+                                              BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: theme.primaryColor, width: 0.5))),
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                              child: Text(
+                                                '${context.tr('discount')} :',
+                                                style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(right: 4.0, top: 6.0),
+                                                child: Transform.translate(
+                                                  offset: const Offset(0, -4),
+                                                  child: const Text('---'),
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                      TableRow(children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                          child: Text(
+                                            '${context.tr('totalAmount')} :',
+                                            style: TextStyle(fontWeight: FontWeight.bold, color: theme.primaryColor),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(right: 4.0, top: 6.0),
+                                            child: Transform.translate(
+                                              offset: const Offset(0, -3),
+                                              child: Text(
+                                                '${NumberFormat("#,##0.0", "en_US").format(timeSlot.total)} ${timeSlot.currencySymbol} ',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
-                     SizedBox(height: context.locale.toString() == 'th_TH' ? 140.0 : 200.0),
+                    SizedBox(height: context.locale.toString() == 'th_TH' ? 140.0 : 200.0),
                     //Footer
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,7 +457,7 @@ class InlinePdfPreview extends StatelessWidget {
     switch (normalized) {
       case 'paid':
         borderColor = Colors.green[600]!; // Similar to #5BC236
-          text = context.tr('paid');
+        text = context.tr('paid');
         break;
       case 'awaiting request':
         borderColor = Colors.red[600]!; // Similar to #f44336
@@ -436,7 +465,7 @@ class InlinePdfPreview extends StatelessWidget {
         break;
       case 'pending':
         borderColor = Colors.orange[600]!; // Similar to #ffa500
-          text = context.tr('pending');
+        text = context.tr('pending');
         break;
       default:
         borderColor = Colors.grey;

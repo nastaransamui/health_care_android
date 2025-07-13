@@ -41,7 +41,7 @@ class _FourCardPateintDoctorLottieState extends State<FourCardPateintDoctorLotti
       ValueDelegate.colorFilter(
         ['Cyan Solid 1', '**'],
         value: ColorFilter.mode(
-          theme.brightness == Brightness.dark ? Colors.black87 : Colors.white70,
+          theme.canvasColor,
           BlendMode.src,
         ),
       ),

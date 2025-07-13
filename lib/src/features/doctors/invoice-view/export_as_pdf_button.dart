@@ -126,9 +126,13 @@ Future<pw.Document> buildExportInvoicePdf(
   
 ) async {
   final theme = Theme.of(context);
-
-  var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
-
+  final AuthProvider authProvider =Provider.of<AuthProvider>(context, listen: false);
+  var roleName = authProvider.roleName;
+    bool isSameDoctor = false;
+    if (roleName == 'doctors') {
+      final String currentDoctorId = authProvider.doctorsProfile!.userId;
+      isSameDoctor = currentDoctorId == reservation.doctorId;
+    }
   final robotoRegular = pw.Font.ttf(await rootBundle.load('fonts/Roboto_Condensed/static/RobotoCondensed-Regular.ttf'));
   final robotoBold = pw.Font.ttf(await rootBundle.load('fonts/Roboto_Condensed/static/RobotoCondensed-Bold.ttf'));
   final sarabunLight = pw.Font.ttf(await rootBundle.load('fonts/Sarabun/Sarabun-Light.ttf'));
@@ -490,7 +494,7 @@ Future<pw.Document> buildExportInvoicePdf(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           // Left: Stamp (if doctor)
-                          if (roleName == 'doctors')
+                          if (roleName == 'doctors' && isSameDoctor)
                             pw.Positioned(
                               top: 50,
                               child: buildDoctorPaymentStamp(doctorPaymentStatus),
