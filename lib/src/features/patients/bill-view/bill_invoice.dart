@@ -122,7 +122,11 @@ class _BillInvoiceState extends State<BillInvoice> {
             }
           });
         }
-
+        bool isSameDoctor = false;
+        if (roleName == 'doctors') {
+          final String currentDoctorId = authProvider.doctorsProfile!.userId;
+          isSameDoctor = currentDoctorId == bill!.doctorId;
+        }
         return ScaffoldWrapper(
           title: context.tr('billView'),
           children: Stack(
@@ -157,7 +161,7 @@ class _BillInvoiceState extends State<BillInvoice> {
                           ? const Center(child: CircularProgressIndicator())
                           : InlineBillPdfPreview(
                               bill: bill,
-                              isSameDoctor: widget.billingId.isNotEmpty,
+                              isSameDoctor: isSameDoctor,
                             ),
                       BillGoBackButton(roleName: roleName)
                     ],

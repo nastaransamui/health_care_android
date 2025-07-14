@@ -1,8 +1,9 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:timezone/timezone.dart' as tz;
+
 
 class BillDueDateIntput extends StatelessWidget {
   const BillDueDateIntput({
@@ -19,7 +20,7 @@ class BillDueDateIntput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bangkok = tz.getLocation(dotenv.env['TZ']!);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Semantics(
@@ -69,9 +70,7 @@ class BillDueDateIntput extends StatelessWidget {
           name: 'dueDate',
           initialValue: dueDate == null
               ? ''
-              : DateFormat('dd MMM yyyy').format(
-                  tz.TZDateTime.from(dueDate!, bangkok),
-                ),
+              : DateFormat('dd MMM yyyy').format(dueDate!),
           decoration: InputDecoration(
             errorStyle: TextStyle(color: Colors.redAccent.shade400),
             floatingLabelStyle: TextStyle(color: formType == 'view' ? theme.disabledColor : theme.primaryColorLight),

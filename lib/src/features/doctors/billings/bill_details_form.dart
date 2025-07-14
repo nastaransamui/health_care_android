@@ -109,7 +109,7 @@ class _BillDetailsFormState extends State<BillDetailsForm> {
                             label: Center(
                               // Center the text within the Chip
                               child: Text(
-                                widget.dueDate == null ? widget.status : context.tr('overDue'),
+                                widget.dueDate == null ? widget.status : context.tr(widget.status),
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ),

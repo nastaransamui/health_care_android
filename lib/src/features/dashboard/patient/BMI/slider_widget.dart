@@ -94,17 +94,25 @@ class _SliderWidgetState extends State<SliderWidget> {
                         FilteringTextInputFormatter.digitsOnly,
                       ],
                       onChanged: (value) {
-                        int? intValue = int.tryParse(value);
-                        if (intValue != null && intValue >= widget.min.toInt() && intValue <= widget.max.toInt()) {
-                          setState(() {
-                            _value = intValue;
-                            _controller.text = intValue.toString();
+                        final int? intValue = int.tryParse(value);
+                        if (intValue == null) return;
+
+                        int clamped = intValue.clamp(widget.min.toInt(), widget.max.toInt());
+
+                        if (clamped != intValue) {
+                          // If out of bounds, correct it immediately
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _controller.text = clamped.toString();
                             _controller.selection = TextSelection.fromPosition(
                               TextPosition(offset: _controller.text.length),
                             );
                           });
-                          widget.onChange(intValue);
                         }
+
+                        setState(() {
+                          _value = clamped;
+                        });
+                        widget.onChange(clamped);
                       },
                     ),
                   ),
@@ -122,7 +130,7 @@ class _SliderWidgetState extends State<SliderWidget> {
               Slider(
                 min: widget.min,
                 max: widget.max,
-                value: widget.value.toDouble(),
+                value: (_value.toDouble()).clamp(widget.min, widget.max),
                 thumbColor: Theme.of(context).primaryColor,
                 activeColor: Theme.of(context).primaryColorLight,
                 onChanged: (value) {

@@ -428,7 +428,7 @@
   "name": "ชื่อ",
   "address": "ที่อยู่",
   "patientInformation": "ข้อมูลผู้ป่วย",
-  "paymentMethod": "วิธีการชำระเงิน",
+  "paymentInformation": "ข้อมูลการชำระเงิน",
   "description": "คำอธิบาย",
   "quantity": "ปริมาณ",
   "subtotal": "ยอดรวมย่อย",
@@ -779,5 +779,6 @@
   "billView": "ดูบิล",
   "goBacktoBillPage": "หน้าการเรียกเก็บเงิน",
   "goBacktoInvoicePage": "หน้าใบแจ้งหนี้",
-  "awaiting request": "กำลังรอคำขอ"
+  "awaiting request": "กำลังรอคำขอ",
+  "mustBePositiveInt": "ฟิลด์นี้ต้องการจำนวนบวก."
 }

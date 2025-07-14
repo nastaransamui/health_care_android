@@ -73,7 +73,7 @@ class _BillsShowBoxState extends State<BillsShowBox> {
     final String patientProfileImage = patientProfile?.profileImage ?? "";
     final String doctorName = "Dr. ${doctorProfile.fullName}";
     final String doctorProfileImage = doctorProfile.profileImage;
-    final String dueDate = DateFormat("dd MMM yyyy").format(bill.dueDate.toLocal());
+    final String dueDate = DateFormat("dd MMM yyyy").format(bill.dueDate);
     final bool isSameDoctor = roleName == 'doctors' && doctorsProfile?.userId == bill.doctorId;
     final ImageProvider<Object> finalImage = userType == 'doctors'
         ? patientProfileImage.isEmpty

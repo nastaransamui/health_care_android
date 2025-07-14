@@ -428,7 +428,7 @@
   "name": "Name",
   "address": "Address",
   "patientInformation": "Patient Informations",
-  "paymentMethod": "Payment Method",
+  "paymentInformation": "Payment Information",
   "description": "Description",
   "quantity": "Quantity",
   "subtotal": "Subtotal",
@@ -781,5 +781,6 @@
   "billView": "View Bill",
   "goBacktoBillPage": "Billing page",
   "goBacktoInvoicePage": "Invoice page",
-  "awaiting request": "Awaiting Request"
+  "awaiting request": "Awaiting Request",
+  "mustBePositiveInt": "This field need positive number."
 }

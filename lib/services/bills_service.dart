@@ -52,7 +52,7 @@ class BillsService {
         }
         return;
       }
-      if (context.mounted) {
+      if (context.mounted && isLogin) {
         billingProvider.setLoading(false);
       }
       final billingRecords = data['billingRecords'];
@@ -104,7 +104,7 @@ class BillsService {
         }
         return;
       }
-      if (context.mounted) {
+      if (context.mounted && isLogin) {
         billingProvider.setLoading(false);
       }
       final billingRecords = data['billingRecords'];

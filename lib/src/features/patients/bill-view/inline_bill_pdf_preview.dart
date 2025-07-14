@@ -28,7 +28,7 @@ class InlineBillPdfPreview extends StatelessWidget {
     final PatientUserProfile? patientUserProfile = bill.patientProfile;
     final DoctorUserProfile doctorUserProfile = bill.doctorProfile;
     final String issueDay = dateFormat.format(tz.TZDateTime.from(bill.createdAt, bangkok));
-    final String dueDate = dateFormat.format(tz.TZDateTime.from(bill.dueDate, bangkok));
+    final String dueDate = dateFormat.format(bill.dueDate);
     final String invoiceId = bill.invoiceId;
     final String paymentType = bill.paymentType;
     final String paymentToken = bill.paymentToken;
@@ -134,7 +134,8 @@ class InlineBillPdfPreview extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: Container(
                 width: 595, // A4 width in points (PDF standard)
-                height: 842, // A4 height in points
+                // height: 842, // A4 height in points
+
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -254,7 +255,7 @@ class InlineBillPdfPreview extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  context.tr('paymentMethod'),
+                                  context.tr('paymentInformation'),
                                   style: TextStyle(
                                     color: theme.primaryColor,
                                     fontSize: 18,
@@ -263,6 +264,7 @@ class InlineBillPdfPreview extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 Text(paymentType),
                                 Text(paymentToken),
+                                Text(DateFormat('dd MMM yyyy HH:mm').format(tz.TZDateTime.from(bill.paymentDate, bangkok)))
                               ],
                             ),
                           ),
@@ -372,6 +374,7 @@ class InlineBillPdfPreview extends StatelessWidget {
                                   child: Table(
                                     border: TableBorder(
                                       bottom: BorderSide(color: theme.primaryColor, width: 0.5),
+                                       top: BorderSide(color: theme.primaryColor, width: 0.5),
                                     ),
                                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                     children: [
@@ -394,6 +397,8 @@ class InlineBillPdfPreview extends StatelessWidget {
                                                 padding: const EdgeInsets.only(right: 4.0, top: 6.0),
                                                 child: Text(
                                                   '${NumberFormat("#,##0.0", "en_US").format(bill.price)} ${bill.currencySymbol} ',
+                                                  style:
+                                                      TextStyle(fontSize: NumberFormat("#,##0.0", "en_US").format(bill.price).length > 15 ? 12 : 14),
                                                 ),
                                               ),
                                             ),
@@ -402,6 +407,9 @@ class InlineBillPdfPreview extends StatelessWidget {
                                       ],
                                       if (roleName == 'doctors' && isSameDoctor) ...[
                                         TableRow(
+                                          decoration:
+                                              BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: theme.primaryColor, width: 0.5))),
+                                          
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.all(8),
@@ -419,6 +427,8 @@ class InlineBillPdfPreview extends StatelessWidget {
                                                 padding: const EdgeInsets.only(right: 4.0, top: 6.0),
                                                 child: Text(
                                                   '${NumberFormat("#,##0.0", "en_US").format(bill.bookingsFeePrice)} ${bill.currencySymbol} ',
+                                                  style: TextStyle(
+                                                      fontSize: NumberFormat("#,##0.0", "en_US").format(bill.bookingsFeePrice).length > 15 ? 12 : 14),
                                                 ),
                                               ),
                                             ),
@@ -438,8 +448,13 @@ class InlineBillPdfPreview extends StatelessWidget {
                                             alignment: !isSameDoctor && roleName == 'doctors' ? Alignment.centerLeft : Alignment.centerRight,
                                             child: Padding(
                                               padding: const EdgeInsets.only(right: 8.0, top: 6.0),
-                                              child: Text(
-                                                '${NumberFormat("#,##0.0", "en_US").format(bill.total)} ${bill.currencySymbol} ',
+                                              child: Transform.translate(
+                                                offset: Offset(roleName != 'doctors' ? -43 : !isSameDoctor && roleName == 'doctors' ? 10 : 5, 0),
+                                                child: Text(
+                                                  '${NumberFormat("#,##0.0", "en_US").format(bill.total)} ${bill.currencySymbol} ',
+                                                  style:
+                                                      TextStyle(fontSize: NumberFormat("#,##0.0", "en_US").format(bill.total).length > 15 ? 11 : 14),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -489,13 +504,47 @@ class InlineBillPdfPreview extends StatelessWidget {
   }
 
   double _calculateDynamicSpacing(int itemCount, String locale, bool isSameDoctor) {
-    if (itemCount <= 1) return locale == 'th_TH' ? 190.0 : 230.0;
-    if (itemCount == 2) return locale == 'th_TH' ? 140.0 : 200.0;
-    if (itemCount == 3) return locale == 'th_TH' ? 120.0 : 140.0;
-    if (itemCount == 4) return locale == 'th_TH' ? 100.0 : 120.0;
+    if (itemCount <= 1) {
+      return isSameDoctor
+          ? locale == 'th_TH'
+              ? 120.0
+              : 200.0
+          : locale == 'th_TH'
+              ? 190.0
+              : 230.0;
+    }
+    if (itemCount == 2) {
+      return isSameDoctor
+          ? locale == 'th_TH'
+              ? 100.0
+              : 160.0
+          : locale == 'th_TH'
+              ? 140.0
+              : 200.0;
+    }
+    if (itemCount == 3) {
+      return isSameDoctor
+          ? locale == 'th_TH'
+              ? 65.0
+              : 130.0
+          : locale == 'th_TH'
+              ? 120.0
+              : 140.0;
+    }
+    if (itemCount == 4) {
+      return isSameDoctor
+          ? locale == 'th_TH'
+              ? 15.0
+              : 100.0
+          : locale == 'th_TH'
+              ? 100.0
+              : 120.0;
+    }
     if (itemCount == 5) {
       return isSameDoctor
-          ?locale == 'th_TH' ? 10.0 : 70.0
+          ? locale == 'th_TH'
+              ? 10.0
+              : 70.0
           : locale == 'th_TH'
               ? 50.0
               : 110.0;
