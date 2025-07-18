@@ -55,6 +55,8 @@ class _ScrollButtonState extends State<ScrollButton> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Theme.of(context).primaryColor, width: 1),
                     shape: BoxShape.circle,
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).cardTheme.color?.withOpacity(1.0)
                   ),
                   child: const Center(
                     child: Icon(Icons.arrow_downward),
@@ -84,6 +86,8 @@ class _ScrollButtonState extends State<ScrollButton> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Theme.of(context).primaryColor, width: 1),
                     shape: BoxShape.circle,
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).cardTheme.color?.withOpacity(1.0)
                   ),
                   child: const Center(
                     child: Icon(Icons.arrow_upward),

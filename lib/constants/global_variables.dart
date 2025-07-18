@@ -158,7 +158,7 @@ List patientsDashboardLink = [
   },
   {
     'name': 'message',
-    'routeName': "/patient/dashboard/message",
+    'routeName': "/patient/dashboard/patient-chat",
     "icon": const FaIcon(FontAwesomeIcons.comments),
   },
   // {

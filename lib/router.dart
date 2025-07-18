@@ -8,6 +8,7 @@ import 'package:health_care/providers/bank_provider.dart';
 import 'package:health_care/providers/bill_provider.dart';
 import 'package:health_care/providers/billing_provider.dart';
 import 'package:health_care/providers/booking_information_provider.dart';
+import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/providers/dependents_provider.dart';
 import 'package:health_care/providers/doctor_patient_profile_provider.dart';
 import 'package:health_care/providers/favourites_provider.dart';
@@ -66,6 +67,8 @@ import 'package:health_care/src/features/patients/medicalDetails/single_medical_
 import 'package:health_care/src/features/patients/medicalRecords/patient_medical_records.dart';
 import 'package:health_care/src/features/doctors/prescriptions/patient_prescriptions.dart';
 import 'package:health_care/src/features/doctors/prescriptions/prescription_add_widget.dart';
+import 'package:health_care/src/features/patients/patient-chat/patient_chat_widget.dart';
+import 'package:health_care/src/features/patients/patient-chat/patient_single_chat_widget.dart';
 import 'package:health_care/src/features/patients/payment-success/bill_payment_success.dart';
 import 'package:health_care/src/features/patients/rates/patient_rates_widget.dart';
 import 'package:health_care/src/features/patients/reviews/patient_reviews_widget.dart';
@@ -1214,6 +1217,87 @@ final router = GoRouter(
 
               if (patientProfile != null) {
                 return const PatientRatesWidget();
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/patient/dashboard/patient-chat',
+      name: 'patientChat',
+      builder: (context, state) {
+        return ChangeNotifierProvider(
+          create: (context) => ChatProvider(),
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return const PatientChatWidget();
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    // Use innerContext here
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        );
+      },
+      redirect: (context, state) {
+        var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
+        var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+        final patientProfile = Provider.of<AuthProvider>(context, listen: false).patientProfile;
+        if (!isLogin) return '/';
+        if (roleName != 'patient') return '/';
+        if (patientProfile == null) return '/';
+
+        return null;
+      },
+    ),
+
+    GoRoute(
+      path: '/patient/dashboard/patient-chat/single/:encodedRoomId',
+      name: 'patientChatSingle',
+      builder: (context, state) {
+        final encodedRoomId = state.pathParameters['encodedRoomId']!;
+        final roomId = utf8.decode(base64.decode(encodedRoomId));
+        return ChangeNotifierProvider(
+          create: (context) => ChatProvider(),
+          child: Builder(
+            // Using Builder to access the newly provided InvoiceProvider within the same build method
+            builder: (innerContext) {
+              // Use innerContext to get the InvoiceProvider from the local scope
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final patientProfile = authProvider.patientProfile;
+
+              if (patientProfile != null) {
+                return  PatientSingleChatWidget(roomId: roomId);
               } else {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (innerContext.mounted) {

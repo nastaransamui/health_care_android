@@ -780,5 +780,9 @@
   "goBacktoBillPage": "หน้าการเรียกเก็บเงิน",
   "goBacktoInvoicePage": "หน้าใบแจ้งหนี้",
   "awaiting request": "กำลังรอคำขอ",
-  "mustBePositiveInt": "ฟิลด์นี้ต้องการจำนวนบวก."
+  "mustBePositiveInt": "ฟิลด์นี้ต้องการจำนวนบวก.",
+  "chats": "แชท",
+  "chatEndToEndEncrypt": "แชทนี้เป็นการเข้ารหัสแบบ end-to-end และไฟล์เป็นแบบส่วนตัว",
+  "deleteQuestion": "คุณแน่ใจหรือไม่ว่าจะลบบันทึกนี้?",
+  "noChatsAvailable": "ไม่มีแชทใดที่พร้อมใช้งาน"
 }

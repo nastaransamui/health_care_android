@@ -782,5 +782,9 @@
   "goBacktoBillPage": "Billing page",
   "goBacktoInvoicePage": "Invoice page",
   "awaiting request": "Awaiting Request",
-  "mustBePositiveInt": "This field need positive number."
+  "mustBePositiveInt": "This field need positive number.",
+  "chats": "Chats",
+  "chatEndToEndEncrypt": "This chat is end to end encrypt and files are privates.",
+  "deleteQuestion": "Are you sure to delete this record?",
+  "noChatsAvailable": "No any Chat Available."
 }
