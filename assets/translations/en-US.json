@@ -786,5 +786,6 @@
   "chats": "Chats",
   "chatEndToEndEncrypt": "This chat is end to end encrypt and files are privates.",
   "deleteQuestion": "Are you sure to delete this record?",
-  "noChatsAvailable": "No any Chat Available."
+  "noChatsAvailable": "No any Chat Available.",
+  "typeSomething": "Write a message"
 }

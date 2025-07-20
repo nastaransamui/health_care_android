@@ -1,7 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 
@@ -34,72 +34,85 @@ class SingleChatScaffold extends StatelessWidget {
             : const Color.fromARGB(255, 250, 18, 2);
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
           titleSpacing: 0.0,
-          title: Row(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(color: theme.primaryColorLight),
-                      shape: BoxShape.rectangle,
-                      borderRadius: const BorderRadius.all(Radius.circular(5)),
-                      image: DecorationImage(fit: BoxFit.contain, image: finalImage),
+          title: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(color: theme.primaryColorLight),
+                        shape: BoxShape.rectangle,
+                        borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        image: DecorationImage(fit: BoxFit.contain, image: finalImage),
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    right: 2,
-                    bottom: 2,
-                    child: AvatarGlow(
-                      glowColor: statusColor,
-                      child: Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: statusColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: statusColor, width: 0.5),
+                    Positioned(
+                      right: 2,
+                      bottom: 2,
+                      child: AvatarGlow(
+                        glowColor: statusColor,
+                        child: Container(
+                          width: 5,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: statusColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: statusColor, width: 0.5),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 10),
-              Text(
-                "${profileToShow.roleName == 'doctors' ? "Dr. " : ""}${profileToShow.fullName}",
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  "${profileToShow.roleName == 'doctors' ? "Dr. " : ""}${profileToShow.fullName}",
+                ),
+              ],
+            ),
           ),
           actions: [
-            IconButton(
-              onPressed: () {
-                
-              },
-              icon: const Icon(Icons.local_phone, size: 25),
-              tooltip: context.tr('phoneCall'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GestureDetector(
+                onTap: () {},
+                child: Transform.rotate(
+                  angle: 360,
+                  child: const FaIcon(
+                    FontAwesomeIcons.phone,
+                    size: 18,
+                  ),
+                ),
+              ),
             ),
-            IconButton(
-              onPressed: () {
-                
-              },
-              icon: const Icon(Icons.videocam, size: 25),
-              tooltip: context.tr('videoCall'),
+            GestureDetector(
+              onTap: () {},
+              child: const FaIcon(
+                FontAwesomeIcons.video,
+                size: 18,
+              ),
             ),
-            IconButton(
-              onPressed: () {
-                
-              },
-              icon: const Icon(Icons.more_vert, size: 25),
-              tooltip: context.tr('more'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GestureDetector(
+                onTap: () {},
+                child:  const FaIcon(
+                  FontAwesomeIcons.ellipsisV,
+                  size: 18,
+                ),
+              ),
             ),
           ],
         ),

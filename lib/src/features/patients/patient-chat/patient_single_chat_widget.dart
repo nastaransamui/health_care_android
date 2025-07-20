@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -39,9 +38,41 @@ class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
   bool isLoading = true;
   bool _hasRedirected = false;
   bool hasMarkedRead = false;
+  bool isEditMessage = false;
   String? lastSeenMessageId;
   double scrollPercentage = 0;
   late String currentUserId;
+  TextEditingController chatInputController = TextEditingController();
+  final chatInputFocusNode = FocusNode();
+  Set<int> showDeleteIndices = {};
+  int editMessageTime = 0;
+
+  void setEditMessageTime(int timestamp) {
+    setState(() {
+      editMessageTime = timestamp;
+    });
+  }
+
+  void bubbleChatLongPress(index) {
+    setState(() {
+      if (showDeleteIndices.contains(index)) {
+        showDeleteIndices.remove(index);
+        if (isEditMessage) {
+          chatInputController.clear();
+          chatInputFocusNode.unfocus();
+          taggleEditMessage(false);
+        }
+      } else {
+        showDeleteIndices.add(index);
+      }
+    });
+  }
+
+  void taggleEditMessage(bool value) {
+    setState(() {
+      isEditMessage = value;
+    });
+  }
 
   Future<void> getDataOnUpdate() async {
     hasMarkedRead = false;
@@ -119,6 +150,7 @@ class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
     socket.off('getSingleRoomByIdReturn');
     socket.off('updateGetSingleRoomById');
     chatProvider.removeListener(_scrollToBottomOnUpdate);
+    chatInputFocusNode.dispose();
     super.dispose();
   }
 
@@ -158,72 +190,87 @@ class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
             ? SingleChatScaffold(
                 currentRoom: currentRoom,
                 currentUserId: currentUserId,
-                children: SizedBox(
-                  child: Stack(
-                    children: [
-                      NotificationListener<ScrollNotification>(
-                        onNotification: (notification) {
-                          double per = 0;
-                          if (scrollController.hasClients) {
-                            per = ((scrollController.offset / scrollController.position.maxScrollExtent));
-                          }
-                          if (per >= 0) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) {
-                              if (context.mounted) {
-                                setState(() {
-                                  scrollPercentage = 307 * per;
-                                });
-                              }
-                            });
-                          }
-                          return false;
-                        },
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 68.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  restorationId: 'pateintChat',
-                                  key: const ValueKey('pateintChat'),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: currentRoom.messages.length,
-                                  itemBuilder: (context, index) {
-                                    return ChatBubbleWidget(
-                                      currentRoom: currentRoom,
-                                      index: index,
-                                      currentUserId: currentUserId,
-                                    );
-                                  },
-                                ),
-                                if (isLoading) ...[
-                                  const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  )
-                                ],
-                                if (!isLoading && currentRoom.messages.isEmpty) ...[const NoChatAvailableWidget()]
+                children: Stack(
+                  children: [
+                    NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        double per = 0;
+                        if (scrollController.hasClients) {
+                          per = ((scrollController.offset / scrollController.position.maxScrollExtent));
+                        }
+                        if (per >= 0) {
+                          SchedulerBinding.instance.addPostFrameCallback((_) {
+                            if (context.mounted) {
+                              setState(() {
+                                scrollPercentage = 307 * per;
+                              });
+                            }
+                          });
+                        }
+                        return false;
+                      },
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 68.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                restorationId: 'pateintChat',
+                                key: const ValueKey('pateintChat'),
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: currentRoom.messages.length,
+                                itemBuilder: (context, index) {
+                                  return ChatBubbleWidget(
+                                    currentRoom: currentRoom,
+                                    index: index,
+                                    currentUserId: currentUserId,
+                                    chatInputController: chatInputController,
+                                    chatInputFocusNode: chatInputFocusNode,
+                                    taggleEditMessage: taggleEditMessage,
+                                    isEditMessage: isEditMessage,
+                                    showDeleteIndices: showDeleteIndices,
+                                    bubbleChatLongPress: bubbleChatLongPress,
+                                    setEditMessageTime: setEditMessageTime,
+                                  );
+                                },
+                              ),
+                              if (isLoading) ...[
+                                const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
                               ],
-                            ),
+                              if (!isLoading && currentRoom.messages.isEmpty) ...[const NoChatAvailableWidget()]
+                            ],
                           ),
                         ),
                       ),
-                      Transform.translate(
-                        offset: const Offset(0, -40),
-                        child: ScrollButton(
-                          scrollController: scrollController,
-                          scrollPercentage: scrollPercentage,
-                        ),
+                    ),
+                    Transform.translate(
+                      offset: const Offset(0, -40),
+                      child: ScrollButton(
+                        scrollController: scrollController,
+                        scrollPercentage: scrollPercentage,
                       ),
-                      // Chat input field at bottom
-                      const ChatInput(),
-                    ],
-                  ),
+                    ),
+                    // Chat input field at bottom
+                    ChatInput(
+                      chatInputController: chatInputController,
+                      currentRoom: currentRoom,
+                      currentUserId: currentUserId,
+                      focusNode: chatInputFocusNode,
+                      taggleEditMessage: taggleEditMessage,
+                      isEditMessage: isEditMessage,
+                      showDeleteIndices: showDeleteIndices,
+                      bubbleChatLongPress: bubbleChatLongPress,
+                      editMessageTime: editMessageTime,
+                    ),
+                  ],
                 ),
               )
             : const SizedBox.shrink();

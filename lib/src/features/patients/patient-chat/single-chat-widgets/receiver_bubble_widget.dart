@@ -67,7 +67,11 @@ class _ReceiverBubbleWidgetState extends State<ReceiverBubbleWidget> {
                   style: TextStyle(color: textColor),
                 )
               else
-                ChatAttachmentWidget(message: message, userId: currentUserId),
+                ChatAttachmentWidget(
+                  key: ValueKey(message.receiverId),
+                  message: message,
+                  userId: currentUserId,
+                ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

@@ -90,7 +90,7 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
                       style: TextStyle(color: textColor),
                     )
                   else
-                    ChatAttachmentWidget(message: message, userId: currentUserId),
+                    ChatAttachmentWidget(key: ValueKey(message.senderId), message: message, userId: currentUserId),
 
                   Row(
                     mainAxisSize: MainAxisSize.min,

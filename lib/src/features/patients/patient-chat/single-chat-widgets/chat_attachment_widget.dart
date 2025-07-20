@@ -1,3 +1,4 @@
+
 import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class ChatAttachmentWidget extends StatefulWidget {
 class _ChatAttachmentWidgetState extends State<ChatAttachmentWidget> {
   late String messageText = "";
   final Map<String, Uint8List> _loadedImages = {};
+  final Set<String> _loadingInProgress = {};
   @override
   void initState() {
     super.initState();
@@ -35,18 +37,51 @@ class _ChatAttachmentWidgetState extends State<ChatAttachmentWidget> {
     _maybeLoadImages();
   }
 
-  void _maybeLoadImages() {
-    for (final attachment in widget.message.attachment) {
-      if (attachment.isImage && !_loadedImages.containsKey(attachment.id)) {
-        getChatFile(attachment.id, widget.userId).then((bytes) {
-          if (bytes != null) {
-            setState(() {
-              _loadedImages[attachment.id] = bytes;
-            });
-          }
-        });
-      }
+void _maybeLoadImages() {
+  for (final attachment in widget.message.attachment) {
+    if (!attachment.isImage) continue;
+
+    final alreadyCached = AttachmentCache.get(attachment.id);
+    if (alreadyCached != null) {
+      _loadedImages[attachment.id] = alreadyCached;
+      continue;
     }
+
+    if (_loadingInProgress.contains(attachment.id)) continue;
+
+    _loadingInProgress.add(attachment.id);
+
+    AttachmentCache.fetch(attachment.id, widget.userId).then((bytes) {
+      if (bytes != null && mounted) {
+        _loadedImages[attachment.id] = bytes;
+        setState(() {});
+      }
+    }).whenComplete(() {
+      _loadingInProgress.remove(attachment.id);
+    });
+  }
+}
+
+  @override
+  void didUpdateWidget(covariant ChatAttachmentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.message != widget.message) {
+      final newIds = widget.message.attachment.map((e) => e.id).toSet();
+      _loadedImages.removeWhere((id, _) => !newIds.contains(id));
+      messageText = '';
+      final msg = widget.message.message;
+      if (msg != null && msg.isNotEmpty) {
+        messageText = decrypt(msg);
+      }
+      _maybeLoadImages();
+    }
+  }
+
+  @override
+  void dispose() {
+    _loadedImages.clear();
+    super.dispose();
   }
 
   @override
@@ -70,6 +105,7 @@ class _ChatAttachmentWidgetState extends State<ChatAttachmentWidget> {
             final String fileName = attach.name;
             final imageBytes = _loadedImages[attach.id];
             return InkWell(
+              key: ValueKey(attach.id),
               onTap: () async {
                 if (isImage) {
                   final imageAttachments = attachments.where((e) => e.isImage).toList();
@@ -134,5 +170,14 @@ class _ChatAttachmentWidgetState extends State<ChatAttachmentWidget> {
         ]
       ],
     );
+  }
+}
+class AttachmentCache {
+  static final _mem = <String, Uint8List>{};
+
+  static Uint8List? get(String id) => _mem[id];
+
+  static Future<Uint8List?> fetch(String id, String userId) async {
+    return _mem[id] ??= (await getChatFile(id, userId))!;
   }
 }

@@ -1,19 +1,43 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/chat_data_type.dart';
+import 'package:health_care/services/chat_service.dart';
+import 'package:health_care/src/features/patients/patient-chat/chat-share/show_delete_confirmation_dialog.dart';
 import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/receiver_bubble_widget.dart';
 import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/sender_bubble_with_avatar.dart';
+import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
-class ChatBubbleWidget extends StatelessWidget {
+class ChatBubbleWidget extends StatefulWidget {
   final int index;
   final ChatDataType currentRoom;
   final String currentUserId;
+  final TextEditingController chatInputController;
+  final FocusNode chatInputFocusNode;
+  final ValueChanged<bool> taggleEditMessage;
+  final bool isEditMessage;
+  final Set<int> showDeleteIndices;
+  final ValueChanged<int> bubbleChatLongPress;
+  final ValueChanged<int> setEditMessageTime;
   const ChatBubbleWidget({
     super.key,
     required this.index,
     required this.currentRoom,
     required this.currentUserId,
+    required this.chatInputController,
+    required this.chatInputFocusNode,
+    required this.taggleEditMessage,
+    required this.isEditMessage,
+    required this.showDeleteIndices,
+    required this.bubbleChatLongPress,
+    required this.setEditMessageTime,
   });
+
+  @override
+  State<ChatBubbleWidget> createState() => _ChatBubbleWidgetState();
+}
+
+class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
+  final ChatService chatService = ChatService();
 
   String _formatDateFromEpoch(int epochMillis) {
     final DateTime date = DateTime.fromMillisecondsSinceEpoch(epochMillis);
@@ -37,14 +61,14 @@ class ChatBubbleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final ThemeData theme = Theme.of(context);
-    final MessageType message = currentRoom.messages[index];
-    final bool isSent = message.senderId == currentUserId;
+    final MessageType message = widget.currentRoom.messages[widget.index];
+    final bool isSent = message.senderId == widget.currentUserId;
+
     final DateTime messageDate = DateTime.fromMillisecondsSinceEpoch(message.timestamp);
     DateTime? previousDate;
-    if (index > 0) {
-      previousDate = DateTime.fromMillisecondsSinceEpoch(currentRoom.messages[index - 1].timestamp);
+    if (widget.index > 0) {
+      previousDate = DateTime.fromMillisecondsSinceEpoch(widget.currentRoom.messages[widget.index - 1].timestamp);
     }
 
     final bool showDate = previousDate == null ||
@@ -55,13 +79,10 @@ class ChatBubbleWidget extends StatelessWidget {
       children: [
         if (showDate)
           Padding(
-            padding: EdgeInsets.only(top: index == 0 ? 10 : 0, bottom: 8),
+            padding: EdgeInsets.only(top: widget.index == 0 ? 10 : 0, bottom: 8),
             child: Center(
               child: Container(
-                decoration:  BoxDecoration(
-                  color: theme.cardTheme.color,
-                  borderRadius: const BorderRadius.all(Radius.circular(15))
-                ),
+                decoration: BoxDecoration(color: theme.cardTheme.color, borderRadius: const BorderRadius.all(Radius.circular(15))),
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
                 child: Text(
                   _formatDateFromEpoch(message.timestamp),
@@ -74,14 +95,60 @@ class ChatBubbleWidget extends StatelessWidget {
             ),
           ),
         isSent
-            ? ReceiverBubbleWidget(
-                currentUserId: currentUserId,
-                currentRoom: currentRoom,
-                message: message,
+            ? GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onLongPress: () {
+                  widget.bubbleChatLongPress(widget.index);
+                },
+                child: Row(
+                  children: [
+                    ReceiverBubbleWidget(
+                      currentUserId: widget.currentUserId,
+                      currentRoom: widget.currentRoom,
+                      message: message,
+                    ),
+                    if (widget.showDeleteIndices.contains(widget.index)) ...[
+                      GestureDetector(
+                        onTap: () {
+                          showDeleteConfirmationDialog(context, () async {
+                            var payload = {
+                              "deleteType": "message",
+                              "currentUserId": widget.currentUserId,
+                              "roomId": widget.currentRoom.roomId,
+                              "valueToSearch": message.timestamp
+                            };
+                            await chatService.deleteChat(context, payload);
+                            widget.bubbleChatLongPress(widget.index);
+                          });
+                        },
+                        child: const Icon(
+                          Icons.delete_forever,
+                          color: Colors.pink,
+                        ),
+                      ),
+                      if (message.calls.isEmpty && message.attachment.isEmpty)
+                        GestureDetector(
+                          onTap: () {
+                            final msg = message.message;
+                            if (msg != null && msg.isNotEmpty) {
+                              widget.chatInputController.text = decrypt(msg);
+                              widget.chatInputFocusNode.requestFocus();
+                              widget.taggleEditMessage(true);
+                              widget.setEditMessageTime(message.timestamp);
+                            }
+                          },
+                          child: Icon(
+                            Icons.edit,
+                            color: theme.primaryColorLight,
+                          ),
+                        ),
+                    ],
+                  ],
+                ),
               )
             : SenderBubbleWithAvatar(
-                currentUserId: currentUserId,
-                currentRoom: currentRoom,
+                currentUserId: widget.currentUserId,
+                currentRoom: widget.currentRoom,
                 message: message,
               ),
       ],
