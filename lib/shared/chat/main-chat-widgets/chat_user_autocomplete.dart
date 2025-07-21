@@ -4,8 +4,8 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
-import 'package:health_care/src/features/patients/patient-chat/main-chat-widgets/auto_complete_item_builder.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/sort_latest_message.dart';
+import 'package:health_care/shared/chat/main-chat-widgets/auto_complete_item_builder.dart';
+import 'package:health_care/shared/chat/chat-share/sort_latest_message.dart';
 import 'package:health_care/stream_socket.dart';
 
 class ChatUserAutocomplete extends StatefulWidget {

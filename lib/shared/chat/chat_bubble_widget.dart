@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/services/chat_service.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/show_delete_confirmation_dialog.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/receiver_bubble_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/sender_bubble_with_avatar.dart';
+import 'package:health_care/shared/chat/chat-share/show_delete_confirmation_dialog.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/receiver_bubble_widget.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/sender_bubble_with_avatar.dart';
 import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
@@ -73,7 +73,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
 
     final bool showDate = previousDate == null ||
         !(messageDate.year == previousDate.year && messageDate.month == previousDate.month && messageDate.day == previousDate.day);
-
+    final bool showTail = isLastMessageFromSameSender(widget.index);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,6 +106,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       currentUserId: widget.currentUserId,
                       currentRoom: widget.currentRoom,
                       message: message,
+                      showTail: showTail,
                     ),
                     if (widget.showDeleteIndices.contains(widget.index)) ...[
                       GestureDetector(
@@ -146,12 +147,16 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   ],
                 ),
               )
-            : SenderBubbleWithAvatar(
-                currentUserId: widget.currentUserId,
-                currentRoom: widget.currentRoom,
-                message: message,
-              ),
+            : SenderBubbleWithAvatar(currentUserId: widget.currentUserId, currentRoom: widget.currentRoom, message: message, showTail: showTail),
       ],
     );
+  }
+
+  bool isLastMessageFromSameSender(int index) {
+    final current = widget.currentRoom.messages[index];
+    if (index + 1 >= widget.currentRoom.messages.length) return true; // Last message in the list
+
+    final next = widget.currentRoom.messages[index + 1];
+    return current.senderId != next.senderId;
   }
 }

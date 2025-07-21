@@ -10,23 +10,23 @@ import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:health_care/src/features/patients/patient-chat/main-chat-widgets/chat_header.dart';
-import 'package:health_care/src/features/patients/patient-chat/main-chat-widgets/chat_user_autocomplete.dart';
-import 'package:health_care/src/features/patients/patient-chat/main-chat-widgets/chat_user_with_slider.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/no_chat_available_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/sort_latest_message.dart';
+import 'package:health_care/shared/chat/main-chat-widgets/chat_header.dart';
+import 'package:health_care/shared/chat/main-chat-widgets/chat_user_autocomplete.dart';
+import 'package:health_care/shared/chat/main-chat-widgets/chat_user_with_slider.dart';
+import 'package:health_care/shared/chat/chat-share/no_chat_available_widget.dart';
+import 'package:health_care/shared/chat/chat-share/sort_latest_message.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 
-class PatientChatWidget extends StatefulWidget {
+class ChatWidget extends StatefulWidget {
   static const String routeName = '/patient/dashboard/patient-chat';
-  const PatientChatWidget({super.key});
+  const ChatWidget({super.key});
 
   @override
-  State<PatientChatWidget> createState() => _PatientChatWidgetState();
+  State<ChatWidget> createState() => _ChatWidgetState();
 }
 
-class _PatientChatWidgetState extends State<PatientChatWidget> {
+class _ChatWidgetState extends State<ChatWidget> {
   final ScrollController scrollController = ScrollController();
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
@@ -104,7 +104,7 @@ class _PatientChatWidgetState extends State<PatientChatWidget> {
         final filteredChatData =
             sortLatestMessage(userChatData).where((chat) => chat.messages.isNotEmpty || chat.createrData.userId == currentUserId).toList();
         return ScaffoldWrapper(
-          title: context.tr('PatientChat'),
+          title: context.tr('${roleName}_chat'),
           children: Container(
             color: theme.canvasColor,
             child: Stack(
@@ -153,10 +153,12 @@ class _PatientChatWidgetState extends State<PatientChatWidget> {
                             itemCount: filteredChatData.length,
                             itemBuilder: (context, index) {
                               final chatRoom = filteredChatData[index];
+                              final bool isTheLast = index == filteredChatData.length - 1;
                               return ChatUserWithSlider(
                                 index: index,
                                 chatRoom: chatRoom,
                                 currentUserId: currentUserId,
+                                isTheLast: isTheLast,
                               );
                             },
                           ),

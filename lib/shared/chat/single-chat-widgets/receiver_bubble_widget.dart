@@ -2,20 +2,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:health_care/models/chat_data_type.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/read_status_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/call_bubble_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/chat_attachment_widget.dart';
+import 'package:health_care/shared/chat/chat-share/read_status_widget.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/call_bubble_widget.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/chat_attachment_widget.dart';
 import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
 class ReceiverBubbleWidget extends StatefulWidget {
   final String currentUserId;
   final ChatDataType currentRoom;
   final MessageType message;
+  final bool showTail;
   const ReceiverBubbleWidget({
     super.key,
     required this.currentUserId,
     required this.currentRoom,
     required this.message,
+    required this.showTail,
   });
 
   @override
@@ -45,9 +47,13 @@ class _ReceiverBubbleWidgetState extends State<ReceiverBubbleWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
       child: ChatBubble(
-        clipper: ChatBubbleClipper4(
-          type: BubbleType.receiverBubble,
-        ),
+        clipper: widget.showTail
+            ? ChatBubbleClipper5(
+                type: BubbleType.receiverBubble,
+              )
+            : ChatBubbleClipper5(
+                type: BubbleType.receiverBubble,
+              ),
         alignment: Alignment.topLeft,
         backGroundColor: bubbleBackground,
         shadowColor: Colors.transparent,

@@ -13,23 +13,25 @@ import 'package:go_router/go_router.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/custom_lightbox.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/get_file_icon.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/read_status_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/save_bytes_to_file.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/show_delete_confirmation_dialog.dart';
-import 'package:health_care/src/features/patients/patient-chat/main-chat-widgets/slide_manager.dart';
+import 'package:health_care/shared/chat/chat-share/custom_lightbox.dart';
+import 'package:health_care/shared/chat/chat-share/get_file_icon.dart';
+import 'package:health_care/shared/chat/chat-share/read_status_widget.dart';
+import 'package:health_care/shared/chat/chat-share/save_bytes_to_file.dart';
+import 'package:health_care/shared/chat/chat-share/show_delete_confirmation_dialog.dart';
+import 'package:health_care/shared/chat/main-chat-widgets/slide_manager.dart';
 import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
 class ChatUserWithSlider extends StatefulWidget {
   final int index;
   final ChatDataType chatRoom;
   final String currentUserId;
+  final bool isTheLast;
   const ChatUserWithSlider({
     super.key,
     required this.index,
     required this.chatRoom,
     required this.currentUserId,
+    required this.isTheLast,
   });
 
   @override
@@ -80,9 +82,10 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
     final sortedMessages = [...chatData.messages]..sort((a, b) => b.timestamp.compareTo(a.timestamp));
     final MessageType? lastMessage = sortedMessages.isNotEmpty ? sortedMessages.first : null;
     final int? timestamp = lastMessage?.timestamp;
-    final numberOfNotRead = chatData.messages.where((m) => !(m.read)).length;
+    final int numberOfNotRead = chatData.messages.where((m) => !m.read && m.receiverId == currentUserId).length;
     final bool hasMessage = chatData.messages.isNotEmpty;
-    final String unreadMessagesLength = hasMessage ? (numberOfNotRead == 0 ? '' : numberOfNotRead.toString()) : '';
+   final String unreadMessagesLength =
+    hasMessage ? (numberOfNotRead == 0 ? '' : numberOfNotRead.toString()) : '';
     late String displayValue = '';
     if (timestamp != null) {
       final DateTime lastMessageTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -132,6 +135,10 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
                   color: theme.primaryColor,
                   width: 1,
                 ),
+                bottom: BorderSide(
+                  color: widget.isTheLast ? theme.primaryColor : Colors.transparent,
+                  width: 1,
+                ),
               ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -141,9 +148,15 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
       ],
       child: GestureDetector(
         onTap: () {
-          context.push(
-            Uri(path: '/patient/dashboard/patient-chat/single/$encodedRoomId').toString(),
-          );
+          if (profileToShow.roleName == 'doctors') {
+            context.push(
+              Uri(path: '/patient/dashboard/patient-chat/single/$encodedRoomId').toString(),
+            );
+          } else {
+            context.push(
+              Uri(path: '/doctors/dashboard/doctors-chat/single/$encodedRoomId').toString(),
+            );
+          }
         },
         child: Container(
           decoration: BoxDecoration(
@@ -152,6 +165,10 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
             border: Border(
               top: BorderSide(
                 color: theme.primaryColor,
+                width: 1,
+              ),
+              bottom: BorderSide(
+                color: widget.isTheLast ? theme.primaryColor : Colors.transparent,
                 width: 1,
               ),
             ),

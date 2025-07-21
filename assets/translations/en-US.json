@@ -787,5 +787,9 @@
   "chatEndToEndEncrypt": "This chat is end to end encrypt and files are privates.",
   "deleteQuestion": "Are you sure to delete this record?",
   "noChatsAvailable": "No any Chat Available.",
-  "typeSomething": "Write a message"
+  "typeSomething": "Write a message",
+  "patient_chat": "Patient chat",
+  "doctors_chat": "Doctor chat",
+  "search_doctors": "Search doctors",
+  "search_patient": "Search patient"
 }

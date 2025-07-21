@@ -784,5 +784,10 @@
   "chats": "แชท",
   "chatEndToEndEncrypt": "แชทนี้เป็นการเข้ารหัสแบบ end-to-end และไฟล์เป็นแบบส่วนตัว",
   "deleteQuestion": "คุณแน่ใจหรือไม่ว่าจะลบบันทึกนี้?",
-  "noChatsAvailable": "ไม่มีแชทใดที่พร้อมใช้งาน"
+  "noChatsAvailable": "ไม่มีแชทใดที่พร้อมใช้งาน",
+  "typeSomething": "เขียนข้อความ",
+  "patient_chat": "แชทกับคนไข้",
+  "doctors_chat": "แชทกับหมอ",
+  "search_doctors": "ค้นหาหมอ",
+  "search_patient": "ค้นหาคนไข้"
 }

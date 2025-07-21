@@ -4,21 +4,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:health_care/models/chat_data_type.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/read_status_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/call_bubble_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/chat_attachment_widget.dart';
+import 'package:health_care/shared/chat/chat-share/read_status_widget.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/call_bubble_widget.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/chat_attachment_widget.dart';
 import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
 class SenderBubbleWithAvatar extends StatefulWidget {
   final String currentUserId;
   final ChatDataType currentRoom;
   final MessageType message;
+  final bool showTail;
 
   const SenderBubbleWithAvatar({
     super.key,
     required this.currentUserId,
     required this.currentRoom,
-    required this.message,
+    required this.message, required this.showTail,
   });
 
   @override
@@ -66,51 +67,56 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          ChatBubble(
-            clipper: ChatBubbleClipper4(
-              type: BubbleType.sendBubble,
-            ),
-            alignment: Alignment.topRight,
-            backGroundColor: bubbleBackground,
-            shadowColor: Colors.transparent,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.7,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Text('$message'),
-                  if (message.calls.isNotEmpty)
-                    CallBubbleWidget(message: message)
-                  else if (message.attachment.isEmpty)
-                    // Only Text message
-                    Text(
-                      messageText,
-                      style: TextStyle(color: textColor),
-                    )
-                  else
-                    ChatAttachmentWidget(key: ValueKey(message.senderId), message: message, userId: currentUserId),
-
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ReadStatusWidget(lastMessage: message),
+          Transform.translate(
+            offset: const Offset(6, -5),
+            child: ChatBubble(
+              clipper: widget.showTail? ChatBubbleClipper3(
+                type: BubbleType.sendBubble,
+              ) :ChatBubbleClipper5(
+                type: BubbleType.sendBubble,
+              ) ,
+              alignment: Alignment.topRight,
+              backGroundColor: bubbleBackground,
+              shadowColor: Colors.transparent,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.7,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Text('$message'),
+                    if (message.calls.isNotEmpty)
+                      CallBubbleWidget(message: message)
+                    else if (message.attachment.isEmpty)
+                      // Only Text message
                       Text(
-                        displayValue,
-                        style: TextStyle(
-                          color: theme.disabledColor,
-                          fontSize: 12,
-                        ),
+                        messageText,
+                        style: TextStyle(color: textColor),
                       )
-                    ],
-                  )
-                ],
+                    else
+                      ChatAttachmentWidget(key: ValueKey(message.senderId), message: message, userId: currentUserId),
+            
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ReadStatusWidget(lastMessage: message),
+                        Text(
+                          displayValue,
+                          style: TextStyle(
+                            color: theme.disabledColor,
+                            fontSize: 12,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
           Stack(
-            children: [
+            children: widget.showTail ? [
               Container(
                 width: 40,
                 height: 40,
@@ -137,6 +143,12 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
                     ),
                   ),
                 ),
+              ),
+            ] : [
+              const SizedBox(
+                width: 50,
+                height: 40,
+                
               ),
             ],
           ),

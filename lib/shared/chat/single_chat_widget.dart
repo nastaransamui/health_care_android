@@ -8,26 +8,27 @@ import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
 import 'package:health_care/src/commons/scroll_button.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/no_chat_available_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat_bubble_widget.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/chat_input.dart';
-import 'package:health_care/src/features/patients/patient-chat/single-chat-widgets/single_chat_scaffold.dart';
+import 'package:health_care/shared/chat/chat-share/no_chat_available_widget.dart';
+import 'package:health_care/shared/chat/chat_bubble_widget.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/chat_input.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/single_chat_scaffold.dart';
+import 'package:health_care/src/utils/play_sound.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 
-class PatientSingleChatWidget extends StatefulWidget {
+class SingleChatWidget extends StatefulWidget {
   static const String routeName = '/patient/dashboard/patient-chat/single';
   final String roomId;
-  const PatientSingleChatWidget({
+  const SingleChatWidget({
     super.key,
     required this.roomId,
   });
 
   @override
-  State<PatientSingleChatWidget> createState() => _PatientSingleChateWidgetState();
+  State<SingleChatWidget> createState() => _SingleChateWidgetState();
 }
 
-class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
+class _SingleChateWidgetState extends State<SingleChatWidget> {
   final ScrollController scrollController = ScrollController();
   final AuthService authService = AuthService();
   late final AuthProvider authProvider;
@@ -46,7 +47,7 @@ class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
   final chatInputFocusNode = FocusNode();
   Set<int> showDeleteIndices = {};
   int editMessageTime = 0;
-
+  int? lastMessageTimestamp;
   void setEditMessageTime(int timestamp) {
     setState(() {
       editMessageTime = timestamp;
@@ -77,6 +78,21 @@ class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
   Future<void> getDataOnUpdate() async {
     hasMarkedRead = false;
     chatService.getSingleRoomById(context, widget.roomId, () {
+      if (hasMarkedRead) {
+        final currentRoom = chatProvider.currentRoom;
+        if (currentRoom != null && currentRoom.messages.isNotEmpty) {
+          final latestMessage = currentRoom.messages.last;
+          // Check if it's a new message AND not from the current user
+          if (lastMessageTimestamp == null || latestMessage.timestamp > lastMessageTimestamp!) {
+            if (latestMessage.senderId != currentUserId) {
+              playReciveMessageSound();
+            }
+
+            // Update the latest seen timestamp
+            lastMessageTimestamp = latestMessage.timestamp;
+          }
+        }
+      }
       setState(() {
         isLoading = false;
       });
@@ -121,7 +137,7 @@ class _PatientSingleChateWidgetState extends State<PatientSingleChatWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getDataOnUpdate();
       socket.emit("joinRoom", widget.roomId);
-      socket.emit('makeAllMessageRead', {"roomId": widget.roomId});
+      socket.emit('makeAllMessageRead', {"roomId": widget.roomId, "userId": currentUserId});
     });
   }
 

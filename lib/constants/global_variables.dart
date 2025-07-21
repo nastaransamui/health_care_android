@@ -83,7 +83,7 @@ List doctorsDashboardLink = [
   {
     'name': 'message',
     'routeName': "/doctors/dashboard/chat-doctor",
-    "icon": const FaIcon(FontAwesomeIcons.commentAlt),
+    "icon": const FaIcon(FontAwesomeIcons.comments),
   },
   {
     'name': 'socialMedia',

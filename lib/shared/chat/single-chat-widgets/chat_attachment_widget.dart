@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/services/time_schedule_service.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/custom_lightbox.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/get_file_icon.dart';
-import 'package:health_care/src/features/patients/patient-chat/chat-share/save_bytes_to_file.dart';
+import 'package:health_care/shared/chat/chat-share/custom_lightbox.dart';
+import 'package:health_care/shared/chat/chat-share/get_file_icon.dart';
+import 'package:health_care/shared/chat/chat-share/save_bytes_to_file.dart';
 import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
 class ChatAttachmentWidget extends StatefulWidget {
