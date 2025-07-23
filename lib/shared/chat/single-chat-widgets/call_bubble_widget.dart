@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/chat_data_type.dart';
 
@@ -14,6 +15,7 @@ class CallBubbleWidget extends StatelessWidget {
     final call = message.calls.first;
     final int startTime = message.calls.first.startTimeStamp;
     final int finishTime = message.calls.first.finishTimeStamp ?? startTime;
+    final bool isAnswered = call.isAnswered;
 
 // Duration from milliseconds
     final duration = Duration(milliseconds: finishTime - startTime);
@@ -24,7 +26,9 @@ class CallBubbleWidget extends StatelessWidget {
 
     String formattedDuration = "";
 
-    if (totalSeconds < 60) {
+    if (!isAnswered) {
+      formattedDuration = context.tr('noAnswer');
+    } else if (totalSeconds < 60) {
       formattedDuration = "$totalSeconds sec";
     } else if (totalSeconds < 3600) {
       final int remainingSeconds = totalSeconds % 60;

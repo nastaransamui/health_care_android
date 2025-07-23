@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/providers/user_from_token_provider.dart';
 import 'package:health_care/providers/vital_provider.dart';
@@ -46,9 +47,27 @@ Future<void> requestNotificationPermission() async {
    
   }
 }
+Future<void> requestMediaPermissions() async {
+  if (Platform.isAndroid || Platform.isIOS) {
+    final micStatus = await Permission.microphone.request();
+    final camStatus = await Permission.camera.request();
+
+    if (micStatus.isDenied || micStatus.isPermanentlyDenied) {
+      debugPrint("Microphone permission denied");
+      // Optionally show UI
+    }
+
+    if (camStatus.isDenied || camStatus.isPermanentlyDenied) {
+      debugPrint("Camera permission denied");
+      // Optionally show UI
+    }
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await requestMediaPermissions();
+  await requestNotificationPermission();
   // Initialize notification settings
   const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
   const iosInit = DarwinInitializationSettings();
@@ -124,6 +143,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => VitalProvider()),
         ChangeNotifierProvider(create: (_) => UserFromTokenProvider()),
         ChangeNotifierProvider(create: (_) => DataGridProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: EasyLocalization(
         supportedLocales: const [

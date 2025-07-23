@@ -230,6 +230,8 @@ class MessageType {
     result.addAll({'timestamp': timestamp});
     if (message != null) {
       result.addAll({'message': message});
+    }else{
+      result.addAll({'message': null});
     }
     result.addAll({'read': read});
     result.addAll({'attachment': attachment.map((x) => x.toMap()).toList()});
@@ -421,6 +423,8 @@ class CallType {
     result.addAll({'startTimeStamp': startTimeStamp});
     if (finishTimeStamp != null) {
       result.addAll({'finishTimeStamp': finishTimeStamp});
+    }else{
+       result.addAll({'finishTimeStamp': null});
     }
     result.addAll({'isMissedCall': isMissedCall});
     result.addAll({'isRejected': isRejected});

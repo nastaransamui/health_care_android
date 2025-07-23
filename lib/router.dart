@@ -8,7 +8,6 @@ import 'package:health_care/providers/bank_provider.dart';
 import 'package:health_care/providers/bill_provider.dart';
 import 'package:health_care/providers/billing_provider.dart';
 import 'package:health_care/providers/booking_information_provider.dart';
-import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/providers/dependents_provider.dart';
 import 'package:health_care/providers/doctor_patient_profile_provider.dart';
 import 'package:health_care/providers/favourites_provider.dart';
@@ -641,31 +640,27 @@ final router = GoRouter(
     GoRoute(
       path: '/doctors/dashboard/chat-doctor',
       name: 'doctorsChat',
-      builder: (context, state) {
-        return ChangeNotifierProvider(
-          create: (context) => ChatProvider(),
-          child: Builder(
-            // Using Builder to access the newly provided InvoiceProvider within the same build method
-            builder: (innerContext) {
-              // Use innerContext to get the InvoiceProvider from the local scope
-              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
-              final doctorProfile = authProvider.doctorsProfile;
+      pageBuilder: (context, state) {
+    return MaterialPage(
+      child: Builder(
+        builder: (innerContext) {
+          final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+          final doctorProfile = authProvider.doctorsProfile;
 
-              if (doctorProfile != null) {
-                return const ChatWidget();
-              } else {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (innerContext.mounted) {
-                    // Use innerContext here
-                    innerContext.go('/');
-                  }
-                });
-                return const SizedBox.shrink();
+          if (doctorProfile != null) {
+            return const ChatWidget();
+          } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (innerContext.mounted) {
+                innerContext.go('/');
               }
-            },
-          ),
-        );
-      },
+            });
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+  },
       redirect: (context, state) {
         // Redirect logic remains the same, as AuthProvider is likely a global provider
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -678,29 +673,24 @@ final router = GoRouter(
         return null;
       },
     ),
-        GoRoute(
+    GoRoute(
       path: '/doctors/dashboard/doctors-chat/single/:encodedRoomId',
       name: 'doctorsChatSingle',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final encodedRoomId = state.pathParameters['encodedRoomId']!;
         final roomId = utf8.decode(base64.decode(encodedRoomId));
-        return ChangeNotifierProvider(
-          create: (context) => ChatProvider(),
+        return MaterialPage(
           child: Builder(
-            // Using Builder to access the newly provided InvoiceProvider within the same build method
             builder: (innerContext) {
-              // Use innerContext to get the InvoiceProvider from the local scope
               final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
               final doctorProfile = authProvider.doctorsProfile;
 
               if (doctorProfile != null) {
-                return  SingleChatWidget(roomId: roomId);
+                return SingleChatWidget(roomId: roomId);
               } else {
+                // Redirect back home on first frame
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (innerContext.mounted) {
-                    // Use innerContext here
-                    innerContext.go('/');
-                  }
+                  if (innerContext.mounted) innerContext.go('/');
                 });
                 return const SizedBox.shrink();
               }
@@ -1327,28 +1317,25 @@ final router = GoRouter(
       path: '/patient/dashboard/patient-chat',
       name: 'patientChat',
       builder: (context, state) {
-        return ChangeNotifierProvider(
-          create: (context) => ChatProvider(),
-          child: Builder(
-            // Using Builder to access the newly provided InvoiceProvider within the same build method
-            builder: (innerContext) {
-              // Use innerContext to get the InvoiceProvider from the local scope
-              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
-              final patientProfile = authProvider.patientProfile;
+        return Builder(
+          // Using Builder to access the newly provided InvoiceProvider within the same build method
+          builder: (innerContext) {
+            // Use innerContext to get the InvoiceProvider from the local scope
+            final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+            final patientProfile = authProvider.patientProfile;
 
-              if (patientProfile != null) {
-                return const ChatWidget();
-              } else {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (innerContext.mounted) {
-                    // Use innerContext here
-                    innerContext.go('/');
-                  }
-                });
-                return const SizedBox.shrink();
-              }
-            },
-          ),
+            if (patientProfile != null) {
+              return const ChatWidget();
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (innerContext.mounted) {
+                  // Use innerContext here
+                  innerContext.go('/');
+                }
+              });
+              return const SizedBox.shrink();
+            }
+          },
         );
       },
       redirect: (context, state) {
@@ -1368,28 +1355,25 @@ final router = GoRouter(
       builder: (context, state) {
         final encodedRoomId = state.pathParameters['encodedRoomId']!;
         final roomId = utf8.decode(base64.decode(encodedRoomId));
-        return ChangeNotifierProvider(
-          create: (context) => ChatProvider(),
-          child: Builder(
-            // Using Builder to access the newly provided InvoiceProvider within the same build method
-            builder: (innerContext) {
-              // Use innerContext to get the InvoiceProvider from the local scope
-              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
-              final patientProfile = authProvider.patientProfile;
+        return Builder(
+          // Using Builder to access the newly provided InvoiceProvider within the same build method
+          builder: (innerContext) {
+            // Use innerContext to get the InvoiceProvider from the local scope
+            final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+            final patientProfile = authProvider.patientProfile;
 
-              if (patientProfile != null) {
-                return SingleChatWidget(roomId: roomId);
-              } else {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (innerContext.mounted) {
-                    // Use innerContext here
-                    innerContext.go('/');
-                  }
-                });
-                return const SizedBox.shrink();
-              }
-            },
-          ),
+            if (patientProfile != null) {
+              return SingleChatWidget(roomId: roomId);
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (innerContext.mounted) {
+                  // Use innerContext here
+                  innerContext.go('/');
+                }
+              });
+              return const SizedBox.shrink();
+            }
+          },
         );
       },
       redirect: (context, state) {

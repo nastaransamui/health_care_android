@@ -4,3 +4,6 @@
 -keepclassmembers class * {
     public <init>(...);
 }
+# Flutter WebRTC
+-keep class com.cloudwebrtc.webrtc.** { *; }
+-keep class org.webrtc.** { *; }

@@ -19,12 +19,35 @@ Future<void> playReciveMessageSound() async {
     log("Error playing sound: $e");
   }
 }
+AudioPlayer? incomingCallPlayer;
+bool isPlaying = false;
 
-Future<void> playIncomingCallSound() async {
-  final player = AudioPlayer();
+Future<void> incomingCallSound(bool play) async {
   try {
-    await player.play(AssetSource('sound/incoming-call.mp3'));
+    if (play) {
+      if (isPlaying) return;
+
+      // Always create a new instance to avoid disposed issues
+      incomingCallPlayer = AudioPlayer();
+      await incomingCallPlayer!.setReleaseMode(ReleaseMode.loop);
+      await incomingCallPlayer!.play(
+        AssetSource('sound/incoming-call.mp3'),
+        volume: 1.0,
+      );
+
+      isPlaying = true;
+    } else {
+      if (!isPlaying) return;
+
+      await incomingCallPlayer?.stop();
+      await incomingCallPlayer?.dispose();
+      incomingCallPlayer = null;
+
+      isPlaying = false;
+    }
   } catch (e) {
-    log("Error playing sound: $e");
+    log("Error handling incoming call sound: $e");
+    isPlaying = false;
+    incomingCallPlayer = null;
   }
 }

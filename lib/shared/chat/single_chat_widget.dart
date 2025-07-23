@@ -85,7 +85,9 @@ class _SingleChateWidgetState extends State<SingleChatWidget> {
           // Check if it's a new message AND not from the current user
           if (lastMessageTimestamp == null || latestMessage.timestamp > lastMessageTimestamp!) {
             if (latestMessage.senderId != currentUserId) {
+              if(latestMessage.calls.isEmpty){
               playReciveMessageSound();
+              }
             }
 
             // Update the latest seen timestamp
