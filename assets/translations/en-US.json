@@ -791,5 +791,7 @@
   "patient_chat": "Patient chat",
   "doctors_chat": "Doctor chat",
   "search_doctors": "Search doctors",
-  "search_patient": "Search patient"
+  "search_patient": "Search patient",
+  "voiceCallConnecting": "Wait while answer.",
+  "voiceCallConnected": "Voice call is going on...."
 }

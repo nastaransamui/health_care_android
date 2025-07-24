@@ -789,5 +789,7 @@
   "patient_chat": "แชทกับคนไข้",
   "doctors_chat": "แชทกับหมอ",
   "search_doctors": "ค้นหาหมอ",
-  "search_patient": "ค้นหาคนไข้"
+  "search_patient": "ค้นหาคนไข้",
+  "voiceCallConnecting": "รอรับสาย.",
+  "voiceCallConnected": "กำลังสนทนาทางโทรศัพท์อยู่..."
 }

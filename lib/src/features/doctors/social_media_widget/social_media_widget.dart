@@ -112,12 +112,10 @@ class _SocialMediaWidgetState extends State<SocialMediaWidget> {
     // Convert the list of SocialMedia objects into a Map for easy lookup
     // where the key is the platform name and the value is the link.
     final Map<String, String> existingSocialMediaLinks = {};
-    if (socialMediaList != null) {
-      for (var sm in socialMediaList) {
-        existingSocialMediaLinks[sm.platform] = sm.link;
-      }
+    for (var sm in socialMediaList!) {
+      existingSocialMediaLinks[sm.platform] = sm.link;
     }
-    return ScaffoldWrapper(
+      return ScaffoldWrapper(
       title: context.tr('socialMedia'),
       children: SingleChildScrollView(
         controller: scrollController,

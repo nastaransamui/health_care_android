@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 String ipApiUrl = 'http://ip-api.com/json';
@@ -436,3 +437,13 @@ final int eveningMinutes = eveningFinish.difference(eveningStart).inMinutes;
       }
     }
   };
+
+  Map<String, dynamic> icServerConfiguration = {
+  'iceServers': [
+    {'urls': 'stun:stun.l.google.com:19302'}
+  ]
+};
+
+late RTCPeerConnection peerConnection;
+late MediaStream? localStream;
+MediaStream? remoteStream;

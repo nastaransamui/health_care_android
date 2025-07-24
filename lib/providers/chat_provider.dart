@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:health_care/models/chat_data_type.dart';
+import 'package:health_care/models/incoming_call.dart';
 
 class ChatProvider extends ChangeNotifier {
   List<ChatDataType> _userChatData = [];
   bool _isLoading = true;
-  ChatDataType? _currentRoom; 
+  ChatDataType? _currentRoom;
+  bool _endCall = false;
+  bool _isAcceptCall = false;
+  IncomingCall? _incomingCall;
 
   List<ChatDataType> get userChatData => _userChatData;
   bool get isLoading => _isLoading;
   ChatDataType? get currentRoom => _isLoading ? null : _currentRoom;
+  bool get endCall => _endCall;
+  bool get isAcceptCall => _isAcceptCall;
+  IncomingCall? get incomingCall => _incomingCall;
 
   void setUserChatData(List<ChatDataType> userChatData, {bool notify = true}) {
     _userChatData = userChatData;
@@ -24,6 +31,21 @@ class ChatProvider extends ChangeNotifier {
 
   void setLoading(bool value, {bool notify = true}) {
     _isLoading = value;
+    if (notify) notifyListeners();
+  }
+
+  void setEndCall(bool value, {bool notify = true}) {
+    _endCall = value;
+    if (notify) notifyListeners();
+  }
+
+  void setIsAcceptCall(bool value, {bool notify = true}) {
+    _isAcceptCall = value;
+    if (notify) notifyListeners();
+  }
+
+    void setIncomingCall(IncomingCall? incomingCall, {bool notify = true}) {
+    _incomingCall = incomingCall;
     if (notify) notifyListeners();
   }
 }

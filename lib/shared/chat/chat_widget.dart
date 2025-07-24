@@ -14,7 +14,7 @@ import 'package:health_care/shared/chat/main-chat-widgets/chat_header.dart';
 import 'package:health_care/shared/chat/main-chat-widgets/chat_user_autocomplete.dart';
 import 'package:health_care/shared/chat/main-chat-widgets/chat_user_with_slider.dart';
 import 'package:health_care/shared/chat/chat-share/no_chat_available_widget.dart';
-import 'package:health_care/shared/chat/chat-share/sort_latest_message.dart';
+import 'package:health_care/shared/chat/chat_helpers/sort_latest_message.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 

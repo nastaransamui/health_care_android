@@ -189,6 +189,39 @@ class ChatService {
     socket.on('updateGetSingleRoomById', (_) => getSingleRoomByIdWithUpdate());
     getSingleRoomByIdWithUpdate();
   }
+
+  Future<void> receiveVoiceCall(BuildContext context) async {
+    socket.on('receiveVoiceCall', (data) async {
+      // final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      // chatProvider.setEndCall(false);
+      // chatProvider.setIsAcceptCall(false);
+      try {
+        log('$data data recieveVocidecal:');
+        // final RTCSessionDescription offer = RTCSessionDescription(data['offer']['sdp'], data['offer']['type']);
+        // final String receiverId = data['receiverId'];
+        // final String callerId = data['callerId'];
+        // final String roomId = data['roomId'];
+        // var messageDataMap = data['messageData'];
+        // final MessageType messageData = MessageType.fromMap(messageDataMap);
+        // chatProvider.setIncomingCall(
+        //   IncomingCall(
+        //     offer: offer,
+        //     receiverId: receiverId,
+        //     callerId: callerId,
+        //     roomId: roomId,
+        //     messageData: messageData,
+        //   ),
+        // );
+        // await initiateVoiceCallIfPermitted(
+        //   context,
+        //   widget.currentRoom,
+        //   widget.currentUserId,
+        // );
+      } catch (e) {
+        log("Error socket receiveVoiceCall: $e");
+      }
+    });
+  }
 }
 
 Future<Uint8List?> getChatFile(String fileId, String userId) async {

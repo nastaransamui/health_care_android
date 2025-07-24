@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/src/features/loading_screen.dart';
-import 'package:health_care/shared/chat/chat-share/get_file_icon.dart';
+import 'package:health_care/shared/chat/chat_helpers/get_file_icon.dart';
 import 'package:health_care/src/utils/play_sound.dart';
 
 import 'package:health_care/stream_socket.dart';

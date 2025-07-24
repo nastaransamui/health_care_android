@@ -939,13 +939,11 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                   firstDate: DateTime(1924),
                                   lastDate: DateTime.now(),
                                 );
-                                if (pickedDate != null) {
-                                  String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate);
-                                  setState(() {
-                                    dobController.text = formattedDate;
-                                  });
-                                }
-                              },
+                                String formattedDate = DateFormat('dd MMM yyyy').format(pickedDate!);
+                                setState(() {
+                                  dobController.text = formattedDate;
+                                });
+                                                            },
                             ),
                             const SizedBox(height: 10),
                           ],
@@ -2103,29 +2101,25 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                             firstDate: DateTime(experienceFromDate[index].first, experienceFromDate[index][1],
                                                                 experienceFromDate[index][2]),
                                                             lastDate: DateTime(endFromYear, endFromMonth, endFromDay));
-                                                        if (fromDate != null) {
-                                                          String formattedDate = DateFormat('dd MMM yyyy').format(fromDate);
-                                                          experienceToDate[index][0] = fromDate.year;
-                                                          experienceToDate[index][1] = fromDate.month;
-                                                          experienceToDate[index][2] = fromDate.day;
-                                                          setState(() {
-                                                            entry.value.text = formattedDate;
-                                                          });
-                                                        }
-                                                      } else {
+                                                        String formattedDate = DateFormat('dd MMM yyyy').format(fromDate!);
+                                                        experienceToDate[index][0] = fromDate.year;
+                                                        experienceToDate[index][1] = fromDate.month;
+                                                        experienceToDate[index][2] = fromDate.day;
+                                                        setState(() {
+                                                          entry.value.text = formattedDate;
+                                                        });
+                                                                                                            } else {
                                                         DateTime? toDate = await showDatePicker(
                                                             initialDatePickerMode: DatePickerMode.year,
                                                             context: context,
                                                             firstDate: DateTime(experienceToDate[index].first, experienceToDate[index][1],
                                                                 experienceToDate[index][2]),
                                                             lastDate: DateTime.now());
-                                                        if (toDate != null) {
-                                                          String formattedDate = DateFormat('dd MMM yyyy').format(toDate);
-                                                          setState(() {
-                                                            entry.value.text = formattedDate;
-                                                          });
-                                                        }
-                                                      }
+                                                        String formattedDate = DateFormat('dd MMM yyyy').format(toDate!);
+                                                        setState(() {
+                                                          entry.value.text = formattedDate;
+                                                        });
+                                                                                                            }
                                                     },
                                                   );
                                           },

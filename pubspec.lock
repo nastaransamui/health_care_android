@@ -45,10 +45,10 @@ packages:
     dependency: transitive
     description:
       name: asn1lib
-      sha256: "0511d6be23b007e95105ae023db599aea731df604608978dada7f9faf2637623"
+      sha256: "9a8f69025044eb466b9b60ef3bc3ac99b4dc6c158ae9c56d25eeccf5bc56d024"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.4"
+    version: "1.6.5"
   async:
     dependency: transitive
     description:
@@ -57,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  audio_streamer:
+    dependency: transitive
+    description:
+      name: audio_streamer
+      sha256: f9084f3d4c98bd83ad5255a8b9250adcc81515de170efd7ef16a7663f8b8d95c
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   audioplayers:
     dependency: "direct main"
     description:
@@ -554,10 +562,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_form_builder
-      sha256: aa3901466c70b69ae6c7f3d03fcbccaec5fde179d3fded0b10203144b546ad28
+      sha256: db01493da4ef0f9ca1b2367fd1653569e933052eb06d6fbd944be97c76764fb8
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.1"
+    version: "10.1.0"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -634,10 +642,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: b94a50aabbe56ef254f95f3be75640f99120429f0a153b2dc30143cffc9bfdf3
+      sha256: "81350df6cb90196390b0b175c645968620d508a4fc9db5996215a1cfa4135a03"
       url: "https://pub.dev"
     source: hosted
-    version: "19.2.1"
+    version: "19.3.1"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -650,18 +658,18 @@ packages:
     dependency: transitive
     description:
       name: flutter_local_notifications_platform_interface
-      sha256: "2569b973fc9d1f63a37410a9f7c1c552081226c597190cb359ef5d5762d1631c"
+      sha256: "277d25d960c15674ce78ca97f57d0bae2ee401c844b6ac80fcd972a9c99d09fe"
       url: "https://pub.dev"
     source: hosted
-    version: "9.0.0"
+    version: "9.1.0"
   flutter_local_notifications_windows:
     dependency: transitive
     description:
       name: flutter_local_notifications_windows
-      sha256: f8fc0652a601f83419d623c85723a3e82ad81f92b33eaa9bcc21ea1b94773e6e
+      sha256: ed46d7ae4ec9d19e4c8fa2badac5fe27ba87a3fe387343ce726f927af074ec98
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.2"
   flutter_localizations:
     dependency: transitive
     description: flutter
@@ -743,10 +751,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: d44bf546b13025ec7353091516f6881f1d4c633993cb109c3916c3a0159dadf1
+      sha256: cd57f7969b4679317c17af6fd16ee233c1e60a82ed209d8a475c54fd6fd6f845
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   flutter_swipe_button:
     dependency: "direct main"
     description:
@@ -801,10 +809,10 @@ packages:
     dependency: "direct main"
     description:
       name: form_builder_validators
-      sha256: cd617fa346250293ff3e2709961d0faf7b80e6e4f0ff7b500126b28d7422dd67
+      sha256: "1b03c74d1db740890e6af803b43e5ebe56f8fa1ff5609cbf744e8d980dc5f8c6"
       url: "https://pub.dev"
     source: hosted
-    version: "11.1.2"
+    version: "11.2.0"
   get:
     dependency: transitive
     description:
@@ -921,10 +929,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_android
-      sha256: "317a5d961cec5b34e777b9252393f2afbd23084aa6e60fcf601dcf6341b9ebeb"
+      sha256: "6fae381e6af2bbe0365a5e4ce1db3959462fa0c4d234facf070746024bb80c8d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.12+23"
+    version: "0.8.12+24"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -1157,6 +1165,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  noise_meter:
+    dependency: "direct main"
+    description:
+      name: noise_meter
+      sha256: "1eab67e5023c24c43757fa2b6b1b8bc43277e9cc6a7b0fb1c6f6537cc0e3116c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2"
   octo_image:
     dependency: transitive
     description:
@@ -1337,10 +1353,10 @@ packages:
     dependency: "direct main"
     description:
       name: permission_handler
-      sha256: "2d070d8684b68efb580a5997eb62f675e8a885ef0be6e754fb9ef489c177470f"
+      sha256: bc917da36261b00137bbc8896bf1482169cd76f866282368948f032c8c1caae1
       url: "https://pub.dev"
     source: hosted
-    version: "12.0.0+1"
+    version: "12.0.1"
   permission_handler_android:
     dependency: transitive
     description:
@@ -1465,10 +1481,10 @@ packages:
     dependency: transitive
     description:
       name: posix
-      sha256: f0d7856b6ca1887cfa6d1d394056a296ae33489db914e365e2044fdada449e62
+      sha256: "6323a5b0fa688b6a010df4905a56b00181479e6d10534cecfecede2aa55add61"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.2"
+    version: "6.0.3"
   pretty_gauge:
     dependency: "direct main"
     description:
@@ -1815,108 +1831,126 @@ packages:
     description:
       path: "packages/syncfusion_flutter_calendar"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       path: "packages/syncfusion_flutter_core"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_flutter_datagrid:
     dependency: "direct main"
     description:
       path: "packages/syncfusion_flutter_datagrid"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_flutter_datepicker:
     dependency: "direct main"
     description:
       path: "packages/syncfusion_flutter_datepicker"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_flutter_pdf:
     dependency: "direct main"
     description:
       path: "packages/syncfusion_flutter_pdf"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_flutter_pdfviewer:
     dependency: "direct main"
     description:
       path: "packages/syncfusion_flutter_pdfviewer"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_flutter_signaturepad:
     dependency: transitive
     description:
       path: "packages/syncfusion_flutter_signaturepad"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
+  syncfusion_localizations:
+    dependency: transitive
+    description:
+      path: "packages/syncfusion_localizations"
+      ref: HEAD
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
+      url: "https://github.com/syncfusion/flutter-widgets.git"
+    source: git
+    version: "30.1.37"
+  syncfusion_pdfviewer_linux:
+    dependency: transitive
+    description:
+      path: "packages/syncfusion_pdfviewer_linux"
+      ref: HEAD
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
+      url: "https://github.com/syncfusion/flutter-widgets.git"
+    source: git
+    version: "30.1.37"
   syncfusion_pdfviewer_macos:
     dependency: transitive
     description:
       path: "packages/syncfusion_pdfviewer_macos"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_pdfviewer_platform_interface:
     dependency: transitive
     description:
       path: "packages/syncfusion_flutter_pdfviewer_platform_interface"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_pdfviewer_web:
     dependency: transitive
     description:
       path: "packages/syncfusion_pdfviewer_web"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   syncfusion_pdfviewer_windows:
     dependency: transitive
     description:
       path: "packages/syncfusion_pdfviewer_windows"
       ref: HEAD
-      resolved-ref: "1dd3309a0ea5b3e638b4989b2ac468cb96be0514"
+      resolved-ref: "302c84f2ccdb51896f794b5e870e058a3c23b2b8"
       url: "https://github.com/syncfusion/flutter-widgets.git"
     source: git
-    version: "29.1.33"
+    version: "30.1.37"
   synchronized:
     dependency: transitive
     description:
       name: synchronized
-      sha256: "0669c70faae6270521ee4f05bffd2919892d42d1276e6c495be80174b6bc0ef6"
+      sha256: c254ade258ec8282947a0acbbc90b9575b4f19673533ee46f2f6e9b3aeefd7c0
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.1"
+    version: "3.4.0"
   term_glyph:
     dependency: transitive
     description:
@@ -1945,10 +1979,10 @@ packages:
     dependency: "direct main"
     description:
       name: timezone
-      sha256: ffc9d5f4d1193534ef051f9254063fa53d588609418c84299956c3db9383587d
+      sha256: dd14a3b83cfd7cb19e7888f1cbc20f258b8d71b54c06f79ac585f14093a287d1
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.0"
+    version: "0.10.1"
   toastify:
     dependency: "direct main"
     description:
@@ -1961,10 +1995,10 @@ packages:
     dependency: "direct main"
     description:
       name: trina_grid
-      sha256: "58ce44be1343018355d1187d162635ce8543601c0ccb43608d0d9161911f691e"
+      sha256: "8b4f4cdc86467fb5d7ff637b2c6f43d6a6ea3eee48c4bd45548497deb8c2975e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.9"
+    version: "1.6.10"
   typed_data:
     dependency: transitive
     description:
@@ -1985,10 +2019,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: "9d06212b1362abc2f0f0d78e6f09f726608c74e3b9462e8368bb03314aa8d603"
+      sha256: f6a7e5c4835bb4e3026a04793a4199ca2d14c739ec378fdfe23fc8075d0439f8
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.1"
+    version: "6.3.2"
   url_launcher_android:
     dependency: transitive
     description:
@@ -2109,6 +2143,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "15.0.0"
+  waveform_flutter:
+    dependency: "direct main"
+    description:
+      name: waveform_flutter
+      sha256: "08c9e98d4cf119428d8b3c083ed42c11c468623eaffdf30420ae38e36662922a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   web:
     dependency: transitive
     description:
@@ -2167,4 +2209,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.8.0 <4.0.0"
-  flutter: ">=3.29.0"
+  flutter: ">=3.32.0"
