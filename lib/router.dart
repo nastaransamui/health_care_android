@@ -641,26 +641,26 @@ final router = GoRouter(
       path: '/doctors/dashboard/chat-doctor',
       name: 'doctorsChat',
       pageBuilder: (context, state) {
-    return MaterialPage(
-      child: Builder(
-        builder: (innerContext) {
-          final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
-          final doctorProfile = authProvider.doctorsProfile;
+        return MaterialPage(
+          child: Builder(
+            builder: (innerContext) {
+              final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
+              final doctorProfile = authProvider.doctorsProfile;
 
-          if (doctorProfile != null) {
-            return const ChatWidget();
-          } else {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (innerContext.mounted) {
-                innerContext.go('/');
+              if (doctorProfile != null) {
+                return const ChatWidget();
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (innerContext.mounted) {
+                    innerContext.go('/');
+                  }
+                });
+                return const SizedBox.shrink();
               }
-            });
-            return const SizedBox.shrink();
-          }
-        },
-      ),
-    );
-  },
+            },
+          ),
+        );
+      },
       redirect: (context, state) {
         // Redirect logic remains the same, as AuthProvider is likely a global provider
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
@@ -1827,15 +1827,18 @@ final router = GoRouter(
       redirect: (context, state) {
         var isLogin = Provider.of<AuthProvider>(context, listen: false).isLogin;
         var roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
-        if (!isLogin) {
-          return state.namedLocation('verifyEmail', pathParameters: state.pathParameters);
-        } else {
+
+        // Only redirect IF user is logged in
+        if (isLogin) {
           if (roleName == 'doctors') {
             return '/';
           } else {
             return '/patient/dashboard';
           }
         }
+
+        // Stay on page if not logged in
+        return null;
       },
     ),
 

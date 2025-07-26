@@ -1,12 +1,15 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:health_care/models/chat_data_type.dart';
+import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/src/features/patients/medicalRecords/medical_record_show_box.dart';
 import 'package:health_care/shared/chat/main-chat-widgets/auto_complete_item_builder.dart';
 import 'package:health_care/shared/chat/chat_helpers/sort_latest_message.dart';
 import 'package:health_care/stream_socket.dart';
+import 'package:provider/provider.dart';
 
 class ChatUserAutocomplete extends StatefulWidget {
   final String roleName; // doctors or patient
@@ -39,6 +42,8 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ChatService chatService = ChatService();
+  late final ChatProvider chatProvider;
+    bool _isProvidersInitialized = false;
 
   @override
   void initState() {
@@ -47,18 +52,26 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
       setState(() {}); // Triggers rebuild so suffixIcon updates
     });
   }
-
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isProvidersInitialized) {
+      chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      _isProvidersInitialized = true;
+    }
+  }
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
     socket.off('userSearchAutocompleteReturn');
+    chatProvider.clearUserSearchAutocompleteReturn(notify: false);
     super.dispose();
   }
 
   void onSelectAutoComplete(ChatUserAutocompleteData suggestion) {
     _focusNode.unfocus();
-
+    
     setState(() {
       _controller.text = "";
     });
@@ -92,6 +105,9 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
         "messages": [],
       };
       socket.emit('inviteUserToRoom', roomData);
+    }else{
+      final String existRoomId = widget.userChatData[selectedIndex].roomId;
+      chatProvider.setShowEmptyRoomInSearchList(existRoomId);
     }
   }
 

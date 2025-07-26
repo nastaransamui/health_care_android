@@ -96,6 +96,7 @@ class PatientUserProfile {
   final dynamic dob;
   final List<String> doctorsId;
   final List<String> favsId;
+  final List<String> fcmTokens;
   final String firstName;
   final String fullName;
   final String gender;
@@ -134,6 +135,7 @@ class PatientUserProfile {
     required this.dob,
     required this.doctorsId,
     required this.favsId,
+    required this.fcmTokens,
     required this.firstName,
     required this.fullName,
     required this.gender,
@@ -175,6 +177,7 @@ class PatientUserProfile {
     result.addAll({'dob': dob});
     result.addAll({'doctorsId': doctorsId});
     result.addAll({'favsId': favsId});
+    result.addAll({'fcmTokens': fcmTokens});
     result.addAll({'firstName': firstName});
     result.addAll({'fullName': fullName});
     result.addAll({'gender': gender});
@@ -217,6 +220,7 @@ class PatientUserProfile {
       dob: map['dob'] == '' ? '' : DateTime.parse(map['dob']),
       doctorsId: List<String>.from(map['doctors_id'] ?? []),
       favsId: List<String>.from(map['favs_id'] ?? []),
+      fcmTokens: List<String>.from(map['fcmTokens'] ?? []),
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
@@ -262,6 +266,7 @@ class PatientUserProfile {
         dob: '',
         doctorsId: [],
         favsId: [],
+        fcmTokens: [],
         firstName: '',
         fullName: '',
         gender: '',
@@ -301,6 +306,7 @@ class PatientUserProfile {
     dynamic dob,
     List<String>? doctorsId,
     List<String>? favsId,
+    List<String>? fcmTokens,
     String? firstName,
     String? fullName,
     String? gender,
@@ -339,6 +345,7 @@ class PatientUserProfile {
       dob: dob ?? this.dob,
       doctorsId: doctorsId ?? this.doctorsId,
       favsId: favsId ?? this.favsId,
+      fcmTokens: fcmTokens ?? this.fcmTokens,
       firstName: firstName ?? this.firstName,
       fullName: fullName ?? this.fullName,
       gender: gender ?? this.gender,
@@ -369,7 +376,7 @@ class PatientUserProfile {
 
   @override
   String toString() {
-    return 'PatientUserProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, reservationsId: $reservationsId, reviewsArray: $reviewsArray, roleName: $roleName, services: $services, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
+    return 'PatientUserProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, fcmTokens: $fcmTokens, firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, reservationsId: $reservationsId, reviewsArray: $reviewsArray, roleName: $roleName, services: $services, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
   }
 }
 
@@ -542,6 +549,7 @@ class DoctorUserProfile {
   final List<Education> educations;
   final List<Experinces> experinces;
   final List<String> favsId;
+  final List<String>fcmTokens;
   final String firstName;
   final String fullName;
   final String gender;
@@ -596,6 +604,7 @@ class DoctorUserProfile {
     required this.educations,
     required this.experinces,
     required this.favsId,
+    required this.fcmTokens,
     required this.firstName,
     required this.fullName,
     required this.gender,
@@ -657,6 +666,7 @@ class DoctorUserProfile {
       educations: (json['educations'] as List).map((e) => Education.fromMap(e as Map<String, dynamic>)).toList(),
       experinces: (json['experinces'] as List).map((e) => Experinces.fromMap(e as Map<String, dynamic>)).toList(),
       favsId: List<String>.from(json['favs_id']),
+      fcmTokens: List<String>.from(json['fcmTokens']),
       firstName: json['firstName'] ?? '',
       fullName: json['fullName'] ?? '',
       gender: json['gender'] ?? '',
@@ -716,6 +726,7 @@ class DoctorUserProfile {
       'educations': educations.map((e) => e.toJson()).toList(),
       'experinces': experinces.map((e) => e.toJson()).toList(),
       'favs_id': favsId,
+      'fcmTokens': fcmTokens,
       'firstName': firstName,
       'fullName': fullName,
       'gender': gender,
@@ -774,6 +785,7 @@ class DoctorUserProfile {
     result.addAll({'educations': educations.map((x) => x.toMap()).toList()});
     result.addAll({'experinces': experinces.map((x) => x.toMap()).toList()});
     result.addAll({'favsId': favsId});
+    result.addAll({'fcmTokens': fcmTokens});
     result.addAll({'firstName': firstName});
     result.addAll({'fullName': fullName});
     result.addAll({'gender': gender});
@@ -833,6 +845,7 @@ class DoctorUserProfile {
       educations: map['educations'] != null ? List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))) : [],
       experinces: map['experinces'] != null ? List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))) : [],
       favsId: map['favs_id'] != null ? List<String>.from(map['favs_id']) : [],
+      fcmTokens: map['fcmTokens'] != null ? List<String>.from(map['fcmTokens']) : [],
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
@@ -840,7 +853,8 @@ class DoctorUserProfile {
       invoiceIds: map['invoice_ids'] != null ? List<String>.from(map['invoice_ids']) : [],
       isActive: map['isActive'] ?? false,
       isVerified: map['isVerified'] ?? false,
-      lastLogin: map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: DateTime.now(), ipAddr: '', userAgent: '', idle: false),
+      lastLogin:
+          map['lastLogin'] != null ? LastLogin.fromMap(map['lastLogin']) : LastLogin(date: DateTime.now(), ipAddr: '', userAgent: '', idle: false),
       lastName: map['lastName'] ?? '',
       lastUpdate: map['lastUpdate'] != null ? DateTime.parse(map['lastUpdate']) : DateTime.now(), // Handle DateTime parsing for lastUpdate
       memberships: map['memberships'] != null ? List<Memberships>.from(map['memberships']?.map((x) => Memberships.fromMap(x))) : [],
@@ -892,6 +906,7 @@ class DoctorUserProfile {
       educations: [],
       experinces: [],
       favsId: [],
+      fcmTokens: [],
       firstName: '',
       fullName: '',
       gender: '',
@@ -930,6 +945,6 @@ class DoctorUserProfile {
 
   @override
   String toString() {
-    return 'DoctorUserProfile(aboutMe: $aboutMe, accessToken: $accessToken, address1: $address1, address2: $address2, awards: $awards, bankId: $bankId, billingsIds: $billingsIds, bookingsFee: $bookingsFee, city: $city, clinicAddress: $clinicAddress, clinicImages: $clinicImages, clinicName: $clinicName, country: $country, createdAt: $createdAt, currency: $currency, dob: $dob, educations: $educations, experinces: $experinces, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, memberships: $memberships, mobileNumber: $mobileNumber, userName: $userName, online: $online, patientsId: $patientsId, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, recommendArray: $recommendArray, registrations: $registrations, reviewsArray: $reviewsArray, reservationsId: $reservationsId, roleName: $roleName, services: $services, socialMedia: $socialMedia, specialities: $specialities, specialitiesServices: $specialitiesServices, state: $state, timeSlotId: $timeSlotId, timeslots: $timeslots, zipCode: $zipCode, id: $id, doctorsId: $doctorsId)';
+    return 'DoctorUserProfile(aboutMe: $aboutMe, accessToken: $accessToken, address1: $address1, address2: $address2, awards: $awards, bankId: $bankId, billingsIds: $billingsIds, bookingsFee: $bookingsFee, city: $city, clinicAddress: $clinicAddress, clinicImages: $clinicImages, clinicName: $clinicName, country: $country, createdAt: $createdAt, currency: $currency, dob: $dob, educations: $educations, experinces: $experinces, favsId: $favsId, fcmTokens: $fcmTokens,  firstName: $firstName, fullName: $fullName, gender: $gender, idle: $idle, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastUpdate: $lastUpdate, memberships: $memberships, mobileNumber: $mobileNumber, userName: $userName, online: $online, patientsId: $patientsId, prescriptionsId: $prescriptionsId, profileImage: $profileImage, rateArray: $rateArray, recommendArray: $recommendArray, registrations: $registrations, reviewsArray: $reviewsArray, reservationsId: $reservationsId, roleName: $roleName, services: $services, socialMedia: $socialMedia, specialities: $specialities, specialitiesServices: $specialitiesServices, state: $state, timeSlotId: $timeSlotId, timeslots: $timeslots, zipCode: $zipCode, id: $id, doctorsId: $doctorsId)';
   }
 }

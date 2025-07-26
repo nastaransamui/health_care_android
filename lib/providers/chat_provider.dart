@@ -9,6 +9,7 @@ class ChatProvider extends ChangeNotifier {
   bool _endCall = false;
   bool _isAcceptCall = false;
   IncomingCall? _incomingCall;
+  final List<String> _showEmptyRoomInSearchList = [];
 
   List<ChatDataType> get userChatData => _userChatData;
   bool get isLoading => _isLoading;
@@ -16,6 +17,7 @@ class ChatProvider extends ChangeNotifier {
   bool get endCall => _endCall;
   bool get isAcceptCall => _isAcceptCall;
   IncomingCall? get incomingCall => _incomingCall;
+  List<String> get showEmptyRoomInSearchList => _showEmptyRoomInSearchList;
 
   void setUserChatData(List<ChatDataType> userChatData, {bool notify = true}) {
     _userChatData = userChatData;
@@ -47,5 +49,14 @@ class ChatProvider extends ChangeNotifier {
     void setIncomingCall(IncomingCall? incomingCall, {bool notify = true}) {
     _incomingCall = incomingCall;
     if (notify) notifyListeners();
+  }
+
+  void setShowEmptyRoomInSearchList(String roomId, {bool notify = true}){
+    _showEmptyRoomInSearchList.add(roomId);
+     if (notify) notifyListeners();
+  }
+    void clearUserSearchAutocompleteReturn({bool notify = true}){
+    _showEmptyRoomInSearchList.clear();
+     if (notify) notifyListeners();
   }
 }

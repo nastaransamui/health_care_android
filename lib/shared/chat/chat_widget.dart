@@ -101,8 +101,12 @@ class _ChatWidgetState extends State<ChatWidget> {
         bool isLoading = chatProvider.isLoading;
         final theme = Theme.of(context);
         final List<ChatDataType> userChatData = chatProvider.userChatData;
-        final filteredChatData =
-            sortLatestMessage(userChatData).where((chat) => chat.messages.isNotEmpty || chat.createrData.userId == currentUserId).toList();
+        final List<String> showEmptyRoomInSearchList = chatProvider.showEmptyRoomInSearchList;
+        final filteredChatData = sortLatestMessage(userChatData)
+            .where(
+              (chat) => chat.messages.isNotEmpty || chat.createrData.userId == currentUserId || showEmptyRoomInSearchList.contains(chat.roomId),
+            )
+            .toList();
         return ScaffoldWrapper(
           title: context.tr('${roleName}_chat'),
           children: Container(

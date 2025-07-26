@@ -46,7 +46,6 @@ class ChatService {
       final userRooms = data['userRooms'];
       if (userRooms is List && userRooms.isNotEmpty) {
         try {
-          // (userRooms).map((json) => ChatDataType.fromMap(json)).toList();
           final chatList = await Future.wait(
             userRooms.map<Future<ChatDataType>>(
               (json) async {
@@ -74,12 +73,13 @@ class ChatService {
           );
           chatProvider.setUserChatData(chatList);
         } catch (e) {
-          log('chatErro: e');
+          log('getUserRoomsReturn: $e');
         }
       } else {
         if (context.mounted && isLogin) {
           chatProvider.setLoading(false);
           chatProvider.setUserChatData([]);
+          chatProvider.clearUserSearchAutocompleteReturn();
         }
       }
     });
@@ -102,7 +102,7 @@ class ChatService {
             final userList = users.map((json) => ChatUserAutocompleteData.fromMap(json)).toList();
             completer.complete(userList);
           } catch (e) {
-            log('chatErro: $e');
+            log('userSearchAutocompleteReturnError: $e');
             completer.complete([]); // complete with empty if parsing fails
           }
         } else {
@@ -181,7 +181,7 @@ class ChatService {
         chatProvider.setCurrentRoom(chatRoom);
         onDone();
       } catch (e) {
-        log('chatErro: $e');
+        log('getSingleRoomByIdReturn: $e');
       }
     });
 
@@ -190,38 +190,6 @@ class ChatService {
     getSingleRoomByIdWithUpdate();
   }
 
-  Future<void> receiveVoiceCall(BuildContext context) async {
-    socket.on('receiveVoiceCall', (data) async {
-      // final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
-      // chatProvider.setEndCall(false);
-      // chatProvider.setIsAcceptCall(false);
-      try {
-        log('$data data recieveVocidecal:');
-        // final RTCSessionDescription offer = RTCSessionDescription(data['offer']['sdp'], data['offer']['type']);
-        // final String receiverId = data['receiverId'];
-        // final String callerId = data['callerId'];
-        // final String roomId = data['roomId'];
-        // var messageDataMap = data['messageData'];
-        // final MessageType messageData = MessageType.fromMap(messageDataMap);
-        // chatProvider.setIncomingCall(
-        //   IncomingCall(
-        //     offer: offer,
-        //     receiverId: receiverId,
-        //     callerId: callerId,
-        //     roomId: roomId,
-        //     messageData: messageData,
-        //   ),
-        // );
-        // await initiateVoiceCallIfPermitted(
-        //   context,
-        //   widget.currentRoom,
-        //   widget.currentUserId,
-        // );
-      } catch (e) {
-        log("Error socket receiveVoiceCall: $e");
-      }
-    });
-  }
 }
 
 Future<Uint8List?> getChatFile(String fileId, String userId) async {

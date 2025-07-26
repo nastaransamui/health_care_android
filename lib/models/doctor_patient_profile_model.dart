@@ -19,6 +19,7 @@ class DoctorPatientProfileModel {
   final dynamic dob;
   final List<String> doctorsId;
   final List<String> favsId;
+  final List<String> fcmTokens;
   final String firstName;
   final String fullName;
   final String gender;
@@ -57,6 +58,7 @@ class DoctorPatientProfileModel {
     required this.dob,
     required this.doctorsId,
     required this.favsId,
+    required this.fcmTokens,
     required this.firstName,
     required this.fullName,
     required this.gender,
@@ -96,6 +98,7 @@ class DoctorPatientProfileModel {
     dynamic dob,
     List<String>? doctorsId,
     List<String>? favsId,
+    List<String>? fcmTokens,
     String? firstName,
     String? fullName,
     String? gender,
@@ -134,6 +137,7 @@ class DoctorPatientProfileModel {
       dob: dob ?? this.dob,
       doctorsId: doctorsId ?? this.doctorsId,
       favsId: favsId ?? this.favsId,
+      fcmTokens: fcmTokens ?? this.fcmTokens,
       firstName: firstName ?? this.firstName,
       fullName: fullName ?? this.fullName,
       gender: gender ?? this.gender,
@@ -176,6 +180,7 @@ class DoctorPatientProfileModel {
     result.addAll({'dob': dob});
     result.addAll({'doctorsId': doctorsId});
     result.addAll({'favsId': favsId});
+    result.addAll({'fcmTokens': fcmTokens});
     result.addAll({'firstName': firstName});
     result.addAll({'fullName': fullName});
     result.addAll({'gender': gender});
@@ -226,6 +231,7 @@ class DoctorPatientProfileModel {
       dob: map['dob'] == '' ? '' : DateTime.parse(map['dob']),
       doctorsId: List<String>.from(map['doctors_id'] ?? []),
       favsId: List<String>.from(map['favs_id'] ?? []),
+      fcmTokens: List<String>.from(map['fcmTokens'] ?? []),
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
@@ -271,6 +277,7 @@ class DoctorPatientProfileModel {
       dob: '',
       doctorsId: [],
       favsId: [],
+      fcmTokens: [],
       firstName: '',
       fullName: '',
       gender: '',
@@ -300,7 +307,7 @@ class DoctorPatientProfileModel {
   }
   @override
   String toString() {
-    return 'DoctorPatientProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, firstName: $firstName, fullName: $fullName, gender: $gender, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastTwoAppointments $lastTwoAppointments, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online,  prescriptionsId: $prescriptionsId, profileImage: $profileImage,  reservationsId: $reservationsId,  roleName: $roleName, services: $services,singlePrescription: $singlePrescription, singleBill: $singleBill, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
+    return 'DoctorPatientProfile(address1: $address1, address2: $address2, billingsIds: $billingsIds, bloodG: $bloodG, city: $city, country: $country, createdAt: $createdAt, dependentsArray: $dependentsArray, dob: $dob, doctorsId: $doctorsId, favsId: $favsId, fcmTokens: $fcmTokens, firstName: $firstName, fullName: $fullName, gender: $gender, invoiceIds: $invoiceIds, isActive: $isActive, isVerified: $isVerified, lastLogin: $lastLogin, lastName: $lastName, lastTwoAppointments $lastTwoAppointments, lastUpdate: $lastUpdate, medicalRecordsArray: $medicalRecordsArray, mobileNumber: $mobileNumber, online: $online,  prescriptionsId: $prescriptionsId, profileImage: $profileImage,  reservationsId: $reservationsId,  roleName: $roleName, services: $services,singlePrescription: $singlePrescription, singleBill: $singleBill, state: $state, userName: $userName, zipCode: $zipCode, id: $id, patientsId: $patientsId)';
   }
 
   @override
@@ -319,6 +326,7 @@ class DoctorPatientProfileModel {
         other.dob == dob &&
         listEquals(other.doctorsId, doctorsId) &&
         listEquals(other.favsId, favsId) &&
+        listEquals(other.fcmTokens, fcmTokens) &&
         other.firstName == firstName &&
         other.fullName == fullName &&
         other.gender == gender &&
@@ -359,6 +367,7 @@ class DoctorPatientProfileModel {
         dob.hashCode ^
         doctorsId.hashCode ^
         favsId.hashCode ^
+        fcmTokens.hashCode ^
         firstName.hashCode ^
         fullName.hashCode ^
         gender.hashCode ^

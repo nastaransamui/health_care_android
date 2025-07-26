@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -66,7 +67,7 @@ Future<void> requestMediaPermissions() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await requestMediaPermissions();
+   await Firebase.initializeApp();
   await requestNotificationPermission();
   // Initialize notification settings
   const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');

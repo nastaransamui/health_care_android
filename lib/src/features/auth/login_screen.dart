@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/button_list.dart';
@@ -60,7 +61,15 @@ class _LoginScreenState extends State<LoginScreen> {
     deviceData,
     context,
   ) async {
-    var formData = {"password": password, "email": email, "ipAddr": userData?.query, "userAgent": deviceData};
+    // Get the FCM token
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    var formData = {
+      "password": password,
+      "email": email,
+      "ipAddr": userData?.query,
+      "userAgent": deviceData,
+      "fcmToken": fcmToken,
+    };
     FocusManager.instance.primaryFocus?.unfocus();
     socket.emit('loginFormSubmit', formData);
     socket.once('loginFormReturn', (data) {
@@ -340,6 +349,8 @@ class _InputFieldState extends State<InputField> {
             formData['prompt'] = "none";
             formData['scope'] =
                 "email profile https://www.googleapis.com/auth/userinfo.profile openid https://www.googleapis.com/auth/userinfo.email";
+            final fcmToken = await FirebaseMessaging.instance.getToken();
+            formData['fcmToken'] = fcmToken;
             socket.emit('googleLoginSubmit', formData);
             socket.once('googleLoginReturn', (data) {
               switch (data['status']) {
@@ -496,6 +507,14 @@ class _InputFieldState extends State<InputField> {
                 if (roleName.isNotEmpty) {
                   googleLogin(roleName);
                   Navigator.pop(context);
+                  showModalBottomSheet(
+                    isDismissible: false,
+                    enableDrag: false,
+                    showDragHandle: false,
+                    useSafeArea: true,
+                    context: context,
+                    builder: (context) => const LoadingScreen(),
+                  );
                 }
               },
               border: Border.fromBorderSide(

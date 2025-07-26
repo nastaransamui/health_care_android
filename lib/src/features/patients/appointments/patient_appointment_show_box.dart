@@ -556,6 +556,7 @@ PatientUserProfile createPatientProfileFromDoctorPatientProfile(DoctorPatientPro
     dob: doctorPatientProfile.dob,
     doctorsId: doctorPatientProfile.doctorsId,
     favsId: doctorPatientProfile.favsId,
+    fcmTokens: doctorPatientProfile.fcmTokens,
     firstName: doctorPatientProfile.firstName,
     fullName: doctorPatientProfile.fullName,
     gender: doctorPatientProfile.gender,

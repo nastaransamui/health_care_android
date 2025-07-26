@@ -25,8 +25,9 @@ class _PatientDoctorProfileHeaderState extends State<PatientDoctorProfileHeader>
     final ThemeData theme = Theme.of(context);
     final Widget profileImageWidget =
         doctorUserProfile.profileImage.isEmpty ? Image.asset('assets/images/doctors_profile.jpg') : Image.network(doctorUserProfile.profileImage);
-    final String speciality = doctorUserProfile.specialities.first.specialities;
-    final String specialityImage = doctorUserProfile.specialities.first.image;
+    final String speciality = doctorUserProfile.specialities.isNotEmpty ? doctorUserProfile.specialities.first.specialities : "";
+    final String specialityImage =
+        doctorUserProfile.specialities.isNotEmpty ? doctorUserProfile.specialities.first.image : '';
 
     final uri = Uri.parse(specialityImage);
     final imageIsSvg = uri.path.endsWith('.svg');
@@ -274,7 +275,7 @@ class _PatientDoctorProfileHeaderState extends State<PatientDoctorProfileHeader>
                                           height: 15,
                                           fit: BoxFit.fitHeight,
                                         )
-                                      : SizedBox(
+                                      : specialityImage.isEmpty ? const Text( '---') :  SizedBox(
                                           width: 15,
                                           height: 15,
                                           child: CachedNetworkImage(
@@ -301,11 +302,9 @@ class _PatientDoctorProfileHeaderState extends State<PatientDoctorProfileHeader>
                         ),
                       ),
                     ),
-                    if (
-                      ModalRoute.of(context)?.settings.name == 'doctorsSearchProfile' ||
-                      ModalRoute.of(context)?.settings.name == 'patientBillCheckout' ||
-                      ModalRoute.of(context)?.settings.name == 'patientBillSuccess'
-                    ) ...[
+                    if (ModalRoute.of(context)?.settings.name == 'doctorsSearchProfile' ||
+                        ModalRoute.of(context)?.settings.name == 'patientBillCheckout' ||
+                        ModalRoute.of(context)?.settings.name == 'patientBillSuccess') ...[
                       Container(
                         decoration: BoxDecoration(
                           border: Border(

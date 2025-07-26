@@ -1,6 +1,5 @@
-
-
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -44,8 +43,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
   void initState() {
     super.initState();
     userDataService.fetchUserData(context);
-    userFromTokenService.fetchUserFromVerifyToken(
-        context, widget.pathParameters['token']!);
+    userFromTokenService.fetchUserFromVerifyToken(context, widget.pathParameters['token']!);
   }
 
   double lifeTime = 10000;
@@ -55,14 +53,18 @@ class _VerifyEmailState extends State<VerifyEmail> {
   var height = 220.0;
   double topPadding = 8;
 
-  void verificationClicked(Map<String, dynamic> map) {
-    socket.emit('verificationEmail', {
-      map['user'],
-      map['token'],
-      map['ipAddr'],
-      map['userAgent'],
-      map['password']
-    });
+  void verificationClicked(Map<String, dynamic> map) async {
+    socket.emit(
+      'verificationEmail',
+      {
+        map['user'],
+        map['token'],
+        map['ipAddr'],
+        map['userAgent'],
+        map['password'],
+        map['fcmToken'],
+      },
+    );
     socket.once('verificationEmailReturn', (data) {
       if (data['status'] != 200) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -116,8 +118,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   @override
   Widget build(BuildContext context) {
-    final userFromToken =
-        Provider.of<UserFromTokenProvider>(context).userFromToken;
+    final userFromToken = Provider.of<UserFromTokenProvider>(context).userFromToken;
     final userData = Provider.of<UserDataProvider>(context).userData;
     final deviceData = Provider.of<DeviceProvider>(context).deviceData;
 
@@ -140,10 +141,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   height: 10,
                   child: LoadingIndicator(
                     indicatorType: Indicator.ballPulse,
-                    colors: [
-                      Theme.of(context).primaryColorLight,
-                      Theme.of(context).primaryColor
-                    ],
+                    colors: [Theme.of(context).primaryColorLight, Theme.of(context).primaryColor],
                     strokeWidth: 1,
                     backgroundColor: Theme.of(context).canvasColor,
                     pathBackgroundColor: Theme.of(context).canvasColor,
@@ -178,19 +176,16 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   curve: Curves.easeInOut,
                   duration: const Duration(seconds: 1),
                   child: SizedBox(
-                    child:
-                        AuthContainer(formKey: _verifyEmailFormKey, children: [
+                    child: AuthContainer(formKey: _verifyEmailFormKey, children: [
                       Center(
-                        child: Text(
-                            '${userFromToken.roleName == "doctors" ? "Dr." : ""}${userFromToken.firstName} ${userFromToken.lastName}'),
+                        child: Text('${userFromToken.roleName == "doctors" ? "Dr." : ""}${userFromToken.firstName} ${userFromToken.lastName}'),
                       ),
                       Text(userFromToken.userName),
                       Text(context.tr('verifyText')),
                       ListTileTheme(
                         horizontalTitleGap: 0.0,
                         child: CheckboxListTile(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           contentPadding: const EdgeInsets.only(left: 30),
                           title: Text(context.tr('directLoginLabel')),
                           checkboxSemanticLabel: context.tr('directLoginLabel'),
@@ -225,21 +220,17 @@ class _VerifyEmailState extends State<VerifyEmail> {
                         secondChild: const SizedBox(
                           height: 0,
                         ),
-                        crossFadeState: height == 310
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
+                        crossFadeState: height == 310 ? CrossFadeState.showFirst : CrossFadeState.showSecond,
                         duration: Duration(seconds: height == 220 ? 1 : 2),
                       ),
                       AnimatedPadding(
                         duration: Duration(seconds: height == 220 ? 1 : 2),
                         curve: Curves.easeInOut,
-                        padding: EdgeInsets.only(
-                            left: 8.0, top: topPadding, right: 8.0, bottom: 8),
+                        padding: EdgeInsets.only(left: 8.0, top: topPadding, right: 8.0, bottom: 8),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (applyPassword) {
-                              if (_verifyEmailFormKey.currentState!
-                                  .validate()) {
+                              if (_verifyEmailFormKey.currentState!.validate()) {
                                 showModalBottomSheet(
                                   isDismissible: false,
                                   enableDrag: false,
@@ -248,6 +239,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                                   context: context,
                                   builder: (context) => const LoadingScreen(),
                                 );
+                                final fcmToken = await FirebaseMessaging.instance.getToken();
                                 verificationClicked({
                                   "user": {
                                     "_id": userFromToken.userId,
@@ -258,7 +250,8 @@ class _VerifyEmailState extends State<VerifyEmail> {
                                   "token": widget.pathParameters['token']!,
                                   "ipAddr": userData?.query,
                                   "userAgent": deviceData,
-                                  "password": passwordController.text
+                                  "password": passwordController.text,
+                                  "fcmToken": fcmToken,
                                 });
                               }
                             } else {
@@ -285,8 +278,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                           },
                           style: ElevatedButton.styleFrom(
                             fixedSize: const Size(double.maxFinite, 30),
-                            backgroundColor:
-                                Theme.of(context).primaryColorLight,
+                            backgroundColor: Theme.of(context).primaryColorLight,
                             elevation: 5.0,
                           ),
                           child: Text(

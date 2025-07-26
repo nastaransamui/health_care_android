@@ -45,3 +45,6 @@ app.*.map.json
 /android/key.properties
 # local env files
 .env
+
+# Firebase Android
+android/app/google-services.json
