@@ -23,6 +23,15 @@ allprojects {
 rootProject.buildDir = '../build'
 
 subprojects {
+    afterEvaluate { proj ->
+    if (proj.name.contains('audio_streamer') && proj.plugins.hasPlugin('com.android.library')) {
+      proj.android {
+        if (namespace == null || namespace.trim().isEmpty()) {
+          namespace = proj.group ?: 'plugins.cachet.audio_streamer'
+        }
+      }
+    }
+  }
     project.buildDir = "${rootProject.buildDir}/${project.name}"
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
         kotlinOptions.jvmTarget = "1.8"

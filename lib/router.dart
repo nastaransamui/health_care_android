@@ -84,9 +84,10 @@ import 'package:health_care/src/landing/general_1_page.dart';
 import 'package:health_care/src/landing/general_2_page.dart';
 import 'package:provider/provider.dart';
 
+
 // GoRouter configuration
 final router = GoRouter(
-  observers: [BotToastNavigatorObserver()],
+  observers: [BotToastNavigatorObserver()], 
   navigatorKey: NavigationService.navigatorKey,
   routes: [
     GoRoute(

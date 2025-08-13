@@ -1,12 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:health_care/models/chat_data_type.dart';
+import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
 
 class CallBubbleWidget extends StatelessWidget {
   final MessageType message;
+  final String currentUserId;
+  final ChatDataType currentRoom;
   const CallBubbleWidget({
     super.key,
     required this.message,
+    required this.currentUserId,
+    required this.currentRoom,
   });
 
   @override
@@ -16,6 +21,7 @@ class CallBubbleWidget extends StatelessWidget {
     final int startTime = message.calls.first.startTimeStamp;
     final int finishTime = message.calls.first.finishTimeStamp ?? startTime;
     final bool isAnswered = call.isAnswered;
+    final bool isMissedCall = call.isMissedCall;
 
 // Duration from milliseconds
     final duration = Duration(milliseconds: finishTime - startTime);
@@ -26,7 +32,9 @@ class CallBubbleWidget extends StatelessWidget {
 
     String formattedDuration = "";
 
-    if (!isAnswered) {
+    if (isMissedCall) {
+      formattedDuration = context.tr('missedCall');
+    } else if (!isAnswered) {
       formattedDuration = context.tr('noAnswer');
     } else if (totalSeconds < 60) {
       formattedDuration = "$totalSeconds sec";
@@ -47,13 +55,15 @@ class CallBubbleWidget extends StatelessWidget {
     } else if (call.isAnswered && call.isVideoCall) {
       icon = Icons.videocam;
     } else if (call.isAnswered && call.isVoiceCall) {
-      icon = Icons.phone;
+      icon = message.senderId == currentUserId ? Icons.phone_forwarded : Icons.phone_callback;
     } else {
-      icon = Icons.call;
+      icon = message.senderId == currentUserId ? Icons.phone_forwarded : Icons.phone_callback;
     }
     return GestureDetector(
-      onTap: () {
-        // log('voiceCallToggleFunction()');
+      onTap: () async {
+        final List<String> currentUserFcmTokens =
+            currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.fcmTokens : currentRoom.receiverData.fcmTokens;
+        await initiateVoiceCallIfPermitted(context, currentRoom, currentUserId, currentUserFcmTokens);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -4,10 +4,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart' hide MessageType;
 import 'package:health_care/models/chat_data_type.dart';
+import 'package:health_care/models/incoming_call.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/services/time_schedule_service.dart';
+// import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -50,7 +53,6 @@ class ChatService {
             userRooms.map<Future<ChatDataType>>(
               (json) async {
                 final chatRoom = ChatDataType.fromMap(json);
-
                 final updatedMessages = await Future.wait(
                   chatRoom.messages.map<Future<MessageType>>(
                     (msg) async {
@@ -190,6 +192,39 @@ class ChatService {
     getSingleRoomByIdWithUpdate();
   }
 
+  Future<void> receiveVoiceCallSocket(BuildContext context, String currentUserId) async {
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final bool isLogin = authProvider.isLogin;
+    if (!isLogin) return;
+    socket.on('receiveVoiceCall', (data) async {
+      chatProvider.setEndCall(false);
+      chatProvider.setIsAcceptCall(false);
+      try {
+        final RTCSessionDescription offer = RTCSessionDescription(data['offer']['sdp'], data['offer']['type']);
+        final String receiverId = data['receiverId'];
+        final String callerId = data['callerId'];
+        final String roomId = data['roomId'];
+        var messageDataMap = data['messageData'];
+        final MessageType messageData = MessageType.fromMap(messageDataMap);
+        // final List<String> currentUserFcmTokens =
+        //     messageData.receiverId == currentUserId ? messageData.receiverFcmTokens : messageData.senderFcmTokens;
+
+        chatProvider.setIncomingCall(
+          IncomingCall(
+            offer: offer,
+            receiverId: receiverId,
+            callerId: callerId,
+            roomId: roomId,
+            messageData: messageData,
+          ),
+        );
+        // await initiateVoiceCallIfPermitted(context, currentRoom, currentUserId, currentUserFcmTokens);
+      } catch (e) {
+        log("Error socket receiveVoiceCall: $e");
+      }
+    });
+  }
 }
 
 Future<Uint8List?> getChatFile(String fileId, String userId) async {

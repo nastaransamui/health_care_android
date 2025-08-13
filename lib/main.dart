@@ -1,4 +1,5 @@
-
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -8,17 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_care/constants/navigator_key.dart';
 import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/providers/data_grid_provider.dart';
 import 'package:health_care/providers/user_from_token_provider.dart';
 import 'package:health_care/providers/vital_provider.dart';
-import 'package:health_care/src/utils/is_app_updated.dart';
-import 'package:health_care/src/utils/show_update_notification.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:health_care/controllers/theme_controller.dart';
+import 'package:health_care/providers/theme_load_provider.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/clinics_provider.dart';
 import 'package:health_care/providers/device_provider.dart';
@@ -29,7 +30,6 @@ import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/src/app.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:url_launcher/url_launcher.dart';
 
 final EasyLogger logger = EasyLogger(
   name: 'NamePrefix',
@@ -41,13 +41,10 @@ final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 Future<void> requestNotificationPermission() async {
   if (Platform.isAndroid || Platform.isIOS) {
     final status = await Permission.notification.request();
-    if (status.isDenied || status.isPermanentlyDenied) {
-      
-    }
-  } else {
-   
-  }
+    if (status.isDenied || status.isPermanentlyDenied) {}
+  } else {}
 }
+
 Future<void> requestMediaPermissions() async {
   if (Platform.isAndroid || Platform.isIOS) {
     final micStatus = await Permission.microphone.request();
@@ -67,7 +64,7 @@ Future<void> requestMediaPermissions() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   await Firebase.initializeApp();
+  await Firebase.initializeApp();
   await requestNotificationPermission();
   // Initialize notification settings
   const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -87,19 +84,25 @@ Future<void> main() async {
     initSettings,
     onDidReceiveNotificationResponse: (NotificationResponse response) async {
       final payload = response.payload;
-      if (payload == 'open_play_store') {
-        const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.healthCareApp';
-        final uri = Uri.parse(playStoreUrl);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (payload != null && payload.isNotEmpty) {
+        try {
+          final data = jsonDecode(payload);
+          final String roomId = data['roomId'];
+          final String encodedRoomId = base64.encode(utf8.encode(roomId));
+
+          BuildContext context = NavigationService.navigatorKey.currentContext!;
+          final roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+          if (roleName == 'patient') {
+            context.push('/patient/dashboard/patient-chat/single/$encodedRoomId');
+          } else {
+            context.push('/doctors/dashboard/doctors-chat/single/$encodedRoomId');
+          }
+        } catch (e) {
+          log('❌ Notification payload error: $e');
         }
       }
     },
   );
-  final updated = await isAppUpdated();
-  if (updated) {
-    await showUpdateNotification();
-  }
 
   ///Prevent orientation
   SystemChrome.setPreferredOrientations([
@@ -107,12 +110,12 @@ Future<void> main() async {
   ]);
 
   ///Load Theme from shared_preferences
-  final themeController = ThemeController();
+  final themeLoadProvider = ThemeLoadProvider();
   tz.initializeTimeZones();
 
   ///Load auth from shared_preferences
 
-  await themeController.loadTheme();
+  await themeLoadProvider.loadTheme();
   await dotenv.load(fileName: '.env');
 
   //Initial easy localization
@@ -157,7 +160,7 @@ Future<void> main() async {
           'US',
         ),
         child: MyApp(
-          controller: themeController,
+          themeLoadProvider: themeLoadProvider,
           streamSocket: streamSocket,
         ),
       ),

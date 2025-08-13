@@ -19,7 +19,8 @@ class SenderBubbleWithAvatar extends StatefulWidget {
     super.key,
     required this.currentUserId,
     required this.currentRoom,
-    required this.message, required this.showTail,
+    required this.message,
+    required this.showTail,
   });
 
   @override
@@ -70,11 +71,13 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
           Transform.translate(
             offset: const Offset(6, -5),
             child: ChatBubble(
-              clipper: widget.showTail? ChatBubbleClipper3(
-                type: BubbleType.sendBubble,
-              ) :ChatBubbleClipper5(
-                type: BubbleType.sendBubble,
-              ) ,
+              clipper: widget.showTail
+                  ? ChatBubbleClipper3(
+                      type: BubbleType.sendBubble,
+                    )
+                  : ChatBubbleClipper5(
+                      type: BubbleType.sendBubble,
+                    ),
               alignment: Alignment.topRight,
               backGroundColor: bubbleBackground,
               shadowColor: Colors.transparent,
@@ -87,7 +90,11 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
                   children: [
                     // Text('$message'),
                     if (message.calls.isNotEmpty)
-                      CallBubbleWidget(message: message)
+                      CallBubbleWidget(
+                        message: message,
+                        currentUserId: currentUserId,
+                        currentRoom: widget.currentRoom,
+                      )
                     else if (message.attachment.isEmpty)
                       // Only Text message
                       Text(
@@ -96,7 +103,7 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
                       )
                     else
                       ChatAttachmentWidget(key: ValueKey(message.senderId), message: message, userId: currentUserId),
-            
+
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -116,41 +123,42 @@ class _SenderBubbleWithAvatarState extends State<SenderBubbleWithAvatar> {
             ),
           ),
           Stack(
-            children: widget.showTail ? [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: theme.primaryColorLight),
-                  shape: BoxShape.rectangle,
-                  borderRadius: const BorderRadius.all(Radius.circular(50)),
-                  image: DecorationImage(fit: BoxFit.contain, image: finalImage),
-                ),
-              ),
-              Positioned(
-                right: 2,
-                bottom: 2,
-                child: AvatarGlow(
-                  glowColor: statusColor,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: statusColor, width: 0.5),
+            children: widget.showTail
+                ? [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(color: theme.primaryColorLight),
+                        shape: BoxShape.rectangle,
+                        borderRadius: const BorderRadius.all(Radius.circular(50)),
+                        image: DecorationImage(fit: BoxFit.contain, image: finalImage),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ] : [
-              const SizedBox(
-                width: 50,
-                height: 40,
-                
-              ),
-            ],
+                    Positioned(
+                      right: 2,
+                      bottom: 2,
+                      child: AvatarGlow(
+                        glowColor: statusColor,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: statusColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: statusColor, width: 0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]
+                : [
+                    const SizedBox(
+                      width: 50,
+                      height: 40,
+                    ),
+                  ],
           ),
         ],
       ),

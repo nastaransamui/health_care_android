@@ -65,7 +65,11 @@ class _ReceiverBubbleWidgetState extends State<ReceiverBubbleWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (message.calls.isNotEmpty)
-                CallBubbleWidget(message: message)
+                CallBubbleWidget(
+                  message: message,
+                  currentUserId: currentUserId,
+                  currentRoom: widget.currentRoom,
+                )
               else if (message.attachment.isEmpty)
                 // Only Text message
                 Text(

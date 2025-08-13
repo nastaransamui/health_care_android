@@ -28,20 +28,19 @@ Future<void> acceptVoiceCall(BuildContext context) async {
     });
     // get the audio and asign stream to local Stream
     localStream = stream;
-    // create peerConnection
-    peerConnection = await createPeerConnectionFunction(callerId, receiverId, roomId);
+    peerConnection ??= await createPeerConnectionFunction(callerId, receiverId, roomId);
 
     // add Tracks to peer connection
     localStream!.getTracks().forEach((track) async {
       track.enabled = true;
-      peerConnection.addTrack(track, localStream!);
+      peerConnection?.addTrack(track, localStream!);
       await Helper.setSpeakerphoneOn(true);
     });
-    await peerConnection.setRemoteDescription(
+    await peerConnection?.setRemoteDescription(
       RTCSessionDescription(offer.sdp, offer.type),
     );
-    var answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+    var answer = await peerConnection?.createAnswer();
+    await peerConnection?.setLocalDescription(answer!);
     final updatedCalls = [...messageData.calls];
     if (updatedCalls.isNotEmpty) {
       updatedCalls[0] = updatedCalls[0].copyWith(isAnswered: true);
@@ -50,8 +49,8 @@ Future<void> acceptVoiceCall(BuildContext context) async {
     final updatedChatInputValue = messageData.copyWith(calls: updatedCalls);
     socket.emit('answerCall', {
       "answer": {
-        "sdp": answer.sdp,
-        "type": answer.type,
+        "sdp": answer?.sdp,
+        "type": answer?.type,
       },
       "callerId": callerId,
       "receiverId": receiverId,

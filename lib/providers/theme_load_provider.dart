@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeController with ChangeNotifier {
+class ThemeLoadProvider with ChangeNotifier {
   late String _homeThemeName;
   late String _homeThemeType;
   late String _homeActivePage;

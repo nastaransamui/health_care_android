@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -41,6 +40,8 @@ class _ChatWidgetState extends State<ChatWidget> {
   late String profileImage;
   late bool online;
   late bool idle;
+  late String gender;
+  late List<String> fcmTokens;
 
   void setCurrentRoomId(String roomId) {
     setState(() {
@@ -76,12 +77,16 @@ class _ChatWidgetState extends State<ChatWidget> {
       profileImage = authProvider.doctorsProfile!.userProfile.profileImage;
       online = authProvider.doctorsProfile!.userProfile.online;
       idle = authProvider.doctorsProfile!.userProfile.lastLogin.idle ?? false;
+      gender = authProvider.doctorsProfile!.userProfile.gender;
+      fcmTokens = authProvider.doctorsProfile!.userProfile.fcmTokens;
     } else if (roleName == 'patient') {
       currentUserId = authProvider.patientProfile!.userId;
       fullName = authProvider.patientProfile!.userProfile.fullName;
       profileImage = authProvider.patientProfile!.userProfile.profileImage;
       online = authProvider.patientProfile!.userProfile.online;
       idle = authProvider.patientProfile!.userProfile.lastLogin.idle ?? false;
+      gender = authProvider.patientProfile!.userProfile.gender;
+      fcmTokens = authProvider.patientProfile!.userProfile.fcmTokens;
     }
   }
 
@@ -148,6 +153,8 @@ class _ChatWidgetState extends State<ChatWidget> {
                             profileImage: profileImage,
                             online: online,
                             idle: idle,
+                            gender: gender,
+                            fcmTokens: fcmTokens,
                           ),
                           ListView.builder(
                             shrinkWrap: true,

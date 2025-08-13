@@ -50,6 +50,7 @@ class _VitalSignScrollViewState extends State<VitalSignScrollView> {
         return AlertDialog(
           contentPadding: const EdgeInsets.only(top: 5, left: 8, right: 8, bottom: 5),
           titlePadding: const EdgeInsets.all(0),
+          backgroundColor: theme.cardColor,
           title: Column(
             children: [
               ListTile(

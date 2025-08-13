@@ -45,7 +45,6 @@ class _ChatInputState extends State<ChatInput> {
   final ImagePicker _attachmentImagePicker = ImagePicker();
   List<Map<String, dynamic>> attachmentFilesList = [];
 
-
   @override
   void dispose() {
     attachmentFilesList.clear();
@@ -202,6 +201,27 @@ class _ChatInputState extends State<ChatInput> {
                                     ? widget.currentRoom.receiverData.userId
                                     : widget.currentRoom.createrData.userId;
 
+                                final List<String> senderFcmTokens = widget.currentRoom.createrData.userId == widget.currentUserId
+                                    ? widget.currentRoom.createrData.fcmTokens
+                                    : widget.currentRoom.receiverData.fcmTokens;
+
+                                final List<String> receiverFcmTokens = widget.currentRoom.createrData.userId == widget.currentUserId
+                                    ? widget.currentRoom.receiverData.fcmTokens
+                                    : widget.currentRoom.createrData.fcmTokens;
+
+                                final String senderRoleName = widget.currentRoom.createrData.userId == widget.currentUserId
+                                    ? widget.currentRoom.createrData.roleName
+                                    : widget.currentRoom.receiverData.roleName;
+                                final String senderName = widget.currentRoom.createrData.userId == widget.currentUserId
+                                    ? widget.currentRoom.createrData.fullName
+                                    : widget.currentRoom.receiverData.fullName;
+                                final String icon = widget.currentRoom.createrData.userId == widget.currentUserId
+                                    ? widget.currentRoom.createrData.profileImage
+                                    : widget.currentRoom.receiverData.profileImage;
+                                final String senderGender = widget.currentRoom.createrData.userId == widget.currentUserId
+                                    ? widget.currentRoom.createrData.gender
+                                    : widget.currentRoom.receiverData.gender;
+
                                 List<Map<String, dynamic>>? attachmentFiles = [];
 
                                 if (attachmentFilesList.isNotEmpty) {
@@ -223,13 +243,19 @@ class _ChatInputState extends State<ChatInput> {
                                   Map<String, dynamic> messageData = {
                                     "senderId": widget.currentUserId,
                                     "receiverId": receiverId,
+                                    "senderFcmTokens": senderFcmTokens,
+                                    "receiverFcmTokens": receiverFcmTokens,
                                     "timestamp": DateTime.now().millisecondsSinceEpoch,
                                     "message": text.isEmpty ? null : text,
                                     "read": false,
                                     "attachment": [],
                                     "roomId": widget.currentRoom.roomId,
                                     "attachmentFiles": attachmentFiles,
-                                    "calls": []
+                                    "calls": [],
+                                    "senderRoleName": senderRoleName,
+                                    "senderName": senderName,
+                                    'senderGender': senderGender,
+                                    "icon": icon,
                                   };
                                   socket.emit('sendMessage', messageData);
                                   playSendMessageSound();
@@ -253,13 +279,19 @@ class _ChatInputState extends State<ChatInput> {
                                   Map<String, dynamic> messageData = {
                                     "senderId": widget.currentUserId,
                                     "receiverId": receiverId,
+                                    "senderFcmTokens": senderFcmTokens,
+                                    "receiverFcmTokens": receiverFcmTokens,
                                     "timestamp": widget.editMessageTime,
                                     "message": text,
                                     "read": false,
                                     "attachment": [],
                                     "roomId": widget.currentRoom.roomId,
                                     "attachmentFiles": attachmentFiles,
-                                    "calls": []
+                                    "calls": [],
+                                    "senderRoleName": senderRoleName,
+                                    "senderName": senderName,
+                                    'senderGender': senderGender,
+                                    "icon": icon,
                                   };
 
                                   socket.emit('editMessage', messageData);

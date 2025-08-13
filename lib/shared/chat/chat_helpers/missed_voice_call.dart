@@ -7,7 +7,7 @@ import 'package:health_care/src/utils/play_sound.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:provider/provider.dart';
 
-Future<void> endVoiceCall(
+Future<void> missedVoiceCall(
   BuildContext context,
   MessageType messageData,
 ) async {
@@ -44,7 +44,8 @@ Future<void> endVoiceCall(
         return index == 0
             ? call.copyWith(
                 finishTimeStamp: DateTime.now().millisecondsSinceEpoch,
-                isAnswered: true,
+                isAnswered: false,
+                isMissedCall: true
               )
             : call;
       }).toList(),

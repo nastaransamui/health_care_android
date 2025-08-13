@@ -791,5 +791,8 @@
   "search_doctors": "ค้นหาหมอ",
   "search_patient": "ค้นหาคนไข้",
   "voiceCallConnecting": "รอรับสาย.",
-  "voiceCallConnected": "กำลังสนทนาทางโทรศัพท์อยู่..."
+  "voiceCallConnected": "กำลังสนทนาทางโทรศัพท์อยู่...",
+  "deleteRoom": "ลบห้อง",
+  "noAnswer": "ไม่ตอบ",
+  "missedCall": "สายที่ไม่ได้รับ"
 }

@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -20,6 +19,8 @@ class ChatUserAutocomplete extends StatefulWidget {
   final String profileImage;
   final bool online;
   final bool idle;
+  final String gender;
+  final List<String> fcmTokens;
   final void Function(String roomId) setCurrentRoomId;
   const ChatUserAutocomplete({
     super.key,
@@ -32,6 +33,8 @@ class ChatUserAutocomplete extends StatefulWidget {
     required this.profileImage,
     required this.online,
     required this.idle,
+    required this.gender,
+    required this.fcmTokens,
   });
 
   @override
@@ -43,7 +46,7 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
   final FocusNode _focusNode = FocusNode();
   final ChatService chatService = ChatService();
   late final ChatProvider chatProvider;
-    bool _isProvidersInitialized = false;
+  bool _isProvidersInitialized = false;
 
   @override
   void initState() {
@@ -52,7 +55,8 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
       setState(() {}); // Triggers rebuild so suffixIcon updates
     });
   }
-    @override
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isProvidersInitialized) {
@@ -60,6 +64,7 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
       _isProvidersInitialized = true;
     }
   }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -71,7 +76,7 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
 
   void onSelectAutoComplete(ChatUserAutocompleteData suggestion) {
     _focusNode.unfocus();
-    
+
     setState(() {
       _controller.text = "";
     });
@@ -92,7 +97,9 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
           "profileImage": widget.profileImage,
           "online": widget.online,
           "idle": widget.idle,
-          "roleName": widget.roleName == 'doctors' ? 'patient': 'doctors',
+          "roleName": widget.roleName == 'doctors' ? 'patient' : 'doctors',
+          "gender": widget.gender,
+          "fcmTokens": widget.fcmTokens,
         },
         "receiverData": {
           "userId": suggestion.id,
@@ -101,11 +108,13 @@ class _ChatUserAutocompleteState extends State<ChatUserAutocomplete> {
           "online": suggestion.online,
           "idle": suggestion.lastLogin.idle ?? false,
           "roleName": suggestion.roleName,
+          "gender": suggestion.gender,
+          "fcmTokens": suggestion.fcmTokens,
         },
         "messages": [],
       };
       socket.emit('inviteUserToRoom', roomData);
-    }else{
+    } else {
       final String existRoomId = widget.userChatData[selectedIndex].roomId;
       chatProvider.setShowEmptyRoomInSearchList(existRoomId);
     }

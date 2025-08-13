@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' hide MessageType;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,8 +10,11 @@ import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/chat_data_type.dart';
 import 'package:health_care/models/incoming_call.dart';
 import 'package:health_care/providers/chat_provider.dart';
+import 'package:health_care/services/chat_service.dart';
+import 'package:health_care/shared/chat/chat-share/show_delete_confirmation_dialog.dart';
 import 'package:health_care/shared/chat/chat_helpers/end_voice_call.dart';
 import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
+import 'package:health_care/shared/chat/chat_helpers/missed_voice_call.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/utils/play_sound.dart';
 import 'package:health_care/stream_socket.dart';
@@ -33,6 +37,7 @@ class SingleChatScaffold extends StatefulWidget {
 
 class _SingleChatScaffoldState extends State<SingleChatScaffold> {
   List<RTCIceCandidate> remoteCandidates = [];
+  final ChatService chatService = ChatService();
   late final ChatProvider chatProvider;
   bool _isProvidersInitialized = false;
 
@@ -49,6 +54,9 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
         final String roomId = data['roomId'];
         var messageDataMap = data['messageData'];
         final MessageType messageData = MessageType.fromMap(messageDataMap);
+        final List<String> currentUserFcmTokens =
+            messageData.receiverId == widget.currentUserId ? messageData.receiverFcmTokens : messageData.senderFcmTokens;
+
         chatProvider.setIncomingCall(
           IncomingCall(
             offer: offer,
@@ -58,11 +66,15 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
             messageData: messageData,
           ),
         );
-        await initiateVoiceCallIfPermitted(
-          context,
-          widget.currentRoom,
-          widget.currentUserId,
-        );
+        // 20 seconds for missed call if not acceptcall
+        Future.delayed(const Duration(seconds: 20), () {
+          if (!chatProvider.isAcceptCall) {
+            if (mounted) {
+              missedVoiceCall(context, messageData);
+            }
+          }
+        });
+        await initiateVoiceCallIfPermitted(context, widget.currentRoom, widget.currentUserId, currentUserFcmTokens);
       } catch (e) {
         log("Error socket receiveVoiceCall: $e");
       }
@@ -85,17 +97,20 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
           candidateMap['sdpMid'],
           candidateMap['sdpMLineIndex'],
         );
-        log('peerConnection: $peerConnection in iceCandidate');
-        final remoteDesc = await peerConnection.getRemoteDescription();
+        if (peerConnection == null) {
+          remoteCandidates.add(candidate);
+          return;
+        }
+        final remoteDesc = await peerConnection?.getRemoteDescription();
         if (remoteDesc != null) {
           // Iterate over a copy to avoid concurrent modification
           for (final buffered in List.of(remoteCandidates)) {
-            await peerConnection.addCandidate(buffered);
+            await peerConnection?.addCandidate(buffered);
           }
           remoteCandidates.clear();
 
           // Add the newly received candidate too
-          await peerConnection.addCandidate(candidate);
+          await peerConnection?.addCandidate(candidate);
         } else {
           // PeerConnection not ready yet, buffer this new candidate
           remoteCandidates.add(candidate);
@@ -111,21 +126,70 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
         final answer = data['answer'];
         final sdp = answer['sdp'];
         final type = answer['type'];
-        peerConnection.setRemoteDescription(RTCSessionDescription(sdp, type));
+        peerConnection?.setRemoteDescription(RTCSessionDescription(sdp, type));
         incomingCallSound(false);
-        final receivers = await peerConnection.getReceivers();
-        final remoteTracks = receivers.map((r) => r.track).whereType<MediaStreamTrack>().toList();
+        final receivers = await peerConnection?.getReceivers();
+        final remoteTracks = receivers?.map((r) => r.track).whereType<MediaStreamTrack>().toList();
 
-        if (remoteTracks.isNotEmpty) {
+        if (remoteTracks!.isNotEmpty) {
           final newRemoteStream = await createLocalMediaStream('remote');
           for (final track in remoteTracks) {
             await newRemoteStream.addTrack(track);
           }
           remoteStream = newRemoteStream;
-          log("🔊 Remote stream rebuilt from confirmCall");
         }
       } catch (e) {
         log("Error socket confirmCall: $e");
+      }
+    });
+
+    socket.on('receiveMessage', (data) async {
+      final rawMessage = MessageType.fromMap(data);
+      final roomId = rawMessage.roomId;
+      final chatList = chatProvider.userChatData;
+      final index = chatList.indexWhere((chat) => chat.roomId == roomId);
+      if (index == -1) return;
+
+      final chat = chatList[index];
+      final exists = chat.messages.any((msg) => msg.timestamp == rawMessage.timestamp);
+      if (exists) return;
+
+      // Immediately insert raw message (without waiting for attachment downloads)
+      final updatedMessages = [...chat.messages, rawMessage];
+      final updatedChat = chat.copyWith(messages: updatedMessages);
+      final newChatList = [...chatList];
+      newChatList[index] = updatedChat;
+      chatProvider.setUserChatData(newChatList); // ✅ fast UI update
+
+      // If there are attachments, update them asynchronously
+      if (rawMessage.attachment.isNotEmpty) {
+        final updatedAttachments = await Future.wait(
+          rawMessage.attachment.map((attach) async {
+            final fileId = attach.id;
+            final fileBytes = fileId.isNotEmpty ? await getChatFile(fileId, widget.currentUserId) : null;
+            return attach.copyWith(imageBytes: fileBytes);
+          }),
+        );
+
+        final updatedMessage = rawMessage.copyWith(attachment: updatedAttachments);
+
+        // Replace just this one message (with updated attachment)
+        final current = chatProvider.userChatData;
+        final i = current.indexWhere((c) => c.roomId == roomId);
+        if (i != -1) {
+          final chat = current[i];
+          final updatedMsgIndex = chat.messages.indexWhere((m) => m.timestamp == rawMessage.timestamp);
+          if (updatedMsgIndex != -1) {
+            final newMessages = [...chat.messages];
+            newMessages[updatedMsgIndex] = updatedMessage;
+
+            final newChat = chat.copyWith(messages: newMessages);
+            final updatedChatList = [...current];
+            updatedChatList[i] = newChat;
+
+            chatProvider.setUserChatData(updatedChatList); // ⚡ only updates if attachment differs
+          }
+        }
       }
     });
   }
@@ -145,7 +209,21 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
     socket.off('iceCandidate');
     socket.off('endVoiceCall');
     socket.off('confirmCall');
+    // Fire-and-forget async cleanup
+    cleanupPeerConnection();
     super.dispose();
+  }
+
+  void cleanupPeerConnection() async {
+    try {
+      await peerConnection?.close();
+      await peerConnection?.dispose();
+      peerConnection = null;
+      await localStream?.dispose();
+      localStream = null;
+    } catch (e) {
+      log('Error disposing peerConnection: $e');
+    }
   }
 
   @override
@@ -153,6 +231,9 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
     final ThemeData theme = Theme.of(context);
     final ChatUserType profileToShow =
         widget.currentRoom.createrData.userId == widget.currentUserId ? widget.currentRoom.receiverData : widget.currentRoom.createrData;
+    final List<String> currentUserFcmTokens = widget.currentRoom.createrData.userId == widget.currentUserId
+        ? widget.currentRoom.createrData.fcmTokens
+        : widget.currentRoom.receiverData.fcmTokens;
     final ImageProvider<Object> finalImage = profileToShow.roleName == 'doctors'
         ? profileToShow.profileImage.isEmpty
             ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
@@ -165,6 +246,7 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
         : profileToShow.online
             ? const Color(0xFF44B700)
             : const Color.fromARGB(255, 250, 18, 2);
+    final bubbleBackground = theme.brightness == Brightness.dark ? theme.cardTheme.color : theme.disabledColor;
 
     return SafeArea(
       child: Scaffold(
@@ -222,11 +304,7 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: GestureDetector(
                 onTap: () async {
-                  await initiateVoiceCallIfPermitted(
-                    context,
-                    widget.currentRoom,
-                    widget.currentUserId,
-                  );
+                  await initiateVoiceCallIfPermitted(context, widget.currentRoom, widget.currentUserId, currentUserFcmTokens);
                 },
                 child: SizedBox(
                   width: 30,
@@ -256,16 +334,51 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GestureDetector(
-                onTap: () {},
-                child: const FaIcon(
-                  FontAwesomeIcons.ellipsisV,
-                  size: 18,
+            PopupMenuButton<String>(
+              color: bubbleBackground,
+              icon: const FaIcon(FontAwesomeIcons.ellipsisV, size: 18),
+              offset: const Offset(0, 53),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: <Widget>[
+                      const Icon(Icons.delete_forever, color: Colors.red),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Text(context.tr('deleteRoom')),
+                    ],
+                  ),
                 ),
-              ),
+              ],
+              elevation: 4,
+              onSelected: (value) {
+                if (value == 'delete') {
+                  showDeleteConfirmationDialog(context, () async {
+                    var payload = {
+                      "deleteType": "room",
+                      "currentUserId": widget.currentUserId,
+                      "roomId": widget.currentRoom.roomId,
+                      "valueToSearch": "room",
+                    };
+                    await chatService.deleteChat(context, payload);
+                  });
+                }
+              },
             ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //   child: GestureDetector(
+            //     onTap: () {
+
+            //     },
+            //     child: const FaIcon(
+            //       FontAwesomeIcons.ellipsisV,
+            //       size: 18,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         body: widget.children,

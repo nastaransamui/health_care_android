@@ -99,6 +99,8 @@ class ChatUserType {
   final bool online;
   final bool idle;
   final String roleName;
+  final List<String> fcmTokens;
+  final String gender;
 
   ChatUserType({
     required this.userId,
@@ -107,6 +109,8 @@ class ChatUserType {
     required this.online,
     required this.idle,
     required this.roleName,
+    required this.fcmTokens,
+    required this.gender,
   });
 
   ChatUserType copyWith({
@@ -116,6 +120,8 @@ class ChatUserType {
     bool? online,
     bool? idle,
     String? roleName,
+    List<String>? fcmTokens,
+    String? gender,
   }) {
     return ChatUserType(
       userId: userId ?? this.userId,
@@ -124,6 +130,8 @@ class ChatUserType {
       online: online ?? this.online,
       idle: idle ?? this.idle,
       roleName: roleName ?? this.roleName,
+      fcmTokens: fcmTokens ?? this.fcmTokens,
+      gender: gender ?? this.gender,
     );
   }
 
@@ -136,6 +144,8 @@ class ChatUserType {
     result.addAll({'online': online});
     result.addAll({'idle': idle});
     result.addAll({'roleName': roleName});
+    result.addAll({'fcmTokens': fcmTokens});
+    result.addAll({'gender': gender});
 
     return result;
   }
@@ -148,6 +158,8 @@ class ChatUserType {
       online: map['online'] ?? false,
       idle: map['idle'] ?? false,
       roleName: map['roleName'] ?? '',
+      fcmTokens: (map['fcmTokens'] as List?)?.whereType<String>().toList() ?? [],
+      gender: map['gender'] ?? '',
     );
   }
 
@@ -157,7 +169,7 @@ class ChatUserType {
 
   @override
   String toString() {
-    return 'ChatUserType(userId: $userId, fullName: $fullName, profileImage: $profileImage, online: $online, idle: $idle, roleName: $roleName)';
+    return 'ChatUserType(userId: $userId, fullName: $fullName, profileImage: $profileImage, online: $online, idle: $idle, roleName: $roleName, fcmTokens: $fcmTokens,gender: $gender)';
   }
 
   @override
@@ -170,18 +182,29 @@ class ChatUserType {
         other.profileImage == profileImage &&
         other.online == online &&
         other.idle == idle &&
-        other.roleName == roleName;
+        other.roleName == roleName &&
+        other.fcmTokens == fcmTokens &&
+        other.gender == gender;
   }
 
   @override
   int get hashCode {
-    return userId.hashCode ^ fullName.hashCode ^ profileImage.hashCode ^ online.hashCode ^ idle.hashCode ^ roleName.hashCode;
+    return userId.hashCode ^
+        fullName.hashCode ^
+        profileImage.hashCode ^
+        online.hashCode ^
+        idle.hashCode ^
+        roleName.hashCode ^
+        fcmTokens.hashCode ^
+        gender.hashCode;
   }
 }
 
 class MessageType {
   final String senderId;
   final String receiverId;
+  final List<String> senderFcmTokens;
+  final List<String> receiverFcmTokens;
   final int timestamp;
   final String? message;
   final bool read;
@@ -192,6 +215,8 @@ class MessageType {
   MessageType({
     required this.senderId,
     required this.receiverId,
+    required this.senderFcmTokens,
+    required this.receiverFcmTokens,
     required this.timestamp,
     required this.message,
     required this.read,
@@ -203,6 +228,8 @@ class MessageType {
   MessageType copyWith({
     String? senderId,
     String? receiverId,
+    List<String>? senderFcmTokens,
+    List<String>? receiverFcmTokens,
     int? timestamp,
     String? message,
     bool? read,
@@ -213,6 +240,8 @@ class MessageType {
     return MessageType(
       senderId: senderId ?? this.senderId,
       receiverId: receiverId ?? this.receiverId,
+      senderFcmTokens: senderFcmTokens ?? this.senderFcmTokens,
+      receiverFcmTokens: receiverFcmTokens ?? this.receiverFcmTokens,
       timestamp: timestamp ?? this.timestamp,
       message: message ?? this.message,
       read: read ?? this.read,
@@ -227,10 +256,12 @@ class MessageType {
 
     result.addAll({'senderId': senderId});
     result.addAll({'receiverId': receiverId});
+    result.addAll({'senderFcmTokens': senderFcmTokens});
+    result.addAll({'receiverFcmTokens': receiverFcmTokens});
     result.addAll({'timestamp': timestamp});
     if (message != null) {
       result.addAll({'message': message});
-    }else{
+    } else {
       result.addAll({'message': null});
     }
     result.addAll({'read': read});
@@ -245,6 +276,8 @@ class MessageType {
     return MessageType(
       senderId: map['senderId'] ?? '',
       receiverId: map['receiverId'] ?? '',
+      senderFcmTokens: (map['senderFcmTokens'] as List?)?.whereType<String>().toList() ?? [],
+      receiverFcmTokens: (map['receiverFcmTokens'] as List?)?.whereType<String>().toList() ?? [],
       timestamp: map['timestamp']?.toInt() ?? 0,
       message: map['message'],
       read: map['read'] ?? false,
@@ -260,7 +293,7 @@ class MessageType {
 
   @override
   String toString() {
-    return 'MessageType(senderId: $senderId, receiverId: $receiverId, timestamp: $timestamp, message: $message, read: $read, attachment: $attachment, calls: $calls, roomId: $roomId)';
+    return 'MessageType(senderId: $senderId, receiverId: $receiverId,senderFcmTokens: $senderFcmTokens,  receiverFcmTokens: $receiverFcmTokens, timestamp: $timestamp, message: $message, read: $read, attachment: $attachment, calls: $calls, roomId: $roomId)';
   }
 
   @override
@@ -361,13 +394,13 @@ class AttachmentType {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is AttachmentType && 
-    other.src == src && 
-    other.name == name && 
-    other.isImage == isImage && 
-    other.type == type && 
-    other.id == id &&
-    other.imageBytes == imageBytes;
+    return other is AttachmentType &&
+        other.src == src &&
+        other.name == name &&
+        other.isImage == isImage &&
+        other.type == type &&
+        other.id == id &&
+        other.imageBytes == imageBytes;
   }
 
   @override
@@ -423,8 +456,8 @@ class CallType {
     result.addAll({'startTimeStamp': startTimeStamp});
     if (finishTimeStamp != null) {
       result.addAll({'finishTimeStamp': finishTimeStamp});
-    }else{
-       result.addAll({'finishTimeStamp': null});
+    } else {
+      result.addAll({'finishTimeStamp': null});
     }
     result.addAll({'isMissedCall': isMissedCall});
     result.addAll({'isRejected': isRejected});
@@ -490,18 +523,21 @@ class ChatUserAutocompleteData {
   final String id;
   final String searchString;
   final List<Specialities>? specialities;
+  final List<String> fcmTokens;
+  final String gender;
 
-  ChatUserAutocompleteData({
-    required this.online,
-    required this.lastLogin,
-    required this.createdAt,
-    required this.fullName,
-    required this.profileImage,
-    required this.roleName,
-    required this.id,
-    required this.searchString,
-    required this.specialities,
-  });
+  ChatUserAutocompleteData(
+      {required this.online,
+      required this.lastLogin,
+      required this.createdAt,
+      required this.fullName,
+      required this.profileImage,
+      required this.roleName,
+      required this.id,
+      required this.searchString,
+      required this.specialities,
+      required this.fcmTokens,
+      required this.gender});
 
   ChatUserAutocompleteData copyWith({
     bool? online,
@@ -513,6 +549,8 @@ class ChatUserAutocompleteData {
     String? id,
     String? searchString,
     List<Specialities>? specialities,
+    List<String>? fcmTokens,
+    String? gender,
   }) {
     return ChatUserAutocompleteData(
       online: online ?? this.online,
@@ -524,6 +562,8 @@ class ChatUserAutocompleteData {
       id: id ?? this.id,
       searchString: searchString ?? this.searchString,
       specialities: specialities ?? this.specialities,
+      fcmTokens: fcmTokens ?? this.fcmTokens,
+      gender: gender ?? this.gender,
     );
   }
 
@@ -541,6 +581,8 @@ class ChatUserAutocompleteData {
     if (specialities != null) {
       result.addAll({'specialities': specialities!.map((x) => x.toMap()).toList()});
     }
+    result.addAll({'fcmTokens': fcmTokens});
+    result.addAll({'gender': gender});
 
     return result;
   }
@@ -557,6 +599,8 @@ class ChatUserAutocompleteData {
       id: map['_id'] ?? '',
       searchString: map['searchString'] ?? '',
       specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
+      fcmTokens: List<String>.from(map['fcmTokens'] ?? []),
+      gender: map['gender'] ?? '',
     );
   }
 
@@ -566,7 +610,7 @@ class ChatUserAutocompleteData {
 
   @override
   String toString() {
-    return 'ChatUserAutocompleteData(online: $online, lastLogin: $lastLogin, createdAt: $createdAt, fullName: $fullName, profileImage: $profileImage, roleName: $roleName, id: $id, searchString: $searchString, specialities: $specialities)';
+    return 'ChatUserAutocompleteData(online: $online, lastLogin: $lastLogin, createdAt: $createdAt, fullName: $fullName, profileImage: $profileImage, roleName: $roleName, id: $id, searchString: $searchString, specialities: $specialities, gender: $gender, fcmTokens: $fcmTokens)';
   }
 
   @override

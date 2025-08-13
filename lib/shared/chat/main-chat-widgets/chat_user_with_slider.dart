@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -16,6 +15,7 @@ import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/shared/chat/chat-share/custom_lightbox.dart';
 import 'package:health_care/shared/chat/chat_helpers/get_file_icon.dart';
 import 'package:health_care/shared/chat/chat-share/read_status_widget.dart';
+import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
 import 'package:health_care/shared/chat/chat_helpers/save_bytes_to_file.dart';
 import 'package:health_care/shared/chat/chat-share/show_delete_confirmation_dialog.dart';
 import 'package:health_care/shared/chat/main-chat-widgets/slide_manager.dart';
@@ -84,8 +84,7 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
     final int? timestamp = lastMessage?.timestamp;
     final int numberOfNotRead = chatData.messages.where((m) => !m.read && m.receiverId == currentUserId).length;
     final bool hasMessage = chatData.messages.isNotEmpty;
-   final String unreadMessagesLength =
-    hasMessage ? (numberOfNotRead == 0 ? '' : numberOfNotRead.toString()) : '';
+    final String unreadMessagesLength = hasMessage ? (numberOfNotRead == 0 ? '' : numberOfNotRead.toString()) : '';
     late String displayValue = '';
     if (timestamp != null) {
       final DateTime lastMessageTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -123,7 +122,15 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
         GestureDetector(
           onTap: () {
             showDeleteConfirmationDialog(context, () async {
-              var payload = {"deleteType": "room", "currentUserId": currentUserId, "roomId": widget.chatRoom.roomId, "valueToSearch": "room"};
+              // Close all open sliders before deletion
+              SlideManager.active.value?.dismiss();
+              SlideManager.clear(SlideManager.active.value!);
+              var payload = {
+                "deleteType": "room",
+                "currentUserId": currentUserId,
+                "roomId": widget.chatRoom.roomId,
+                "valueToSearch": "room",
+              };
               await chatService.deleteChat(context, payload);
             });
           },
@@ -369,37 +376,74 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
                             ...lastMessage.calls.map((call) {
                               IconData icon;
                               Color iconColor = theme.primaryColorLight;
+                              final int startTime = call.startTimeStamp;
+                              final int finishTime = call.finishTimeStamp ?? startTime;
+                              final bool isAnswered = call.isAnswered;
+                              final bool isMissedCall = call.isMissedCall;
 
-                              if (call.isMissedCall) {
+                              // Duration from milliseconds
+                              final duration = Duration(milliseconds: finishTime - startTime);
+
+                              final int totalSeconds = duration.inSeconds;
+                              final int totalMinutes = duration.inMinutes;
+                              final int totalHours = duration.inHours;
+                              String formattedDuration = "";
+                              if (isMissedCall) {
+                                formattedDuration = context.tr('missedCall');
+                              } else if (!isAnswered) {
+                                formattedDuration = context.tr('noAnswer');
+                              } else if (totalSeconds < 60) {
+                                formattedDuration = "$totalSeconds sec";
+                              } else if (totalSeconds < 3600) {
+                                final int remainingSeconds = totalSeconds % 60;
+                                formattedDuration = "$totalMinutes min $remainingSeconds sec";
+                              } else {
+                                final int remainingMinutes = totalMinutes % 60;
+                                formattedDuration = "$totalHours hr $remainingMinutes min";
+                              }
+                              if (isMissedCall) {
                                 icon = Icons.phone_missed;
                               } else if (call.isRejected) {
                                 icon = Icons.call_end;
                               } else if (call.isAnswered && call.isVideoCall) {
                                 icon = Icons.videocam;
                               } else if (call.isAnswered && call.isVoiceCall) {
-                                icon = Icons.phone;
+                                icon = lastMessage.senderId == currentUserId ? Icons.phone_forwarded : Icons.phone_callback;
                               } else {
-                                icon = Icons.call;
+                                icon = lastMessage.senderId == currentUserId ? Icons.phone_forwarded : Icons.phone_callback;
                               }
-
                               return GestureDetector(
-                                onTap: () {
-                                  log('voiceCallToggleFunction()');
+                                onTap: () async {
+                                  final List<String> currentUserFcmTokens =
+                                      chatData.createrData.userId == currentUserId ? chatData.createrData.fcmTokens : chatData.receiverData.fcmTokens;
+                                  await initiateVoiceCallIfPermitted(context, chatData, currentUserId, currentUserFcmTokens);
                                 },
-                                child: Container(
-                                  width: 25,
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(50),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 25,
+                                      height: 25,
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(50),
+                                        ),
+                                        color: theme.canvasColor,
+                                      ),
+                                      child: Icon(
+                                        icon,
+                                        color: iconColor,
+                                        size: 14,
+                                      ),
                                     ),
-                                    color: theme.canvasColor,
-                                  ),
-                                  child: Icon(
-                                    icon,
-                                    color: iconColor,
-                                    size: 14,
-                                  ),
+                                    Text(
+                                      formattedDuration,
+                                      style: TextStyle(
+                                        color: theme.disabledColor,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             }),

@@ -6,16 +6,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 String ipApiUrl = 'http://ip-api.com/json';
 const double expandedHeight = 250;
-  final List<Map<String, dynamic>> bloodGValues = [
-    {"title": 'A+', 'icon': '🅰️'},
-    {"title": 'A-', 'icon': '🅰️'},
-    {"title": 'B+', 'icon': '🅱️'},
-    {"title": 'B-', 'icon': '🅱️'},
-    {"title": 'AB+', 'icon': '🆎'},
-    {"title": 'AB-', 'icon': '🆎'},
-    {"title": 'O+', 'icon': '🅾️'},
-    {"title": 'O-', 'icon': '🅾️'},
-  ];
+final List<Map<String, dynamic>> bloodGValues = [
+  {"title": 'A+', 'icon': '🅰️'},
+  {"title": 'A-', 'icon': '🅰️'},
+  {"title": 'B+', 'icon': '🅱️'},
+  {"title": 'B-', 'icon': '🅱️'},
+  {"title": 'AB+', 'icon': '🆎'},
+  {"title": 'AB-', 'icon': '🆎'},
+  {"title": 'O+', 'icon': '🅾️'},
+  {"title": 'O-', 'icon': '🅾️'},
+];
 List dcotorsDashboarPatientHeader = [
   {"title": "totalPatient", "icon": "", "image": "assets/icon/doctor-dashboard-01.png", "percent": 0.8},
   {"title": "thisWeekPatients", "icon": "", "image": "assets/icon/doctor-dashboard-02.png", "percent": 0.5},
@@ -104,11 +104,10 @@ List vitalBoxList = [
   {'title': 'height', "icon": "", "image": "assets/images/height.png", "unit": "cm"},
 ];
 
-
 List socialPlatforms = ["facebook", "x", "instagram", "pinterest", "linkedin", "youtube"];
 final Map<String, IconData> platformToIconMap = {
   "facebook": FontAwesomeIcons.facebookF, // Often facebookF for solid icon
-  "x": FontAwesomeIcons.twitter,        // 'x' is typically x-twitter
+  "x": FontAwesomeIcons.twitter, // 'x' is typically x-twitter
   "instagram": FontAwesomeIcons.instagram,
   "pinterest": FontAwesomeIcons.pinterest,
   "linkedin": FontAwesomeIcons.linkedinIn, // Often linkedinIn for solid icon
@@ -407,43 +406,43 @@ final DateTime eveningStart = DateTime(now.year, now.month, now.day, 17);
 final DateTime eveningFinish = DateTime(now.year, now.month, now.day, 20);
 final int eveningMinutes = eveningFinish.difference(eveningStart).inMinutes;
 
-  Map<String, dynamic> googlePayData = {
-    "provider": "google_pay",
-    "data": {
-      "environment": "TEST",
-      "apiVersion": 2,
-      "apiVersionMinor": 0,
-      "allowedPaymentMethods": [
-        {
-          "type": "CARD",
-          "tokenizationSpecification": {
-            "type": "PAYMENT_GATEWAY",
-            "parameters": {"gateway": "example", "gatewayMerchantId": "exampleGatewayMerchantId"}
-          },
-          "parameters": {
-            "allowedCardNetworks": ["VISA", "MASTERCARD"],
-            "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-            "billingAddressRequired": true,
-            "billingAddressParameters": {"format": "FULL", "phoneNumberRequired": true}
-          }
+Map<String, dynamic> googlePayData = {
+  "provider": "google_pay",
+  "data": {
+    "environment": "TEST",
+    "apiVersion": 2,
+    "apiVersionMinor": 0,
+    "allowedPaymentMethods": [
+      {
+        "type": "CARD",
+        "tokenizationSpecification": {
+          "type": "PAYMENT_GATEWAY",
+          "parameters": {"gateway": "example", "gatewayMerchantId": "exampleGatewayMerchantId"}
+        },
+        "parameters": {
+          "allowedCardNetworks": ["VISA", "MASTERCARD"],
+          "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+          "billingAddressRequired": true,
+          "billingAddressParameters": {"format": "FULL", "phoneNumberRequired": true}
         }
-      ],
-      "merchantInfo": {"merchantName": "Demo Merchant", "merchantId": "12345678901234567890"},
-      "transactionInfo": {
-        "countryCode": "US",
-        "currencyCode": "USD",
-        "totalPriceStatus": "FINAL",
-        "totalPrice": "0.00" // will update this dynamically
       }
+    ],
+    "merchantInfo": {"merchantName": "Demo Merchant", "merchantId": "12345678901234567890"},
+    "transactionInfo": {
+      "countryCode": "US",
+      "currencyCode": "USD",
+      "totalPriceStatus": "FINAL",
+      "totalPrice": "0.00" // will update this dynamically
     }
-  };
+  }
+};
 
-  Map<String, dynamic> icServerConfiguration = {
+Map<String, dynamic> icServerConfiguration = {
   'iceServers': [
     {'urls': 'stun:stun.l.google.com:19302'}
   ]
 };
 
-late RTCPeerConnection peerConnection;
-late MediaStream? localStream;
+RTCPeerConnection? peerConnection;
+MediaStream? localStream;
 MediaStream? remoteStream;

@@ -793,5 +793,8 @@
   "search_doctors": "Search doctors",
   "search_patient": "Search patient",
   "voiceCallConnecting": "Wait while answer.",
-  "voiceCallConnected": "Voice call is going on...."
+  "voiceCallConnected": "Voice call is going on....",
+  "deleteRoom": "Delete Room",
+  "noAnswer": "Not Answer",
+  "missedCall": "Missed call"
 }

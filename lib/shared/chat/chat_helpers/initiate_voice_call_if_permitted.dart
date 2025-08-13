@@ -14,6 +14,7 @@ Future<void> initiateVoiceCallIfPermitted(
   BuildContext context,
   ChatDataType currentRoom,
   String currentUserId,
+  List<String> currentUserFcmTokens,
 ) async {
   try {
     final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
@@ -30,12 +31,18 @@ Future<void> initiateVoiceCallIfPermitted(
     }
     late String receiverId;
     late MessageType messageData;
+    late List<String> receiverFcmTokens;
+    final List<String> senderFcmTokens;
     // this block happen if need to make call
     if (chatProvider.incomingCall == null) {
       receiverId = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData.userId : currentRoom.createrData.userId;
+      receiverFcmTokens = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData.fcmTokens : currentRoom.createrData.fcmTokens;
+      senderFcmTokens = currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.fcmTokens : currentRoom.receiverData.fcmTokens;
       messageData = MessageType(
         senderId: currentUserId,
         receiverId: receiverId,
+        senderFcmTokens: senderFcmTokens,
+        receiverFcmTokens: receiverFcmTokens,
         timestamp: DateTime.now().millisecondsSinceEpoch,
         message: null,
         read: false,
