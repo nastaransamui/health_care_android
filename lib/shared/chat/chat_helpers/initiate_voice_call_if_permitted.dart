@@ -12,9 +12,10 @@ import 'package:provider/provider.dart';
 
 Future<void> initiateVoiceCallIfPermitted(
   BuildContext context,
-  ChatDataType currentRoom,
   String currentUserId,
-  List<String> currentUserFcmTokens,
+  ChatUserType callerData,
+  ChatUserType receiverData,
+  String roomId,
 ) async {
   try {
     final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
@@ -29,15 +30,13 @@ Future<void> initiateVoiceCallIfPermitted(
       }
       return;
     }
-    late String receiverId;
+
     late MessageType messageData;
-    late List<String> receiverFcmTokens;
-    final List<String> senderFcmTokens;
+    String receiverId = callerData.userId == currentUserId ? receiverData.userId : callerData.userId;
+    List<String> senderFcmTokens = callerData.userId == currentUserId ? callerData.fcmTokens : receiverData.fcmTokens;
+    List<String> receiverFcmTokens = callerData.userId == currentUserId ? receiverData.fcmTokens : callerData.fcmTokens;
     // this block happen if need to make call
     if (chatProvider.incomingCall == null) {
-      receiverId = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData.userId : currentRoom.createrData.userId;
-      receiverFcmTokens = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData.fcmTokens : currentRoom.createrData.fcmTokens;
-      senderFcmTokens = currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.fcmTokens : currentRoom.receiverData.fcmTokens;
       messageData = MessageType(
         senderId: currentUserId,
         receiverId: receiverId,
@@ -58,9 +57,18 @@ Future<void> initiateVoiceCallIfPermitted(
             isAnswered: false,
           )
         ],
-        roomId: currentRoom.roomId,
+        roomId: roomId,
       );
-      if (context.mounted) await makeVoiceCall(context, currentRoom, currentUserId, messageData);
+      if (context.mounted) {
+        await makeVoiceCall(
+          context,
+          currentUserId,
+          callerData,
+          receiverData,
+          roomId,
+          messageData,
+        );
+      }
     }
     // this block happen if reciveCall
     else {
@@ -69,7 +77,6 @@ Future<void> initiateVoiceCallIfPermitted(
     }
     if (context.mounted) {
       incomingCallSound(true);
-
       showModalBottomSheet(
         useSafeArea: true,
         showDragHandle: false,
@@ -79,9 +86,9 @@ Future<void> initiateVoiceCallIfPermitted(
         context: context,
         builder: (context) {
           return VoiceCallWidget(
-            currentRoom: currentRoom,
             currentUserId: currentUserId,
             messageData: messageData,
+            profileToShow: receiverData,
           );
         },
       );

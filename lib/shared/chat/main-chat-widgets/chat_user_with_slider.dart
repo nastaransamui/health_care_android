@@ -61,30 +61,28 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
   @override
   Widget build(BuildContext context) {
     final ChatDataType chatData = widget.chatRoom;
-    // final int index = widget.index;
+    final String roomId = chatData.roomId;
+
     final String currentUserId = widget.currentUserId;
     final ThemeData theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final ChatUserType profileToShow = chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData;
     final ImageProvider<Object> finalImage = profileToShow.roleName == 'doctors'
         ? profileToShow.profileImage.isEmpty
-            ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
+            ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
             : CachedNetworkImageProvider(profileToShow.profileImage)
         : profileToShow.profileImage.isEmpty
-            ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
+            ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
             : CachedNetworkImageProvider(profileToShow.profileImage);
     final Color statusColor = profileToShow.idle
         ? const Color(0xFFFFA812)
         : profileToShow.online
             ? const Color(0xFF44B700)
             : const Color.fromARGB(255, 250, 18, 2);
-
     final sortedMessages = [...chatData.messages]..sort((a, b) => b.timestamp.compareTo(a.timestamp));
     final MessageType? lastMessage = sortedMessages.isNotEmpty ? sortedMessages.first : null;
     final int? timestamp = lastMessage?.timestamp;
-    final int numberOfNotRead = chatData.messages.where((m) => !m.read && m.receiverId == currentUserId).length;
-    final bool hasMessage = chatData.messages.isNotEmpty;
-    final String unreadMessagesLength = hasMessage ? (numberOfNotRead == 0 ? '' : numberOfNotRead.toString()) : '';
+
     late String displayValue = '';
     if (timestamp != null) {
       final DateTime lastMessageTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
@@ -110,7 +108,7 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
                   ? thisYearValue
                   : defaultValue;
     }
-    final encodedRoomId = base64.encode(utf8.encode(chatData.roomId));
+    final encodedRoomId = base64.encode(utf8.encode(roomId));
 
     return SlidablePanel(
       controller: slideController,
@@ -414,9 +412,17 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
                               }
                               return GestureDetector(
                                 onTap: () async {
-                                  final List<String> currentUserFcmTokens =
-                                      chatData.createrData.userId == currentUserId ? chatData.createrData.fcmTokens : chatData.receiverData.fcmTokens;
-                                  await initiateVoiceCallIfPermitted(context, chatData, currentUserId, currentUserFcmTokens);
+                                  final ChatUserType callerData =
+                                      chatData.createrData.userId == currentUserId ? chatData.createrData : chatData.receiverData;
+                                  final ChatUserType receiverData =
+                                      chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData;
+                                  await initiateVoiceCallIfPermitted(
+                                    context,
+                                    currentUserId,
+                                    callerData,
+                                    receiverData,
+                                    roomId,
+                                  );
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,14 +458,14 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
                             const Spacer(),
                           ],
                           const SizedBox(width: 1),
-                          if (unreadMessagesLength.isNotEmpty)
+                          if (chatData.totalUnreadMessage != 0)
                             Padding(
                               padding: const EdgeInsets.only(right: 13.0),
                               child: badges.Badge(
                                 offset: const Offset(0, -5),
                                 backgroundColor: theme.primaryColorLight,
                                 label: Text(
-                                  unreadMessagesLength,
+                                  '${chatData.totalUnreadMessage}',
                                   style: TextStyle(color: textColor),
                                 ),
                                 child: const SizedBox(),

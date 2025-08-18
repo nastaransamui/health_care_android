@@ -7,8 +7,8 @@ import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/chat_service.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/single_chat_scroll_button.dart';
 import 'package:health_care/src/commons/scaffold_wrapper.dart';
-import 'package:health_care/src/commons/scroll_button.dart';
 import 'package:health_care/shared/chat/chat-share/no_chat_available_widget.dart';
 import 'package:health_care/shared/chat/chat_bubble_widget.dart';
 import 'package:health_care/shared/chat/single-chat-widgets/chat_input.dart';
@@ -86,8 +86,8 @@ class _SingleChateWidgetState extends State<SingleChatWidget> {
           // Check if it's a new message AND not from the current user
           if (lastMessageTimestamp == null || latestMessage.timestamp > lastMessageTimestamp!) {
             if (latestMessage.senderId != currentUserId) {
-              if(latestMessage.calls.isEmpty){
-              playReciveMessageSound();
+              if (latestMessage.calls.isEmpty) {
+                playReciveMessageSound();
               }
             }
 
@@ -272,7 +272,7 @@ class _SingleChateWidgetState extends State<SingleChatWidget> {
                     ),
                     Transform.translate(
                       offset: const Offset(0, -40),
-                      child: ScrollButton(
+                      child: SingleChatScrollButton(
                         scrollController: scrollController,
                         scrollPercentage: scrollPercentage,
                       ),

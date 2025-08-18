@@ -11,6 +11,7 @@ import 'package:health_care/providers/theme_load_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/router.dart';
 import 'package:health_care/services/auth_service.dart';
+import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/services/clinics_service.dart';
 import 'package:health_care/services/device_service.dart';
 import 'package:health_care/services/doctors_service.dart';
@@ -44,6 +45,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   final SpecialitiesService specialitiesService = SpecialitiesService();
   final DoctorsService doctorsService = DoctorsService();
   final DeviceService deviceService = DeviceService();
+  final ChatService chatService = ChatService();
   @override
   void initState() {
     super.initState();
@@ -68,25 +70,80 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       }
       FirebaseMessaging.onMessage.listen(
         (RemoteMessage message) async {
-          // await showChatNotification(message);
-          final currentContext = NavigationService.navigatorKey.currentContext;
-          if (currentContext == null) return;
-          if (currentContext.mounted) {
-            final state = GoRouter.of(currentContext).state;
-            final currentRoomId = state.pathParameters["encodedRoomId"];
-            final data = message.data;
-            final roomId = data['roomId'];
-            final encodedRoomId = base64.encode(utf8.encode(roomId));
-            //  Show notification only if no room is open
-            if (currentRoomId == null) {
-              await showChatNotification(message);
-              // show notification if room open but different roome
-            } else if (currentRoomId != encodedRoomId) {
-              await showChatNotification(message);
+          final data = message.data;
+
+          // Delay to ensure MaterialApp is mounted
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final currentContext = NavigationService.navigatorKey.currentContext;
+
+            String? currentRoomId;
+            if (currentContext != null && currentContext.mounted) {
+              final state = GoRouter.of(currentContext).state;
+              currentRoomId = state.pathParameters["encodedRoomId"];
             }
-          }
+
+            if (data['type'] == 'voiceCall') {
+              try {
+                final params = jsonDecode(data['params']);
+                if (currentContext != null && currentContext.mounted) {
+                  chatService.handleIncomingVoiceCall(
+                    currentContext,
+                    data: params,
+                    currentUserId: params['receiverId'],
+                  );
+                }
+              } catch (e) {
+                debugPrint('Failed to decode params: $e');
+              }
+            } else {
+              final roomId = data['roomId'];
+              final encodedRoomId = base64.encode(utf8.encode(roomId));
+
+              // Show notification if no room open OR different room open
+              if (currentRoomId == null || currentRoomId != encodedRoomId) {
+                await showChatNotification(message);
+              }
+            }
+          });
         },
       );
+      // FirebaseMessaging.onMessage.listen(
+      //   (RemoteMessage message) async {
+      //     // await showChatNotification(message);
+      //     final currentContext = NavigationService.navigatorKey.currentContext;
+      //     if (currentContext == null) return;
+      //     if (currentContext.mounted) {
+      //       final state = GoRouter.of(currentContext).state;
+      //       final currentRoomId = state.pathParameters["encodedRoomId"];
+      //       final data = message.data;
+      //       if (data['type'] == 'voiceCall') {
+      //         try {
+      //           final params = jsonDecode(data['params']);
+      //           debugPrint('Decoded params: $params');
+      //           if (mounted) {
+      //             chatService.handleIncomingVoiceCall(
+      //               currentContext,
+      //               data: params,
+      //               currentUserId: params['receiverId'],
+      //             );
+      //           }
+      //         } catch (e) {
+      //           debugPrint('Failed to decode params: $e');
+      //         }
+      //       } else {
+      //         final roomId = data['roomId'];
+      //         final encodedRoomId = base64.encode(utf8.encode(roomId));
+      //         //  Show notification only if no room is open
+      //         if (currentRoomId == null) {
+      //           await showChatNotification(message);
+      //           // show notification if room open but different roome
+      //         } else if (currentRoomId != encodedRoomId) {
+      //           await showChatNotification(message);
+      //         }
+      //       }
+      //     }
+      //   },
+      // );
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         // Navigate to relevant screen or show a dialog
         log('2${message.toString()}');

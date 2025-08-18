@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -25,6 +26,7 @@ class PatientDashboard extends StatefulWidget {
   @override
   State<PatientDashboard> createState() => _PatientDashboardState();
 }
+
 
 class _PatientDashboardState extends State<PatientDashboard> {
   final AuthService authService = AuthService();
@@ -81,6 +83,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
         final PatientUserProfile patientProfile = authProvider.patientProfile!.userProfile;
 
+       
         final String userId = authProvider.patientProfile!.userId;
         final VitalSigns? vitalSigns = vitalProvider.vitalSign;
         final ThemeData theme = Theme.of(context);
@@ -131,6 +134,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                           ),
                           // Link Cards
                           ...patientsDashboardLink.where((item) {
+
                             // Hide 'changePassword' if services (e.g. Google login) is present
                             if (item['name'] == 'changePassword' && patientProfile.services == "google") {
                               return false;

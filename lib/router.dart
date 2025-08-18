@@ -1085,7 +1085,7 @@ final router = GoRouter(
               // Use innerContext to get the InvoiceProvider from the local scope
               final authProvider = Provider.of<AuthProvider>(innerContext, listen: false);
               final patientProfile = authProvider.patientProfile;
-
+      
               if (patientProfile != null) {
                 return PatientMedicalRecords(patientId: patientProfile.userId);
               } else {

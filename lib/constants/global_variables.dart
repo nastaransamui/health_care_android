@@ -28,52 +28,52 @@ List doctorDataScroll = [
 List doctorsDashboardLink = [
   {
     'name': 'profileSettings',
-    'routeName': "/doctors/dashboard/profile",
+    'routeName': "doctorsDashboardProfile",
     "icon": const FaIcon(FontAwesomeIcons.userCog),
   },
   {
     'name': 'favourites',
-    'routeName': "/doctors/dashboard/favourites",
+    'routeName': "doctorFavourites",
     "icon": const FaIcon(FontAwesomeIcons.bookmark),
   },
   {
     'name': 'appointments',
-    'routeName': "/doctors/dashboard/appointments",
+    'routeName': "doctorAppointments",
     "icon": const FaIcon(FontAwesomeIcons.calendarCheck),
   },
   {
     'name': 'myPatients',
-    'routeName': "/doctors/dashboard/my-patients",
+    'routeName': "doctorMyPatients",
     "icon": const FaIcon(FontAwesomeIcons.userInjured),
   },
   {
     'name': 'scheduleTiming',
-    'routeName': "/doctors/dashboard/schedule-timing",
+    'routeName': "doctorsDashboardScheduleTiming",
     "icon": const FaIcon(FontAwesomeIcons.hourglassStart),
   },
   {
     'name': 'availableTiming',
-    'routeName': "/doctors/dashboard/available-timing",
+    'routeName': "doctorAvailableTiming",
     "icon": const FaIcon(FontAwesomeIcons.clock),
   },
   {
     'name': 'invoices',
-    'routeName': "/doctors/dashboard/invoice",
+    'routeName': "doctorsInvoices",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
   },
   {
     'name': 'billings',
-    'routeName': "/doctors/dashboard/billings",
+    'routeName': "doctorsBillings",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
   },
   {
     'name': 'accounts',
-    'routeName': "/doctors/dashboard/account",
+    'routeName': "doctorsAccount",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoiceDollar),
   },
   {
     'name': 'reviews',
-    'routeName': "/doctors/dashboard/reviews",
+    'routeName': "doctorsReviews",
     "icon": const FaIcon(FontAwesomeIcons.comment),
   },
   // {
@@ -83,17 +83,17 @@ List doctorsDashboardLink = [
   // },
   {
     'name': 'message',
-    'routeName': "/doctors/dashboard/chat-doctor",
+    'routeName': "doctorsChat",
     "icon": const FaIcon(FontAwesomeIcons.comments),
   },
   {
     'name': 'socialMedia',
-    'routeName': "/doctors/dashboard/socialMedia",
+    'routeName': "socialMedia",
     "icon": const FaIcon(FontAwesomeIcons.shareAlt),
   },
   {
     'name': 'changePassword',
-    'routeName': "/doctors/dashboard/changePassword",
+    'routeName': "changePassword",
     "icon": const FaIcon(FontAwesomeIcons.lock),
   },
 ];
@@ -117,48 +117,48 @@ final Map<String, IconData> platformToIconMap = {
 List patientsDashboardLink = [
   {
     'name': 'profileSettings',
-    'routeName': "/patient/dashboard/profile",
+    'routeName': "patientsDashboardProfile",
     "icon": const FaIcon(FontAwesomeIcons.userCog),
   },
   {
     'name': 'favourites',
-    'routeName': "/patient/dashboard/favourites",
+    'routeName': "patientFavourites",
     "icon": const FaIcon(FontAwesomeIcons.bookmark),
   },
   {
     'name': 'appointments',
-    'routeName': "/patient/dashboard/appointments",
+    'routeName': "patientAppointments",
     "icon": const FaIcon(FontAwesomeIcons.calendarCheck),
   },
 
   {
     'name': 'invoices',
-    'routeName': "/patient/dashboard/invoice",
+    'routeName': "patientInvoices",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
   },
   {
     'name': 'billings',
-    'routeName': "/patient/dashboard/billings",
+    'routeName': "patientBillings",
     "icon": const FaIcon(FontAwesomeIcons.fileInvoice),
   },
   {
     'name': 'dependent',
-    'routeName': "/patient/dashboard/dependent",
+    'routeName': "patientDependent",
     "icon": const FaIcon(FontAwesomeIcons.users),
   },
   {
     'name': 'reviews',
-    'routeName': "/patient/dashboard/review",
+    'routeName': "patientReview",
     "icon": const FaIcon(FontAwesomeIcons.comments),
   },
   {
     'name': 'rates',
-    'routeName': "/patient/dashboard/rates",
+    'routeName': "patientRates",
     "icon": const FaIcon(FontAwesomeIcons.star),
   },
   {
     'name': 'message',
-    'routeName': "/patient/dashboard/patient-chat",
+    'routeName': "patientChat",
     "icon": const FaIcon(FontAwesomeIcons.comments),
   },
   // {
@@ -168,22 +168,22 @@ List patientsDashboardLink = [
   // },
   {
     'name': 'medicalrecords',
-    'routeName': "/patient/dashboard/medicalrecords",
-    "icon": const FaIcon(FontAwesomeIcons.clipboard),
+    'routeName': "patientMedicalRecords",
+    "icon": const FaIcon(FontAwesomeIcons.fileMedicalAlt),
   },
   {
     'name': 'prescriptions',
-    'routeName': "/patient/dashboard/prescriptions",
+    'routeName': "patientPrescriptions",
     "icon": const FaIcon(FontAwesomeIcons.clipboard),
   },
   {
     'name': 'medicalDetails',
-    'routeName': "/patient/dashboard/medicalDetails",
+    'routeName': "patientMedicalDetails",
     "icon": const FaIcon(FontAwesomeIcons.fileMedicalAlt),
   },
   {
     'name': 'changePassword',
-    'routeName': "/patient/dashboard/changePassword",
+    'routeName': "patientChangePassword",
     "icon": const FaIcon(FontAwesomeIcons.lock),
   },
 ];

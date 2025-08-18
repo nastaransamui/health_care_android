@@ -10,27 +10,23 @@ import 'package:provider/provider.dart';
 
 Future<void> makeVoiceCall(
   BuildContext context,
-  ChatDataType currentRoom,
   String currentUserId,
+  ChatUserType callerData,
+  ChatUserType receiverData,
+  String roomId,
   MessageType messageData,
 ) async {
   try {
     final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
     chatProvider.setEndCall(false);
     final String callerId = currentUserId;
-    final String receiverId = currentRoom.createrData.userId == callerId ? currentRoom.receiverData.userId : currentRoom.createrData.userId;
-    final String roomId = currentRoom.roomId;
-    final List<String> senderFcmTokens =
-        currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.fcmTokens : currentRoom.receiverData.fcmTokens;
-    final List<String> receiverFcmTokens =
-        currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData.fcmTokens : currentRoom.createrData.fcmTokens;
-
-    final String senderRoleName =
-        currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.roleName : currentRoom.receiverData.roleName;
-    final String senderName = currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.fullName : currentRoom.receiverData.fullName;
-    final String icon =
-        currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.profileImage : currentRoom.receiverData.profileImage;
-    final String senderGender = currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.gender : currentRoom.receiverData.gender;
+    String receiverId = callerData.userId == currentUserId ? receiverData.userId : callerData.userId;
+    List<String> senderFcmTokens = callerData.userId == currentUserId ? callerData.fcmTokens : receiverData.fcmTokens;
+    List<String> receiverFcmTokens = callerData.userId == currentUserId ? receiverData.fcmTokens : callerData.fcmTokens;
+    String senderRoleName = callerData.userId == currentUserId ? callerData.roleName : receiverData.roleName;
+    String senderName = callerData.userId == currentUserId ? callerData.fullName : receiverData.fullName;
+    String icon = callerData.userId == currentUserId ? callerData.profileImage : receiverData.profileImage;
+    String senderGender = callerData.userId == currentUserId ? callerData.gender : receiverData.gender;
 
     final stream = await navigator.mediaDevices.getUserMedia({
       'audio': {
@@ -51,7 +47,7 @@ Future<void> makeVoiceCall(
       await Helper.setSpeakerphoneOn(true);
     });
     // create offer
-    final offer = await peerConnection?.createOffer();
+    final offer = await peerConnection?.createOffer({'offerToReceiveAudio': 1, 'offerToReceiveVideo': 0});
     await peerConnection?.setLocalDescription(offer!);
     Map<String, dynamic> messageDataMap = {
       "senderId": currentUserId,
@@ -62,8 +58,8 @@ Future<void> makeVoiceCall(
       "message": null,
       "read": false,
       "attachment": [],
-      "roomId": currentRoom.roomId,
-      "calls":  messageData.calls.map((call) => call.toMap()).toList(),
+      "roomId": roomId,
+      "calls": messageData.calls.map((call) => call.toMap()).toList(),
       "senderRoleName": senderRoleName,
       "senderName": senderName,
       'senderGender': senderGender,
@@ -73,9 +69,12 @@ Future<void> makeVoiceCall(
       "offer": {'sdp': offer!.sdp, 'type': offer.type},
       "callerId": currentUserId,
       "receiverId": receiverId,
-      "roomId": currentRoom.roomId,
+      "roomId": roomId,
       "messageData": messageDataMap,
+      "callerData": callerData,
+      "receiverData": receiverData,
     };
+    
     socket.emit('makeVoiceCall', payload);
   } catch (e) {
     log('makeVoiceCall error: $e');

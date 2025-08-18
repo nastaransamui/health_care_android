@@ -12,32 +12,33 @@ class ChatDataType {
   final ChatUserType createrData;
   final ChatUserType receiverData;
   final List<MessageType> messages;
+  final int totalUnreadMessage;
 
-  ChatDataType({
-    this.id,
-    required this.roomId,
-    required this.participants,
-    required this.createrData,
-    required this.receiverData,
-    required this.messages,
-  });
+  ChatDataType(
+      {this.id,
+      required this.roomId,
+      required this.participants,
+      required this.createrData,
+      required this.receiverData,
+      required this.messages,
+      required this.totalUnreadMessage});
 
-  ChatDataType copyWith({
-    String? id,
-    String? roomId,
-    List<String>? participants,
-    ChatUserType? createrData,
-    ChatUserType? receiverData,
-    List<MessageType>? messages,
-  }) {
+  ChatDataType copyWith(
+      {String? id,
+      String? roomId,
+      List<String>? participants,
+      ChatUserType? createrData,
+      ChatUserType? receiverData,
+      List<MessageType>? messages,
+      int? totalUnreadMessage}) {
     return ChatDataType(
-      id: id ?? this.id,
-      roomId: roomId ?? this.roomId,
-      participants: participants ?? this.participants,
-      createrData: createrData ?? this.createrData,
-      receiverData: receiverData ?? this.receiverData,
-      messages: messages ?? this.messages,
-    );
+        id: id ?? this.id,
+        roomId: roomId ?? this.roomId,
+        participants: participants ?? this.participants,
+        createrData: createrData ?? this.createrData,
+        receiverData: receiverData ?? this.receiverData,
+        messages: messages ?? this.messages,
+        totalUnreadMessage: totalUnreadMessage ?? this.totalUnreadMessage);
   }
 
   Map<String, dynamic> toMap() {
@@ -49,6 +50,7 @@ class ChatDataType {
     result.addAll({'createrData': createrData.toMap()});
     result.addAll({'receiverData': receiverData.toMap()});
     result.addAll({'messages': messages.map((x) => x.toMap()).toList()});
+    result.addAll({'totalUnreadMessage': totalUnreadMessage});
 
     return result;
   }
@@ -61,6 +63,7 @@ class ChatDataType {
       createrData: ChatUserType.fromMap(map['createrData']),
       receiverData: ChatUserType.fromMap(map['receiverData']),
       messages: List<MessageType>.from(map['messages']?.map((x) => MessageType.fromMap(x))),
+      totalUnreadMessage: map['totalUnreadMessage'] ?? 0,
     );
   }
 
@@ -70,7 +73,7 @@ class ChatDataType {
 
   @override
   String toString() {
-    return 'ChatDataType(id: $id, roomId: $roomId, participants: $participants, createrData: $createrData, receiverData: $receiverData, messages: $messages)';
+    return 'ChatDataType(id: $id, roomId: $roomId, participants: $participants, createrData: $createrData, receiverData: $receiverData, messages: $messages, totalUnreadMessage: $totalUnreadMessage)';
   }
 
   @override
@@ -83,12 +86,19 @@ class ChatDataType {
         listEquals(other.participants, participants) &&
         other.createrData == createrData &&
         other.receiverData == receiverData &&
-        listEquals(other.messages, messages);
+        listEquals(other.messages, messages) &&
+        other.totalUnreadMessage == totalUnreadMessage;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ roomId.hashCode ^ participants.hashCode ^ createrData.hashCode ^ receiverData.hashCode ^ messages.hashCode;
+    return id.hashCode ^
+        roomId.hashCode ^
+        participants.hashCode ^
+        createrData.hashCode ^
+        receiverData.hashCode ^
+        messages.hashCode ^
+        totalUnreadMessage.hashCode;
   }
 }
 
@@ -526,18 +536,19 @@ class ChatUserAutocompleteData {
   final List<String> fcmTokens;
   final String gender;
 
-  ChatUserAutocompleteData(
-      {required this.online,
-      required this.lastLogin,
-      required this.createdAt,
-      required this.fullName,
-      required this.profileImage,
-      required this.roleName,
-      required this.id,
-      required this.searchString,
-      required this.specialities,
-      required this.fcmTokens,
-      required this.gender});
+  ChatUserAutocompleteData({
+    required this.online,
+    required this.lastLogin,
+    required this.createdAt,
+    required this.fullName,
+    required this.profileImage,
+    required this.roleName,
+    required this.id,
+    required this.searchString,
+    required this.specialities,
+    required this.fcmTokens,
+    required this.gender,
+  });
 
   ChatUserAutocompleteData copyWith({
     bool? online,
@@ -599,7 +610,7 @@ class ChatUserAutocompleteData {
       id: map['_id'] ?? '',
       searchString: map['searchString'] ?? '',
       specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
-      fcmTokens: List<String>.from(map['fcmTokens'] ?? []),
+      fcmTokens: (map['fcmTokens'] as List?)?.map((e) => e.toString()).toList() ?? [],
       gender: map['gender'] ?? '',
     );
   }

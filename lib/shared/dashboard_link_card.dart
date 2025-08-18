@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +26,7 @@ class DashboardLinkCard extends StatelessWidget {
       child: InkWell(
         splashColor: Theme.of(context).primaryColor,
         onTap: () {
-          context.push(element['routeName']);
+          context.pushNamed(element['routeName']);
         },
         child: SizedBox(
           child: ListTile(

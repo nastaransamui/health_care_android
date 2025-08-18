@@ -61,9 +61,16 @@ class CallBubbleWidget extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () async {
-        final List<String> currentUserFcmTokens =
-            currentRoom.createrData.userId == currentUserId ? currentRoom.createrData.fcmTokens : currentRoom.receiverData.fcmTokens;
-        await initiateVoiceCallIfPermitted(context, currentRoom, currentUserId, currentUserFcmTokens);
+        final ChatUserType callerData = currentRoom.createrData.userId == currentUserId ? currentRoom.createrData : currentRoom.receiverData;
+        final ChatUserType receiverData = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+        final String roomId = currentRoom.roomId;
+        await initiateVoiceCallIfPermitted(
+          context,
+          currentUserId,
+          callerData,
+          receiverData,
+          roomId,
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

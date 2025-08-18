@@ -15,13 +15,13 @@ import 'package:waveform_flutter/waveform_flutter.dart';
 class VoiceCallWidget extends StatefulWidget {
   const VoiceCallWidget({
     super.key,
-    required this.currentRoom,
     required this.currentUserId,
-    required this.messageData
+    required this.messageData,
+    required this.profileToShow,
   });
-  final ChatDataType currentRoom;
   final String currentUserId;
   final MessageType messageData;
+  final ChatUserType profileToShow;
 
   @override
   State<VoiceCallWidget> createState() => _VoiceCallWidgetState();
@@ -46,9 +46,9 @@ class _VoiceCallWidgetState extends State<VoiceCallWidget> {
     return Consumer<ChatProvider>(
       builder: (context, chatProvider, child) {
         final ThemeData theme = Theme.of(context);
-
-        final ChatUserType profileToShow =
-            widget.currentRoom.createrData.userId == widget.currentUserId ? widget.currentRoom.receiverData : widget.currentRoom.createrData;
+        final ChatUserType profileToShow = widget.profileToShow;
+        // final ChatUserType profileToShow =
+        //     widget.currentRoom.createrData.userId == widget.currentUserId ? widget.currentRoom.receiverData : widget.currentRoom.createrData;
         final ImageProvider<Object> finalImage = profileToShow.roleName == 'doctors'
             ? profileToShow.profileImage.isEmpty
                 ? const AssetImage('assets/images/default-avatar.png') as ImageProvider

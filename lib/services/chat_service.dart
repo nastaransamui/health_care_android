@@ -10,6 +10,8 @@ import 'package:health_care/models/incoming_call.dart';
 import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/services/time_schedule_service.dart';
+import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
+import 'package:health_care/shared/chat/chat_helpers/missed_voice_call.dart';
 // import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:http/http.dart' as http;
@@ -192,38 +194,56 @@ class ChatService {
     getSingleRoomByIdWithUpdate();
   }
 
-  Future<void> receiveVoiceCallSocket(BuildContext context, String currentUserId) async {
-    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+  void handleIncomingVoiceCall(
+    BuildContext context, {
+    required dynamic data,
+    required String currentUserId,
+  }) async {
     final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final bool isLogin = authProvider.isLogin;
-    if (!isLogin) return;
-    socket.on('receiveVoiceCall', (data) async {
-      chatProvider.setEndCall(false);
-      chatProvider.setIsAcceptCall(false);
-      try {
-        final RTCSessionDescription offer = RTCSessionDescription(data['offer']['sdp'], data['offer']['type']);
-        final String receiverId = data['receiverId'];
-        final String callerId = data['callerId'];
-        final String roomId = data['roomId'];
-        var messageDataMap = data['messageData'];
-        final MessageType messageData = MessageType.fromMap(messageDataMap);
-        // final List<String> currentUserFcmTokens =
-        //     messageData.receiverId == currentUserId ? messageData.receiverFcmTokens : messageData.senderFcmTokens;
+    chatProvider.setEndCall(false);
+    chatProvider.setIsAcceptCall(false);
 
-        chatProvider.setIncomingCall(
-          IncomingCall(
-            offer: offer,
-            receiverId: receiverId,
-            callerId: callerId,
-            roomId: roomId,
-            messageData: messageData,
-          ),
-        );
-        // await initiateVoiceCallIfPermitted(context, currentRoom, currentUserId, currentUserFcmTokens);
-      } catch (e) {
-        log("Error socket receiveVoiceCall: $e");
-      }
-    });
+    try {
+      final RTCSessionDescription offer = RTCSessionDescription(data['offer']['sdp'], data['offer']['type']);
+      final String receiverId = data['receiverId'];
+      final String callerId = data['callerId'];
+      final String roomId = data['roomId'];
+      final Map<String, dynamic> caller = data['callerData'];
+      final Map<String, dynamic> receiver = data['receiverData'];
+
+      final messageDataMap = data['messageData'];
+      final MessageType messageData = MessageType.fromMap(messageDataMap);
+       final ChatUserType callerData = ChatUserType.fromMap(caller);
+       final ChatUserType receiverData= ChatUserType.fromMap(receiver);
+
+      chatProvider.setIncomingCall(
+        IncomingCall(
+          offer: offer,
+          receiverId: receiverId,
+          callerId: callerId,
+          roomId: roomId,
+          messageData: messageData,
+        ),
+      );
+
+      // 20 seconds for missed call if not accepted
+      Future.delayed(const Duration(seconds: 20), () {
+        if (!chatProvider.isAcceptCall) {
+          if (context.mounted) {
+            missedVoiceCall(context, messageData);
+          }
+        }
+      });
+      await initiateVoiceCallIfPermitted(
+        context,
+        currentUserId,
+        callerData,
+        receiverData,
+        roomId,
+      );
+    } catch (e) {
+      log("Error handling incoming voice call: $e");
+    }
   }
 }
 

@@ -8,13 +8,11 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' hide MessageType;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_care/constants/global_variables.dart';
 import 'package:health_care/models/chat_data_type.dart';
-import 'package:health_care/models/incoming_call.dart';
 import 'package:health_care/providers/chat_provider.dart';
 import 'package:health_care/services/chat_service.dart';
 import 'package:health_care/shared/chat/chat-share/show_delete_confirmation_dialog.dart';
 import 'package:health_care/shared/chat/chat_helpers/end_voice_call.dart';
 import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
-import 'package:health_care/shared/chat/chat_helpers/missed_voice_call.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/utils/play_sound.dart';
 import 'package:health_care/stream_socket.dart';
@@ -45,39 +43,11 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
   void initState() {
     super.initState();
     socket.on('receiveVoiceCall', (data) async {
-      chatProvider.setEndCall(false);
-      chatProvider.setIsAcceptCall(false);
-      try {
-        final RTCSessionDescription offer = RTCSessionDescription(data['offer']['sdp'], data['offer']['type']);
-        final String receiverId = data['receiverId'];
-        final String callerId = data['callerId'];
-        final String roomId = data['roomId'];
-        var messageDataMap = data['messageData'];
-        final MessageType messageData = MessageType.fromMap(messageDataMap);
-        final List<String> currentUserFcmTokens =
-            messageData.receiverId == widget.currentUserId ? messageData.receiverFcmTokens : messageData.senderFcmTokens;
-
-        chatProvider.setIncomingCall(
-          IncomingCall(
-            offer: offer,
-            receiverId: receiverId,
-            callerId: callerId,
-            roomId: roomId,
-            messageData: messageData,
-          ),
-        );
-        // 20 seconds for missed call if not acceptcall
-        Future.delayed(const Duration(seconds: 20), () {
-          if (!chatProvider.isAcceptCall) {
-            if (mounted) {
-              missedVoiceCall(context, messageData);
-            }
-          }
-        });
-        await initiateVoiceCallIfPermitted(context, widget.currentRoom, widget.currentUserId, currentUserFcmTokens);
-      } catch (e) {
-        log("Error socket receiveVoiceCall: $e");
-      }
+      chatService.handleIncomingVoiceCall(
+        context,
+        data: data,
+        currentUserId: widget.currentUserId,
+      );
     });
     socket.on('endVoiceCall', (data) async {
       try {
@@ -209,6 +179,7 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
     socket.off('iceCandidate');
     socket.off('endVoiceCall');
     socket.off('confirmCall');
+    socket.off('receiveMessage');
     // Fire-and-forget async cleanup
     cleanupPeerConnection();
     super.dispose();
@@ -231,9 +202,8 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
     final ThemeData theme = Theme.of(context);
     final ChatUserType profileToShow =
         widget.currentRoom.createrData.userId == widget.currentUserId ? widget.currentRoom.receiverData : widget.currentRoom.createrData;
-    final List<String> currentUserFcmTokens = widget.currentRoom.createrData.userId == widget.currentUserId
-        ? widget.currentRoom.createrData.fcmTokens
-        : widget.currentRoom.receiverData.fcmTokens;
+    final String currentUserId = widget.currentUserId;
+    final String roomId = widget.currentRoom.roomId;
     final ImageProvider<Object> finalImage = profileToShow.roleName == 'doctors'
         ? profileToShow.profileImage.isEmpty
             ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
@@ -304,7 +274,17 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: GestureDetector(
                 onTap: () async {
-                  await initiateVoiceCallIfPermitted(context, widget.currentRoom, widget.currentUserId, currentUserFcmTokens);
+                  final ChatUserType callerData =
+                      widget.currentRoom.createrData.userId == currentUserId ? widget.currentRoom.createrData : widget.currentRoom.receiverData;
+                  final ChatUserType receiverData =
+                      widget.currentRoom.createrData.userId == currentUserId ? widget.currentRoom.receiverData : widget.currentRoom.createrData;
+                  await initiateVoiceCallIfPermitted(
+                    context,
+                    currentUserId,
+                    callerData,
+                    receiverData,
+                    roomId,
+                  );
                 },
                 child: SizedBox(
                   width: 30,

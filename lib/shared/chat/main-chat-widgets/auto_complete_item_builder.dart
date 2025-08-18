@@ -16,12 +16,12 @@ class AutoCompleteItemBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final ImageProvider<Object> finalImage = roleName == 'doctors'
+    final ImageProvider<Object> finalImage = suggestion.roleName == 'doctors'
         ? suggestion.profileImage.isEmpty
-            ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
+            ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
             : CachedNetworkImageProvider(suggestion.profileImage)
         : suggestion.profileImage.isEmpty
-            ? const AssetImage('assets/images/doctors_profile.jpg') as ImageProvider
+            ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
             : CachedNetworkImageProvider(suggestion.profileImage);
     final Color statusColor = suggestion.lastLogin.idle ?? false
         ? const Color(0xFFFFA812)
