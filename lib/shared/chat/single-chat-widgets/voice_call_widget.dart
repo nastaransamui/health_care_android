@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -18,10 +17,14 @@ class VoiceCallWidget extends StatefulWidget {
     required this.currentUserId,
     required this.messageData,
     required this.profileToShow,
+    required this.callerData,
+    required this.receiverData,
   });
   final String currentUserId;
   final MessageType messageData;
   final ChatUserType profileToShow;
+  final ChatUserType callerData;
+  final ChatUserType receiverData;
 
   @override
   State<VoiceCallWidget> createState() => _VoiceCallWidgetState();
@@ -169,7 +172,8 @@ class _VoiceCallWidgetState extends State<VoiceCallWidget> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                              color: chatProvider.incomingCall == null  || chatProvider.isAcceptCall ? theme.disabledColor : Colors.green, borderRadius: BorderRadius.circular(30)),
+                              color: chatProvider.incomingCall == null || chatProvider.isAcceptCall ? theme.disabledColor : Colors.green,
+                              borderRadius: BorderRadius.circular(30)),
                           child: Center(
                             child: Transform.rotate(
                               angle: 360,
@@ -184,7 +188,7 @@ class _VoiceCallWidgetState extends State<VoiceCallWidget> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          endVoiceCall(context, widget.messageData);
+                          endVoiceCall(context, widget.messageData, widget.callerData, widget.receiverData, widget.currentUserId, false);
                         },
                         child: Container(
                           width: 50,

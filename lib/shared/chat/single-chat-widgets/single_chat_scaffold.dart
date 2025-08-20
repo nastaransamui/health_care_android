@@ -52,9 +52,17 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
     socket.on('endVoiceCall', (data) async {
       try {
         if (chatProvider.endCall) return;
-
         final MessageType messageData = MessageType.fromMap(data['messageData']);
-        endVoiceCall(context, messageData);
+        final ChatUserType callerData = ChatUserType.fromMap(data['callerData']);
+        final ChatUserType receiverData = ChatUserType.fromMap(data['receiverData']);
+        endVoiceCall(
+          context,
+          messageData,
+          callerData,
+          receiverData,
+          widget.currentUserId,
+          false
+        );
       } catch (e) {
         log("Error socket endVoiceCall: $e");
       }
@@ -100,7 +108,6 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
         incomingCallSound(false);
         final receivers = await peerConnection?.getReceivers();
         final remoteTracks = receivers?.map((r) => r.track).whereType<MediaStreamTrack>().toList();
-
         if (remoteTracks!.isNotEmpty) {
           final newRemoteStream = await createLocalMediaStream('remote');
           for (final track in remoteTracks) {

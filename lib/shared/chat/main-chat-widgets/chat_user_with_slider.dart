@@ -15,9 +15,9 @@ import 'package:health_care/services/time_schedule_service.dart';
 import 'package:health_care/shared/chat/chat-share/custom_lightbox.dart';
 import 'package:health_care/shared/chat/chat_helpers/get_file_icon.dart';
 import 'package:health_care/shared/chat/chat-share/read_status_widget.dart';
-import 'package:health_care/shared/chat/chat_helpers/initiate_voice_call_if_permitted.dart';
 import 'package:health_care/shared/chat/chat_helpers/save_bytes_to_file.dart';
 import 'package:health_care/shared/chat/chat-share/show_delete_confirmation_dialog.dart';
+import 'package:health_care/shared/chat/main-chat-widgets/chat_user_with_slider_voice_call_widget.dart';
 import 'package:health_care/shared/chat/main-chat-widgets/slide_manager.dart';
 import 'package:health_care/src/utils/encrupt_decrypt.dart';
 
@@ -372,85 +372,11 @@ class _ChatUserWithSliderState extends State<ChatUserWithSlider> {
                           ],
                           if (lastMessage.calls.isNotEmpty) ...[
                             ...lastMessage.calls.map((call) {
-                              IconData icon;
-                              Color iconColor = theme.primaryColorLight;
-                              final int startTime = call.startTimeStamp;
-                              final int finishTime = call.finishTimeStamp ?? startTime;
-                              final bool isAnswered = call.isAnswered;
-                              final bool isMissedCall = call.isMissedCall;
-
-                              // Duration from milliseconds
-                              final duration = Duration(milliseconds: finishTime - startTime);
-
-                              final int totalSeconds = duration.inSeconds;
-                              final int totalMinutes = duration.inMinutes;
-                              final int totalHours = duration.inHours;
-                              String formattedDuration = "";
-                              if (isMissedCall) {
-                                formattedDuration = context.tr('missedCall');
-                              } else if (!isAnswered) {
-                                formattedDuration = context.tr('noAnswer');
-                              } else if (totalSeconds < 60) {
-                                formattedDuration = "$totalSeconds sec";
-                              } else if (totalSeconds < 3600) {
-                                final int remainingSeconds = totalSeconds % 60;
-                                formattedDuration = "$totalMinutes min $remainingSeconds sec";
-                              } else {
-                                final int remainingMinutes = totalMinutes % 60;
-                                formattedDuration = "$totalHours hr $remainingMinutes min";
-                              }
-                              if (isMissedCall) {
-                                icon = Icons.phone_missed;
-                              } else if (call.isRejected) {
-                                icon = Icons.call_end;
-                              } else if (call.isAnswered && call.isVideoCall) {
-                                icon = Icons.videocam;
-                              } else if (call.isAnswered && call.isVoiceCall) {
-                                icon = lastMessage.senderId == currentUserId ? Icons.phone_forwarded : Icons.phone_callback;
-                              } else {
-                                icon = lastMessage.senderId == currentUserId ? Icons.phone_forwarded : Icons.phone_callback;
-                              }
-                              return GestureDetector(
-                                onTap: () async {
-                                  final ChatUserType callerData =
-                                      chatData.createrData.userId == currentUserId ? chatData.createrData : chatData.receiverData;
-                                  final ChatUserType receiverData =
-                                      chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData;
-                                  await initiateVoiceCallIfPermitted(
-                                    context,
-                                    currentUserId,
-                                    callerData,
-                                    receiverData,
-                                    roomId,
-                                  );
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 25,
-                                      height: 25,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(50),
-                                        ),
-                                        color: theme.canvasColor,
-                                      ),
-                                      child: Icon(
-                                        icon,
-                                        color: iconColor,
-                                        size: 14,
-                                      ),
-                                    ),
-                                    Text(
-                                      formattedDuration,
-                                      style: TextStyle(
-                                        color: theme.disabledColor,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              return ChatUserWithSliderVoiceCallWidget(
+                                call: call,
+                                lastMessage: lastMessage,
+                                currentUserId: currentUserId,
+                                chatData: chatData,
                               );
                             }),
                             const SizedBox(width: 3),

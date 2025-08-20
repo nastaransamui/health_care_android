@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 Future<void> missedVoiceCall(
   BuildContext context,
   MessageType messageData,
+  ChatUserType callerData,
+  ChatUserType receiverData,
 ) async {
   final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
   if (chatProvider.endCall) return;
@@ -41,16 +43,14 @@ Future<void> missedVoiceCall(
         final index = entry.key;
         final call = entry.value;
 
-        return index == 0
-            ? call.copyWith(
-                finishTimeStamp: DateTime.now().millisecondsSinceEpoch,
-                isAnswered: false,
-                isMissedCall: true
-              )
-            : call;
+        return index == 0 ? call.copyWith(finishTimeStamp: DateTime.now().millisecondsSinceEpoch, isAnswered: false, isMissedCall: true) : call;
       }).toList(),
     );
-    socket.emit('endVoiceCall', {'messageData': updatedMessageData.toMap()});
+    socket.emit('endVoiceCall', {
+      'messageData': updatedMessageData.toMap(),
+      "callerData": callerData.toMap(),
+      "receiverData": receiverData.toMap(),
+    });
   } catch (e) {
     log('endVoiceCall error: $e');
   }

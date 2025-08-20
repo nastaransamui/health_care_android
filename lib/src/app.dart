@@ -7,6 +7,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/constants/navigator_key.dart';
+import 'package:health_care/models/chat_data_type.dart';
+import 'package:health_care/providers/auth_provider.dart';
 import 'package:health_care/providers/theme_load_provider.dart';
 import 'package:health_care/providers/theme_provider.dart';
 import 'package:health_care/router.dart';
@@ -17,12 +19,14 @@ import 'package:health_care/services/device_service.dart';
 import 'package:health_care/services/doctors_service.dart';
 import 'package:health_care/services/specialities_service.dart';
 import 'package:health_care/services/theme_service.dart';
+import 'package:health_care/shared/chat/chat_helpers/end_voice_call.dart';
 import 'package:health_care/src/utils/show_update_notification.dart';
 import 'package:health_care/stream_socket.dart';
 import 'package:health_care/theme_config.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyApp extends StatefulWidget {
   final StreamSocket streamSocket;
@@ -81,16 +85,45 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               final state = GoRouter.of(currentContext).state;
               currentRoomId = state.pathParameters["encodedRoomId"];
             }
+            if (data['type'] == 'endVoiceCall') {
+              final params = jsonDecode(data['params']);
+              try {
+                var authProvider = Provider.of<AuthProvider>(context, listen: false);
+                if (params['callerData'] != null && params['receiverData'] != null) {
+                  final MessageType messageData = MessageType.fromMap(params['messageData']);
+                  final ChatUserType callerData = ChatUserType.fromMap(params['callerData']);
+                  final ChatUserType receiverData = ChatUserType.fromMap(params['receiverData']);
+                  final String? currentUserId =
+                      authProvider.roleName == "doctors" ? authProvider.doctorsProfile?.userId : authProvider.patientProfile?.userId;
 
+                  if (currentUserId != null) {
+                    if (currentContext != null && currentContext.mounted) {
+                      String? currentRoomId;
+                      try {
+                        final state = GoRouter.of(currentContext).state;
+                        currentRoomId = state.pathParameters["encodedRoomId"];
+                      } catch (e) {
+                        log("GoRouter not ready yet: $e");
+                      }
+                     if(currentRoomId == null) endVoiceCall(currentContext, messageData, callerData, receiverData, currentUserId, false);
+                    }
+                  }
+                }
+              } catch (e) {
+                log("data['type'] == 'endVoiceCall'1: $e ");
+              }
+            }
             if (data['type'] == 'voiceCall') {
               try {
                 final params = jsonDecode(data['params']);
                 if (currentContext != null && currentContext.mounted) {
-                  chatService.handleIncomingVoiceCall(
-                    currentContext,
-                    data: params,
-                    currentUserId: params['receiverId'],
-                  );
+                  if (currentRoomId == null) {
+                    chatService.handleIncomingVoiceCall(
+                      currentContext,
+                      data: params,
+                      currentUserId: params['receiverId'],
+                    );
+                  }
                 }
               } catch (e) {
                 debugPrint('Failed to decode params: $e');
@@ -107,58 +140,154 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
           });
         },
       );
-      // FirebaseMessaging.onMessage.listen(
-      //   (RemoteMessage message) async {
-      //     // await showChatNotification(message);
-      //     final currentContext = NavigationService.navigatorKey.currentContext;
-      //     if (currentContext == null) return;
-      //     if (currentContext.mounted) {
-      //       final state = GoRouter.of(currentContext).state;
-      //       final currentRoomId = state.pathParameters["encodedRoomId"];
-      //       final data = message.data;
-      //       if (data['type'] == 'voiceCall') {
-      //         try {
-      //           final params = jsonDecode(data['params']);
-      //           debugPrint('Decoded params: $params');
-      //           if (mounted) {
-      //             chatService.handleIncomingVoiceCall(
-      //               currentContext,
-      //               data: params,
-      //               currentUserId: params['receiverId'],
-      //             );
-      //           }
-      //         } catch (e) {
-      //           debugPrint('Failed to decode params: $e');
-      //         }
-      //       } else {
-      //         final roomId = data['roomId'];
-      //         final encodedRoomId = base64.encode(utf8.encode(roomId));
-      //         //  Show notification only if no room is open
-      //         if (currentRoomId == null) {
-      //           await showChatNotification(message);
-      //           // show notification if room open but different roome
-      //         } else if (currentRoomId != encodedRoomId) {
-      //           await showChatNotification(message);
-      //         }
-      //       }
-      //     }
-      //   },
-      // );
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        // Navigate to relevant screen or show a dialog
-        log('2${message.toString()}');
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+        final data = message.data;
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          final currentContext = NavigationService.navigatorKey.currentContext;
+
+          String? currentRoomId;
+          if (currentContext != null && currentContext.mounted) {
+            final state = GoRouter.of(currentContext).state;
+            currentRoomId = state.pathParameters["encodedRoomId"];
+          }
+          if (data['type'] == 'endVoiceCall') {
+            final params = jsonDecode(data['params']);
+            try {
+              var authProvider = Provider.of<AuthProvider>(context, listen: false);
+              if (params['callerData'] != null && params['receiverData'] != null) {
+                final MessageType messageData = MessageType.fromMap(params['messageData']);
+                final ChatUserType callerData = ChatUserType.fromMap(params['callerData']);
+                final ChatUserType receiverData = ChatUserType.fromMap(params['receiverData']);
+                final String? currentUserId =
+                    authProvider.roleName == "doctors" ? authProvider.doctorsProfile?.userId : authProvider.patientProfile?.userId;
+
+                if (currentUserId != null) {
+                  if (currentContext != null && currentContext.mounted) {
+                    if(currentRoomId == null) endVoiceCall(currentContext, messageData, callerData, receiverData, currentUserId, false);
+                  }
+                }
+              }
+            } catch (e) {
+              log("data['type'] == 'endVoiceCall'2: $e");
+            }
+          }
+          if (data['type'] == 'voiceCall') {
+            try {
+              final params = jsonDecode(data['params']);
+              if (currentContext != null && currentContext.mounted) {
+                if (currentRoomId == null) {
+                  chatService.handleIncomingVoiceCall(
+                    currentContext,
+                    data: params,
+                    currentUserId: params['receiverId'],
+                  );
+                }
+              }
+            } catch (e) {
+              debugPrint('Failed to decode params: $e');
+            }
+          } else {
+            final roomId = data['roomId'];
+            final encodedRoomId = base64.encode(utf8.encode(roomId));
+            // Show notification if no room open OR different room open
+            if (currentRoomId == null || currentRoomId != encodedRoomId) {
+              // await showChatNotification(message);
+              try {
+                BuildContext context = NavigationService.navigatorKey.currentContext!;
+                final roleName = Provider.of<AuthProvider>(context, listen: false).roleName;
+                if (roleName == 'patient') {
+                  context.push('/patient/dashboard/patient-chat/single/$encodedRoomId');
+                } else {
+                  context.push('/doctors/dashboard/doctors-chat/single/$encodedRoomId');
+                }
+              } catch (e) {
+                log('onMessageOpenedApp error: $e');
+              }
+            }
+          }
+        });
       });
 
       Future<void> checkInitialMessage() async {
         RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-        if (initialMessage != null) {
-          log("App launched via notification: ${initialMessage.notification?.title}");
-          // Handle deep link/navigation here
+        if (initialMessage == null) return;
+
+        final data = initialMessage.data;
+        final messageId = initialMessage.messageId ?? DateTime.now().millisecondsSinceEpoch.toString();
+        final uniqueKey = '${data['roomId']}_$messageId';
+
+        final prefs = await SharedPreferences.getInstance();
+        final lastHandledKey = prefs.getString('last_handled_message_id');
+        if (lastHandledKey == null || uniqueKey == lastHandledKey) {
+          return;
         }
+
+        final currentContext = NavigationService.navigatorKey.currentContext;
+        if (currentContext == null || !currentContext.mounted) return;
+        String? currentRoomId;
+        try {
+          final state = GoRouter.of(currentContext).state;
+          currentRoomId = state.pathParameters["encodedRoomId"];
+        } catch (e) {
+          log("GoRouter not ready yet: $e");
+        }
+        log('currentRoomId: $currentRoomId');
+        switch (data['type']) {
+          case 'endVoiceCall':
+            _handleEndVoiceCall(currentContext, data, currentRoomId);
+            break;
+
+          case 'voiceCall':
+            _handleIncomingVoiceCall(currentContext, data);
+            break;
+
+          default:
+            final roomId = data['roomId'];
+            final encodedRoomId = base64.encode(utf8.encode(roomId));
+            if (currentRoomId == null || currentRoomId != encodedRoomId) {
+              await showChatNotification(initialMessage);
+            }
+        }
+        await prefs.setString('last_handled_message_id', uniqueKey);
       }
 
       checkInitialMessage();
     });
+  }
+
+  void _handleEndVoiceCall(BuildContext context, Map<String, dynamic> data, String? currentRoomId) {
+    try {
+      final params = jsonDecode(data['params']);
+      final authProvider = Provider.of<AuthProvider>(
+        NavigationService.navigatorKey.currentContext!,
+        listen: false,
+      );
+
+      final messageData = MessageType.fromMap(params['messageData']);
+      final callerData = ChatUserType.fromMap(params['callerData']);
+      final receiverData = ChatUserType.fromMap(params['receiverData']);
+      final currentUserId = authProvider.roleName == "doctors" ? authProvider.doctorsProfile?.userId : authProvider.patientProfile?.userId;
+
+      if (currentUserId != null) {
+         if(currentRoomId == null) endVoiceCall(context, messageData, callerData, receiverData, currentUserId, false);
+      }
+    } catch (e) {
+      log("Failed to handle endVoiceCall: $e");
+    }
+  }
+
+  void _handleIncomingVoiceCall(BuildContext context, Map<String, dynamic> data) {
+    try {
+      final params = jsonDecode(data['params']);
+      chatService.handleIncomingVoiceCall(
+        context,
+        data: params,
+        currentUserId: params['receiverId'],
+      );
+    } catch (e) {
+      debugPrint('Failed to decode params: $e');
+    }
   }
 
   @override

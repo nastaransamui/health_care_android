@@ -71,8 +71,8 @@ Future<void> makeVoiceCall(
       "receiverId": receiverId,
       "roomId": roomId,
       "messageData": messageDataMap,
-      "callerData": callerData,
-      "receiverData": receiverData,
+      "callerData": callerData.toMap(),
+      "receiverData": receiverData.toMap(),
     };
     
     socket.emit('makeVoiceCall', payload);

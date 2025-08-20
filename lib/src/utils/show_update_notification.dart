@@ -33,7 +33,7 @@ Future<void> showUpdateNotification() async {
 Future<void> showChatNotification(RemoteMessage message) async {
   final data = message.data;
   final roomId = data['roomId'];
-  // final type = data['type'];
+  final type = data['type'];
   // final attachment = data['attachment'];
   // final clickAction = data['click_action'];
   final notification = message.notification;
@@ -42,6 +42,7 @@ Future<void> showChatNotification(RemoteMessage message) async {
   final title = notification?.title ?? 'New Message';
   final body = notification?.body ?? '';
   final imageUrl = android?.imageUrl;
+  if(type != 'endVoiceCall'){
 
   BigPictureStyleInformation? styleInfo;
   Map<String, String> payload = {
@@ -93,4 +94,5 @@ Future<void> showChatNotification(RemoteMessage message) async {
     notificationDetails,
     payload: jsonEncode(payload),
   );
+  }
 }

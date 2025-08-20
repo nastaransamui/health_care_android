@@ -230,7 +230,7 @@ class ChatService {
       Future.delayed(const Duration(seconds: 20), () {
         if (!chatProvider.isAcceptCall) {
           if (context.mounted) {
-            missedVoiceCall(context, messageData);
+            missedVoiceCall(context, messageData, callerData, receiverData);
           }
         }
       });

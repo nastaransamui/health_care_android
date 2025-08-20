@@ -89,6 +89,8 @@ Future<void> initiateVoiceCallIfPermitted(
             currentUserId: currentUserId,
             messageData: messageData,
             profileToShow: receiverData,
+            callerData: callerData,
+            receiverData: receiverData,
           );
         },
       );
