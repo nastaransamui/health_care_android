@@ -943,7 +943,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 setState(() {
                                   dobController.text = formattedDate;
                                 });
-                                                            },
+                              },
                             ),
                             const SizedBox(height: 10),
                           ],
@@ -992,15 +992,17 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 child: Container(
                                   constraints: const BoxConstraints.expand(height: 100, width: double.infinity),
                                   child: DottedBorder(
-                                    dashPattern: const [8, 4],
-                                    strokeWidth: 2,
-                                    color: _clinicXfileFiles.length < 4
-                                        ? hexToColor(
-                                            secondaryDarkColorCodeReturn(homeThemeName),
-                                          )
-                                        : Theme.of(context).disabledColor,
-                                    padding: const EdgeInsets.all(8),
-                                    borderPadding: const EdgeInsets.all(4),
+                                    options: RectDottedBorderOptions(
+                                      dashPattern: const [8, 4],
+                                      strokeWidth: 2,
+                                      color: _clinicXfileFiles.length < 4
+                                          ? hexToColor(
+                                              secondaryDarkColorCodeReturn(homeThemeName),
+                                            )
+                                          : Theme.of(context).disabledColor,
+                                      padding: const EdgeInsets.all(8),
+                                      borderPadding: const EdgeInsets.all(4),
+                                    ),
                                     child: Center(
                                       child: Text(
                                         context.tr('max4File'),
@@ -2108,7 +2110,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                         setState(() {
                                                           entry.value.text = formattedDate;
                                                         });
-                                                                                                            } else {
+                                                      } else {
                                                         DateTime? toDate = await showDatePicker(
                                                             initialDatePickerMode: DatePickerMode.year,
                                                             context: context,
@@ -2119,7 +2121,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                         setState(() {
                                                           entry.value.text = formattedDate;
                                                         });
-                                                                                                            }
+                                                      }
                                                     },
                                                   );
                                           },
