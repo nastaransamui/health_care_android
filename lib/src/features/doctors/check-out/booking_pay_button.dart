@@ -31,7 +31,7 @@ class BookingPayButton extends StatefulWidget {
 class _BookingPayButtonState extends State<BookingPayButton> {
   final BookingInformationService bookingInformationService = BookingInformationService();
 
-  void onGooglePayResult(paymentResult) async {
+  void onGooglePayResult(Map<String, dynamic> paymentResult) async {
     // Example: Extract token
     final paymentMethodData = paymentResult['paymentMethodData'];
     final paymentToken = paymentMethodData?['tokenizationData']?['token'];

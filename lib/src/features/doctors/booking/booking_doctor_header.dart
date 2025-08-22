@@ -248,7 +248,7 @@ class BookingDoctorHeader extends StatelessWidget {
                                 TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: getRecommendationPercentage(doctorProfile),
+                                      text: getRecommendationPercentageFromBookingInformation(doctorProfile),
                                     ),
                                     const TextSpan(text: '  '),
                                     TextSpan(

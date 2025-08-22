@@ -113,7 +113,7 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-  _formSubmit() {
+  void _formSubmit() {
     final isValid = _signupFormKey.currentState?.saveAndValidate() ?? false;
 
     if (!isValid) {
@@ -818,7 +818,7 @@ class PasswordInput extends StatefulWidget {
 
 class _PasswordInputState extends State<PasswordInput> {
   bool _isObscureText = true;
-  showPassword() {
+  void showPassword() {
     setState(() {
       _isObscureText = !_isObscureText;
     });
@@ -889,7 +889,7 @@ class RepeatPasswordInput extends StatefulWidget {
 
 class _RepeatPasswordInputState extends State<RepeatPasswordInput> {
   bool _isObscureText = true;
-  showPassword() {
+  void showPassword() {
     setState(() {
       _isObscureText = !_isObscureText;
     });

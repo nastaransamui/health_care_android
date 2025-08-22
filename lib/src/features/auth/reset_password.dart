@@ -193,7 +193,7 @@ class InputFields extends StatefulWidget {
 }
 
 class _InputFieldsState extends State<InputFields> {
-  _resetSubmit() {
+  void _resetSubmit() {
     SubmitNotification(widget.passwordController.text,
             widget.repeatPasswordController.text)
         .dispatch(context);

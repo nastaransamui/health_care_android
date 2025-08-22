@@ -120,7 +120,7 @@ class _ScoreScreenState extends State<ScoreScreen> {
     );
   }
 
-  void setBmiInterpretation(context) {
+  void setBmiInterpretation(BuildContext context) {
     if (widget.bmiScore > 30) {
       bmiStatus = tr("Obese");
       bmiInterpretation = tr("ObeseDesc");

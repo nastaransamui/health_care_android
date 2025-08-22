@@ -300,7 +300,7 @@ class _InputFieldState extends State<InputField> {
   double lifeTime = 2500;
   double duration = 200;
 
-  _formSubmit() {
+  void _formSubmit() {
     SubmitNotification(
       widget.emailController.text.trim().toLowerCase(),
       widget.passwordController.text,

@@ -135,7 +135,7 @@ class _SearchProfileBookingBoxState extends State<SearchProfileBookingBox> {
                     FaIcon(FontAwesomeIcons.thumbsUp, size: 12, color: Theme.of(context).primaryColor),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Text(getRecommendationPercentage(doctorUserProfile)),
+                      child: Text(getRecommendationPercentageFromUserProfile(doctorUserProfile)),
                     ),
                     Text(
                       "(${doctorUserProfile.recommendArray.length} ${context.tr('votes')})",
@@ -293,7 +293,7 @@ class _SearchProfileBookingBoxState extends State<SearchProfileBookingBox> {
     );
   }
 
-  void favTaggleError(msg) {
+  void favTaggleError(Map<String, dynamic>msg) {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,

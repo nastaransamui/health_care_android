@@ -27,7 +27,7 @@ class VoteWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
                 FaIcon(FontAwesomeIcons.thumbsUp, size: 12,color: Theme.of(context).primaryColor),
-              Text(getRecommendationPercentage(singleDoctor)),
+              Text(getRecommendationPercentageFromSingleDoctors(singleDoctor)),
               Text(
                 "(${singleDoctor.recommendArray.length} ${context.tr('votes')})",
               )

@@ -151,7 +151,7 @@ class _DoctorSearchFavIconWidgetState extends State<DoctorSearchFavIconWidget> {
     );
   }
 
-  void favTaggleError(msg) {
+  void favTaggleError(Map<String, dynamic>msg) {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,

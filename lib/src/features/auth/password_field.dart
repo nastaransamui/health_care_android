@@ -18,7 +18,7 @@ class PasswordField extends StatefulWidget {
 
 class _PasswordFieldState extends State<PasswordField> {
   bool _isObscureText = true;
-  showPassword() {
+  void showPassword() {
     setState(() {
       _isObscureText = !_isObscureText;
     });
