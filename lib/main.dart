@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -62,10 +63,22 @@ Future<void> requestMediaPermissions() async {
   }
 }
 
+Future<void> initUpdateFCM() async {
+  final fcm = FirebaseMessaging.instance;
+
+  // Request token (ensures device is registered with FCM)
+  String? token = await fcm.getToken();
+  log("Anonymous FCM token: $token");
+
+  // Subscribe to a universal topic
+  await fcm.subscribeToTopic("all_users");
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await requestNotificationPermission();
+  await initUpdateFCM();
   // Initialize notification settings
   const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
   const iosInit = DarwinInitializationSettings();

@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 
 import 'dart:convert';
 import 'dart:developer';
@@ -75,7 +74,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       FirebaseMessaging.onMessage.listen(
         (RemoteMessage message) async {
           final data = message.data;
-
           // Delay to ensure MaterialApp is mounted
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             final currentContext = NavigationService.navigatorKey.currentContext;
@@ -105,7 +103,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                       } catch (e) {
                         log("GoRouter not ready yet: $e");
                       }
-                     if(currentRoomId == null) endVoiceCall(currentContext, messageData, callerData, receiverData, currentUserId, false);
+                      if (currentRoomId == null) endVoiceCall(currentContext, messageData, callerData, receiverData, currentUserId, false);
                     }
                   }
                 }
@@ -128,7 +126,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               } catch (e) {
                 debugPrint('Failed to decode params: $e');
               }
-            } else {
+            }
+            if (data['roomId'] != null) {
               final roomId = data['roomId'];
               final encodedRoomId = base64.encode(utf8.encode(roomId));
 
@@ -136,6 +135,11 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               if (currentRoomId == null || currentRoomId != encodedRoomId) {
                 await showChatNotification(message);
               }
+            }
+            if (data['type'] == 'update') {
+              // Local notification about app update
+              if (mounted) await showUpdateDialog(context);
+              return;
             }
           });
         },
@@ -164,7 +168,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
                 if (currentUserId != null) {
                   if (currentContext != null && currentContext.mounted) {
-                    if(currentRoomId == null) endVoiceCall(currentContext, messageData, callerData, receiverData, currentUserId, false);
+                    if (currentRoomId == null) endVoiceCall(currentContext, messageData, callerData, receiverData, currentUserId, false);
                   }
                 }
               }
@@ -187,7 +191,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
             } catch (e) {
               debugPrint('Failed to decode params: $e');
             }
-          } else {
+          }
+          if (data['roomId'] != null) {
             final roomId = data['roomId'];
             final encodedRoomId = base64.encode(utf8.encode(roomId));
             // Show notification if no room open OR different room open
@@ -206,6 +211,11 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               }
             }
           }
+          if (message.notification?.title == 'Update Available') {
+            // Local notification about app update
+            if (currentContext != null) await showUpdateDialog(currentContext);
+            return;
+          }
         });
       });
 
@@ -213,7 +223,13 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
         if (initialMessage == null) return;
 
+        final currentContext = NavigationService.navigatorKey.currentContext;
         final data = initialMessage.data;
+        if (initialMessage.notification?.title == 'Update Available') {
+          // Local notification about app update
+          if (currentContext != null && currentContext.mounted) await showUpdateDialog(currentContext);
+          return;
+        }
         final messageId = initialMessage.messageId ?? DateTime.now().millisecondsSinceEpoch.toString();
         final uniqueKey = '${data['roomId']}_$messageId';
 
@@ -223,7 +239,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
           return;
         }
 
-        final currentContext = NavigationService.navigatorKey.currentContext;
         if (currentContext == null || !currentContext.mounted) return;
         String? currentRoomId;
         try {
@@ -232,7 +247,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         } catch (e) {
           log("GoRouter not ready yet: $e");
         }
-        log('currentRoomId: $currentRoomId');
         switch (data['type']) {
           case 'endVoiceCall':
             _handleEndVoiceCall(currentContext, data, currentRoomId);
@@ -270,7 +284,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       final currentUserId = authProvider.roleName == "doctors" ? authProvider.doctorsProfile?.userId : authProvider.patientProfile?.userId;
 
       if (currentUserId != null) {
-         if(currentRoomId == null) endVoiceCall(context, messageData, callerData, receiverData, currentUserId, false);
+        if (currentRoomId == null) endVoiceCall(context, messageData, callerData, receiverData, currentUserId, false);
       }
     } catch (e) {
       log("Failed to handle endVoiceCall: $e");

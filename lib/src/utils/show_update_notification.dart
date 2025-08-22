@@ -1,32 +1,36 @@
+
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-Future<void> showUpdateNotification() async {
-  const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-    'update_channel',
-    'App Updates',
-    icon: 'ic_stat_notify',
-    importance: Importance.max,
-    priority: Priority.high,
-    playSound: true,
-    enableLights: true,
-  );
-
-  const NotificationDetails details = NotificationDetails(android: androidDetails);
-
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'App Updated!',
-    'Thanks for updating to the latest version.',
-    details,
-    payload: 'open_play_store',
+Future<void> showUpdateDialog(BuildContext context) async {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => AlertDialog(
+      title: const Text("Update Available"),
+      content: const Text("Please update to the latest version for best experience."),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            final url = Uri.parse(
+                "https://play.google.com/store/apps/details?id=com.healthCareApp&pli=1");
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
+           if(context.mounted) Navigator.of(context).pop(); // close dialog after pressing
+          },
+          child: const Text("Update"),
+        ),
+      ],
+    ),
   );
 }
 
