@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   _fe_analyzer_shared:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: _fe_analyzer_shared
       sha256: da0d9209ca76bde579f2da330aeb9df62b6319c834fa7baae052021b0462401f
@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "85.0.0"
   _flutterfire_internals:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: _flutterfire_internals
       sha256: ff0a84a2734d9e1089f8aedd5c0af0061b82fb94e95260d943404e0ef2134b11
@@ -82,13 +82,13 @@ packages:
     source: hosted
     version: "2.13.0"
   audio_streamer:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: audio_streamer
-      sha256: aed4bc55f57d65953b16344f5848239e1c9bd058cf5a6c23d7b4173f337d4ea8
+      sha256: "77b4271058fb9273d51e59a47729c6c02d046adcae1c93bc71af26822705b2ab"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.0"
+    version: "4.2.2"
   audioplayers:
     dependency: "direct main"
     description:
@@ -953,10 +953,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_webrtc
-      sha256: "792aa1e5838a719f29ae52c0773dbb5dd781fc33b1bf87c321b274e55ab51ad1"
+      sha256: "945d0a38b90fbca8257eadb167d8fb9fa7075d9a1939fd2953c10054454d1de2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.14.2"
+    version: "1.1.0"
   fluttertoast:
     dependency: "direct main"
     description:
@@ -1341,6 +1341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  logger:
+    dependency: transitive
+    description:
+      name: logger
+      sha256: "55d6c23a6c15db14920e037fe7e0dc32e7cdaf3b64b4b25df2d541b5b6b81c0c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.1"
   logging:
     dependency: transitive
     description:
@@ -1609,18 +1617,18 @@ packages:
     dependency: "direct main"
     description:
       name: permission_handler
-      sha256: bc917da36261b00137bbc8896bf1482169cd76f866282368948f032c8c1caae1
+      sha256: "59adad729136f01ea9e35a48f5d1395e25cba6cea552249ddbe9cf950f5d7849"
       url: "https://pub.dev"
     source: hosted
-    version: "12.0.1"
+    version: "11.4.0"
   permission_handler_android:
     dependency: transitive
     description:
       name: permission_handler_android
-      sha256: "1e3bc410ca1bf84662104b100eb126e066cb55791b7451307f9708d4007350e6"
+      sha256: d3971dcdd76182a0c198c096b5db2f0884b0d4196723d21a866fc4cdea057ebc
       url: "https://pub.dev"
     source: hosted
-    version: "13.0.1"
+    version: "12.1.0"
   permission_handler_apple:
     dependency: transitive
     description:
