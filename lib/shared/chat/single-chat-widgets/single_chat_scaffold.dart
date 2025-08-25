@@ -298,7 +298,7 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
                   height: 30,
                   child: Center(
                     child: Transform.rotate(
-                      angle: 360,
+                      angle: 0,
                       child: const FaIcon(
                         FontAwesomeIcons.phone,
                         size: 18,

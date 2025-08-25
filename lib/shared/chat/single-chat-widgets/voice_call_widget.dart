@@ -176,7 +176,7 @@ class _VoiceCallWidgetState extends State<VoiceCallWidget> {
                               borderRadius: BorderRadius.circular(30)),
                           child: Center(
                             child: Transform.rotate(
-                              angle: 360,
+                              angle: 0,
                               child: const FaIcon(
                                 FontAwesomeIcons.phone,
                                 size: 18,
@@ -196,7 +196,7 @@ class _VoiceCallWidgetState extends State<VoiceCallWidget> {
                           decoration: BoxDecoration(color: Colors.pink, borderRadius: BorderRadius.circular(30)),
                           child: Center(
                             child: Transform.rotate(
-                              angle: -8.6,
+                              angle: 8.6,
                               child: const FaIcon(
                                 FontAwesomeIcons.phone,
                                 size: 18,
