@@ -294,7 +294,7 @@ class _BookingButtonBoxState extends State<BookingButtonBox> {
                                         Padding(
                                           padding: const EdgeInsets.only(right: 2.0),
                                           child: FaIcon(
-                                            isPassed || isBooked || isOccupied ? FontAwesomeIcons.stopCircle : FontAwesomeIcons.clock,
+                                            isPassed || isBooked || isOccupied ? FontAwesomeIcons.circleStop : FontAwesomeIcons.clock,
                                             size: 12,
                                             color: isPassed
                                                 ? isBooked

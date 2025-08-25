@@ -220,7 +220,7 @@ class PatientUserProfile {
       dob: map['dob'] == '' ? '' : DateTime.parse(map['dob']),
       doctorsId: List<String>.from(map['doctors_id'] ?? []),
       favsId: List<String>.from(map['favs_id'] ?? []),
-      fcmTokens: List<String>.from(map['fcmTokens'] ?? []),
+      fcmTokens: (map['fcmTokens'] as List?)?.whereType<String>().toList() ?? [],
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
@@ -549,7 +549,7 @@ class DoctorUserProfile {
   final List<Education> educations;
   final List<Experinces> experinces;
   final List<String> favsId;
-  final List<String>fcmTokens;
+  final List<String> fcmTokens;
   final String firstName;
   final String fullName;
   final String gender;
@@ -845,7 +845,7 @@ class DoctorUserProfile {
       educations: map['educations'] != null ? List<Education>.from(map['educations']?.map((x) => Education.fromMap(x))) : [],
       experinces: map['experinces'] != null ? List<Experinces>.from(map['experinces']?.map((x) => Experinces.fromMap(x))) : [],
       favsId: map['favs_id'] != null ? List<String>.from(map['favs_id']) : [],
-      fcmTokens: map['fcmTokens'] != null ? List<String>.from(map['fcmTokens']) : [],
+      fcmTokens: (map['fcmTokens'] as List?)?.whereType<String>().toList() ?? [],
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',

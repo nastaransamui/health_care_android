@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   easy_localization: ^3.0.5
   shared_preferences: ^2.5.3
-  socket_io_client: ^2.0.3+1
+  socket_io_client: ^3.1.2
   flutter_spinkit: ^5.2.1
   avatar_view: ^1.0.1
   flutter_signin_button: ^2.0.0
@@ -45,7 +45,7 @@ dependencies:
   carousel_slider: ^5.0.0
   sliver_fill_remaining_box_adapter: ^1.0.0
   extended_nested_scroll_view: ^6.2.1
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.2.0
   easy_logger: ^0.0.2
   accordion: ^2.6.0
   readmore: ^3.0.0
@@ -57,9 +57,9 @@ dependencies:
   badges: ^3.1.2
   lottie: ^3.1.1
   rflutter_alert: ^2.0.7
-  flutter_form_builder: ^10.0.1
+  flutter_form_builder: ^10.2.0
   form_builder_validators: ^11.0.0
-  google_sign_in: ^6.2.1
+  google_sign_in: ^7.1.1
   qlevar_router: ^1.10.3
   go_router: ^16.0.0
   bot_toast: ^4.1.3
@@ -68,29 +68,35 @@ dependencies:
   syncfusion_flutter_core:
     git:
       url: https://github.com/syncfusion/flutter-widgets.git
+      ref: 302c84f2ccdb51896f794b5e870e058a3c23b2b8
       path: packages/syncfusion_flutter_core
   syncfusion_flutter_calendar:
     git:
       url: https://github.com/syncfusion/flutter-widgets.git
+      ref: 302c84f2ccdb51896f794b5e870e058a3c23b2b8
       path: packages/syncfusion_flutter_calendar
   syncfusion_flutter_datepicker:
     git:
       url: https://github.com/syncfusion/flutter-widgets.git
+      ref: 302c84f2ccdb51896f794b5e870e058a3c23b2b8
       path: packages/syncfusion_flutter_datepicker
   syncfusion_flutter_datagrid:
     git:
       url: https://github.com/syncfusion/flutter-widgets.git
+      ref: 302c84f2ccdb51896f794b5e870e058a3c23b2b8
       path: packages/syncfusion_flutter_datagrid  
   syncfusion_flutter_pdf:
     git:
       url: https://github.com/syncfusion/flutter-widgets.git
+      ref: 302c84f2ccdb51896f794b5e870e058a3c23b2b8
       path: packages/syncfusion_flutter_pdf
   syncfusion_flutter_pdfviewer:
     git:
       url: https://github.com/syncfusion/flutter-widgets.git
+      ref: 302c84f2ccdb51896f794b5e870e058a3c23b2b8
       path: packages/syncfusion_flutter_pdfviewer
   jiffy: ^6.2.1
-  moment_dart: ^2.1.0
+  moment_dart: ^5.2.3
   flutter_3d_choice_chip: ^0.1.4
   page_transition: ^2.1.0
   swipeable_button_view: ^0.0.2
@@ -98,7 +104,7 @@ dependencies:
   share_plus: ^11.1.0
   cached_network_image: ^3.3.1
   grouped_list: ^6.0.0
-  font_awesome_flutter: ^9.2.0
+  font_awesome_flutter: ^10.10.0
   mirai_dropdown_menu: ^0.0.8+2
   flutter_animate: ^4.5.0
   search_choices: ^2.2.7
@@ -109,7 +115,6 @@ dependencies:
   flutter_slidable_panel: ^1.1.3
   avatar_glow: ^3.0.1
   loading_indicator: ^3.1.1
-  infinite_scroll_pagination: ^4.0.0
   scrollable_positioned_list: ^0.3.8
   equatable: ^2.0.7
   session_storage: ^0.0.1
@@ -136,8 +141,7 @@ dependencies:
   google_fonts: ^6.2.1
   animated_page_reveal: ^1.0.0
   typewritertext: ^3.0.8
-  flutter_multi_formatter: ^2.13.7
-  trina_grid: ^1.6.8
+  flutter_multi_formatter: ^2.13.9
   permission_handler: ^11.4.0
   package_info_plus: ^8.3.1
   flutter_local_notifications: ^19.2.1
@@ -165,16 +169,14 @@ dependencies:
   json_serializable: ^6.10.0
   freezed: ^3.2.0
   freezed_annotation: ^3.1.0
-  meta: ^1.16.0
   web_socket_channel: ^3.0.3
   hive_flutter: ^1.1.0
-  _fe_analyzer_shared: ^85.0.0
   _flutterfire_internals: ^1.3.59
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.13.1"
+  flutter_launcher_icons: "^0.14.4"
 
 
   # The "flutter_lints" package below contains a set of recommended lints to

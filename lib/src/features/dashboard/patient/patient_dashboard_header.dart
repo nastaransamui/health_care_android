@@ -152,7 +152,7 @@ class _PatientDashboardHeaderState extends State<PatientDashboardHeader> {
                             ProfileHeaderCellWidget(
                               iconWidget: Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
-                                child: FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
+                                child: FaIcon(FontAwesomeIcons.mapLocation, size: 13, color: theme.primaryColor),
                               ),
                               titleWidget: Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
@@ -179,7 +179,7 @@ class _PatientDashboardHeaderState extends State<PatientDashboardHeader> {
                             VerticalDivider(theme: theme),
                             // city Column
                             ProfileHeaderCellWidget(
-                              iconWidget: FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
+                              iconWidget: FaIcon(FontAwesomeIcons.mapLocation, size: 13, color: theme.primaryColor),
                               titleWidget: Padding(
                                 padding: const EdgeInsets.only(left: 5.0),
                                 child: Text(
@@ -220,7 +220,7 @@ class _PatientDashboardHeaderState extends State<PatientDashboardHeader> {
                             ProfileHeaderCellWidget(
                               iconWidget: Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
-                                child: FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColor),
+                                child: FaIcon(FontAwesomeIcons.mapLocation, size: 13, color: theme.primaryColor),
                               ),
                               titleWidget: Padding(
                                 padding: const EdgeInsets.only(left: 5.0),

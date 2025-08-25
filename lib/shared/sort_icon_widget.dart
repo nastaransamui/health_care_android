@@ -39,8 +39,8 @@ class SortIconWidget extends StatelessWidget {
               !isActive
                   ? FontAwesomeIcons.sort
                   : direction == 'desc'
-                      ? FontAwesomeIcons.arrowAltCircleDown
-                      : FontAwesomeIcons.arrowAltCircleUp,
+                      ? FontAwesomeIcons.circleDown
+                      : FontAwesomeIcons.circleUp,
               size: 16,
               color: isActive
                   ? Theme.of(context).primaryColorLight

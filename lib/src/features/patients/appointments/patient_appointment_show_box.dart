@@ -273,7 +273,7 @@ class _PatientAppointmentShowBoxState extends State<PatientAppointmentShowBox> {
                     Expanded(
                       child: Row(
                         children: [
-                          FaIcon(FontAwesomeIcons.mapMarkedAlt, size: 13, color: theme.primaryColorLight),
+                          FaIcon(FontAwesomeIcons.mapLocationDot, size: 13, color: theme.primaryColorLight),
                           const SizedBox(width: 5),
                           Text(
                             '${doctorUserProfile.address1} ${doctorUserProfile.address2}',

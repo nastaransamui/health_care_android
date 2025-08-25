@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/patient_appointment_reservation.dart';
 import 'package:health_care/providers/auth_provider.dart';
@@ -26,6 +28,7 @@ class PatientAppointmentService {
 
     socket.off('getAppointmentRecordReturn');
     socket.on('getAppointmentRecordReturn', (data) {
+      log(' appointmentProvider.setLoading 7');
       patientAppointmentProvider.setLoading(false);
       if (data['status'] != 200 && data['status'] != 400) {
         if (context.mounted) {

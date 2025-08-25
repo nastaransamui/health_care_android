@@ -1,7 +1,10 @@
-import 'dart:convert';
+// import 'dart:convert';
+import 'dart:developer' as dev;
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -14,6 +17,7 @@ import 'package:health_care/providers/device_provider.dart';
 import 'package:health_care/providers/user_data_provider.dart';
 import 'package:health_care/services/auth_service.dart';
 import 'package:health_care/services/device_service.dart';
+import 'package:health_care/shared/chat/single-chat-widgets/chat_input.dart';
 import 'package:health_care/src/commons/bottom_bar.dart';
 import 'package:health_care/src/commons/fadein_widget.dart';
 import 'package:health_care/src/features/auth/auth_header.dart';
@@ -21,7 +25,7 @@ import 'package:health_care/src/features/loading_screen.dart';
 import 'package:health_care/src/utils/validate_email.dart';
 import 'package:health_care/src/utils/validate_password.dart';
 import 'package:health_care/stream_socket.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -143,64 +147,51 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  static const List<String> scopes = <String>[
-    'email',
-    'profile',
-  ];
-
-  GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: scopes,
-  );
+  GoogleSignIn googleSignIn = GoogleSignIn.instance;
   Future<void> googleLogin(String roleName) async {
-    var formData = {"ipAddr": userData.query, "userAgent": deviceData};
-    googleSignIn.signIn().then((result) {
-      result?.authentication.then((googleKey) async {
-        final http.Response response = await http.get(Uri.parse("https://www.googleapis.com/oauth2/v3/userinfo"),
-            headers: {'Accept': 'application/json', "Authorization": "Bearer ${googleKey.accessToken}"});
-        if (response.statusCode != 200) {
-          debugPrint('${response.statusCode} response: ${response.body}');
-        } else {
-          var info = jsonDecode(response.body);
-
-          formData['email'] = info['email'];
-          formData['firstName'] = info['given_name'];
-          formData['lastName'] = info['family_name'];
-          formData['profileImage'] = info['picture'];
+    dynamic formData = {"ipAddr": userData.query, "userAgent": deviceData};
+    await googleSignIn.initialize(
+      clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+      serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
+    );
+    // listen to authentication events (optional but useful)
+    final sub = googleSignIn.authenticationEvents.listen((event) {
+      // dev.log('authentication event: ${event.toString()}');
+    }, onError: (e) {
+      dev.log('authenticationEvents error: $e');
+    });
+    try {
+      final account = await googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'], // request scopes
+      );
+      final auth = account.authentication;
+      final idToken = auth.idToken;
+       formData['email'] = account.email;
+          formData['firstName'] = account.displayName ?? '';
+          formData['lastName'] = '';
+          formData['profileImage'] = account.photoUrl ?? '';
           formData['userType'] = roleName.toLowerCase();
-          formData['access_token'] = googleKey.accessToken!;
+          formData['access_token'] = idToken!;
           formData['token_type'] = 'Bearer';
           formData['authuser'] = "0";
           formData['expires_in'] = 3599;
           formData['prompt'] = "none";
           formData['scope'] = "email profile https://www.googleapis.com/auth/userinfo.profile openid https://www.googleapis.com/auth/userinfo.email";
+           final fcmToken = await FirebaseMessaging.instance.getToken();
+            if(fcmToken != null){
+              formData['fcmToken'] = fcmToken;
+            }else{
+              formData['fcmToken'] = null;
+            }
           socket.emit('googleLoginSubmit', formData);
           socket.once('googleLoginReturn', (data) {
             switch (data['status']) {
               case 400:
               case 403:
-                showToast(
-                  context,
-                  Toast(
-                    title: 'Failed',
-                    description: data['reason'],
-                    duration: Duration(milliseconds: duration.toInt()),
-                    lifeTime: Duration(
-                      milliseconds: lifeTime.toInt(),
-                    ),
-                  ),
-                );
+                Navigator.pop(context);
+                  showCustomToast(context, data['reason']);
               case 500:
-                showToast(
-                  context,
-                  Toast(
-                    title: 'Failed',
-                    description: data['reason'],
-                    duration: Duration(milliseconds: duration.toInt()),
-                    lifeTime: Duration(
-                      milliseconds: lifeTime.toInt(),
-                    ),
-                  ),
-                );
+                showCustomToast(context, data['reason']);
                 break;
               case 410:
                 showToast(
@@ -277,15 +268,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 break;
             }
           });
-        }
-      }).catchError((err) {
-        debugPrint('inner error');
-      });
-    });
-    //If you want further information about Google accounts, such as authentication, use this.
-    // final GoogleSignInAuthentication googleAuthentication =
-    //     await googleAccount!.authentication;
-    // print(googleAccount);
+    } on GoogleSignInException catch (e) {
+      // handle user cancellation / other known google_sign_in errors
+      dev.log('GoogleSignInException: code=${e.code} description=${e.description} details=${e.details}');
+    } catch (e, st) {
+      // fallback
+      dev.log('Unexpected sign-in error: $e\n$st');
+    } finally {
+      await sub.cancel();
+    }
   }
 
   void onGoogleButtonClicked() {

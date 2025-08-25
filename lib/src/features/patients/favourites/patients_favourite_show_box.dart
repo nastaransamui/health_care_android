@@ -263,7 +263,7 @@ class CountryRow extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
+                FaIcon(FontAwesomeIcons.mapLocation, size: 13, color: theme.primaryColorLight),
                 const SizedBox(width: 5),
                 Text('${context.tr('country')} '),
                 Text(
@@ -305,7 +305,7 @@ class StateRow extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
+                FaIcon(FontAwesomeIcons.mapLocation, size: 13, color: theme.primaryColorLight),
                 const SizedBox(width: 3),
                 Text('${context.tr('state')} '),
                 Text(
@@ -347,7 +347,7 @@ class CityRow extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.mapMarked, size: 13, color: theme.primaryColorLight),
+                FaIcon(FontAwesomeIcons.mapLocation, size: 13, color: theme.primaryColorLight),
                 const SizedBox(width: 5),
                 Text('${context.tr('city')} '),
                 Text(

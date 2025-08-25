@@ -634,7 +634,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
                                                       child: DropdownButtonFormField<String>(
                                                         iconDisabledColor: Theme.of(context).disabledColor,
                                                         iconEnabledColor: Theme.of(context).primaryColor,
-                                                        value: times.timeSlot.toString(),
+                                                        initialValue: times.timeSlot.toString(),
                                                         onChanged: !times.isNew
                                                             ? null
                                                             : (value) {
@@ -976,7 +976,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
                                                                 child: Row(
                                                                   children: [
                                                                     FaIcon(
-                                                                      FontAwesomeIcons.minusCircle,
+                                                                      FontAwesomeIcons.circleMinus,
                                                                       color: Theme.of(context).primaryColorLight, // like crimson
                                                                       size: 20,
                                                                     ),
@@ -1003,7 +1003,7 @@ class _DoctorsDashboardScheduleTimingState extends State<DoctorsDashboardSchedul
                                                                   child: Row(
                                                                     children: [
                                                                       FaIcon(
-                                                                        times.isNew ? FontAwesomeIcons.plusCircle : FontAwesomeIcons.edit,
+                                                                        times.isNew ? FontAwesomeIcons.circlePlus : FontAwesomeIcons.penToSquare,
                                                                         color: Theme.of(context).primaryColor,
                                                                         size: times.isNew ? 20 : 17,
                                                                       ),

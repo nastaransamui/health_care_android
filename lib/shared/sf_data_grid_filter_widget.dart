@@ -238,7 +238,7 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
         child: Column(
           children: [
             DropdownButtonFormField<String>(
-              value: selectedColumnName,
+              initialValue: selectedColumnName,
               decoration: InputDecoration(
                 labelText: context.tr("selectColumForFilter"),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -291,7 +291,7 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: DropdownButtonFormField<String>(
-                  value: selectedOperator,
+                  initialValue: selectedOperator,
                   decoration: InputDecoration(
                     labelText: context.tr("selectOperator"),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -334,7 +334,7 @@ class _SfDataGridFilterWidgetState extends State<SfDataGridFilterWidget> {
                 )
               else if (selectedOperator == 'is')
                 DropdownButtonFormField<bool>(
-                  value: _selectedValue,
+                  initialValue: _selectedValue,
                   decoration: InputDecoration(
                     labelText: context.tr("selectValue"),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),

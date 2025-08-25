@@ -63,7 +63,7 @@ class AvailablityWidget extends StatelessWidget {
         const SizedBox(height: 15),
         Row(
           children: [
-            FaIcon(FontAwesomeIcons.mapMarkedAlt, size: 12, color: Theme.of(context).primaryColor),
+            FaIcon(FontAwesomeIcons.mapLocationDot, size: 12, color: Theme.of(context).primaryColor),
             const SizedBox(width: 5),
             Text(
               doctorUserProfile.clinicAddress.isEmpty ? '--' : doctorUserProfile.clinicAddress,

@@ -29,7 +29,7 @@ List doctorsDashboardLink = [
   {
     'name': 'profileSettings',
     'routeName': "doctorsDashboardProfile",
-    "icon": const FaIcon(FontAwesomeIcons.userCog),
+    "icon": const FaIcon(FontAwesomeIcons.userGear),
   },
   {
     'name': 'favourites',
@@ -89,7 +89,7 @@ List doctorsDashboardLink = [
   {
     'name': 'socialMedia',
     'routeName': "socialMedia",
-    "icon": const FaIcon(FontAwesomeIcons.shareAlt),
+    "icon": const FaIcon(FontAwesomeIcons.shareNodes),
   },
   {
     'name': 'changePassword',
@@ -118,7 +118,7 @@ List patientsDashboardLink = [
   {
     'name': 'profileSettings',
     'routeName': "patientsDashboardProfile",
-    "icon": const FaIcon(FontAwesomeIcons.userCog),
+    "icon": const FaIcon(FontAwesomeIcons.userGear),
   },
   {
     'name': 'favourites',
@@ -169,7 +169,7 @@ List patientsDashboardLink = [
   {
     'name': 'medicalrecords',
     'routeName': "patientMedicalRecords",
-    "icon": const FaIcon(FontAwesomeIcons.fileMedicalAlt),
+    "icon": const FaIcon(FontAwesomeIcons.fileWaveform),
   },
   {
     'name': 'prescriptions',
@@ -179,7 +179,7 @@ List patientsDashboardLink = [
   {
     'name': 'medicalDetails',
     'routeName': "patientMedicalDetails",
-    "icon": const FaIcon(FontAwesomeIcons.fileMedicalAlt),
+    "icon": const FaIcon(FontAwesomeIcons.fileWaveform),
   },
   {
     'name': 'changePassword',
@@ -334,10 +334,10 @@ List startDrawerTitleList = [
   {
     'name': 'home',
     'routeName': "/",
-    "icon": const FaIcon(FontAwesomeIcons.home),
+    "icon": const FaIcon(FontAwesomeIcons.house),
   },
   {
-    'icon': const FaIcon(FontAwesomeIcons.clinicMedical),
+    'icon': const FaIcon(FontAwesomeIcons.houseChimneyMedical),
     'name': 'clinics',
     'injectClinics': true,
     'children': [],
@@ -345,7 +345,7 @@ List startDrawerTitleList = [
   {
     'name': 'pharmacy',
     'routeName': "/pharmacy",
-    "icon": const FaIcon(FontAwesomeIcons.medkit),
+    "icon": const FaIcon(FontAwesomeIcons.suitcaseMedical),
   },
   {
     'name': 'blog',
@@ -355,10 +355,10 @@ List startDrawerTitleList = [
   {
     'name': 'doctors',
     'routeName': '/doctors/search',
-    "icon": const FaIcon(FontAwesomeIcons.userMd),
+    "icon": const FaIcon(FontAwesomeIcons.userDoctor),
   },
   {
-    'icon': const FaIcon(FontAwesomeIcons.fileAlt),
+    'icon': const FaIcon(FontAwesomeIcons.fileLines),
     'name': "conditions",
     'children': [
       {
@@ -374,14 +374,14 @@ List startDrawerTitleList = [
       {
         'name': 'faq',
         'routeName': '/faq',
-        'icon': const FaIcon(FontAwesomeIcons.questionCircle),
+        'icon': const FaIcon(FontAwesomeIcons.circleQuestion),
       },
     ],
   },
   {
     'name': 'aboutUs',
     'routeName': "/about",
-    "icon": const FaIcon(FontAwesomeIcons.infoCircle),
+    "icon": const FaIcon(FontAwesomeIcons.circleInfo),
   },
   {
     'name': 'contactUs',

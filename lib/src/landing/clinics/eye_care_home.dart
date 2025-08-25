@@ -349,7 +349,7 @@ class _EyeCareSpecialistsState extends State<EyeCareSpecialists> {
                           child: const RotationTransition(
                             turns: AlwaysStoppedAnimation(-0.120),
                             child: FaIcon(
-                              FontAwesomeIcons.chevronCircleRight,
+                              FontAwesomeIcons.circleChevronRight,
                               size: 13,
                             ),
                           ),
@@ -379,14 +379,14 @@ class _EyeCareSpecialistsState extends State<EyeCareSpecialists> {
             IconButton(
               onPressed: () => buttonCarouselController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.linear),
               icon: FaIcon(
-                FontAwesomeIcons.chevronCircleLeft,
+                FontAwesomeIcons.circleChevronLeft,
                 color: Theme.of(context).primaryColorLight,
               ),
             ),
             IconButton(
               onPressed: () => buttonCarouselController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.linear),
               icon: FaIcon(
-                FontAwesomeIcons.chevronCircleRight,
+                FontAwesomeIcons.circleChevronRight,
                 color: Theme.of(context).primaryColorLight,
               ),
             ),

@@ -400,7 +400,7 @@ class _PrescriptionShowBoxState extends State<PrescriptionShowBox> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              FaIcon(isSameDoctor ? FontAwesomeIcons.edit : FontAwesomeIcons.eye, size: 13, color: textColor),
+                              FaIcon(isSameDoctor ? FontAwesomeIcons.penToSquare : FontAwesomeIcons.eye, size: 13, color: textColor),
                               const SizedBox(width: 5),
                               Text(
                                 context.tr(isSameDoctor ? "edit" : "view"),

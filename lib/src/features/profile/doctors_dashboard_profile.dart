@@ -1873,7 +1873,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     if (!showValidation) return null;
                                     return value == null ? context.tr('required') : null;
                                   },
-                                  value: speciality.text.isEmpty ? null : speciality.text,
+                                  initialValue: speciality.text.isEmpty ? null : speciality.text,
                                   hint: Text(context.tr('speciality')),
                                   items: specialities.map<DropdownMenuItem<String>>((Specialities values) {
                                     final name = context.tr(values.specialities);
@@ -2013,7 +2013,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ],
@@ -2162,7 +2162,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     experienceFromDate.add([1934, 1, 1]);
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]
@@ -2255,7 +2255,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]
@@ -2318,7 +2318,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]
@@ -2411,7 +2411,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]

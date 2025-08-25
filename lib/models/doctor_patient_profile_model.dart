@@ -231,7 +231,7 @@ class DoctorPatientProfileModel {
       dob: map['dob'] == '' ? '' : DateTime.parse(map['dob']),
       doctorsId: List<String>.from(map['doctors_id'] ?? []),
       favsId: List<String>.from(map['favs_id'] ?? []),
-      fcmTokens: List<String>.from(map['fcmTokens'] ?? []),
+      fcmTokens: (map['fcmTokens'] as List?)?.whereType<String>().toList() ?? [],
       firstName: map['firstName'] ?? '',
       fullName: map['fullName'] ?? '',
       gender: map['gender'] ?? '',
