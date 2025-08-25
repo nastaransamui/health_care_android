@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.8.21'
+    ext.kotlin_version = '2.1.20'
 
     repositories {
         google()
@@ -7,9 +7,11 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.4.0'
+        // match the plugin version declared in settings.gradle
+    classpath 'com.android.tools.build:gradle:8.7.0'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    // optional: update google services plugin to a newer patch if you want
+    classpath 'com.google.gms:google-services:4.4.3'
     }
 }
 
@@ -34,8 +36,11 @@ subprojects {
   }
     project.buildDir = "${rootProject.buildDir}/${project.name}"
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-        kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions {
+        // use a modern JVM target that matches JDK 17
+        jvmTarget = "17"
     }
+}
 }
 
 tasks.register("clean", Delete) {
