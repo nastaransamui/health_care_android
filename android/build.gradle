@@ -26,21 +26,46 @@ rootProject.buildDir = '../build'
 
 subprojects {
     afterEvaluate { proj ->
-    if (proj.name.contains('audio_streamer') && proj.plugins.hasPlugin('com.android.library')) {
-      proj.android {
-        if (namespace == null || namespace.trim().isEmpty()) {
-          namespace = proj.group ?: 'plugins.cachet.audio_streamer'
+        // keep your audio_streamer namespace fix and ensure Java/Kotlin targets are aligned
+        if (proj.name.contains('audio_streamer') && proj.plugins.hasPlugin('com.android.library')) {
+            proj.android {
+                if (namespace == null || namespace.trim().isEmpty()) {
+                    namespace = proj.group ?: 'plugins.cachet.audio_streamer'
+                }
+
+                // Force Java compile target to 17 for this Android library (correct AGP approach)
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+
+                // Also set Kotlin jvm target inside the android block
+                kotlinOptions {
+                    jvmTarget = "17"
+                }
+            }
         }
-      }
+
+        // Standardize build directory per project
+        project.buildDir = "${rootProject.buildDir}/${project.name}"
+
+        // For all subprojects, set JavaCompile source/target compatibility to 17
+        // NOTE: do NOT set javaCompile.options.release (that's the --release flag AGP rejects)
+        proj.tasks.withType(org.gradle.api.tasks.compile.JavaCompile).configureEach { javaCompile ->
+            javaCompile.sourceCompatibility = "17"
+            javaCompile.targetCompatibility = "17"
+            // If you need to force a specific JDK for compilation, adjust fork options here:
+            // javaCompile.options.fork = true
+            // javaCompile.options.forkOptions.javaHome = file('/usr/lib/jvm/java-17-openjdk-amd64')
+        }
+
+        // Ensure Kotlin compile tasks target JVM 17 everywhere
+        proj.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { kt ->
+            kt.kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
     }
-  }
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions {
-        // use a modern JVM target that matches JDK 17
-        jvmTarget = "17"
-    }
-}
 }
 
 tasks.register("clean", Delete) {
