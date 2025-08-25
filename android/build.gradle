@@ -26,22 +26,31 @@ rootProject.buildDir = '../build'
 
 subprojects {
     afterEvaluate { proj ->
-        // keep your audio_streamer namespace fix and ensure Java/Kotlin targets are aligned
-        if (proj.name.contains('audio_streamer') && proj.plugins.hasPlugin('com.android.library')) {
+
+        // If this is any Android project (app or library), make sure compileOptions and kotlinOptions are set
+        if (proj.plugins.hasPlugin('com.android.application') || proj.plugins.hasPlugin('com.android.library')) {
             proj.android {
-                if (namespace == null || namespace.trim().isEmpty()) {
-                    namespace = proj.group ?: 'plugins.cachet.audio_streamer'
+                // keep possible namespace fix for audio_streamer
+                if (proj.name.contains('audio_streamer')) {
+                    if (namespace == null || namespace.trim().isEmpty()) {
+                        namespace = proj.group ?: 'plugins.cachet.audio_streamer'
+                    }
                 }
 
-                // Force Java compile target to 17 for this Android library (correct AGP approach)
+                // AGP-compatible way: set Java compile compatibility to 17
                 compileOptions {
                     sourceCompatibility JavaVersion.VERSION_17
                     targetCompatibility JavaVersion.VERSION_17
                 }
 
-                // Also set Kotlin jvm target inside the android block
-                kotlinOptions {
-                    jvmTarget = "17"
+                // Also set Kotlin options inside the android block for this module
+                // Some modules expose kotlinOptions here and it's safest to set it where available
+                try {
+                    kotlinOptions {
+                        jvmTarget = "17"
+                    }
+                } catch (ignored) {
+                    // some modules may not expose kotlinOptions here; we'll set Kotlin compile tasks later
                 }
             }
         }
@@ -49,17 +58,16 @@ subprojects {
         // Standardize build directory per project
         project.buildDir = "${rootProject.buildDir}/${project.name}"
 
-        // For all subprojects, set JavaCompile source/target compatibility to 17
-        // NOTE: do NOT set javaCompile.options.release (that's the --release flag AGP rejects)
+        // For all subprojects: ensure JavaCompile tasks use source/target = 17 (do NOT use .release)
         proj.tasks.withType(org.gradle.api.tasks.compile.JavaCompile).configureEach { javaCompile ->
             javaCompile.sourceCompatibility = "17"
             javaCompile.targetCompatibility = "17"
-            // If you need to force a specific JDK for compilation, adjust fork options here:
+            // If you must force a specific JDK for compilation, uncomment and set path:
             // javaCompile.options.fork = true
             // javaCompile.options.forkOptions.javaHome = file('/usr/lib/jvm/java-17-openjdk-amd64')
         }
 
-        // Ensure Kotlin compile tasks target JVM 17 everywhere
+        // For all subprojects: ensure Kotlin compile tasks target JVM 17
         proj.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { kt ->
             kt.kotlinOptions {
                 jvmTarget = "17"
