@@ -223,7 +223,7 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
                                       filled: true,
                                       // prefixIcon: Icon(Icons.account_circle_sharp, color: Theme.of(context).primaryColorLight),
                                       isDense: true,
-                                      alignLabelWithHint: true,
+                                      alignLabelWithHint: false,
                                     ),
                                     items: dependents.map((dependent) {
                                       return DropdownMenuItem<String>(

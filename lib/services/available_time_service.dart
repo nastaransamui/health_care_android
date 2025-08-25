@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/appointment_reservation.dart';
 import 'package:health_care/providers/appointment_provider.dart';
@@ -50,11 +52,15 @@ class AvailableTimeService {
             appointmentProvider.setAppointmentReservations([]);
             final myAppointmentList = (myAppointment).map((json) => AppointmentReservation.fromMap(json)).toList();
             appointmentProvider.setAppointmentReservations(myAppointmentList);
+        log(' appointmentProvider.setLoading 5');
             appointmentProvider.setLoading(false);
             // ignore: empty_catches
-          } catch (e) {}
+          } catch (e) {
+            log('getDoctorAvailableTimeReturn: $e');
+          }
         } else {
           appointmentProvider.setAppointmentReservations([]);
+        log(' appointmentProvider.setLoading 6');
           appointmentProvider.setLoading(false);
         }
       }

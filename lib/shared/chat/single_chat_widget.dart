@@ -55,7 +55,7 @@ class _SingleChateWidgetState extends State<SingleChatWidget> {
     });
   }
 
-  void bubbleChatLongPress(index) {
+  void bubbleChatLongPress(int index) {
     setState(() {
       if (showDeleteIndices.contains(index)) {
         showDeleteIndices.remove(index);

@@ -943,7 +943,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 setState(() {
                                   dobController.text = formattedDate;
                                 });
-                                                            },
+                              },
                             ),
                             const SizedBox(height: 10),
                           ],
@@ -992,15 +992,17 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                 child: Container(
                                   constraints: const BoxConstraints.expand(height: 100, width: double.infinity),
                                   child: DottedBorder(
-                                    dashPattern: const [8, 4],
-                                    strokeWidth: 2,
-                                    color: _clinicXfileFiles.length < 4
-                                        ? hexToColor(
-                                            secondaryDarkColorCodeReturn(homeThemeName),
-                                          )
-                                        : Theme.of(context).disabledColor,
-                                    padding: const EdgeInsets.all(8),
-                                    borderPadding: const EdgeInsets.all(4),
+                                    options: RectDottedBorderOptions(
+                                      dashPattern: const [8, 4],
+                                      strokeWidth: 2,
+                                      color: _clinicXfileFiles.length < 4
+                                          ? hexToColor(
+                                              secondaryDarkColorCodeReturn(homeThemeName),
+                                            )
+                                          : Theme.of(context).disabledColor,
+                                      padding: const EdgeInsets.all(8),
+                                      borderPadding: const EdgeInsets.all(4),
+                                    ),
                                     child: Center(
                                       child: Text(
                                         context.tr('max4File'),
@@ -1871,7 +1873,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     if (!showValidation) return null;
                                     return value == null ? context.tr('required') : null;
                                   },
-                                  value: speciality.text.isEmpty ? null : speciality.text,
+                                  initialValue: speciality.text.isEmpty ? null : speciality.text,
                                   hint: Text(context.tr('speciality')),
                                   items: specialities.map<DropdownMenuItem<String>>((Specialities values) {
                                     final name = context.tr(values.specialities);
@@ -2011,7 +2013,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ],
@@ -2108,7 +2110,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                         setState(() {
                                                           entry.value.text = formattedDate;
                                                         });
-                                                                                                            } else {
+                                                      } else {
                                                         DateTime? toDate = await showDatePicker(
                                                             initialDatePickerMode: DatePickerMode.year,
                                                             context: context,
@@ -2119,7 +2121,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                                         setState(() {
                                                           entry.value.text = formattedDate;
                                                         });
-                                                                                                            }
+                                                      }
                                                     },
                                                   );
                                           },
@@ -2160,7 +2162,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     experienceFromDate.add([1934, 1, 1]);
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]
@@ -2253,7 +2255,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]
@@ -2316,7 +2318,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]
@@ -2409,7 +2411,7 @@ class _DoctorsDashboardProfileState extends State<DoctorsDashboardProfile> {
                                     });
                                   });
                                 },
-                                icon: FaIcon(FontAwesomeIcons.plusCircle, color: Theme.of(context).primaryColorLight),
+                                icon: FaIcon(FontAwesomeIcons.circlePlus, color: Theme.of(context).primaryColorLight),
                                 label: Text(context.tr('addMore')),
                               ),
                             ]

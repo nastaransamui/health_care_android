@@ -58,7 +58,7 @@ class LatestArticles extends StatelessWidget {
                                 e['date'],
                                 style: const TextStyle(fontSize: 13),
                               ),
-                              leading: const FaIcon(FontAwesomeIcons.calendarAlt),
+                              leading: const FaIcon(FontAwesomeIcons.calendarDays),
                             ),
                           ),
                         ],

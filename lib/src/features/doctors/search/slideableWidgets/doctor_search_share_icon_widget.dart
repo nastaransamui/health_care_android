@@ -20,7 +20,9 @@ class DoctorSearchShareIconWidget extends StatelessWidget {
     return TextButton(
       onPressed: () async {
         slideController.toggleAction(1);
-        final result = await Share.share('check out Dr. ${singleDoctor.fullName} ${dotenv.env['webUrl']}/doctors/profile/$encodedId');
+        final result = await SharePlus.instance.share(
+          ShareParams(text: 'check out Dr. ${singleDoctor.fullName} ${dotenv.env['webUrl']}/doctors/profile/$encodedId'),
+        );
         if (result.status == ShareResultStatus.dismissed) {
           slideController.toggleAction(1);
         }

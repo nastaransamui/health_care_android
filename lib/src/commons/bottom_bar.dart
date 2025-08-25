@@ -107,7 +107,7 @@ class _BottomBarState extends State<BottomBar> {
           IconButton(
             iconSize: 30.0,
             padding: const EdgeInsets.only(bottom: 28.0),
-            icon: const FaIcon(FontAwesomeIcons.home),
+            icon: const FaIcon(FontAwesomeIcons.house),
             onPressed: () {
               SchedulerBinding.instance.addPostFrameCallback(
                 (_) {

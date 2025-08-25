@@ -27,7 +27,7 @@ IO.Socket socket = IO.io(
   OptionBuilder().setTransports(['websocket']).disableAutoConnect().build(),
 );
 
-void initiateSocket(isLogin, profile, roleName, userData) {
+void initiateSocket(bool? isLogin, dynamic profile, String? roleName, dynamic userData) {
   late String accessToken = '';
   late String userid = '';
   if (isLogin != null && isLogin) {

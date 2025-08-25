@@ -44,7 +44,7 @@ class ThemeFromAdmin {
     );
   }
 
-  dynamic returnToJson(data) => jsonDecode(data);
+  dynamic returnToJson(dynamic data) => jsonDecode(data);
 
   String toJson() => json.encode(toMap());
 

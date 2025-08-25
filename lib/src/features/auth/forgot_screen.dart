@@ -191,7 +191,7 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
-  _formSubmit() {
+  void _formSubmit() {
     SubmitNotification(widget.emailController.text.trim()).dispatch(context);
   }
 

@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:health_care/models/appointment_reservation.dart';
@@ -39,6 +40,7 @@ class AppointmentService {
     socket.off('getDocDashAppointmentsReturn'); // remove previous to avoid stacking
     socket.on('getDocDashAppointmentsReturn', (data) {
       if (data['status'] != 200 && data['status'] != 400) {
+        log(' appointmentProvider.setLoading 1');
         appointmentProvider.setLoading(false);
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
@@ -46,6 +48,7 @@ class AppointmentService {
         return;
       }
       if (data['status'] == 200) {
+        log(' appointmentProvider.setLoading 2');
         appointmentProvider.setLoading(false);
         final appointments = data['docDashAppointments'];
         if (appointments is List && appointments.isNotEmpty) {
@@ -102,6 +105,7 @@ class AppointmentService {
     socket.off('getDoctorAppointmentsReturn');
     socket.on('getDoctorAppointmentsReturn', (data) {
       if (data['status'] != 200 && data['status'] != 400) {
+        log(' appointmentProvider.setLoading 3');
         appointmentProvider.setLoading(false);
         if (context.mounted) {
           showErrorSnackBar(context, data['message']);
@@ -109,6 +113,7 @@ class AppointmentService {
         return;
       }
       if (data['status'] == 200) {
+        log(' appointmentProvider.setLoading 4');
         appointmentProvider.setLoading(false);
         final appointments = data['myAppointment'];
         final totalAppointment = data['totalAppointment'];
@@ -116,7 +121,7 @@ class AppointmentService {
           final reservationList = (appointments).map((json) => AppointmentReservation.fromJson(json)).toList();
           appointmentProvider.setAppointmentReservations(reservationList);
           appointmentProvider.setTotal(totalAppointment);
-        }else{
+        } else {
           appointmentProvider.setAppointmentReservations([]);
           appointmentProvider.setTotal(0);
         }

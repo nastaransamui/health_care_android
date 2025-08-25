@@ -151,7 +151,7 @@ class _DoctorAppointmentShowBoxState extends State<DoctorAppointmentShowBox> {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Row(
                   children: [
-                    FaIcon(FontAwesomeIcons.mapMarkedAlt, size: 13, color: theme.primaryColorLight),
+                    FaIcon(FontAwesomeIcons.mapLocationDot, size: 13, color: theme.primaryColorLight),
                     const SizedBox(width: 5),
                     Text(
                       '${patientProfile.address1} ${patientProfile.address2}',

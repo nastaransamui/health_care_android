@@ -38,61 +38,96 @@ class DependentIsActiveRadioGroup extends StatelessWidget {
           children: [
             Tooltip(
               message: context.tr('isActive'),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: value,
-                    onChanged: onChanged,
-                    visualDensity: VisualDensity.compact,
-                    activeColor: theme.primaryColorLight,
-                    fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => theme.primaryColorLight,
+              child: RadioGroup<bool>(
+                groupValue: value,
+                onChanged: onChanged,
+                child: Wrap(
+                  spacing: 20,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Radio<bool>(
+                          value: true,
+                          visualDensity: VisualDensity.compact,
+                          activeColor: theme.primaryColorLight,
+                          fillColor: WidgetStateProperty.resolveWith<Color>(
+                            (states) => theme.primaryColorLight,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          context.tr('isActive'),
+                          style: TextStyle(
+                            color: !value! ? (theme.brightness == Brightness.dark ? Colors.white : Colors.black) : theme.primaryColorLight,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    // 'For my dependents'
-                    context.tr('isActive'),
-                    style: TextStyle(
-                      color: !value!
-                          ? theme.brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black
-                          : theme.primaryColorLight,
-                    ),
-                  ),
-                ],
+                    // Add more radio options here if needed
+                  ],
+                ),
               ),
             ),
+            // Tooltip(
+            //   message: context.tr('isActive'),
+            //   child: Row(
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Radio<bool>(
+            //         value: true,
+            //         groupValue: value,
+            //         onChanged: onChanged,
+            //         visualDensity: VisualDensity.compact,
+            //         activeColor: theme.primaryColorLight,
+            //         fillColor: WidgetStateProperty.resolveWith<Color>(
+            //           (states) => theme.primaryColorLight,
+            //         ),
+            //       ),
+            //       Text(
+            //         // 'For my dependents'
+            //         context.tr('isActive'),
+            //         style: TextStyle(
+            //           color: !value!
+            //               ? theme.brightness == Brightness.dark
+            //                   ? Colors.white
+            //                   : Colors.black
+            //               : theme.primaryColorLight,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             Tooltip(
-              message: context.tr('notActive'),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<bool>(
-                    value: false,
-                    groupValue: value,
-                    onChanged: onChanged,
-                    visualDensity: VisualDensity.compact,
-                    activeColor: theme.primaryColorLight,
-                    fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => theme.primaryColorLight,
-                    ),
+                message: context.tr('notActive'),
+                child: RadioGroup(
+                  onChanged: onChanged,
+                  groupValue: value,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Radio<bool>(
+                        value: false,
+                        visualDensity: VisualDensity.compact,
+                        activeColor: theme.primaryColorLight,
+                        fillColor: WidgetStateProperty.resolveWith<Color>(
+                          (states) => theme.primaryColorLight,
+                        ),
+                      ),
+                      Text(
+                        context.tr('notActive'),
+                        style: TextStyle(
+                          color: value!
+                              ? theme.brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black
+                              : theme.primaryColorLight,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    context.tr('notActive'),
-                    style: TextStyle(
-                      color: value!
-                          ? theme.brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black
-                          : theme.primaryColorLight,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                )),
           ],
         ),
       ],

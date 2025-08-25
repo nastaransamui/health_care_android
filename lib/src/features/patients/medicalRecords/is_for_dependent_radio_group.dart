@@ -43,66 +43,70 @@ class IsForDependentRadioGroup extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Tooltip(
-              message: isView ? '' : context.tr('addMedicalForMyDependents'),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: value,
-                    onChanged: isView ? null : onChanged,
-                    visualDensity: VisualDensity.compact,
-                    activeColor: theme.primaryColorLight,
-                    fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => isView ? theme.disabledColor : theme.primaryColorLight,
-                    ),
+                message: isView ? '' : context.tr('addMedicalForMyDependents'),
+                child: RadioGroup(
+                  // onChanged: isView ? null : onChanged,
+                  onChanged: onChanged,
+                  groupValue: value,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Radio<bool>(
+                        value: true,
+                        visualDensity: VisualDensity.compact,
+                        activeColor: theme.primaryColorLight,
+                        fillColor: WidgetStateProperty.resolveWith<Color>(
+                          (states) => isView ? theme.disabledColor : theme.primaryColorLight,
+                        ),
+                      ),
+                      Text(
+                        // 'For my dependents'
+                        context.tr('forMyDependents'),
+                        style: TextStyle(
+                          color: isView
+                              ? theme.disabledColor
+                              : !value!
+                                  ? theme.brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black
+                                  : theme.primaryColorLight,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    // 'For my dependents'
-                    context.tr('forMyDependents'),
-                    style: TextStyle(
-                      color: isView
-                          ? theme.disabledColor
-                          : !value!
-                              ? theme.brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black
-                              : theme.primaryColorLight,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                )),
             Tooltip(
-              message: isView ? '' : context.tr('addMedicalRecorForMyself'), 
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<bool>(
-                    value: false,
-                    groupValue: value,
-                    onChanged: isView ? null : onChanged,
-                    visualDensity: VisualDensity.compact,
-                    activeColor: theme.primaryColorLight,
-                    fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => isView ? theme.disabledColor : theme.primaryColorLight,
-                    ),
+                message: isView ? '' : context.tr('addMedicalRecorForMyself'),
+                child: RadioGroup(
+                  onChanged: onChanged,
+                  // onChanged: isView ? null : onChanged,
+                  groupValue: value,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Radio<bool>(
+                        value: false,
+                        visualDensity: VisualDensity.compact,
+                        activeColor: theme.primaryColorLight,
+                        fillColor: WidgetStateProperty.resolveWith<Color>(
+                          (states) => isView ? theme.disabledColor : theme.primaryColorLight,
+                        ),
+                      ),
+                      Text(
+                        context.tr('forMyself'),
+                        style: TextStyle(
+                          color: isView
+                              ? theme.disabledColor
+                              : value!
+                                  ? theme.brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black
+                                  : theme.primaryColorLight,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    context.tr('forMyself'),
-                    style: TextStyle(
-                      color: isView
-                          ? theme.disabledColor
-                          : value!
-                              ? theme.brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black
-                              : theme.primaryColorLight,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                )),
           ],
         ),
       ],

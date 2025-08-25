@@ -159,7 +159,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           focusColor: hexToColor(primaryColor),
           splashColor: hexToColor(primaryColor),
         ),
-        bottomAppBarTheme: BottomAppBarTheme(
+        bottomAppBarTheme: BottomAppBarThemeData(
           color: hexToColor(primaryColor),
         ),
         // colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color.fromARGB(255, 255, 0, 76)),
@@ -218,7 +218,7 @@ ThemeData themDataLive(String homeThemeName, String homeThemeType) {
           focusColor: hexToColor(primaryColor),
           splashColor: hexToColor(primaryColor),
         ),
-        bottomAppBarTheme: BottomAppBarTheme(
+        bottomAppBarTheme: BottomAppBarThemeData(
           color: hexToColor(primaryColor),
         ),
         colorScheme: ColorScheme.fromSeed(

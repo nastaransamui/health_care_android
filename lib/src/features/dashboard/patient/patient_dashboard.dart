@@ -37,9 +37,9 @@ class _PatientDashboardState extends State<PatientDashboard> {
   bool _isProvidersInitialized = false;
   double scrollPercentage = 0;
 
-  Future<void> getDataOnUpdate(context) async {
+  Future<void> getDataOnUpdate(BuildContext context) async {
     await authService.updateLiveAuth(context);
-    vitalService.getVitalSignsData(context);
+   if(context.mounted) vitalService.getVitalSignsData(context);
   }
 
   @override

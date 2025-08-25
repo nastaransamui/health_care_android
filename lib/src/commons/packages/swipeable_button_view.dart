@@ -69,7 +69,7 @@ class SwipeableButtonViewState extends State<SwipeableButtonView>
   late Animation<double> rippleAnimation;
   late Animation<double> scaleAnimation;
 
-  init() {
+  void init() {
     setState(() {
       isAccepted = false;
       opacity = 1;

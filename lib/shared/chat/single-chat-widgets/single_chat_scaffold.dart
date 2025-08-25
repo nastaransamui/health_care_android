@@ -323,7 +323,7 @@ class _SingleChatScaffoldState extends State<SingleChatScaffold> {
             ),
             PopupMenuButton<String>(
               color: bubbleBackground,
-              icon: const FaIcon(FontAwesomeIcons.ellipsisV, size: 18),
+              icon: const FaIcon(FontAwesomeIcons.ellipsisVertical, size: 18),
               offset: const Offset(0, 53),
               itemBuilder: (context) => [
                 PopupMenuItem(

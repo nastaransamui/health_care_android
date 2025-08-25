@@ -68,8 +68,8 @@ class _MedicalRecordShowBoxState extends State<MedicalRecordShowBox> {
     final bangkok = tz.getLocation(dotenv.env['TZ']!);
     final bool isForDependent = medicalRecord.isForDependent;
     final Dependents? dependentProfile = medicalRecord.dependentProfile;
-    final ImageProvider<Object> finalImage = isForDependent
-        ? dependentProfile!.profileImage.isEmpty
+    final ImageProvider<Object> finalImage = isForDependent && dependentProfile != null
+        ? dependentProfile.profileImage.isEmpty
             ? const AssetImage('assets/images/default-avatar.png') as ImageProvider
             : CachedNetworkImageProvider(dependentProfile.profileImage)
         : roleName == 'doctors'

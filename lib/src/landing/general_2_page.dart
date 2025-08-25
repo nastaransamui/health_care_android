@@ -121,7 +121,7 @@ class _General2PageState extends State<General2Page> {
                 leftPosition: MediaQuery.of(context).size.width / 2.3,
                 topPosition: 0.0,
                 title: context.tr('meetOurDoctor'),
-                icon: FontAwesomeIcons.userMd,
+                icon: FontAwesomeIcons.userDoctor,
                 renderWidget: renders[0],
               ),
               AnimationRight(
@@ -130,7 +130,7 @@ class _General2PageState extends State<General2Page> {
                 rightPosition: MediaQuery.of(context).size.width / 2.3,
                 topPosition: 0.0,
                 title: context.tr('clinics'),
-                icon: FontAwesomeIcons.clinicMedical,
+                icon: FontAwesomeIcons.houseChimneyMedical,
                 renderWidget: renders[1],
               ),
               AnimationLeft(
@@ -157,7 +157,7 @@ class _General2PageState extends State<General2Page> {
                 leftPosition: MediaQuery.of(context).size.width / 2.3,
                 topPosition: cantainerHeight * 2,
                 title: context.tr('howItsWork'),
-                icon: FontAwesomeIcons.usersCog,
+                icon: FontAwesomeIcons.usersGear,
                 renderWidget: renders[4],
               ),
               AnimationRight(
@@ -175,7 +175,7 @@ class _General2PageState extends State<General2Page> {
                 leftPosition: MediaQuery.of(context).size.width / 2.3,
                 topPosition: cantainerHeight * 3,
                 title: context.tr('getYourAnswer'),
-                icon: FontAwesomeIcons.questionCircle,
+                icon: FontAwesomeIcons.circleQuestion,
                 renderWidget: renders[6],
               ),
               AnimationRight(
@@ -184,7 +184,7 @@ class _General2PageState extends State<General2Page> {
                 rightPosition: MediaQuery.of(context).size.width / 2.3,
                 topPosition: cantainerHeight * 3,
                 title: context.tr('testimonial'),
-                icon: FontAwesomeIcons.clinicMedical,
+                icon: FontAwesomeIcons.houseChimneyMedical,
                 renderWidget: renders[7],
               ),
             ],

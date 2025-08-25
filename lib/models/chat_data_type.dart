@@ -610,7 +610,7 @@ class ChatUserAutocompleteData {
       id: map['_id'] ?? '',
       searchString: map['searchString'] ?? '',
       specialities: map['specialities'] != null ? List<Specialities>.from(map['specialities']?.map((x) => Specialities.fromMap(x))) : [],
-      fcmTokens: (map['fcmTokens'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      fcmTokens: (map['fcmTokens'] as List?)?.whereType<String>().toList() ?? [],
       gender: map['gender'] ?? '',
     );
   }

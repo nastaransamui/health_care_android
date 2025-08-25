@@ -358,7 +358,7 @@ class _PatientMedicalRecordsState extends State<PatientMedicalRecords> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    FaIcon(FontAwesomeIcons.plusCircle, size: 13, color: textColor),
+                                    FaIcon(FontAwesomeIcons.circlePlus, size: 13, color: textColor),
                                     const SizedBox(width: 5),
                                     Text(
                                       context.tr("addMedicalRecord"),
